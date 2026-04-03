@@ -1,14 +1,15 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import { Suspense } from 'react'
-import { getProductByHandle } from '@/lib/shopify'
-import ClickAndCollect from '@/components/product/ClickAndCollect'
-import Badge from '@/components/ui/Badge'
-import ProductActions from '@/components/product/ProductActions'
-import ProductReviews from '@/components/product/ProductReviews'
-import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { getProductByHandle, getProductInventoryByLocation, getCollectionByHandle } from '@/lib/shopify'
+import { BODY_START_STORES } from '@/lib/shopify/types'
+import ProductSection from '@/components/product/ProductSection'
+import ProductReviews from '@/components/product/ProductReviews'
+import NutritionAndScience from '@/components/product/NutritionAndScience'
+import HowToUse from '@/components/product/HowToUse'
+import RelatedProducts from '@/components/product/RelatedProducts'
+import { ChevronRight } from 'lucide-react'
 
 interface Props {
   params: { handle: string }
@@ -30,13 +31,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   let product = null
   try {
+    console.log('[ProductPage] Fetching handle:', params.handle)
     product = await getProductByHandle(params.handle)
-  } catch {
-    // API non configurée
+    console.log('[ProductPage] Result for', params.handle, ':', product ? `FOUND (id=${product.id})` : 'NULL — produit introuvable ou brouillon')
+  } catch (err) {
+    console.error('[ProductPage] Erreur API pour handle:', params.handle, err)
   }
 
   if (!product) notFound()
 
+  // Fetch stock en boutique physique
+  const activeStore = BODY_START_STORES.find((s) => s.isActive)
+  let storeInventory: Record<string, number> = {}
+  if (activeStore?.shopifyLocationId) {
+    try {
+      const levels = await getProductInventoryByLocation(product.id, activeStore.shopifyLocationId)
+      const totalAvailable = levels.reduce((sum, v) => sum + v.available, 0)
+      storeInventory[activeStore.id] = totalAvailable
+    } catch {
+      // Admin API non configurée — on continue sans stock
+    }
+  }
+
+  // Fetch produits de la même collection pour les recommandations
+  let relatedProducts: import('@/lib/shopify/types').ShopifyProduct[] = []
+  if (product.collections?.nodes?.[0]?.handle) {
+    try {
+      const collection = await getCollectionByHandle(product.collections.nodes[0].handle, 5)
+      relatedProducts = collection?.products?.nodes ?? []
+    } catch {
+      // On continue sans les recommandations
+    }
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.com'
   const mainVariant = product.variants.nodes[0]
   const hasDiscount =
     mainVariant?.compareAtPrice &&
@@ -49,123 +77,149 @@ export default async function ProductPage({ params }: Props) {
       )
     : null
 
+  const collectionName = product.collections?.nodes?.[0]?.title ?? null
+  const collectionHandle = product.collections?.nodes?.[0]?.handle ?? null
+
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description?.slice(0, 500) ?? '',
+    image: product.featuredImage?.url ?? '',
+    brand: {
+      '@type': 'Brand',
+      name: product.vendor || 'Body Start Nutrition',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `${siteUrl}/products/${product.handle}`,
+      priceCurrency: mainVariant?.price.currencyCode ?? 'EUR',
+      price: mainVariant?.price.amount ?? '0',
+      availability: mainVariant?.availableForSale
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'Body Start Nutrition',
+      },
+    },
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Produits',
+        item: `${siteUrl}/products`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: product.title,
+        item: `${siteUrl}/products/${product.handle}`,
+      },
+    ],
+  }
+
   return (
-    <div className="container py-8 md:py-12">
-      {/* Breadcrumb */}
-      <Link href="/products" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-700 hover:text-gray-900 mb-10 transition-colors">
-        <ArrowLeft className="w-4 h-4" />
-        Retour au catalogue
-      </Link>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Galerie */}
-        <div className="space-y-4">
-          {/* Image principale */}
-          <div className="relative aspect-square bg-gray-50 rounded-sm overflow-hidden border-2 border-gray-900 shadow-[8px_8px_0_theme(colors.gray.900)]">
-            {product.featuredImage ? (
-              <Image
-                src={product.featuredImage.url}
-                alt={product.featuredImage.altText ?? product.title}
-                fill
-                className="object-contain p-4"
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-brand-300 text-6xl font-bold">BS</span>
-              </div>
+      {/* ─── SECTION HERO — Fond crème avec texture ─── */}
+      <div className="bg-[#fcfdfa] relative pb-16 pt-8 overflow-hidden">
+        {/* Subtle texture overlay */}
+        <div
+          className="absolute inset-0 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+
+        <div className="container relative py-8 md:py-12">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 mb-12">
+            <Link href="/" className="hover:text-gray-900 transition-colors">Accueil</Link>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <Link href="/products" className="hover:text-gray-900 transition-colors">Produits</Link>
+            {collectionName && collectionHandle && (
+              <>
+                <ChevronRight className="w-3.5 h-3.5" />
+                <Link href={`/collections/${collectionHandle}`} className="hover:text-gray-900 transition-colors">
+                  {collectionName}
+                </Link>
+              </>
             )}
-            {discountPct && (
-              <div className="absolute top-4 left-4">
-                <Badge variant="red" size="md">-{discountPct}%</Badge>
-              </div>
-            )}
-          </div>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-gray-900">{product.title}</span>
+          </nav>
 
-          {/* Vignettes */}
-          {(product.images?.nodes.length ?? 0) > 1 && (
-            <div className="flex gap-4 overflow-x-auto pb-2 mt-6">
-              {product.images!.nodes.slice(0, 5).map((img, i) => (
-                <div key={i} className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-sm overflow-hidden border-2 border-gray-200 hover:border-gray-900 hover:shadow-[4px_4px_0_theme(colors.gray.900)] cursor-pointer transition-all">
-                  <Image
-                    src={img.url}
-                    alt={img.altText ?? `${product.title} - image ${i + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="96px"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Infos produit */}
-        <div className="lg:pl-8">
-          {/* Labels */}
-          <div className="flex items-center gap-3 mb-6">
-            {product.productType && (
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-700 bg-brand-50 border-2 border-brand-200 px-3 py-1 rounded-sm">
-                {product.productType}
-              </span>
-            )}
-            {product.vendor && (
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
-                • {product.vendor}
-              </span>
-            )}
-          </div>
-
-          <h1 className="font-display text-3xl md:text-5xl lg:text-[3.5rem] font-black uppercase tracking-tight text-gray-900 mb-6 leading-none">
-            {product.title}
-          </h1>
-
-          {/* Sélecteur de variante + prix + bouton panier */}
-          <ProductActions
-            variants={product.variants.nodes}
-            productTitle={product.title}
-          />
-
-          {/* Tags */}
-          {product.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-8 mb-6 border-b-2 border-gray-100 pb-8">
-              {product.tags.slice(0, 5).map((tag) => (
-                <span key={tag} className="text-[10px] font-black uppercase tracking-widest text-gray-600 bg-gray-100 px-3 py-1.5 rounded-sm border-2 border-transparent">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Description courte */}
-          {product.description && (
-            <p className="text-gray-600 font-medium leading-relaxed mb-10 text-lg">
-              {product.description.slice(0, 300)}
-              {(product.description?.length ?? 0) > 300 ? '...' : ''}
-            </p>
-          )}
-
-          {/* ⭐ Click & Collect */}
-          <ClickAndCollect />
-
-          {/* Description complète */}
-          {product.descriptionHtml && (
-            <div className="mt-12 pt-10 border-t-2 border-gray-200">
-              <h2 className="font-display font-black text-2xl uppercase tracking-tight text-gray-900 mb-6">Informations détaillées</h2>
-              <div
-                className="prose prose-gray max-w-none prose-p:font-medium prose-headings:font-display prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-brand-700 font-medium text-gray-600"
-                dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-              />
-            </div>
-          )}
+          <ProductSection
+              images={
+                product.images?.nodes.length
+                  ? product.images.nodes
+                  : product.featuredImage
+                    ? [product.featuredImage]
+                    : []
+              }
+              variants={product.variants.nodes}
+              title={product.title}
+              discountPct={discountPct}
+              productTitle={product.title}
+              collectionName={collectionName}
+              collectionHandle={collectionHandle}
+              activeStore={activeStore}
+              storeInventory={storeInventory}
+            />
         </div>
       </div>
 
-      {/* Avis Judge.me */}
-      <Suspense fallback={null}>
-        <ProductReviews handle={params.handle} />
-      </Suspense>
-    </div>
+      {/* ─── SECTION VERT CLAIR : Nutrition, Science, How to Use ─── */}
+      <div className="bg-[#e6efe1] py-20 relative">
+         <div className="container">
+           {/* SECTION 1 — Nutrition Facts + Scientifiquement Prouvé */}
+           <NutritionAndScience metafields={product.metafields} />
+
+           {/* SECTION 2 — Comment utiliser & Transparence */}
+           <div className="mt-20">
+              <HowToUse />
+           </div>
+         </div>
+      </div>
+
+      {/* ─── SECTION BLANCHE FINALE ─── */}
+      <div className="container py-20">
+        
+        {/* Avis Judge.me */}
+        <Suspense fallback={null}>
+          <ProductReviews handle={params.handle} />
+        </Suspense>
+
+        {/* SECTION 3 — Complétez votre objectif */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-24">
+            <h2 className="font-display text-4xl font-black uppercase tracking-tighter text-gray-900 mb-12 text-center">Complétez Votre Objectif</h2>
+            <RelatedProducts products={relatedProducts} currentHandle={product.handle} />
+          </div>
+        )}
+
+      </div>
+    </>
   )
 }

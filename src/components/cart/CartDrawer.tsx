@@ -1,21 +1,45 @@
 'use client'
 
-import { Fragment } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { X, ShoppingBag, Minus, Plus, Trash2, ArrowRight, Package } from 'lucide-react'
+import { X, ShoppingBag, Minus, Plus, Trash2, ArrowRight, Package, Store, Truck, MapPin, Clock } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
+import { BODY_START_STORES } from '@/lib/shopify/types'
+
+const activeStore = BODY_START_STORES.find((s) => s.isActive)
 
 export default function CartDrawer() {
-  const { cart, isOpen, isLoading, closeCart, updateItem, removeItem } = useCart()
+  const { cart, isOpen, isLoading, closeCart, updateItem, removeItem, setCartAttributes } = useCart()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isCoaching = pathname?.startsWith('/coaching') || searchParams?.get('theme') === 'coaching'
 
+  const [isClickAndCollect, setIsClickAndCollect] = useState(false)
+
   const items = cart?.lines?.nodes ?? []
   const isEmpty = items.length === 0
+
+  async function toggleClickAndCollect() {
+    const newValue = !isClickAndCollect
+    setIsClickAndCollect(newValue)
+
+    if (activeStore) {
+      await setCartAttributes(
+        newValue
+          ? [
+              { key: '__click_and_collect', value: 'true' },
+              { key: 'pickup_location_id', value: activeStore.shopifyLocationId },
+            ]
+          : [
+              { key: '__click_and_collect', value: 'false' },
+              { key: 'pickup_location_id', value: '' },
+            ]
+      )
+    }
+  }
 
   return (
     <>
@@ -78,8 +102,8 @@ export default function CartDrawer() {
               onClick={closeCart}
               className={cn(
                 "py-4 text-[10px] uppercase font-black tracking-widest px-8 rounded-sm inline-flex items-center",
-                isCoaching 
-                  ? "bg-coaching-cyan-500 text-black border-2 border-transparent hover:bg-coaching-cyan-400" 
+                isCoaching
+                  ? "bg-coaching-cyan-500 text-black border-2 border-transparent hover:bg-coaching-cyan-400"
                   : "bg-brand-700 text-white border-2 border-transparent hover:bg-brand-800"
               )}
             >
@@ -211,54 +235,115 @@ export default function CartDrawer() {
               </div>
             </div>
 
-            {/* Livraison offerte */}
-            {parseFloat(cart.cost.subtotalAmount.amount) < 60 ? (
-              <div className={cn(
-                "flex items-center gap-3 p-4 border-2 rounded-sm",
-                isCoaching ? "bg-coaching-50 border-coaching-200" : "bg-brand-50 border-brand-200"
-              )}>
-                <span className="text-xl">🚚</span>
-                <div className="flex-1">
-                  <p className={cn(
-                    "text-[10px] uppercase font-black tracking-widest mb-2",
-                    isCoaching ? "text-coaching-700" : "text-brand-700"
-                  )}>
-                    Plus que{' '}
-                    <strong className="bg-white px-1">
-                      {formatPrice({
-                        amount: String(60 - parseFloat(cart.cost.subtotalAmount.amount)),
-                        currencyCode: cart.cost.subtotalAmount.currencyCode,
-                      })}
-                    </strong>{' '}
-                    pour la livraison offerte !
-                  </p>
-                  <div className={cn(
-                    "w-full bg-white border-2 rounded-sm h-3 p-0.5",
-                    isCoaching ? "border-coaching-200" : "border-brand-200"
-                  )}>
-                    <div
-                      className={cn(
-                        "h-full rounded-sm transition-all duration-300",
-                        isCoaching ? "bg-coaching-400" : "bg-brand-500"
-                      )}
-                      style={{ width: `${Math.min((parseFloat(cart.cost.subtotalAmount.amount) / 60) * 100, 100)}%` }}
-                    />
+            {/* ─── Toggle Livraison / Click & Collect ─── */}
+            {activeStore && (
+              <div className="border-2 border-gray-200 rounded-sm overflow-hidden">
+                {/* Options */}
+                <div className="flex">
+                  <button
+                    onClick={() => isClickAndCollect && toggleClickAndCollect()}
+                    className={cn(
+                      'flex-1 flex items-center justify-center gap-2 py-3 text-[10px] font-black uppercase tracking-widest transition-colors',
+                      !isClickAndCollect
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-white text-gray-500 hover:bg-gray-50'
+                    )}
+                  >
+                    <Truck className="w-3.5 h-3.5" />
+                    Livraison
+                  </button>
+                  <button
+                    onClick={() => !isClickAndCollect && toggleClickAndCollect()}
+                    className={cn(
+                      'flex-1 flex items-center justify-center gap-2 py-3 text-[10px] font-black uppercase tracking-widest transition-colors border-l-2 border-gray-200',
+                      isClickAndCollect
+                        ? 'bg-brand-700 text-white'
+                        : 'bg-white text-gray-500 hover:bg-gray-50'
+                    )}
+                  >
+                    <Store className="w-3.5 h-3.5" />
+                    Retrait boutique
+                  </button>
+                </div>
+
+                {/* Détails Click & Collect */}
+                {isClickAndCollect && (
+                  <div className="p-4 bg-brand-50 border-t-2 border-brand-200 space-y-2">
+                    <div className="flex items-start gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-brand-700 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold text-gray-900">{activeStore.name}</p>
+                        <p className="text-xs text-gray-600">{activeStore.address}, {activeStore.city}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Clock className="w-3.5 h-3.5 text-brand-700 mt-0.5 flex-shrink-0" />
+                      <div>
+                        {activeStore.hours.map((h, i) => (
+                          <p key={i} className="text-xs text-gray-600">
+                            <span className="font-semibold">{h.day}</span> {h.open} – {h.close}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-brand-700 pt-1">
+                      Prêt sous 2h après confirmation
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Livraison offerte (seulement en mode livraison) */}
+            {!isClickAndCollect && (
+              parseFloat(cart.cost.subtotalAmount.amount) < 60 ? (
+                <div className={cn(
+                  "flex items-center gap-3 p-4 border-2 rounded-sm",
+                  isCoaching ? "bg-coaching-50 border-coaching-200" : "bg-brand-50 border-brand-200"
+                )}>
+                  <span className="text-xl">🚚</span>
+                  <div className="flex-1">
+                    <p className={cn(
+                      "text-[10px] uppercase font-black tracking-widest mb-2",
+                      isCoaching ? "text-coaching-700" : "text-brand-700"
+                    )}>
+                      Plus que{' '}
+                      <strong className="bg-white px-1">
+                        {formatPrice({
+                          amount: String(60 - parseFloat(cart.cost.subtotalAmount.amount)),
+                          currencyCode: cart.cost.subtotalAmount.currencyCode,
+                        })}
+                      </strong>{' '}
+                      pour la livraison offerte !
+                    </p>
+                    <div className={cn(
+                      "w-full bg-white border-2 rounded-sm h-3 p-0.5",
+                      isCoaching ? "border-coaching-200" : "border-brand-200"
+                    )}>
+                      <div
+                        className={cn(
+                          "h-full rounded-sm transition-all duration-300",
+                          isCoaching ? "bg-coaching-400" : "bg-brand-500"
+                        )}
+                        style={{ width: `${Math.min((parseFloat(cart.cost.subtotalAmount.amount) / 60) * 100, 100)}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className={cn(
-                "flex items-center gap-3 p-4 border-2 rounded-sm",
-                isCoaching ? "bg-coaching-50 border-coaching-200" : "bg-brand-50 border-brand-200"
-              )}>
-                <span className="text-xl">🎉</span>
-                <p className={cn(
-                  "text-[10px] uppercase font-black tracking-widest",
-                  isCoaching ? "text-coaching-700" : "text-brand-700"
+              ) : (
+                <div className={cn(
+                  "flex items-center gap-3 p-4 border-2 rounded-sm",
+                  isCoaching ? "bg-coaching-50 border-coaching-200" : "bg-brand-50 border-brand-200"
                 )}>
-                  LIVRAISON OFFERTE !
-                </p>
-              </div>
+                  <span className="text-xl">🎉</span>
+                  <p className={cn(
+                    "text-[10px] uppercase font-black tracking-widest",
+                    isCoaching ? "text-coaching-700" : "text-brand-700"
+                  )}>
+                    LIVRAISON OFFERTE !
+                  </p>
+                </div>
+              )
             )}
 
             {/* Bouton checkout */}
@@ -266,12 +351,12 @@ export default function CartDrawer() {
               href={cart.checkoutUrl}
               className={cn(
                 "w-full flex items-center justify-center py-4 text-[10px] font-black uppercase tracking-widest rounded-sm transition-colors",
-                isCoaching 
-                  ? "bg-coaching-cyan-500 text-black hover:bg-coaching-cyan-400" 
+                isCoaching
+                  ? "bg-coaching-cyan-500 text-black hover:bg-coaching-cyan-400"
                   : "bg-brand-700 text-white hover:bg-brand-800"
               )}
             >
-              PASSER LA COMMANDE
+              {isClickAndCollect ? 'VALIDER LE RETRAIT' : 'PASSER LA COMMANDE'}
               <ArrowRight className="w-4 h-4 ml-2" />
             </a>
 

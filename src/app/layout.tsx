@@ -4,6 +4,7 @@ import '@/styles/globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { CustomerProvider } from '@/context/CustomerContext'
 import { Toaster } from 'react-hot-toast'
+import CookieBanner from '@/components/ui/CookieBanner'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -55,6 +56,7 @@ export default function RootLayout({
         <CustomerProvider>
           <CartProvider>
             {children}
+            <CookieBanner />
             <Toaster
               position="top-right"
               toastOptions={{

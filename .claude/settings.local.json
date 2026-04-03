@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/Adam/Desktop/Superpouvoir/body-start/.claude/worktrees/nice-meninsky/src -type f -name *.ts -o -name *.tsx -o -name *.js -o -name *.jsx)",
+      "Bash(xargs grep:*)",
+      "Bash(npm install:*)",
+      "Bash(ls \"C:\\\\Users\\\\Adam\\\\Desktop\\\\Superpouvoir\\\\body-start\\\\.claude\\\\worktrees\\\\nice-meninsky\\\\src\\\\app\\\\\\(nutrition\\)\\\\account\")",
+      "Bash(stripe version:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e \"const pkg = require\\(''./node_modules/stripe/package.json''\\); console.log\\(pkg.version\\)\")",
+      "Bash(grep ApiVersion node_modules/stripe/types/2*.d.ts)",
+      "Bash(ls \"C:\\\\Users\\\\Adam\\\\Desktop\\\\Superpouvoir\\\\body-start\\\\.claude\\\\worktrees\\\\nice-meninsky\\\\public\\\\Background\"*)",
+      "Bash(npm list:*)",
+      "Bash(node -e \":*)",
+      "Bash(cp \"Logorecupération.png\" \"Logo-recuperation.png\")",
+      "Bash(cp \"Logosanté&vitalité.png\" \"Logo-sante-vitalite.png\")"
+    ]
+  }
+}

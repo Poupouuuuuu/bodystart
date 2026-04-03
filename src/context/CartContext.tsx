@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import { createCart, addToCart, updateCartLine, removeFromCart, getCart } from '@/lib/shopify'
+import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes } from '@/lib/shopify'
 import type { ShopifyCart } from '@/lib/shopify/types'
 import toast from 'react-hot-toast'
 
@@ -15,6 +15,7 @@ interface CartContextType {
   addItem: (merchandiseId: string, quantity?: number) => Promise<void>
   updateItem: (lineId: string, quantity: number) => Promise<void>
   removeItem: (lineId: string) => Promise<void>
+  setCartAttributes: (attributes: { key: string; value: string }[]) => Promise<void>
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -86,10 +87,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cart])
 
+  const setCartAttributes = useCallback(async (attributes: { key: string; value: string }[]) => {
+    if (!cart) return
+    setIsLoading(true)
+    try {
+      const updatedCart = await updateCartAttributes(cart.id, attributes)
+      setCart(updatedCart)
+    } catch {
+      toast.error('Erreur lors de la mise à jour')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [cart])
+
   return (
     <CartContext.Provider value={{
       cart, isLoading, isOpen, totalQuantity,
-      openCart, closeCart, addItem, updateItem, removeItem,
+      openCart, closeCart, addItem, updateItem, removeItem, setCartAttributes,
     }}>
       {children}
     </CartContext.Provider>

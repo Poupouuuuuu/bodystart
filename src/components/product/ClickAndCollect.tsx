@@ -24,32 +24,32 @@ export default function ClickAndCollect({ availableInStores = {} }: ClickAndColl
   const { label, color, icon: StatusIcon } = getStockStatus(store.id)
 
   return (
-    <div className="border-2 border-gray-200 rounded-sm overflow-hidden mt-8 mb-4">
+    <div className="border border-cream-300 rounded-2xl overflow-hidden mt-6 mb-4">
       {/* Toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-cream-50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-brand-50 border-2 border-brand-200 rounded-sm flex items-center justify-center">
-            <Store className="w-5 h-5 text-brand-700" />
+          <div className="w-10 h-10 bg-brand-50 rounded-full flex items-center justify-center">
+            <Store className="w-5 h-5 text-brand-500" />
           </div>
           <div className="text-left">
-            <p className="font-black text-gray-900 text-sm uppercase tracking-tight">Click & Collect disponible</p>
-            <p className="text-xs text-gray-500 font-medium">Retrait en boutique sous 2h</p>
+            <p className="font-bold text-gray-900 text-sm">Click & Collect disponible</p>
+            <p className="text-xs text-gray-500">Retrait en boutique sous 2h</p>
           </div>
         </div>
         <ChevronDown className={cn('w-5 h-5 text-gray-400 transition-transform duration-200', isOpen && 'rotate-180')} />
       </button>
 
       {isOpen && (
-        <div className="border-t border-gray-100">
+        <div className="border-t border-cream-200">
           {/* Boutique active */}
-          <div className="p-4 hover:bg-gray-50">
+          <div className="p-4 hover:bg-cream-50 transition-colors">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <MapPin className="w-3.5 h-3.5 text-brand-600" />
+                  <MapPin className="w-3.5 h-3.5 text-brand-500" />
                   <p className="font-semibold text-gray-900 text-sm">{store.name}</p>
                 </div>
                 <p className="text-xs text-gray-500 mb-2">{store.address}, {store.city}</p>
@@ -65,13 +65,13 @@ export default function ClickAndCollect({ availableInStores = {} }: ClickAndColl
               </div>
               <div className="flex-shrink-0">
                 <div className={cn(
-                  'inline-flex items-center gap-1.5 text-[10px] uppercase font-black tracking-widest px-2.5 py-1 rounded-sm border-2',
-                  color === 'green' && 'bg-brand-50 text-brand-700 border-brand-200',
-                  color === 'yellow' && 'bg-yellow-50 text-yellow-700 border-yellow-200',
-                  color === 'red' && 'bg-red-50 text-red-700 border-red-200',
-                  color === 'gray' && 'bg-gray-50 text-gray-700 border-gray-200',
+                  'inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full',
+                  color === 'green' && 'bg-brand-50 text-brand-500',
+                  color === 'yellow' && 'bg-yellow-50 text-yellow-600',
+                  color === 'red' && 'bg-red-50 text-red-600',
+                  color === 'gray' && 'bg-cream-100 text-gray-500',
                 )}>
-                  <StatusIcon className="w-3 h-3" />
+                  <StatusIcon className="w-3.5 h-3.5" />
                   {label}
                 </div>
               </div>
@@ -80,13 +80,13 @@ export default function ClickAndCollect({ availableInStores = {} }: ClickAndColl
 
           {/* Boutique B - coming soon */}
           {COMING_SOON_STORES.map((cs) => (
-            <div key={cs.id} className="p-4 bg-gray-50 border-t border-gray-100">
+            <div key={cs.id} className="p-4 bg-cream-50 border-t border-cream-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-gray-400" />
                   <p className="text-sm text-gray-500">{cs.name}</p>
                 </div>
-                <span className="text-[10px] bg-gray-100 border-2 border-transparent text-gray-500 px-2.5 py-1 flex items-center rounded-sm font-black uppercase tracking-widest">
+                <span className="text-xs bg-cream-200 text-gray-500 px-3 py-1 rounded-full font-medium">
                   {cs.openingDate}
                 </span>
               </div>
@@ -94,8 +94,8 @@ export default function ClickAndCollect({ availableInStores = {} }: ClickAndColl
           ))}
 
           {/* Info */}
-          <div className="p-4 bg-brand-50 border-t border-brand-100">
-            <p className="text-xs text-brand-700 leading-relaxed">
+          <div className="p-4 bg-brand-50 border-t border-brand-50">
+            <p className="text-xs text-brand-600 leading-relaxed">
               <strong>Comment ça marche ?</strong> Choisissez Click & Collect au checkout. Votre commande sera prête en boutique sous 2h. Vous recevrez un email de confirmation avec les détails.
             </p>
           </div>

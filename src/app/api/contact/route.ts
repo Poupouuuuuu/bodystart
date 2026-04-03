@@ -1,17 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const TO = process.env.CONTACT_EMAIL_TO ?? 'contact@bodystart.com'
 
+// ─── Rate limiter : 5 requêtes / 10 min par IP ──────────────
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '10 m'),
+  analytics: true,
+  prefix: 'ratelimit:contact',
+})
+
+// ─── Échappement HTML ────────────────────────────────────────
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // ─── Rate limiting ───
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1'
+    const { success, remaining } = await ratelimit.limit(ip)
+
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Trop de requêtes. Réessayez dans quelques minutes.' },
+        { status: 429, headers: { 'X-RateLimit-Remaining': String(remaining) } }
+      )
+    }
+
     const body = await req.json()
     const { name, email, phone, objectif, message } = body
 
     if (!name || !email || !objectif) {
       return NextResponse.json({ error: 'Champs requis manquants.' }, { status: 400 })
     }
+
+    // ─── Échapper tous les champs utilisateur ───
+    const safeName = escapeHtml(name)
+    const safeEmail = escapeHtml(email)
+    const safePhone = phone ? escapeHtml(phone) : ''
+    const safeMessage = message ? escapeHtml(message) : ''
 
     const objectifLabels: Record<string, string> = {
       'prise-de-muscle': '💪 Prise de muscle',
@@ -21,13 +58,13 @@ export async function POST(req: NextRequest) {
       'immunite': '🛡️ Immunité',
       'autre': '❓ Autre',
     }
-    const objectifLabel = objectifLabels[objectif] ?? objectif
+    const objectifLabel = objectifLabels[objectif] ?? escapeHtml(objectif)
 
     await resend.emails.send({
       from: 'Body Start Nutrition <onboarding@resend.dev>',
       to: TO,
       replyTo: email,
-      subject: `🏋️ Nouvelle demande de conseil — ${name}`,
+      subject: `🏋️ Nouvelle demande de conseil — ${safeName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0;">
           <div style="background: #111827; padding: 32px; text-align: center;">
@@ -41,33 +78,33 @@ export async function POST(req: NextRequest) {
 
           <div style="padding: 32px; background: #ffffff; border-left: 4px solid #15803d;">
             <h2 style="color: #111827; font-size: 18px; font-weight: 800; text-transform: uppercase; margin: 0 0 24px;">
-              ${name} souhaite un conseil personnalisé
+              ${safeName} souhaite un conseil personnalisé
             </h2>
 
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280; width: 140px;">Nom</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">${name}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">${safeName}</td>
               </tr>
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280;">Email</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">
-                  <a href="mailto:${email}" style="color: #15803d;">${email}</a>
+                  <a href="mailto:${safeEmail}" style="color: #15803d;">${safeEmail}</a>
                 </td>
               </tr>
-              ${phone ? `<tr>
+              ${safePhone ? `<tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280;">Téléphone</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">
-                  <a href="tel:${phone}" style="color: #15803d;">${phone}</a>
+                  <a href="tel:${safePhone}" style="color: #15803d;">${safePhone}</a>
                 </td>
               </tr>` : ''}
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280;">Objectif</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #15803d; font-weight: 800; text-transform: uppercase;">${objectifLabel}</td>
               </tr>
-              ${message ? `<tr>
+              ${safeMessage ? `<tr>
                 <td style="padding: 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280; vertical-align: top;">Message</td>
-                <td style="padding: 10px 0; font-size: 14px; color: #374151; line-height: 1.6;">${message.replace(/\n/g, '<br>')}</td>
+                <td style="padding: 10px 0; font-size: 14px; color: #374151; line-height: 1.6;">${safeMessage.replace(/\n/g, '<br>')}</td>
               </tr>` : ''}
             </table>
           </div>
@@ -95,7 +132,7 @@ export async function POST(req: NextRequest) {
           </div>
           <div style="padding: 32px; background: #ffffff;">
             <h2 style="color: #111827; font-size: 20px; font-weight: 800; margin: 0 0 16px;">
-              Bonjour ${name} 👋
+              Bonjour ${safeName} 👋
             </h2>
             <p style="color: #374151; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
               Nous avons bien reçu votre demande de conseil pour l'objectif <strong style="color: #15803d;">${objectifLabel}</strong>.

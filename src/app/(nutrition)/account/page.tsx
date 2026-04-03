@@ -4,7 +4,7 @@ import { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { User, Package, MapPin, LogOut, ChevronRight, ShoppingBag, Star, Gift } from 'lucide-react'
+import { User, Package, MapPin, LogOut, ChevronRight, ShoppingBag, Star, Gift, Dumbbell } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
 import { formatPrice, cn } from '@/lib/utils'
 
@@ -141,6 +141,7 @@ function AccountContent() {
                 { Icon: MapPin, label: 'Mes adresses', href: `/account/addresses${authQuery}` },
                 { Icon: Star, label: 'Mes avis', href: `/account/reviews${authQuery}` },
                 { Icon: Gift, label: 'Parrainage', href: `/account/referral${authQuery}` },
+                { Icon: Dumbbell, label: 'Mon coaching', href: `/account/coaching${authQuery}` },
               ].map(({ Icon, label, href, count }) => (
                 <Link
                   key={label}

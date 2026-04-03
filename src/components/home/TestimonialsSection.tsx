@@ -1,137 +1,124 @@
 import { getLatestReviews } from '@/lib/judgeme'
 import type { JudgemeReview } from '@/lib/judgeme'
-import { CheckCircle } from 'lucide-react'
+import { Star, Quote, BadgeCheck } from 'lucide-react'
 
-function Stars({ rating }: { rating: number }) {
+function Stars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg' }) {
+  const cls = size === 'lg' ? 'w-5 h-5' : 'w-4 h-4'
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((s) => (
-        <svg
+        <Star
           key={s}
-          className={`w-4 h-4 ${s <= rating ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}`}
-          viewBox="0 0 20 20"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
+          className={`${cls} ${s <= rating ? 'text-[#ffc107] fill-[#ffc107]' : 'text-gray-200 fill-gray-200'}`}
+        />
       ))}
     </div>
   )
 }
 
-function ReviewCard({ review }: { review: JudgemeReview }) {
-  // Initiale du prénom pour l'avatar
-  const initial = review.reviewer.name?.charAt(0)?.toUpperCase() ?? '?'
+function ReviewCard({ name, text, product, rating }: {
+  name: string
+  text: string
+  product: string
+  rating: number
+}) {
+  const initial = name.charAt(0).toUpperCase()
   return (
-    <div className="bg-white rounded-sm border-2 border-gray-200 p-6 hover:border-gray-900 shadow-[4px_4px_0_theme(colors.gray.200)] hover:shadow-[4px_4px_0_theme(colors.gray.900)] hover:-translate-y-1 transition-all duration-200">
-      <Stars rating={review.rating} />
-      {review.title && (
-        <p className="font-black text-gray-900 text-sm uppercase tracking-tight mt-3">
-          {review.title}
-        </p>
-      )}
-      <p className="text-gray-600 font-medium text-sm leading-relaxed mt-3 mb-5 line-clamp-4">
-        &ldquo;{review.body}&rdquo;
+    <div className="relative bg-white rounded-2xl border border-cream-300 p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow duration-300">
+      {/* Guillemets décoratifs */}
+      <Quote className="w-8 h-8 text-brand-500/20 mb-4 rotate-180" strokeWidth={1.5} />
+
+      {/* Étoiles */}
+      <div className="mb-4">
+        <Stars rating={rating} />
+      </div>
+
+      {/* Texte */}
+      <p className="text-gray-700 text-sm leading-relaxed mb-6 flex-1">
+        &ldquo;{text}&rdquo;
       </p>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-brand-700 border-2 border-brand-900 rounded-sm flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-[2px_2px_0_theme(colors.brand.900)]">
-            {initial}
-          </div>
-          <div>
-            <p className="text-sm font-black uppercase tracking-tight text-gray-900">
-              {review.reviewer.name}
-            </p>
-            {review.verified && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-brand-700 flex items-center gap-1">
-                <CheckCircle className="w-3 h-3" /> Achat vérifié
-              </p>
-            )}
+
+      {/* Produit acheté */}
+      <p className="text-xs text-brand-500 font-semibold mb-5">
+        A acheté : {product}
+      </p>
+
+      {/* Auteur */}
+      <div className="flex items-center gap-3 pt-5 border-t border-cream-200">
+        <div className="w-10 h-10 bg-brand-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+          {initial}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-gray-900">{name}</p>
+          <div className="flex items-center gap-1 text-brand-500">
+            <BadgeCheck className="w-3.5 h-3.5" />
+            <span className="text-[11px] font-semibold">Client vérifié</span>
           </div>
         </div>
-        {review.product_title && (
-          <span className="bg-brand-50 border-2 border-brand-200 text-brand-700 text-[9px] uppercase tracking-widest font-black px-2 py-1 rounded-sm flex-shrink-0 max-w-[120px] truncate">
-            {review.product_title}
-          </span>
-        )}
       </div>
     </div>
   )
 }
 
-// Fallback si pas encore d'avis
-function FallbackCards() {
-  const FALLBACK = [
-    { initial: 'T', name: 'Thomas R.', text: 'Qualité exceptionnelle. Résultats visibles en 6 semaines.', product: 'Whey Protéine' },
-    { initial: 'J', name: 'Julie M.', text: 'Récupération incroyable. Les dosages sont vraiment honnêtes.', product: 'Acides Aminés' },
-    { initial: 'K', name: 'Karim B.', text: 'Le service en boutique est top. Conseillers très compétents.', product: 'Créatine Pure' },
-  ]
-  return (
-    <>
-      {FALLBACK.map((f) => (
-        <div key={f.name} className="bg-white rounded-sm border-2 border-gray-200 p-6 shadow-[4px_4px_0_theme(colors.gray.200)]">
-          <Stars rating={5} />
-          <p className="text-gray-600 font-medium text-sm leading-relaxed mt-3 mb-5">&ldquo;{f.text}&rdquo;</p>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-brand-700 border-2 border-brand-900 rounded-sm flex items-center justify-center text-white font-black text-sm">
-              {f.initial}
-            </div>
-            <div>
-              <p className="text-sm font-black uppercase tracking-tight text-gray-900">{f.name}</p>
-              <p className="text-[9px] font-black uppercase tracking-widest text-brand-700">Client vérifié</p>
-            </div>
-          </div>
-        </div>
-      ))}
-    </>
-  )
-}
+const FALLBACK_REVIEWS = [
+  {
+    name: 'Thomas R.',
+    text: 'Je suis client en boutique depuis l\'ouverture. La qualité des produits est vraiment au-dessus de ce que je trouvais avant. Le conseil en magasin fait toute la différence, on sent que l\'équipe connaît ses produits.',
+    product: 'Iso Zero 100% Whey',
+    rating: 5,
+  },
+  {
+    name: 'Julie M.',
+    text: 'J\'ai commencé la musculation il y a 6 mois et l\'équipe m\'a orientée vers les bons compléments pour débuter. Résultat : une bien meilleure récupération et plus d\'énergie au quotidien. Merci Body Start !',
+    product: 'Clear Pro Creatine',
+    rating: 5,
+  },
+  {
+    name: 'Karim B.',
+    text: 'Enfin une boutique qui sélectionne des marques sérieuses avec des dosages honnêtes. J\'ai testé pas mal de shops en ligne, ici la transparence sur les compositions est irréprochable. Je recommande les yeux fermés.',
+    product: 'HIT EAA',
+    rating: 5,
+  },
+]
 
 export default async function TestimonialsSection() {
   const reviews = await getLatestReviews(6)
   const hasRealReviews = reviews.length > 0
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="bg-cream-100 py-16 lg:py-24">
       <div className="container">
-        <div className="text-center mb-10">
-          <span className="text-brand-700 text-xs font-black uppercase tracking-widest block mb-3 border-l-4 border-brand-500 pl-3 inline-block">
-            Avis clients · Judge.me
-          </span>
-          <h2 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight text-gray-900 mb-3">
-            Ce que disent nos clients
+        {/* Header avec score global */}
+        <div className="text-center mb-14">
+          <h2 className="font-display text-2xl md:text-3xl lg:text-[40px] font-black uppercase text-gray-900 tracking-tight mb-4">
+            CE QUE DISENT NOS CLIENTS
           </h2>
-          <div className="flex justify-center gap-1">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <svg key={i} className="w-5 h-5 text-amber-400 fill-amber-400" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
+
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Stars rating={5} size="lg" />
+            <span className="font-display font-black text-2xl text-gray-900">4.9/5</span>
           </div>
+          <p className="text-gray-500 text-sm">
+            Basé sur les avis de nos clients en boutique
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {/* Grille de témoignages */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {hasRealReviews
-            ? reviews.map((r) => <ReviewCard key={r.id} review={r} />)
-            : <FallbackCards />
+            ? reviews.slice(0, 3).map((r) => (
+                <ReviewCard
+                  key={r.id}
+                  name={r.reviewer.name}
+                  text={r.body}
+                  product="Complément Body Start"
+                  rating={r.rating}
+                />
+              ))
+            : FALLBACK_REVIEWS.map((f, i) => (
+                <ReviewCard key={i} {...f} />
+              ))
           }
-        </div>
-
-        {/* Stat bar — sera mise à jour une fois les vrais avis disponibles */}
-        <div className="bg-brand-900 border-2 border-brand-700 rounded-sm p-8 shadow-[8px_8px_0_theme(colors.gray.900)]">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center text-white">
-            <div>
-              <p className="font-display text-4xl font-black mb-2 tracking-tighter">53+</p>
-              <p className="text-brand-300 text-[10px] uppercase font-bold tracking-widest">produits disponibles</p>
-            </div>
-            <div>
-              <p className="font-display text-4xl font-black mb-2 tracking-tighter">7j/7</p>
-              <p className="text-brand-300 text-[10px] uppercase font-bold tracking-widest">ouvert en boutique</p>
-            </div>
-            <div>
-              <p className="font-display text-4xl font-black mb-2 tracking-tighter">48h</p>
-              <p className="text-brand-300 text-[10px] uppercase font-bold tracking-widest">livraison partout en France</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>

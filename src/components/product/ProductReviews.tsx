@@ -13,33 +13,33 @@ function formatDate(dateStr: string) {
 
 function ReviewCard({ review }: { review: JudgemeReview }) {
   return (
-    <div className="bg-white border-2 border-gray-200 rounded-sm p-6 shadow-[4px_4px_0_theme(colors.gray.100)]">
+    <div className="bg-white border border-cream-300 rounded-2xl p-6 hover:shadow-md transition-shadow duration-200">
       <div className="flex items-start justify-between gap-4 mb-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <p className="font-black text-gray-900 text-sm uppercase tracking-tight">
+            <p className="font-bold text-gray-900 text-sm">
               {review.reviewer.name}
             </p>
             {review.verified && (
-              <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-brand-700">
-                <CheckCircle className="w-3 h-3" /> Vérifié
+              <span className="flex items-center gap-1 text-xs font-semibold text-brand-500">
+                <CheckCircle className="w-3.5 h-3.5" /> Vérifié
               </span>
             )}
           </div>
           <StarRating rating={review.rating} showCount={false} size="sm" />
         </div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex-shrink-0">
+        <p className="text-xs text-gray-400 flex-shrink-0">
           {formatDate(review.created_at)}
         </p>
       </div>
 
       {review.title && (
-        <p className="font-black text-gray-900 text-sm uppercase tracking-tight mb-2">
+        <p className="font-semibold text-gray-900 text-sm mb-2">
           {review.title}
         </p>
       )}
       {review.body && (
-        <p className="text-sm text-gray-600 font-medium leading-relaxed">
+        <p className="text-sm text-gray-600 leading-relaxed">
           {review.body}
         </p>
       )}
@@ -53,14 +53,14 @@ export default async function ProductReviews({ handle }: { handle: string }) {
   if (count === 0) return null
 
   return (
-    <section className="mt-16 pt-10 border-t-4 border-gray-900">
+    <section className="mt-16 pt-12 border-t border-cream-300">
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-        <h2 className="font-display font-black text-2xl uppercase tracking-tight text-gray-900">
+        <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900">
           Avis clients
         </h2>
         <div className="flex items-center gap-4">
           <div className="text-center">
-            <p className="font-display font-black text-4xl text-gray-900 leading-none">
+            <p className="font-display font-bold text-4xl text-brand-500 leading-none">
               {rating.toFixed(1)}
             </p>
             <StarRating rating={rating} count={count} size="md" className="mt-1" />

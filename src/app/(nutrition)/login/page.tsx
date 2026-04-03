@@ -13,7 +13,8 @@ function LoginContent() {
   const { login } = useCustomer()
   const searchParams = useSearchParams()
 
-  const isCoaching = searchParams.get('theme') === 'coaching'
+  const redirect = searchParams.get('redirect')
+  const isCoaching = searchParams.get('theme') === 'coaching' || (redirect?.startsWith('/coaching') ?? false)
   const authQuery = isCoaching ? '?theme=coaching' : ''
 
   const [form, setForm] = useState({ email: '', password: '' })
@@ -29,7 +30,8 @@ function LoginContent() {
     if (errors.length > 0) {
       setError('Email ou mot de passe incorrect.')
     } else {
-      router.push(`/account${authQuery}`)
+      // Rediriger vers la page demandée ou le compte par défaut
+      router.push(redirect || `/account${authQuery}`)
     }
     setLoading(false)
   }

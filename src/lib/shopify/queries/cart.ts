@@ -109,3 +109,14 @@ export const GET_CART = `
     }
   }
 `
+
+export const UPDATE_CART_ATTRIBUTES = `
+  ${CART_FRAGMENT}
+  mutation UpdateCartAttributes($cartId: ID!, $attributes: [AttributeInput!]!) {
+    cartAttributesUpdate(cartId: $cartId, attributes: $attributes) {
+      cart {
+        ...CartFragment
+      }
+    }
+  }
+`

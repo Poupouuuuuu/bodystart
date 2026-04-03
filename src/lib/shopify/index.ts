@@ -1,4 +1,4 @@
-import { shopifyFetch } from './client'
+import { shopifyFetch, shopifyAdminFetch } from './client'
 import {
   GET_PRODUCTS,
   GET_PRODUCT_BY_HANDLE,
@@ -15,11 +15,16 @@ import {
   UPDATE_CART,
   REMOVE_FROM_CART,
   GET_CART,
+  UPDATE_CART_ATTRIBUTES,
 } from './queries/cart'
 import {
   GET_BLOG_ARTICLES,
   GET_ARTICLE_BY_HANDLE,
 } from './queries/blog'
+import {
+  GET_PRODUCT_INVENTORY_BY_LOCATION,
+  GET_INVENTORY_FOR_VARIANTS,
+} from './queries/inventory'
 import type { ShopifyProduct, ShopifyCollection, ShopifyCart, ShopifyBlog, ShopifyArticle } from './types'
 
 // ─── PRODUITS ────────────────────────────────────────────────
@@ -165,4 +170,69 @@ export async function getCart(cartId: string) {
     { cartId }
   )
   return data.cart
+}
+
+export async function updateCartAttributes(
+  cartId: string,
+  attributes: { key: string; value: string }[]
+) {
+  const data = await shopifyFetch<{ cartAttributesUpdate: { cart: ShopifyCart } }>(
+    UPDATE_CART_ATTRIBUTES,
+    { cartId, attributes }
+  )
+  return data.cartAttributesUpdate.cart
+}
+
+// ─── INVENTORY (Admin API — server-only) ─────────────────────
+
+interface AdminInventoryLevel {
+  location: { id: string; name: string }
+  quantities: { name: string; quantity: number }[]
+}
+
+interface AdminVariantNode {
+  id: string
+  title: string
+  inventoryItem: {
+    id: string
+    inventoryLevels: { nodes: AdminInventoryLevel[] }
+  }
+}
+
+export async function getProductInventoryByLocation(
+  productId: string,
+  locationId: string
+): Promise<{ variantId: string; title: string; available: number }[]> {
+  const data = await shopifyAdminFetch<{
+    product: { variants: { nodes: AdminVariantNode[] } } | null
+  }>(GET_PRODUCT_INVENTORY_BY_LOCATION, { productId })
+
+  if (!data.product) return []
+
+  return data.product.variants.nodes.map((variant) => {
+    const level = variant.inventoryItem.inventoryLevels.nodes.find(
+      (l) => l.location.id === locationId
+    )
+    const available = level?.quantities.find((q) => q.name === 'available')?.quantity ?? 0
+    return { variantId: variant.id, title: variant.title, available }
+  })
+}
+
+export async function getInventoryForVariants(
+  variantIds: string[],
+  locationId: string
+): Promise<Record<string, number>> {
+  const data = await shopifyAdminFetch<{
+    nodes: (AdminVariantNode | null)[]
+  }>(GET_INVENTORY_FOR_VARIANTS, { variantIds })
+
+  const result: Record<string, number> = {}
+  for (const node of data.nodes) {
+    if (!node) continue
+    const level = node.inventoryItem.inventoryLevels.nodes.find(
+      (l) => l.location.id === locationId
+    )
+    result[node.id] = level?.quantities.find((q) => q.name === 'available')?.quantity ?? 0
+  }
+  return result
 }

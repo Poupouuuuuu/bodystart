@@ -21,6 +21,7 @@ export interface ShopifyProductVariant {
   quantityAvailable: number
   price: ShopifyMoney
   compareAtPrice: ShopifyMoney | null
+  image?: ShopifyImage | null
   selectedOptions: {
     name: string
     value: string
@@ -46,6 +47,9 @@ export interface ShopifyProduct {
   priceRange: {
     minVariantPrice: ShopifyMoney
     maxVariantPrice: ShopifyMoney
+  }
+  collections?: {
+    nodes: { handle: string; title: string }[]
   }
   metafields?: ShopifyMetafield[]
 }
@@ -153,6 +157,7 @@ export interface BodyStartStore {
   id: string
   name: string
   shopifyLocationId: string
+  isActive: boolean
   address: string
   city: string
   phone: string
@@ -167,7 +172,8 @@ export const BODY_START_STORES: BodyStartStore[] = [
   {
     id: 'boutique-coignieres',
     name: 'Body Start Nutrition — Coignières',
-    shopifyLocationId: '',
+    shopifyLocationId: 'gid://shopify/Location/114075795838',
+    isActive: true,
     address: '8 Rue du Pont des Landes',
     city: '78310 Coignières',
     phone: '07 61 84 75 80',

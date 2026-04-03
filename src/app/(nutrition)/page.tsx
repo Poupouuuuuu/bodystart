@@ -1,13 +1,11 @@
 import type { Metadata } from 'next'
 import HeroSection from '@/components/home/HeroSection'
+import ShopByObjective from '@/components/home/ShopByObjective'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
 import BrandValues from '@/components/home/BrandValues'
-import ShopByObjective from '@/components/home/ShopByObjective'
+import TestimonialsSection from '@/components/home/TestimonialsSection'
 import StoreLocator from '@/components/home/StoreLocator'
 import UniversSection from '@/components/home/UniversSection'
-import ProofBar from '@/components/home/ProofBar'
-import TestimonialsSection from '@/components/home/TestimonialsSection'
-import NewsletterSection from '@/components/home/NewsletterSection'
 import { getFeaturedProducts } from '@/lib/shopify'
 
 export const metadata: Metadata = {
@@ -27,13 +25,11 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection />
-      <ProofBar />
       <FeaturedProducts products={products} />
       <BrandValues />
       <ShopByObjective />
       <TestimonialsSection />
       <StoreLocator />
-      <NewsletterSection />
       <UniversSection />
     </>
   )

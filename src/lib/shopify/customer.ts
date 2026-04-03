@@ -63,7 +63,18 @@ export interface CustomerOrder {
 
 const TOKEN_KEY = 'body-start-customer-token'
 
-// ─── Helpers localStorage ─────────────────────────────────────
+// ─── Helpers cookie (pour le middleware) ─────────────────────
+
+function setCookie(name: string, value: string, expiresAt: string): void {
+  const expires = new Date(expiresAt).toUTCString()
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=${expires}; SameSite=Lax`
+}
+
+function deleteCookie(name: string): void {
+  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`
+}
+
+// ─── Helpers localStorage + cookie sync ──────────────────────
 
 export function getStoredToken(): string | null {
   if (typeof window === 'undefined') return null
@@ -73,11 +84,13 @@ export function getStoredToken(): string | null {
 export function setStoredToken(token: string, expiresAt: string): void {
   localStorage.setItem(TOKEN_KEY, token)
   localStorage.setItem(`${TOKEN_KEY}-expires`, expiresAt)
+  setCookie(TOKEN_KEY, token, expiresAt)
 }
 
 export function clearStoredToken(): void {
   localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem(`${TOKEN_KEY}-expires`)
+  deleteCookie(TOKEN_KEY)
 }
 
 export function isTokenExpired(): boolean {

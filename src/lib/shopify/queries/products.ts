@@ -22,6 +22,12 @@ export const PRODUCT_CARD_FRAGMENT = `
         currencyCode
       }
     }
+    collections(first: 5) {
+      nodes {
+        handle
+        title
+      }
+    }
     variants(first: 1) {
       nodes {
         id
@@ -84,7 +90,7 @@ export const GET_PRODUCT_BY_HANDLE = `
         width
         height
       }
-      images(first: 10) {
+      images(first: 20) {
         nodes {
           url
           altText
@@ -98,6 +104,12 @@ export const GET_PRODUCT_BY_HANDLE = `
           title
           availableForSale
           quantityAvailable
+          image {
+            url
+            altText
+            width
+            height
+          }
           price {
             amount
             currencyCode
@@ -122,7 +134,16 @@ export const GET_PRODUCT_BY_HANDLE = `
           currencyCode
         }
       }
+      collections(first: 1) {
+        nodes {
+          handle
+          title
+        }
+      }
       metafields(identifiers: [
+        { namespace: "custom", key: "composition" },
+        { namespace: "custom", key: "conseils_d_utilisation" },
+        { namespace: "custom", key: "valeurs_nutritionnelles" },
         { namespace: "custom", key: "ingredients" },
         { namespace: "custom", key: "usage" },
         { namespace: "custom", key: "nutrition_facts" }
@@ -139,7 +160,7 @@ export const GET_PRODUCT_BY_HANDLE = `
 export const GET_FEATURED_PRODUCTS = `
   ${PRODUCT_CARD_FRAGMENT}
   query GetFeaturedProducts {
-    collection(handle: "featured") {
+    collection(handle: "selections") {
       products(first: 8) {
         nodes {
           ...ProductCard
