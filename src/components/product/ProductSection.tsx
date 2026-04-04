@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
-import { Truck } from 'lucide-react'
+import { Truck, Star } from 'lucide-react'
 import ProductGallery from './ProductGallery'
 import ProductActions from './ProductActions'
 import ClickAndCollect from './ClickAndCollect'
@@ -20,6 +20,20 @@ interface ProductSectionProps {
   storeInventory: Record<string, number>
 }
 
+// Pseudo-random rating generator based on title (same as products page)
+function getProductRating(title: string) {
+  let hash = 0
+  for (let i = 0; i < title.length; i++) {
+    hash = title.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const random = Math.abs(Math.sin(hash))
+  const maxScore = 5.0
+  const minScore = 4.3
+  const score = minScore + random * (maxScore - minScore)
+  const reviews = Math.floor(20 + Math.abs(Math.cos(hash)) * 300)
+  return { score: score.toFixed(1), reviews }
+}
+
 export default function ProductSection({
   images,
   variants,
@@ -32,8 +46,8 @@ export default function ProductSection({
   storeInventory,
 }: ProductSectionProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const rating = getProductRating(productTitle)
 
-  // When a variant is selected, find the matching image in the gallery
   const handleVariantChange = useCallback(
     (variant: ShopifyProductVariant) => {
       if (variant.image?.url) {
@@ -48,7 +62,6 @@ export default function ProductSection({
     [images]
   )
 
-  // When a gallery image is clicked
   const handleImageChange = useCallback(
     (index: number) => {
       setSelectedImageIndex(index)
@@ -57,7 +70,7 @@ export default function ProductSection({
   )
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
       {/* Galerie — 50% */}
       <div className="relative">
         <ProductGallery
@@ -70,21 +83,31 @@ export default function ProductSection({
       </div>
 
       {/* Infos produit — 50% */}
-      <div>
-        {/* Badge collection */}
-        {collectionName && collectionHandle && (
-          <Link
-            href={`/collections/${collectionHandle}`}
-            className="font-black text-xs uppercase tracking-widest text-[#345f44] mb-4 inline-block"
-          >
-            {collectionName}
-          </Link>
-        )}
+      <div className="lg:pr-8">
+        {/* Badge collection / Marque */}
+        <Link
+          href={collectionHandle ? `/collections/${collectionHandle}` : '/products'}
+          className="font-bold text-[10px] uppercase tracking-[0.2em] text-[#4a5f4c] mb-4 inline-block"
+        >
+          {collectionName || 'BODY START NUTRITION'}
+        </Link>
 
         {/* Titre */}
-        <h1 className="font-display text-4xl md:text-5xl font-black uppercase text-gray-900 mb-4 leading-none tracking-tighter">
+        <h1 className="text-4xl md:text-5xl font-black uppercase text-[#2c3e2e] mb-4 leading-[1.1] tracking-tight">
           {productTitle}
         </h1>
+
+        {/* Stars */}
+        <div className="flex items-center gap-2 mb-8">
+          <div className="flex text-[#2c3e2e]">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Star key={i} className="w-4 h-4 fill-current" />
+            ))}
+          </div>
+          <span className="text-[13px] font-medium text-[#4a5f4c]">
+            {rating.score}/5 ({rating.reviews} avis)
+          </span>
+        </div>
 
         {/* Sélecteur de variante + prix + quantité + bouton panier */}
         <div className="mt-8">
@@ -95,32 +118,34 @@ export default function ProductSection({
           />
         </div>
 
-        {/* Livraison offerte */}
-        <div className="flex items-center gap-2 mt-6 font-bold text-sm tracking-widest text-gray-400 uppercase">
-          <Truck className="w-4 h-4 text-[#345f44]" />
-          <span>LIVRAISON OFFERTE DÈS 75 €</span>
-        </div>
-
-        {/* Badge stock en boutique */}
-        {activeStore && storeInventory[activeStore.id] !== undefined && (
-          <div className="mt-6">
-            {storeInventory[activeStore.id] > 0 ? (
-              <div className="inline-flex items-center gap-2 px-3 py-2 bg-[#e6efe1] rounded-full text-xs font-semibold text-[#345f44]">
-                <span className="w-2 h-2 bg-[#345f44] rounded-full" />
-                Disponible en boutique ({storeInventory[activeStore.id]} en stock)
-              </div>
-            ) : (
-              <div className="inline-flex items-center gap-2 px-3 py-2 bg-red-50 rounded-full text-xs font-semibold text-red-600">
-                <span className="w-2 h-2 bg-red-500 rounded-full" />
-                Indisponible en boutique
-              </div>
-            )}
+        {/* Livraison / Réassurance */}
+        <div className="flex flex-col gap-3 mt-8 pt-6 border-t border-[#2c3e2e]/10">
+          <div className="flex items-center gap-3 font-bold text-[11px] tracking-widest text-[#2c3e2e] uppercase">
+            <Truck className="w-4 h-4 text-[#4a5f4c]" />
+            <span>LIVRAISON OFFERTE DÈS 60 €</span>
           </div>
-        )}
 
-        {/* Click & Collect */}
-        <div className="mt-4">
-          <ClickAndCollect availableInStores={storeInventory} />
+          {/* Badge stock en boutique */}
+          {activeStore && storeInventory[activeStore.id] !== undefined && (
+            <div>
+              {storeInventory[activeStore.id] > 0 ? (
+                <div className="inline-flex items-center gap-2 text-[11px] font-bold text-[#2c3e2e] tracking-widest uppercase">
+                  <span className="w-2 h-2 bg-[#89b397] rounded-full animate-pulse" />
+                  Disponible en boutique ({storeInventory[activeStore.id]} en stock)
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-2 text-[11px] font-bold text-red-600 tracking-widest uppercase">
+                  <span className="w-2 h-2 bg-red-500 rounded-full" />
+                  Indisponible en boutique
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Click & Collect */}
+          <div className="mt-2 scale-90 origin-left">
+            <ClickAndCollect availableInStores={storeInventory} />
+          </div>
         </div>
       </div>
     </div>

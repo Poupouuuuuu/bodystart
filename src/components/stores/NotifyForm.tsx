@@ -13,21 +13,23 @@ export default function NotifyForm() {
   }
 
   return (
-    <div className="bg-gray-50 rounded-2xl p-5 text-center">
-      <Bell className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-      <p className="font-semibold text-gray-700 mb-1">Ouverture prochaine</p>
-      <p className="text-sm text-gray-500 mb-4">Soyez parmi les premiers informés et bénéficiez d&apos;une offre de bienvenue exclusive.</p>
+    <div className="bg-[#1a2e23]/5 rounded-2xl p-6 text-center">
+      <div className="w-14 h-14 rounded-full bg-[#1a2e23]/10 flex items-center justify-center mx-auto mb-4">
+        <Bell className="w-6 h-6 text-[#1a2e23]" />
+      </div>
+      <p className="font-display font-black text-[#1a2e23] uppercase tracking-tight text-sm mb-1">Ouverture prochaine</p>
+      <p className="text-[13px] text-[#4a5f4c] mb-5 font-medium">Soyez parmi les premiers informés et bénéficiez d&apos;une offre de bienvenue exclusive.</p>
       <div id="newsletter-boutique-b" className="flex gap-2">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="votre@email.fr"
-          className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          className="flex-1 px-5 py-3 rounded-full border border-[#1a2e23]/10 text-sm text-[#1a2e23] placeholder:text-[#89a890] focus:outline-none focus:ring-2 focus:ring-[#1a2e23]/20 focus:border-transparent bg-white"
         />
         <button
           onClick={handleNotify}
-          className="px-4 py-2.5 bg-brand-700 text-white text-sm font-semibold rounded-xl hover:bg-brand-800 transition-colors whitespace-nowrap"
+          className="px-6 py-3 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all whitespace-nowrap"
         >
           Me prévenir
         </button>

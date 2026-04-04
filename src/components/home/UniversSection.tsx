@@ -2,102 +2,121 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Lock, Dumbbell, Salad, Shirt } from 'lucide-react'
 
-const UNIVERS = [
-  {
-    href: '/',
-    label: 'Nutrition',
-    description: 'Protéines, vitamines et boosters. Tout pour atteindre vos objectifs.',
-    cta: 'Explorer la boutique',
-    active: true,
-    icon: Salad,
-    image: '/category-masse.png',
-    gradient: 'from-[#2d5a3d]/80 to-[#1a3a25]/90',
-  },
-  {
-    href: '/coaching',
-    label: 'Coaching',
-    description: 'Programmes sur-mesure et suivi personnalisé par nos coachs certifiés.',
-    cta: 'Découvrir les programmes',
-    active: true,
-    icon: Dumbbell,
-    image: '/category-recuperation.png',
-    gradient: 'from-[#1a6b6b]/80 to-[#0d4f4f]/90',
-  },
-  {
-    href: '/vetements',
-    label: 'Vêtements',
-    description: 'Collection de vêtements techniques et accessoires sport. Bientôt disponible.',
-    cta: 'Être notifié',
-    active: false,
-    icon: Shirt,
-    image: '/category-sante.png',
-    gradient: 'from-gray-700/80 to-gray-900/90',
-  },
-]
-
 export default function UniversSection() {
   return (
-    <section className="bg-white py-16 lg:py-24">
+    <section className="bg-[#fcfaf8] py-24 border-t border-[#1a2e23]/5">
       <div className="container">
-        <div className="text-center mb-14">
-          <h2 className="font-display text-2xl md:text-3xl lg:text-[40px] font-black uppercase text-gray-900 tracking-tight mb-3">
-            NOS UNIVERS
-          </h2>
-          <p className="text-gray-500 text-base max-w-lg mx-auto">
-            Trois univers complémentaires pour vous accompagner à chaque étape de votre progression
+        
+        {/* Header DNVB Style */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div className="max-w-2xl">
+            <h2 className="font-display text-[40px] md:text-[55px] font-black uppercase text-[#1a2e23] leading-[0.9] tracking-tighter">
+              NOS UNIVERS
+            </h2>
+          </div>
+          <p className="text-[#4a5f4c] text-sm md:text-base max-w-sm pb-2 font-medium">
+            Trois piliers complémentaires pour vous accompagner vers l'excellence, à chaque étape de votre progression.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {UNIVERS.map(({ href, label, description, cta, active, icon: Icon, image, gradient }) => (
+        {/* Grille Asymétrique façon Magazine */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-[600px] max-w-7xl mx-auto">
+          
+          {/* Univers NUTRITION (Bloc principal 50%) */}
+          <Link
+            href="/products"
+            className="lg:col-span-7 relative h-[400px] lg:h-full rounded-3xl overflow-hidden group transition-all duration-500 hover:-translate-y-1 shadow-sm hover:shadow-2xl"
+          >
+            {/* Image avec Overlay */}
+            <Image
+              src="/nutrition-hd.png"
+              alt="Nutrition"
+              fill
+              className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e23] via-[#1a2e23]/30 to-transparent" />
+            
+            {/* Contenu textuel */}
+            <div className="absolute inset-x-0 bottom-0 p-8 md:p-12 flex flex-col justify-end">
+              <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-6 border border-white/20">
+                <Salad className="w-6 h-6 text-white" strokeWidth={1.5} />
+              </div>
+              <h3 className="font-display font-black text-4xl md:text-5xl uppercase text-white mb-3">
+                NUTRITION
+              </h3>
+              <p className="text-white/80 text-base md:text-lg mb-6 max-w-md font-medium leading-snug">
+                Formules haute technicité, protéines pures et boosters pour franchir vos paliers.
+              </p>
+              <div className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest text-white group-hover:gap-4 transition-all">
+                ACHETER <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Colonne Droite (Coaching + Vêtements) */}
+          <div className="lg:col-span-5 grid grid-rows-2 gap-6 h-[600px] lg:h-full">
+            
+            {/* Univers COACHING */}
             <Link
-              key={label}
-              href={active ? href : '#'}
-              className={`relative h-[340px] rounded-2xl overflow-hidden group transition-all duration-300 ${
-                active ? 'hover:shadow-xl hover:-translate-y-1' : 'opacity-75 cursor-default'
-              }`}
+              href="/coaching"
+              className="relative h-full rounded-3xl overflow-hidden group transition-all duration-500 hover:-translate-y-1 shadow-sm hover:shadow-xl"
             >
-              {/* Image de fond */}
               <Image
-                src={image}
-                alt={label}
+                src="/category-masse.png"
+                alt="Coaching"
                 fill
-                className={`object-cover transition-transform duration-700 ${active ? 'group-hover:scale-110' : ''}`}
-                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 object-top"
               />
-
-              {/* Overlay dégradé */}
-              <div className={`absolute inset-0 bg-gradient-to-t ${gradient}`} />
-
-              {/* Badge locked pour Vêtements */}
-              {!active && (
-                <div className="absolute top-4 right-4 z-20 w-10 h-10 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <Lock className="w-4 h-4 text-white/70" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0d3b3b] via-[#1a6b6b]/40 to-transparent" />
+              
+              <div className="absolute inset-x-0 bottom-0 p-8 flex flex-col justify-end">
+                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-4 border border-white/20">
+                  <Dumbbell className="w-5 h-5 text-white" strokeWidth={1.5} />
                 </div>
-              )}
-
-              {/* Contenu positionné en bas */}
-              <div className="absolute inset-0 z-10 flex flex-col justify-end p-6">
-                <div className="w-12 h-12 bg-white/15 backdrop-blur-sm rounded-full flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6 text-white" strokeWidth={1.5} />
-                </div>
-
-                <h3 className="font-display font-black text-2xl uppercase text-white mb-2">
-                  {label}
+                <h3 className="font-display font-black text-3xl uppercase text-white mb-2">
+                  COACHING
                 </h3>
-                <p className="text-white/70 text-sm leading-relaxed mb-4 max-w-[260px]">
-                  {description}
+                <p className="text-white/80 text-sm mb-4 max-w-[280px] font-medium leading-snug">
+                  Entraînements sur-mesure par nos experts certifiés.
                 </p>
-
-                <span className={`inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider ${
-                  active ? 'text-white group-hover:gap-3' : 'text-white/50'
-                } transition-all`}>
-                  {cta} <ArrowRight className="w-4 h-4" />
-                </span>
+                <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white group-hover:gap-4 transition-all">
+                  DÉCOUVRIR <ArrowRight className="w-4 h-4" />
+                </div>
               </div>
             </Link>
-          ))}
+
+            {/* Univers VÊTEMENTS (Bientôt) */}
+            <div className="relative h-full rounded-3xl overflow-hidden group border border-[#1a2e23]/10 flex items-center justify-center cursor-default">
+              <Image
+                src="/vetements-hd.png"
+                alt="Vêtements"
+                fill
+                className="object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e23] via-[#1a2e23]/80 to-[#1a2e23]/50" />
+              
+              {/* Badge Lock */}
+              <div className="absolute top-6 right-6 z-20 px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full flex items-center gap-2 shadow-xl">
+                <Lock className="w-3 h-3 text-white/90" />
+                <span className="text-[9px] font-bold text-white uppercase tracking-widest">Bientôt</span>
+              </div>
+
+              <div className="absolute inset-x-0 bottom-0 p-8 flex flex-col justify-end z-10 opacity-60">
+                <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10">
+                  <Shirt className="w-5 h-5 text-white" strokeWidth={1.5} />
+                </div>
+                <h3 className="font-display font-black text-3xl uppercase text-white mb-2">
+                  VÊTEMENTS
+                </h3>
+                <p className="text-white/70 text-sm font-medium leading-snug">
+                  La future gamme technique.
+                </p>
+              </div>
+            </div>
+
+          </div>
         </div>
+
       </div>
     </section>
   )

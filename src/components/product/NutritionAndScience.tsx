@@ -144,47 +144,48 @@ export default function NutritionAndScience({ metafields }: NutritionAndScienceP
   const compositionVal = findMetafield(metafields, 'composition', 'ingredients')
 
   return (
-    <section className="pt-8 md:pt-16 pb-12">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-        {/* Colonne gauche — Valeurs nutritionnelles */}
+    <section className="py-6 md:py-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+        {/* Colonne gauche — Nutrition Facts */}
         <div>
-          <h2 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tighter text-gray-900 mb-8 border-b-2 border-gray-900 pb-4">
+          <h2 className="text-sm font-black uppercase tracking-widest text-[#2c3e2e] mb-6 border-b border-[#2c3e2e]/20 pb-4">
             Valeurs Nutritionnelles
           </h2>
-
           <NutritionTable rows={rows} />
-
-          {/* Accordéon Composition (séparé) */}
-          {compositionVal && (
-            <CompositionAccordion html={compositionVal} />
-          )}
         </div>
 
-        {/* Colonne droite — Scientifiquement prouvé */}
+        {/* Colonne droite — Scientifiquement prouvé & Composition */}
         <div>
-          <h2 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tighter text-gray-900 mb-8 border-b-2 border-gray-900 pb-4">
+          <h2 className="text-sm font-black uppercase tracking-widest text-[#2c3e2e] mb-6 border-b border-[#2c3e2e]/20 pb-4">
             Scientifiquement Prouvé
           </h2>
 
-          <div className="space-y-8 mt-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
             {SCIENCE_CARDS.map(({ icon, title, description }) => (
               <div
                 key={title}
-                className="flex flex-col items-start gap-3 mt-4"
+                className="flex flex-col items-center text-center gap-4"
               >
-                <div className="w-14 h-14 bg-white/50 border border-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                   {icon}
                 </div>
                 <div>
-                  <h4 className="font-display font-black text-gray-900 text-lg uppercase tracking-tight mb-2">
+                  <h4 className="font-bold text-[#2c3e2e] text-[11px] uppercase tracking-widest mb-2 leading-tight">
                     {title}
                   </h4>
-                  <p className="text-sm text-gray-700 font-medium leading-relaxed max-w-sm">
+                  <p className="text-[11px] text-[#4a5f4c] font-medium leading-relaxed">
                     {description}
                   </p>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Accordéon Composition (déplacé sous la science) */}
+          <div className="mt-8">
+            {compositionVal && (
+              <CompositionAccordion html={compositionVal} />
+            )}
           </div>
         </div>
       </div>
@@ -192,37 +193,37 @@ export default function NutritionAndScience({ metafields }: NutritionAndScienceP
   )
 }
 
-// ─── Tableau nutritionnel (Stylé Accordéon Fake) ───
+// ─── Tableau nutritionnel (Stylé clean minimal) ───
 function NutritionTable({ rows }: { rows: NutritionRow[] }) {
   return (
     <div className="w-full">
-      <div className="divide-y divide-gray-300">
+      <div className="divide-y divide-[#2c3e2e]/10">
         {rows.map((row, i) => (
           <div
             key={i}
             className={cn(
-              'flex items-center justify-between py-4 cursor-pointer hover:bg-black/5 transition-colors',
-              row.indent && 'pl-8'
+              'flex items-center justify-between py-3',
+              row.indent && 'pl-4'
             )}
           >
+            <span className={cn(
+              'text-[13px] tracking-wide',
+              row.indent
+                ? 'text-[#4a5f4c]'
+                : !row.value
+                  ? 'font-bold text-[#2c3e2e]'
+                  : 'font-semibold text-[#2c3e2e]'
+            )}>
+              {row.label}
+            </span>
             <div className="flex items-center gap-3">
-              <span className="text-gray-400 font-light text-lg">+</span>
-              <span className={cn(
-                'text-sm uppercase tracking-widest',
-                row.indent
-                  ? 'text-gray-600'
-                  : !row.value
-                    ? 'font-black text-gray-900'
-                    : 'font-bold text-gray-900'
-              )}>
-                {row.label}
-              </span>
+              {row.value && (
+                <span className="text-[13px] font-medium text-[#4a5f4c]">
+                  {row.value}
+                </span>
+              )}
+              {!row.indent && <ChevronDown className="w-4 h-4 text-[#2c3e2e]/40" />}
             </div>
-            {row.value && (
-              <span className="text-sm font-bold text-gray-700">
-                {row.value}
-              </span>
-            )}
           </div>
         ))}
       </div>
@@ -249,19 +250,20 @@ function CompositionAccordion({ html }: { html: string }) {
   if (!plainText) return null
 
   return (
-    <div className="mt-8 border-t border-gray-300">
+    <div className="mt-6 border-t border-[#2c3e2e]/20">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-4 hover:bg-black/5 transition-colors"
+        className="w-full flex items-center justify-between py-4 group"
       >
-        <div className="flex items-center gap-3">
-           <span className="text-gray-400 font-light text-lg">{isOpen ? '-' : '+'}</span>
-           <span className="text-sm font-black uppercase tracking-widest text-gray-900">Composition</span>
-        </div>
+        <span className="text-[13px] font-bold text-[#2c3e2e] tracking-wide group-hover:text-black transition-colors">Composition</span>
+        <ChevronDown className={cn(
+          "w-4 h-4 text-[#2c3e2e]/40 transition-transform duration-300",
+          isOpen && "rotate-180"
+        )} />
       </button>
       {isOpen && (
-        <div className="pb-6 pt-2 pl-6">
-          <p className="text-sm text-gray-700 font-medium leading-relaxed">
+        <div className="pb-6">
+          <p className="text-[13px] text-[#4a5f4c] leading-relaxed">
             {plainText}
           </p>
         </div>

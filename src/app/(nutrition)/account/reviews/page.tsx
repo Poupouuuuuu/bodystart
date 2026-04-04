@@ -17,25 +17,29 @@ export default function ReviewsPage() {
   if (isLoading) return null
 
   return (
-    <div className="container py-10 max-w-3xl">
-      <Link href="/account" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-700 mb-8 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Mon compte
-      </Link>
-
-      <h1 className="font-display text-2xl font-bold text-gray-900 mb-8">Mes avis</h1>
-
-      <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-        <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Star className="w-8 h-8 text-amber-400" />
-        </div>
-        <h2 className="font-semibold text-gray-900 mb-2">Vous n&apos;avez pas encore laissé d&apos;avis</h2>
-        <p className="text-sm text-gray-500 mb-6 max-w-sm mx-auto">
-          Après avoir reçu une commande, vous pourrez noter et commenter les produits achetés.
-        </p>
-        <Link href="/products" className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-700 text-white text-sm font-semibold rounded-xl hover:bg-brand-800 transition-colors">
-          <Package className="w-4 h-4" />
-          Découvrir nos produits
+    <div className="bg-[#f4f6f1] min-h-screen">
+      <div className="container py-12 md:py-16 max-w-3xl">
+        <Link href="/account" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#89a890] hover:text-[#1a2e23] mb-8 transition-colors group">
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" /> Mon compte
         </Link>
+
+        <h1 className="font-display text-[35px] md:text-[42px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none mb-8">
+          Mes avis
+        </h1>
+
+        <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-12 text-center shadow-sm">
+          <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6">
+            <Star className="w-8 h-8 text-[#1a2e23]" />
+          </div>
+          <h2 className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-lg mb-2">Aucun avis pour le moment</h2>
+          <p className="text-sm text-[#4a5f4c] mb-8 max-w-sm mx-auto font-medium">
+            Après avoir reçu une commande, vous pourrez noter et commenter les produits achetés.
+          </p>
+          <Link href="/products" className="inline-flex items-center gap-2 px-8 py-4 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg">
+            <Package className="w-4 h-4" />
+            Découvrir nos produits
+          </Link>
+        </div>
       </div>
     </div>
   )

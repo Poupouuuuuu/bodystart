@@ -44,15 +44,27 @@ function RegisterContent() {
     setLoading(false)
   }
 
+  const inputBase = cn(
+    "w-full px-5 py-3.5 rounded-2xl border text-sm font-medium transition-all focus:outline-none focus:ring-2",
+    isCoaching 
+      ? "bg-gray-950 border-gray-800 text-white focus:ring-coaching-cyan-500/30 focus:border-coaching-cyan-500 placeholder-gray-600" 
+      : "bg-[#f4f6f1] border-[#1a2e23]/10 text-[#1a2e23] focus:ring-[#1a2e23]/10 focus:border-[#1a2e23]/30 placeholder:text-[#89a890]"
+  )
+
+  const labelBase = cn(
+    "block text-[11px] font-bold uppercase tracking-widest mb-2",
+    isCoaching ? "text-gray-300" : "text-[#1a2e23]"
+  )
+
   return (
     <div className={cn(
-      "min-h-[calc(100vh-160px)] flex items-center justify-center py-12 px-4 transition-colors",
-      isCoaching ? "bg-gray-950 text-white" : "text-gray-900"
+      "min-h-[calc(100vh-160px)] flex items-center justify-center py-16 px-4 transition-colors",
+      isCoaching ? "bg-gray-950 text-white" : "bg-[#f4f6f1] text-[#1a2e23]"
     )}>
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
-          <Link href={isCoaching ? "/coaching" : "/"} className={cn("inline-flex items-center gap-2 mb-6", isCoaching && "bg-white p-1 rounded-sm")}>
+          <Link href={isCoaching ? "/coaching" : "/"} className="inline-flex items-center gap-2 mb-6">
             <Image
               src={isCoaching ? "/assets/logos/logo-coaching.png" : "/assets/logos/logo-nutrition.png"}
               alt="Body Start"
@@ -62,27 +74,27 @@ function RegisterContent() {
             />
           </Link>
           <h1 className={cn(
-            "font-display text-3xl md:text-4xl font-black uppercase tracking-tight mb-2",
-            isCoaching ? "text-white" : "text-gray-900"
+            "font-display text-[35px] md:text-[42px] font-black uppercase tracking-tighter mb-3 leading-none",
+            isCoaching ? "text-white" : "text-[#1a2e23]"
           )}>
             Créer un compte
           </h1>
-          <p className={cn("font-medium", isCoaching ? "text-gray-400" : "text-gray-500")}>
+          <p className={cn("font-medium text-sm", isCoaching ? "text-gray-400" : "text-[#4a5f4c]")}>
             Rejoignez la communauté Body Start
           </p>
         </div>
 
         <div className={cn(
-          "rounded-sm border-2 p-8 md:p-10 transition-colors",
+          "rounded-[28px] p-8 md:p-10 transition-colors border",
           isCoaching 
-            ? "bg-gray-900 border-gray-800 shadow-[8px_8px_0_theme(colors.black)]" 
-            : "bg-white border-gray-900 shadow-[8px_8px_0_theme(colors.gray.900)]"
+            ? "bg-gray-900 border-gray-800" 
+            : "bg-white border-[#1a2e23]/5 shadow-sm"
         )}>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {errors.length > 0 && (
-              <div className="p-4 bg-white border-2 border-red-500 rounded-sm shadow-[4px_4px_0_theme(colors.red.500)] space-y-2">
+              <div className="p-4 bg-red-50 border border-red-200 rounded-2xl space-y-1">
                 {errors.map((err, i) => (
-                  <p key={i} className="text-xs font-black uppercase tracking-widest text-red-600">{err}</p>
+                  <p key={i} className="text-xs font-bold text-red-600">{err}</p>
                 ))}
               </div>
             )}
@@ -90,36 +102,24 @@ function RegisterContent() {
             {/* Prénom + Nom */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className={cn(
-                  "block text-[10px] font-black uppercase tracking-widest mb-2",
-                  isCoaching ? "text-gray-300" : "text-gray-900"
-                )}>Prénom</label>
+                <label htmlFor="firstName" className={labelBase}>Prénom</label>
                 <input
                   id="firstName"
                   type="text"
                   required
-                  className={cn(
-                    "input transition-colors",
-                    isCoaching ? "bg-gray-950 border-gray-800 text-white focus:border-coaching-cyan-500 placeholder-gray-600" : ""
-                  )}
+                  className={inputBase}
                   placeholder="Jean"
                   value={form.firstName}
                   onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className={cn(
-                  "block text-[10px] font-black uppercase tracking-widest mb-2",
-                  isCoaching ? "text-gray-300" : "text-gray-900"
-                )}>Nom</label>
+                <label htmlFor="lastName" className={labelBase}>Nom</label>
                 <input
                   id="lastName"
                   type="text"
                   required
-                  className={cn(
-                    "input transition-colors",
-                    isCoaching ? "bg-gray-950 border-gray-800 text-white focus:border-coaching-cyan-500 placeholder-gray-600" : ""
-                  )}
+                  className={inputBase}
                   placeholder="Dupont"
                   value={form.lastName}
                   onChange={(e) => setForm({ ...form, lastName: e.target.value })}
@@ -129,19 +129,13 @@ function RegisterContent() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className={cn(
-                "block text-[10px] font-black uppercase tracking-widest mb-2",
-                isCoaching ? "text-gray-300" : "text-gray-900"
-              )}>Email</label>
+              <label htmlFor="email" className={labelBase}>Email</label>
               <input
                 id="email"
                 type="email"
                 required
                 autoComplete="email"
-                className={cn(
-                  "input transition-colors",
-                  isCoaching ? "bg-gray-950 border-gray-800 text-white focus:border-coaching-cyan-500 placeholder-gray-600" : ""
-                )}
+                className={inputBase}
                 placeholder="vous@exemple.fr"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -150,12 +144,9 @@ function RegisterContent() {
 
             {/* Mot de passe */}
             <div>
-              <label htmlFor="password" className={cn(
-                "block text-[10px] font-black uppercase tracking-widest mb-2",
-                isCoaching ? "text-gray-300" : "text-gray-900"
-              )}>
+              <label htmlFor="password" className={labelBase}>
                 Mot de passe
-                <span className={cn("font-medium ml-2", isCoaching ? "text-gray-500" : "text-gray-500")}>(min. 5 caractères)</span>
+                <span className="font-medium ml-2 text-[#89a890]">(min. 5 caractères)</span>
               </label>
               <div className="relative">
                 <input
@@ -164,10 +155,7 @@ function RegisterContent() {
                   required
                   minLength={5}
                   autoComplete="new-password"
-                  className={cn(
-                    "input pr-11 transition-colors",
-                    isCoaching ? "bg-gray-950 border-gray-800 text-white focus:border-coaching-cyan-500 placeholder-gray-600" : ""
-                  )}
+                  className={cn(inputBase, "pr-12")}
                   placeholder="••••••••"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -175,7 +163,7 @@ function RegisterContent() {
                 <button
                   type="button"
                   onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className={cn("absolute right-4 top-1/2 -translate-y-1/2 transition-colors", isCoaching ? "text-gray-500 hover:text-gray-300" : "text-[#89a890] hover:text-[#1a2e23]")}
                 >
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -183,12 +171,12 @@ function RegisterContent() {
             </div>
 
             {/* Newsletter */}
-            <label className="flex items-start gap-4 cursor-pointer group mt-4">
+            <label className="flex items-start gap-3 cursor-pointer group mt-2">
               <div className={cn(
-                "w-5 h-5 rounded-sm border-2 flex items-center justify-center mt-0.5 flex-shrink-0 transition-colors",
+                "w-5 h-5 rounded-lg border flex items-center justify-center mt-0.5 flex-shrink-0 transition-all",
                 form.acceptsMarketing 
-                  ? (isCoaching ? 'bg-coaching-cyan-500 border-coaching-cyan-500 text-black' : 'bg-gray-900 border-gray-900') 
-                  : (isCoaching ? 'border-gray-700 bg-gray-950 group-hover:border-coaching-cyan-500' : 'border-gray-300 group-hover:border-gray-500')
+                  ? (isCoaching ? 'bg-coaching-cyan-500 border-coaching-cyan-500 text-black' : 'bg-[#1a2e23] border-[#1a2e23]') 
+                  : (isCoaching ? 'border-gray-700 bg-gray-950 group-hover:border-coaching-cyan-500' : 'border-[#1a2e23]/20 bg-[#f4f6f1] group-hover:border-[#1a2e23]/40')
               )}>
                 {form.acceptsMarketing && <Check className={cn("w-3.5 h-3.5", isCoaching ? "text-black" : "text-white")} />}
               </div>
@@ -199,8 +187,8 @@ function RegisterContent() {
                 onChange={(e) => setForm({ ...form, acceptsMarketing: e.target.checked })}
               />
               <span className={cn(
-                "text-xs font-bold leading-snug",
-                isCoaching ? "text-gray-400" : "text-gray-600"
+                "text-[12px] font-medium leading-snug",
+                isCoaching ? "text-gray-400" : "text-[#4a5f4c]"
               )}>
                 Je souhaite recevoir les offres exclusives et l'actualité Body Start
               </span>
@@ -210,10 +198,10 @@ function RegisterContent() {
               type="submit"
               disabled={loading}
               className={cn(
-                "w-full flex items-center justify-center py-4 text-sm font-black uppercase tracking-widest mt-6 rounded-sm border-2 transition-all hover:-translate-y-0.5",
+                "w-full flex items-center justify-center py-4 text-[11px] font-bold uppercase tracking-widest mt-6 rounded-full transition-all hover:-translate-y-0.5",
                 isCoaching 
-                  ? "bg-coaching-cyan-500 border-coaching-cyan-500 text-black hover:bg-coaching-cyan-400 shadow-[4px_4px_0_theme(colors.black)]" 
-                  : "bg-brand-700 border-brand-700 text-white hover:bg-brand-800 shadow-[4px_4px_0_theme(colors.gray.900)]"
+                  ? "bg-coaching-cyan-500 text-black hover:bg-coaching-cyan-400 shadow-lg" 
+                  : "bg-[#1a2e23] text-white hover:bg-[#2e4f3c] shadow-lg hover:shadow-xl"
               )}
             >
               {loading ? (
@@ -222,7 +210,7 @@ function RegisterContent() {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
               ) : (
-                <UserPlus className="w-5 h-5 mr-2" />
+                <UserPlus className="w-4 h-4 mr-2" />
               )}
               {loading ? 'CRÉATION...' : 'CRÉER MON COMPTE'}
             </button>
@@ -231,12 +219,12 @@ function RegisterContent() {
 
         <p className={cn(
           "text-center text-sm font-medium mt-8",
-          isCoaching ? "text-gray-400" : "text-gray-500"
+          isCoaching ? "text-gray-400" : "text-[#4a5f4c]"
         )}>
           Déjà un compte ?{' '}
           <Link href={`/login${authQuery}`} className={cn(
-            "font-black uppercase tracking-tight hover:underline underline-offset-4 transition-colors",
-            isCoaching ? "text-coaching-cyan-400 hover:text-white" : "text-brand-700 hover:text-gray-900"
+            "font-bold uppercase tracking-wide hover:underline underline-offset-4 transition-colors",
+            isCoaching ? "text-coaching-cyan-400 hover:text-white" : "text-[#1a2e23] hover:text-[#4a5f4c]"
           )}>
             Se connecter
           </Link>
@@ -248,7 +236,7 @@ function RegisterContent() {
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-black uppercase tracking-widest text-2xl animate-pulse">CHARGEMENT...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#f4f6f1]"><div className="font-display font-black uppercase tracking-widest text-xl text-[#1a2e23] animate-pulse">CHARGEMENT...</div></div>}>
       <RegisterContent />
     </Suspense>
   )

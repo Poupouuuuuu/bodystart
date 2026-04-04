@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Gift, ArrowLeft, Users, Copy } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
+import toast from 'react-hot-toast'
 
 export default function ReferralPage() {
   const router = useRouter()
@@ -18,61 +19,74 @@ export default function ReferralPage() {
 
   const referralCode = `BS-${customer?.firstName?.toUpperCase().slice(0, 4) ?? 'XXXX'}${Math.floor(Math.random() * 1000)}`
 
+  function copyCode() {
+    navigator.clipboard.writeText(referralCode)
+    toast.success('Code copié !')
+  }
+
   return (
-    <div className="container py-10 max-w-3xl">
-      <Link href="/account" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-700 mb-8 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Mon compte
-      </Link>
+    <div className="bg-[#f4f6f1] min-h-screen">
+      <div className="container py-12 md:py-16 max-w-3xl">
+        <Link href="/account" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#89a890] hover:text-[#1a2e23] mb-8 transition-colors group">
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" /> Mon compte
+        </Link>
 
-      <h1 className="font-display text-2xl font-bold text-gray-900 mb-2">Programme de parrainage</h1>
-      <p className="text-gray-500 mb-8">Invitez vos amis et gagnez des récompenses ensemble.</p>
+        <h1 className="font-display text-[35px] md:text-[42px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none mb-3">
+          Parrainage
+        </h1>
+        <p className="text-[#4a5f4c] font-medium text-sm mb-10">Invitez vos amis et gagnez des récompenses ensemble.</p>
 
-      {/* Carte code parrainage */}
-      <div className="bg-brand-700 text-white rounded-3xl p-8 mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-            <Gift className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="font-bold">Votre code parrainage</p>
-            <p className="text-brand-200 text-sm">Partagez-le avec vos amis</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <code className="flex-1 bg-white/10 border border-white/20 rounded-xl px-5 py-3 font-mono font-bold text-xl tracking-widest text-center">
-            {referralCode}
-          </code>
-          <button className="p-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-colors" aria-label="Copier">
-            <Copy className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Règles */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
-        <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Users className="w-5 h-5 text-brand-700" /> Comment ça marche ?
-        </h2>
-        <div className="space-y-4">
-          {[
-            { step: '1', title: 'Partagez votre code', desc: 'Envoyez votre code à vos amis sportifs.' },
-            { step: '2', title: 'Votre ami commande', desc: 'Il utilise votre code et bénéficie de -10% sur sa première commande.' },
-            { step: '3', title: 'Vous êtes récompensé', desc: 'Vous recevez un bon d\'achat de 10€ crédité sur votre compte.' },
-          ].map(({ step, title, desc }) => (
-            <div key={step} className="flex gap-4">
-              <div className="w-7 h-7 bg-brand-700 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">{step}</div>
+        {/* Carte code parrainage */}
+        <div className="bg-[#1a2e23] text-white rounded-[28px] p-8 md:p-10 mb-6 relative overflow-hidden">
+          {/* Grid background */}
+          <div className="absolute inset-0 z-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#4a5f4c 1px, transparent 1px), linear-gradient(90deg, #4a5f4c 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center border border-white/10">
+                <Gift className="w-6 h-6" />
+              </div>
               <div>
-                <p className="font-semibold text-gray-900 text-sm">{title}</p>
-                <p className="text-gray-500 text-sm">{desc}</p>
+                <p className="font-display font-black uppercase tracking-tight">Votre code parrainage</p>
+                <p className="text-white/50 text-sm font-medium">Partagez-le avec vos amis</p>
               </div>
             </div>
-          ))}
+            <div className="flex items-center gap-3">
+              <code className="flex-1 bg-white/10 border border-white/10 rounded-2xl px-5 py-4 font-mono font-bold text-xl tracking-widest text-center">
+                {referralCode}
+              </code>
+              <button onClick={copyCode} className="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl transition-colors" aria-label="Copier">
+                <Copy className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="bg-brand-50 rounded-2xl border border-brand-100 p-5 text-center">
-        <p className="text-brand-700 font-semibold text-sm">🎉 Programme de parrainage — Bientôt actif</p>
-        <p className="text-brand-600/70 text-xs mt-1">Le système de récompenses sera lancé prochainement.</p>
+        {/* Règles */}
+        <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-8 mb-6 shadow-sm">
+          <h2 className="font-display font-black uppercase tracking-tight text-[#1a2e23] mb-6 flex items-center gap-2 text-lg">
+            <Users className="w-5 h-5 text-[#89a890]" /> Comment ça marche ?
+          </h2>
+          <div className="space-y-5">
+            {[
+              { step: '01', title: 'Partagez votre code', desc: 'Envoyez votre code à vos amis sportifs.' },
+              { step: '02', title: 'Votre ami commande', desc: 'Il utilise votre code et bénéficie de -10% sur sa première commande.' },
+              { step: '03', title: 'Vous êtes récompensé', desc: "Vous recevez un bon d'achat de 10€ crédité sur votre compte." },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="flex gap-4">
+                <div className="w-10 h-10 bg-[#1a2e23] text-white rounded-full flex items-center justify-center font-display font-bold text-sm flex-shrink-0">{step}</div>
+                <div className="pt-1.5">
+                  <p className="font-display font-bold text-[#1a2e23] text-sm uppercase tracking-tight">{title}</p>
+                  <p className="text-[#4a5f4c] text-sm font-medium">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-[#1a2e23]/5 rounded-[20px] p-6 text-center">
+          <p className="text-[#1a2e23] font-display font-bold text-sm uppercase tracking-tight">🎉 Programme de parrainage — Bientôt actif</p>
+          <p className="text-[#4a5f4c] text-[12px] mt-1 font-medium">Le système de récompenses sera lancé prochainement.</p>
+        </div>
       </div>
     </div>
   )

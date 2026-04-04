@@ -46,16 +46,21 @@ const FAQ_ITEMS = [
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className={cn("border-2 rounded-sm overflow-hidden transition-all duration-300 bg-white", open ? "border-gray-900 shadow-[4px_4px_0_theme(colors.gray.900)]" : "border-gray-200 hover:border-gray-900 shadow-[2px_2px_0_theme(colors.gray.200)] hover:shadow-[4px_4px_0_theme(colors.gray.900)]")}>
+    <div className={cn(
+      "bg-white rounded-[20px] overflow-hidden transition-all duration-300 border",
+      open ? "border-[#1a2e23]/20 shadow-md" : "border-[#1a2e23]/5 shadow-sm hover:shadow-md"
+    )}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-6 py-5 text-left bg-transparent"
       >
-        <span className="font-black uppercase tracking-tight text-gray-900 text-sm pr-4 leading-tight">{question}</span>
-        <ChevronDown className={cn('w-5 h-5 text-gray-900 flex-shrink-0 transition-transform duration-200', open && 'rotate-180')} />
+        <span className="font-display font-bold uppercase tracking-tight text-[#1a2e23] text-sm pr-4 leading-tight">{question}</span>
+        <div className={cn("w-8 h-8 rounded-full bg-[#1a2e23]/5 flex items-center justify-center flex-shrink-0 transition-all", open && "bg-[#1a2e23] text-white")}>
+          <ChevronDown className={cn('w-4 h-4 transition-transform duration-200', open ? 'rotate-180' : 'text-[#1a2e23]')} />
+        </div>
       </button>
       {open && (
-        <div className="px-6 pb-6 text-sm font-medium text-gray-600 leading-relaxed border-t-2 border-gray-100 pt-4">
+        <div className="px-6 pb-6 text-sm font-medium text-[#4a5f4c] leading-relaxed border-t border-[#1a2e23]/5 pt-4">
           {answer}
         </div>
       )}
@@ -65,22 +70,27 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 export default function FAQPage() {
   return (
-    <div className="container py-16 md:py-24 max-w-4xl">
-      <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-700 hover:text-gray-900 mb-10 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Retour à l'accueil
-      </Link>
-      <h1 className="font-display text-4xl md:text-5xl font-black uppercase tracking-tight text-gray-900 mb-4 leading-none">Questions fréquentes</h1>
-      <p className="text-gray-500 font-medium mb-12 text-lg">Vous ne trouvez pas la réponse ? <a href="mailto:contact@bodystart.fr" className="text-brand-700 hover:text-gray-900 underline underline-offset-4 font-black">Contactez-nous</a></p>
+    <div className="bg-[#f4f6f1] min-h-screen">
+      <div className="container py-16 md:py-20 max-w-4xl">
+        <Link href="/" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#89a890] hover:text-[#1a2e23] mb-10 transition-colors group">
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" /> Retour à l&apos;accueil
+        </Link>
+        <h1 className="font-display text-[40px] md:text-[60px] font-black uppercase tracking-tighter text-[#1a2e23] mb-4 leading-none">Questions fréquentes</h1>
+        <p className="text-[#4a5f4c] font-medium mb-12 text-base">Vous ne trouvez pas la réponse ? <a href="mailto:contact@bodystart.fr" className="text-[#1a2e23] font-bold hover:underline underline-offset-4">Contactez-nous</a></p>
 
-      <div className="space-y-16">
-        {FAQ_ITEMS.map(({ category, questions }) => (
-          <section key={category}>
-            <h2 className="font-display font-black text-brand-700 text-lg md:text-xl uppercase tracking-widest mb-6 border-l-4 border-brand-500 pl-3 leading-none">{category}</h2>
-            <div className="space-y-4">
-              {questions.map(({ q, a }) => <FAQItem key={q} question={q} answer={a} />)}
-            </div>
-          </section>
-        ))}
+        <div className="space-y-14">
+          {FAQ_ITEMS.map(({ category, questions }) => (
+            <section key={category}>
+              <h2 className="font-display font-black text-[#1a2e23] text-sm uppercase tracking-widest mb-6 flex items-center gap-3">
+                <span className="w-8 h-[2px] bg-[#1a2e23]/20" />
+                {category}
+              </h2>
+              <div className="space-y-3">
+                {questions.map(({ q, a }) => <FAQItem key={q} question={q} answer={a} />)}
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
     </div>
   )
