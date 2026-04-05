@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Calendar, User, Tag } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Calendar, User, Tag, BookOpen } from 'lucide-react'
 import { getBlogArticles, getArticleByHandle } from '@/lib/shopify'
 import { notFound } from 'next/navigation'
+import { cn } from '@/lib/utils'
 
 interface Props {
   params: { slug: string }
@@ -51,9 +52,9 @@ export default async function BlogArticlePage({ params }: Props) {
   const related = allArticles.filter((a) => a.handle !== params.slug).slice(0, 2)
 
   return (
-    <article>
+    <article className="bg-[#f4f6f1] min-h-screen">
       {/* Hero image */}
-      <div className="relative aspect-video w-full overflow-hidden bg-brand-50 max-h-[480px]">
+      <div className="relative w-full overflow-hidden max-h-[520px] aspect-video">
         {article.image ? (
           <Image
             src={article.image.url}
@@ -63,41 +64,46 @@ export default async function BlogArticlePage({ params }: Props) {
             priority
           />
         ) : (
-          <div className="absolute inset-0 bg-gray-950 flex items-center justify-center">
-            <span className="font-display font-black text-6xl text-brand-700">BS</span>
+          <div className="absolute inset-0 bg-[#1a2e23] flex items-center justify-center">
+            <BookOpen className="w-20 h-20 text-[#89a890]/30" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 border-b-4 border-gray-900">
-          {article.tags.length > 0 && (
-            <span className="inline-block bg-brand-600 border-2 border-transparent text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-sm mb-4">
-              {article.tags[0]}
-            </span>
-          )}
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-white leading-none max-w-4xl">
-            {article.title}
-          </h1>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e23] via-[#1a2e23]/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
+          <div className="max-w-4xl mx-auto">
+            {article.tags.length > 0 && (
+              <span className="inline-block bg-[#7cb98b] text-white px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-full mb-5">
+                {article.tags[0]}
+              </span>
+            )}
+            <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-none max-w-4xl">
+              {article.title}
+            </h1>
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="container py-10">
+      <div className="container py-12">
         <div className="max-w-3xl mx-auto">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-700 hover:text-gray-900 mb-10 transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Retour au blog
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#4a5f4c] hover:text-[#1a2e23] mb-10 transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Retour au blog
           </Link>
 
           {/* Metadata */}
-          <div className="flex flex-wrap items-center gap-4 text-[10px] font-black uppercase tracking-widest text-gray-400 mb-10 pb-8 border-b-2 border-gray-200">
-            <span className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-5 text-sm font-medium text-[#89a890] mb-10 pb-8 border-b border-[#89a890]/20">
+            <span className="flex items-center gap-2">
               <Calendar className="w-4 h-4" /> {formatDate(article.publishedAt)}
             </span>
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-2">
               <User className="w-4 h-4" /> {article.author.name}
             </span>
             {article.tags.length > 0 && (
-              <span className="flex items-center gap-1.5">
-                <Tag className="w-4 h-4" /> {article.tags.join(' · ')}
+              <span className="flex items-center gap-2">
+                <Tag className="w-4 h-4" /> {article.tags.join(' / ')}
               </span>
             )}
           </div>
@@ -105,41 +111,57 @@ export default async function BlogArticlePage({ params }: Props) {
           {/* Contenu HTML Shopify */}
           {article.contentHtml ? (
             <div
-              className="prose prose-gray max-w-none prose-p:font-medium prose-p:text-gray-600 prose-headings:font-display prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-headings:text-gray-900 prose-a:text-brand-700 prose-strong:text-gray-900 prose-img:rounded-sm prose-img:border-2 prose-img:border-gray-200 text-lg"
+              className={cn(
+                'prose prose-lg max-w-none',
+                'prose-p:font-medium prose-p:text-[#1a2e23]/70 prose-p:leading-relaxed',
+                'prose-headings:font-display prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-headings:text-[#1a2e23]',
+                'prose-a:text-[#4a5f4c] prose-a:underline-offset-4 hover:prose-a:text-[#7cb98b]',
+                'prose-strong:text-[#1a2e23]',
+                'prose-img:rounded-[20px] prose-img:shadow-sm',
+                'prose-blockquote:border-l-[#7cb98b] prose-blockquote:bg-white prose-blockquote:rounded-r-[16px] prose-blockquote:py-1 prose-blockquote:px-6'
+              )}
               dangerouslySetInnerHTML={{ __html: article.contentHtml }}
             />
           ) : article.excerpt ? (
-            <p className="text-gray-600 font-medium text-xl leading-relaxed">{article.excerpt}</p>
+            <p className="text-[#1a2e23]/70 font-medium text-xl leading-relaxed">{article.excerpt}</p>
           ) : null}
 
           {/* CTA */}
-          <div className="bg-white rounded-sm border-2 border-gray-900 shadow-[8px_8px_0_theme(colors.gray.900)] p-8 md:p-10 flex flex-col md:flex-row items-center gap-6 mt-16 mb-16">
+          <div className="bg-white rounded-[24px] p-8 md:p-10 flex flex-col md:flex-row items-center gap-6 mt-16 mb-16 shadow-sm">
             <div className="flex-1 text-center md:text-left">
-              <p className="font-display text-2xl font-black uppercase tracking-tight text-gray-900 mb-2 leading-none">Prêt à passer à l&apos;action ?</p>
-              <p className="text-gray-500 font-medium">Découvrez nos produits sélectionnés par nos experts.</p>
+              <p className="font-display text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-2 leading-none">
+                Pret a passer a l&apos;action ?
+              </p>
+              <p className="text-[#1a2e23]/50 font-medium">Decouvrez nos produits selectionnes par nos experts.</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 flex-shrink-0 w-full md:w-auto">
-              <Link href="/blog" className="btn-secondary w-full sm:w-auto">
-                <ArrowLeft className="w-4 h-4 mr-2 inline-block" /> Blog
+            <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0 w-full md:w-auto">
+              <Link
+                href="/blog"
+                className="inline-flex items-center justify-center gap-2 bg-[#f4f6f1] text-[#1a2e23] font-bold text-sm px-6 py-3.5 rounded-full hover:bg-[#89a890]/20 transition-colors w-full sm:w-auto"
+              >
+                <ArrowLeft className="w-4 h-4" /> Blog
               </Link>
-              <Link href="/products" className="btn-primary w-full sm:w-auto">
-                Nos produits
+              <Link
+                href="/products"
+                className="inline-flex items-center justify-center gap-2 bg-[#1a2e23] text-white font-bold text-sm px-8 py-3.5 rounded-full hover:bg-[#4a5f4c] transition-colors shadow-md hover:shadow-lg w-full sm:w-auto"
+              >
+                Nos produits <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
 
-          {/* Articles liés */}
+          {/* Articles lies */}
           {related.length > 0 && (
-            <div className="border-t-4 border-gray-900 pt-16 mt-16">
-              <h2 className="font-display text-3xl font-black uppercase tracking-tight text-gray-900 mb-8">Articles liés</h2>
+            <div className="pt-16 mt-16 border-t border-[#89a890]/20">
+              <h2 className="font-display text-3xl font-black uppercase tracking-tight text-[#1a2e23] mb-8">Articles lies</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {related.map((a) => (
                   <Link
                     key={a.id}
                     href={`/blog/${a.handle}`}
-                    className="group rounded-sm overflow-hidden border-2 border-gray-200 hover:-translate-y-1 hover:border-gray-900 shadow-[4px_4px_0_theme(colors.gray.200)] hover:shadow-[8px_8px_0_theme(colors.gray.900)] transition-all bg-white flex flex-col"
+                    className="group rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 bg-white flex flex-col hover:-translate-y-1"
                   >
-                    <div className="relative aspect-video overflow-hidden border-b-2 border-gray-200 group-hover:border-gray-900 transition-colors bg-brand-50">
+                    <div className="relative aspect-video overflow-hidden bg-[#f4f6f1]">
                       {a.image ? (
                         <Image
                           src={a.image.url}
@@ -148,17 +170,23 @@ export default async function BlogArticlePage({ params }: Props) {
                           className="object-cover group-hover:scale-105 transition-transform duration-700"
                         />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="font-display font-black text-3xl text-brand-200">BS</span>
+                        <div className="absolute inset-0 flex items-center justify-center bg-[#1a2e23]/5">
+                          <BookOpen className="w-10 h-10 text-[#89a890]/40" />
                         </div>
                       )}
                     </div>
                     <div className="p-6 flex-1 flex flex-col justify-between">
                       {a.tags.length > 0 && (
-                        <span className="text-[10px] font-black uppercase tracking-widest text-brand-700 bg-brand-50 border-2 border-brand-200 px-2 py-1 rounded-sm mb-3 inline-block">{a.tags[0]}</span>
+                        <span className="text-[11px] font-bold tracking-widest uppercase text-[#4a5f4c] bg-[#f4f6f1] px-3 py-1.5 rounded-full mb-3 inline-block self-start">
+                          {a.tags[0]}
+                        </span>
                       )}
-                      <p className="text-xl font-black uppercase tracking-tight text-gray-900 mt-2 group-hover:text-brand-700 transition-colors leading-tight">{a.title}</p>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-6 pt-4 border-t-2 border-gray-100">{formatDate(a.publishedAt)}</p>
+                      <p className="text-xl font-black uppercase tracking-tight text-[#1a2e23] mt-2 group-hover:text-[#4a5f4c] transition-colors leading-tight">
+                        {a.title}
+                      </p>
+                      <p className="text-xs font-semibold text-[#89a890] mt-6 pt-4 border-t border-[#f4f6f1]">
+                        {formatDate(a.publishedAt)}
+                      </p>
                     </div>
                   </Link>
                 ))}

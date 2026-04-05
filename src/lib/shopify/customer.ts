@@ -6,6 +6,10 @@ import {
   GET_CUSTOMER,
   CUSTOMER_UPDATE,
   CUSTOMER_RECOVER,
+  CUSTOMER_ADDRESS_CREATE,
+  CUSTOMER_ADDRESS_UPDATE,
+  CUSTOMER_ADDRESS_DELETE,
+  CUSTOMER_DEFAULT_ADDRESS_UPDATE,
 } from './queries/customer'
 
 export interface CustomerError {
@@ -183,4 +187,79 @@ export async function recoverCustomerPassword(email: string): Promise<{ errors: 
     customerRecover: { customerUserErrors: CustomerError[] }
   }>(CUSTOMER_RECOVER, { email })
   return { errors: data.customerRecover.customerUserErrors }
+}
+
+// ─── Address CRUD ────────────────────────────────────────────────
+
+export interface AddressInput {
+  address1: string
+  address2?: string
+  city: string
+  zip: string
+  country: string
+  phone?: string
+  firstName?: string
+  lastName?: string
+  company?: string
+}
+
+export async function createAddress(
+  accessToken: string,
+  address: AddressInput
+): Promise<{ address: CustomerAddress | null; errors: CustomerError[] }> {
+  const data = await shopifyFetch<{
+    customerAddressCreate: {
+      customerAddress: CustomerAddress | null
+      customerUserErrors: CustomerError[]
+    }
+  }>(CUSTOMER_ADDRESS_CREATE, { customerAccessToken: accessToken, address })
+
+  const errors = data.customerAddressCreate.customerUserErrors
+  return { address: data.customerAddressCreate.customerAddress, errors }
+}
+
+export async function updateAddress(
+  accessToken: string,
+  addressId: string,
+  address: AddressInput
+): Promise<{ address: CustomerAddress | null; errors: CustomerError[] }> {
+  const data = await shopifyFetch<{
+    customerAddressUpdate: {
+      customerAddress: CustomerAddress | null
+      customerUserErrors: CustomerError[]
+    }
+  }>(CUSTOMER_ADDRESS_UPDATE, { customerAccessToken: accessToken, id: addressId, address })
+
+  const errors = data.customerAddressUpdate.customerUserErrors
+  return { address: data.customerAddressUpdate.customerAddress, errors }
+}
+
+export async function deleteAddress(
+  accessToken: string,
+  addressId: string
+): Promise<{ success: boolean; errors: CustomerError[] }> {
+  const data = await shopifyFetch<{
+    customerAddressDelete: {
+      deletedCustomerAddressId: string | null
+      customerUserErrors: CustomerError[]
+    }
+  }>(CUSTOMER_ADDRESS_DELETE, { customerAccessToken: accessToken, id: addressId })
+
+  const errors = data.customerAddressDelete.customerUserErrors
+  return { success: errors.length === 0, errors }
+}
+
+export async function setDefaultAddress(
+  accessToken: string,
+  addressId: string
+): Promise<{ success: boolean; errors: CustomerError[] }> {
+  const data = await shopifyFetch<{
+    customerDefaultAddressUpdate: {
+      customer: { id: string } | null
+      customerUserErrors: CustomerError[]
+    }
+  }>(CUSTOMER_DEFAULT_ADDRESS_UPDATE, { customerAccessToken: accessToken, addressId })
+
+  const errors = data.customerDefaultAddressUpdate.customerUserErrors
+  return { success: errors.length === 0, errors }
 }

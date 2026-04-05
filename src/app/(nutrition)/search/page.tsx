@@ -3,6 +3,7 @@ import { searchProducts } from '@/lib/shopify'
 import ProductCard from '@/components/product/ProductCard'
 import SearchBar from '@/components/ui/SearchBar'
 import type { ShopifyProduct } from '@/lib/shopify/types'
+import { Search, PackageSearch } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Recherche — Body Start Nutrition',
@@ -28,20 +29,27 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const count = results.length
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#f4f6f1]">
       {/* Hero */}
-      <div className="bg-gray-50 border-b-2 border-gray-200">
+      <div className="bg-white border-b border-[#89a890]/20">
         <div className="container py-12 md:py-16">
-          <span className="text-brand-700 text-xs font-black uppercase tracking-widest block mb-4 border-l-4 border-brand-500 pl-3">Recherche</span>
-          <h1 className="font-display text-4xl md:text-5xl font-black uppercase tracking-tight text-gray-900 leading-none">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-[#89a890]/10 flex items-center justify-center">
+              <Search className="w-5 h-5 text-[#4a5f4c]" />
+            </div>
+            <span className="text-[#4a5f4c] text-xs font-black uppercase tracking-widest">
+              Recherche
+            </span>
+          </div>
+          <h1 className="font-display text-4xl md:text-5xl font-black uppercase tracking-tight text-[#1a2e23] leading-none">
             {q ? (
-              <>&ldquo;{q}&rdquo;</>
+              <>&laquo; {q} &raquo;</>
             ) : (
               'Recherche'
             )}
           </h1>
           {q && (
-            <p className="text-gray-500 font-medium mt-3">
+            <p className="text-[#4a5f4c]/70 font-medium mt-3">
               {count > 0
                 ? `${count} résultat${count > 1 ? 's' : ''} trouvé${count > 1 ? 's' : ''}`
                 : 'Aucun résultat'}
@@ -59,13 +67,27 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       <div className="container pb-16">
         {!q ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="font-black uppercase tracking-widest text-gray-400 text-lg">Tapez un mot-clé pour trouver un produit</p>
-            <p className="text-gray-300 text-sm mt-2 font-medium">Ex : &ldquo;whey&rdquo;, &ldquo;créatine&rdquo;, &ldquo;prise de muscle&rdquo;</p>
+            <div className="w-16 h-16 rounded-full bg-[#89a890]/10 flex items-center justify-center mb-6">
+              <PackageSearch className="w-8 h-8 text-[#89a890]" />
+            </div>
+            <p className="font-display font-black uppercase tracking-widest text-[#1a2e23]/40 text-lg">
+              Tapez un mot-clé pour trouver un produit
+            </p>
+            <p className="text-[#4a5f4c]/50 text-sm mt-2 font-medium">
+              Ex : &laquo; whey &raquo;, &laquo; créatine &raquo;, &laquo; prise de muscle &raquo;
+            </p>
           </div>
         ) : count === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="font-black uppercase tracking-widest text-gray-900 text-lg mb-2">Aucun résultat pour &ldquo;{q}&rdquo;</p>
-            <p className="text-gray-500 text-sm mb-8 font-medium">Essayez d&apos;autres mots-clés ou parcourez notre catalogue.</p>
+            <div className="w-16 h-16 rounded-full bg-[#89a890]/10 flex items-center justify-center mb-6">
+              <PackageSearch className="w-8 h-8 text-[#89a890]" />
+            </div>
+            <p className="font-display font-black uppercase tracking-widest text-[#1a2e23] text-lg mb-2">
+              Aucun résultat pour &laquo; {q} &raquo;
+            </p>
+            <p className="text-[#4a5f4c]/70 text-sm mb-8 font-medium">
+              Essayez d&apos;autres mots-clés ou parcourez notre catalogue.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Dumbbell, Flame, Zap, Moon, ShieldCheck } from 'lucide-react'
 import { getProducts } from '@/lib/shopify'
 import ProductCard from '@/components/product/ProductCard'
 
@@ -13,42 +13,42 @@ const OBJECTIF_IMAGES: Record<string, string> = {
   'immunite': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&q=80',
 }
 
-const OBJECTIVES_META: Record<string, { title: string; emoji: string; description: string; tags: string[] }> = {
+const OBJECTIVES_META: Record<string, { title: string; icon: typeof Dumbbell; description: string; tags: string[] }> = {
   'prise-de-muscle': {
     title: 'Prise de muscle',
-    emoji: '💪',
-    description: 'Protéines, créatine et gainers pour maximiser la synthèse musculaire et soutenir vos séances.',
-    tags: ['protéine', 'créatine', 'gainer', 'bcaa'],
+    icon: Dumbbell,
+    description: 'Prot\u00e9ines, cr\u00e9atine et gainers pour maximiser la synth\u00e8se musculaire et soutenir vos s\u00e9ances.',
+    tags: ['prot\u00e9ine', 'cr\u00e9atine', 'gainer', 'bcaa'],
   },
   'perte-de-poids': {
     title: 'Perte de poids',
-    emoji: '🔥',
-    description: 'Des compléments pour soutenir votre métabolisme, préserver la masse musculaire et réduire les fringales.',
-    tags: ['brûleur', 'protéine', 'thermogénique'],
+    icon: Flame,
+    description: 'Des compl\u00e9ments pour soutenir votre m\u00e9tabolisme, pr\u00e9server la masse musculaire et r\u00e9duire les fringales.',
+    tags: ['br\u00fbleur', 'prot\u00e9ine', 'thermog\u00e9nique'],
   },
   'energie': {
-    title: 'Énergie & Endurance',
-    emoji: '⚡',
-    description: "Pré-workouts, caféine et BCAA pour performer à l'entraînement et repousser vos limites.",
-    tags: ['pré-workout', 'caféine', 'bcaa', 'énergie'],
+    title: '\u00c9nergie & Endurance',
+    icon: Zap,
+    description: "Pr\u00e9-workouts, caf\u00e9ine et BCAA pour performer \u00e0 l'entra\u00eenement et repousser vos limites.",
+    tags: ['pr\u00e9-workout', 'caf\u00e9ine', 'bcaa', '\u00e9nergie'],
   },
   'recuperation': {
-    title: 'Récupération',
-    emoji: '🌙',
-    description: 'Magnésium, oméga 3 et protéines à digestion lente pour récupérer plus vite et mieux dormir.',
-    tags: ['magnésium', 'oméga 3', 'sommeil', 'récupération'],
+    title: 'R\u00e9cup\u00e9ration',
+    icon: Moon,
+    description: 'Magn\u00e9sium, om\u00e9ga 3 et prot\u00e9ines \u00e0 digestion lente pour r\u00e9cup\u00e9rer plus vite et mieux dormir.',
+    tags: ['magn\u00e9sium', 'om\u00e9ga 3', 'sommeil', 'r\u00e9cup\u00e9ration'],
   },
   'immunite': {
-    title: 'Immunité',
-    emoji: '🛡️',
-    description: 'Vitamines, minéraux et antioxydants pour renforcer vos défenses naturelles tout au long de l\'année.',
+    title: 'Immunit\u00e9',
+    icon: ShieldCheck,
+    description: 'Vitamines, min\u00e9raux et antioxydants pour renforcer vos d\u00e9fenses naturelles tout au long de l\'ann\u00e9e.',
     tags: ['vitamine c', 'zinc', 'vitamine d', 'antioxydant'],
   },
 }
 
 export async function generateMetadata({ params }: { params: { objectif: string } }): Promise<Metadata> {
   const meta = OBJECTIVES_META[params.objectif]
-  return { title: meta ? `${meta.emoji} ${meta.title}` : 'Objectif' }
+  return { title: meta ? meta.title : 'Objectif' }
 }
 
 export default async function ObjectifPage({ params }: { params: { objectif: string } }) {
@@ -56,7 +56,7 @@ export default async function ObjectifPage({ params }: { params: { objectif: str
 
   let products: import('@/lib/shopify/types').ShopifyProduct[] = []
   try {
-    // Cherche les produits par tags correspondant à l'objectif
+    // Cherche les produits par tags correspondant \u00e0 l'objectif
     const tagsQuery = meta?.tags?.map((t) => `tag:${t}`).join(' OR ') ?? ''
     const result = await getProducts({ first: 8, query: tagsQuery || undefined })
     products = result.nodes
@@ -64,41 +64,64 @@ export default async function ObjectifPage({ params }: { params: { objectif: str
 
   if (!meta) {
     return (
-      <div className="container py-20 text-center">
-        <p className="text-gray-500 mb-4">Objectif non trouvé.</p>
-        <Link href="/" className="btn-primary">Retour à l&apos;accueil</Link>
+      <div className="bg-[#f4f6f1] min-h-screen">
+        <div className="container py-20 text-center">
+          <p className="text-[#4a5f4c] mb-6 text-lg">Objectif non trouv\u00e9.</p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#1a2e23] text-white font-bold rounded-full hover:bg-[#4a5f4c] transition-colors"
+          >
+            Retour \u00e0 l&apos;accueil
+          </Link>
+        </div>
       </div>
     )
   }
 
+  const Icon = meta.icon
   const heroImage = OBJECTIF_IMAGES[params.objectif]
 
   return (
-    <div>
-      <div className="relative bg-gray-950 text-white py-20 md:py-28 overflow-hidden border-b-4 border-gray-900">
+    <div className="bg-[#f4f6f1] min-h-screen">
+      {/* Hero */}
+      <div className="relative text-white py-24 md:py-32 overflow-hidden">
         {heroImage && (
           <Image
             src={heroImage}
             alt={meta.title}
             fill
-            className="object-cover opacity-30"
+            className="object-cover"
             priority
           />
         )}
-        <div className="absolute inset-0 bg-gray-950/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1a2e23] via-[#1a2e23]/80 to-[#1a2e23]/50" />
+
         <div className="relative container max-w-3xl text-center">
-          <span className="text-6xl block mb-6">{meta.emoji}</span>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-[4.5rem] font-black uppercase tracking-tighter mb-4 leading-none">{meta.title}</h1>
-          <p className="text-gray-300 text-lg md:text-xl font-medium max-w-2xl mx-auto">{meta.description}</p>
+          <div className="w-16 h-16 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center mx-auto mb-6">
+            <Icon className="w-7 h-7 text-white" />
+          </div>
+          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-5 leading-none">
+            {meta.title}
+          </h1>
+          <p className="text-white/80 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
+            {meta.description}
+          </p>
         </div>
       </div>
 
-      <div className="container py-12">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 border-b-2 border-gray-200 pb-6">
-          <Link href="/objectifs" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-700 hover:text-gray-900 transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Tous les objectifs
+      {/* Produits */}
+      <div className="container py-14">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+          <Link
+            href="/objectifs"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[#89a890] hover:text-[#1a2e23] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Tous les objectifs
           </Link>
-          <h2 className="font-display font-black text-2xl uppercase tracking-tight text-gray-900">Produits recommandés</h2>
+          <h2 className="font-display font-black text-2xl uppercase tracking-tight text-[#1a2e23]">
+            Produits recommand\u00e9s
+          </h2>
         </div>
 
         {products.length > 0 ? (
@@ -107,9 +130,13 @@ export default async function ObjectifPage({ params }: { params: { objectif: str
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-gray-400 mb-4">Produits en cours de chargement...</p>
-            <Link href="/products" className="btn-primary">
-              Voir tous les produits <ArrowRight className="w-4 h-4" />
+            <p className="text-[#89a890] mb-6 text-lg">Produits en cours de chargement...</p>
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#1a2e23] text-white font-bold rounded-full hover:bg-[#4a5f4c] transition-colors shadow-md hover:shadow-lg"
+            >
+              Voir tous les produits
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         )}

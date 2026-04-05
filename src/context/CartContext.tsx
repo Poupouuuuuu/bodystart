@@ -25,12 +25,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
-  // Charger le panier depuis localStorage
+  // Charger le panier depuis localStorage (avec fallback si expiré)
   useEffect(() => {
     const cartId = localStorage.getItem('body-start-cart-id')
     if (cartId) {
       getCart(cartId).then((c) => {
-        if (c) setCart(c)
+        if (c) {
+          setCart(c)
+        } else {
+          // Panier expiré ou supprimé côté Shopify
+          localStorage.removeItem('body-start-cart-id')
+        }
+      }).catch(() => {
+        localStorage.removeItem('body-start-cart-id')
       })
     }
   }, [])
@@ -48,12 +55,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updatedCart = await createCart([{ merchandiseId, quantity }])
         localStorage.setItem('body-start-cart-id', updatedCart.id)
       } else {
-        updatedCart = await addToCart(cart.id, [{ merchandiseId, quantity }])
+        try {
+          updatedCart = await addToCart(cart.id, [{ merchandiseId, quantity }])
+        } catch {
+          // Panier expiré — on en recrée un nouveau
+          updatedCart = await createCart([{ merchandiseId, quantity }])
+          localStorage.setItem('body-start-cart-id', updatedCart.id)
+        }
       }
       setCart(updatedCart)
       setIsOpen(true)
       toast.success('Produit ajouté au panier !')
-    } catch (err) {
+    } catch {
       toast.error('Erreur lors de l\'ajout au panier')
     } finally {
       setIsLoading(false)

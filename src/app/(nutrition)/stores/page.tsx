@@ -82,8 +82,8 @@ export default function StoresPage() {
                   <div className="w-10 h-10 rounded-2xl bg-[#1a2e23]/5 flex items-center justify-center flex-shrink-0">
                     <Mail className="w-5 h-5 text-[#1a2e23]" />
                   </div>
-                  <a href="mailto:contact@bodystart.com" className="pt-0.5 hover:text-[#1a2e23] transition-colors">
-                    contact@bodystart.com
+                  <a href="mailto:contact@bodystart.fr" className="pt-0.5 hover:text-[#1a2e23] transition-colors">
+                    contact@bodystart.fr
                   </a>
                 </div>
               </div>

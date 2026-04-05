@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Gift, ArrowLeft, Users, Copy } from 'lucide-react'
@@ -17,7 +17,18 @@ export default function ReferralPage() {
 
   if (isLoading) return null
 
-  const referralCode = `BS-${customer?.firstName?.toUpperCase().slice(0, 4) ?? 'XXXX'}${Math.floor(Math.random() * 1000)}`
+  // Code stable dérivé du customer ID (pas de random à chaque render)
+  const referralCode = useMemo(() => {
+    const name = customer?.firstName?.toUpperCase().slice(0, 4) ?? 'XXXX'
+    // Hash simple depuis l'ID client pour un suffixe stable
+    const idStr = customer?.id ?? ''
+    let hash = 0
+    for (let i = 0; i < idStr.length; i++) {
+      hash = ((hash << 5) - hash + idStr.charCodeAt(i)) | 0
+    }
+    const suffix = String(Math.abs(hash) % 10000).padStart(4, '0')
+    return `BS-${name}${suffix}`
+  }, [customer?.id, customer?.firstName])
 
   function copyCode() {
     navigator.clipboard.writeText(referralCode)

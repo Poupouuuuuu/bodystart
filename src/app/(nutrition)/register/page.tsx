@@ -29,10 +29,23 @@ function RegisterContent() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const validationErrors: string[] = []
+
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      validationErrors.push('Le prénom et le nom sont obligatoires.')
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(form.email)) {
+      validationErrors.push('Veuillez entrer une adresse email valide.')
+    }
     if (form.password.length < 5) {
-      setErrors(['Le mot de passe doit contenir au moins 5 caractères.'])
+      validationErrors.push('Le mot de passe doit contenir au moins 5 caractères.')
+    }
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors)
       return
     }
+
     setLoading(true)
     setErrors([])
     const { errors: apiErrors } = await register(form)

@@ -6,11 +6,16 @@ import {
   loginCustomer,
   logoutCustomer,
   createCustomer,
+  createAddress,
+  updateAddress,
+  deleteAddress,
+  setDefaultAddress,
   getStoredToken,
   isTokenExpired,
   clearStoredToken,
   type Customer,
   type CustomerError,
+  type AddressInput,
 } from '@/lib/shopify/customer'
 
 interface CustomerContextType {
@@ -26,6 +31,10 @@ interface CustomerContextType {
   }) => Promise<{ errors: CustomerError[] }>
   logout: () => Promise<void>
   refreshCustomer: () => Promise<void>
+  addAddress: (address: AddressInput) => Promise<{ errors: CustomerError[] }>
+  editAddress: (id: string, address: AddressInput) => Promise<{ errors: CustomerError[] }>
+  removeAddress: (id: string) => Promise<{ errors: CustomerError[] }>
+  makeDefaultAddress: (id: string) => Promise<{ errors: CustomerError[] }>
 }
 
 const CustomerContext = createContext<CustomerContextType | null>(null)
@@ -80,6 +89,38 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     setCustomer(null)
   }
 
+  const addAddress = async (address: AddressInput) => {
+    const token = getStoredToken()
+    if (!token) return { errors: [{ code: 'TOKEN', field: [], message: 'Non connecté' }] }
+    const { errors } = await createAddress(token, address)
+    if (errors.length === 0) await refreshCustomer()
+    return { errors }
+  }
+
+  const editAddress = async (id: string, address: AddressInput) => {
+    const token = getStoredToken()
+    if (!token) return { errors: [{ code: 'TOKEN', field: [], message: 'Non connecté' }] }
+    const { errors } = await updateAddress(token, id, address)
+    if (errors.length === 0) await refreshCustomer()
+    return { errors }
+  }
+
+  const removeAddress = async (id: string) => {
+    const token = getStoredToken()
+    if (!token) return { errors: [{ code: 'TOKEN', field: [], message: 'Non connecté' }] }
+    const { errors } = await deleteAddress(token, id)
+    if (errors.length === 0) await refreshCustomer()
+    return { errors }
+  }
+
+  const makeDefaultAddress = async (id: string) => {
+    const token = getStoredToken()
+    if (!token) return { errors: [{ code: 'TOKEN', field: [], message: 'Non connecté' }] }
+    const { errors } = await setDefaultAddress(token, id)
+    if (errors.length === 0) await refreshCustomer()
+    return { errors }
+  }
+
   return (
     <CustomerContext.Provider value={{
       customer,
@@ -89,6 +130,10 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
       register,
       logout,
       refreshCustomer,
+      addAddress,
+      editAddress,
+      removeAddress,
+      makeDefaultAddress,
     }}>
       {children}
     </CustomerContext.Provider>

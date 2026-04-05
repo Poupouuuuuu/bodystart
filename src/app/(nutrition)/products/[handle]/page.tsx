@@ -2,12 +2,12 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getProductByHandle, getProductInventoryByLocation, getCollectionByHandle } from '@/lib/shopify'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import ProductSection from '@/components/product/ProductSection'
-import ProductReviews from '@/components/product/ProductReviews'
 import NutritionAndScience from '@/components/product/NutritionAndScience'
-import HowToUse from '@/components/product/HowToUse'
+import ProductReviews from '@/components/product/ProductReviews'
 import RelatedProducts from '@/components/product/RelatedProducts'
 import { ChevronRight, Star } from 'lucide-react'
 
@@ -205,13 +205,17 @@ export default async function ProductPage({ params }: Props) {
       {/* ─── SECTION LIFESTYLE : Split-Screen ─── */}
       <div className="bg-white">
         <div className="grid grid-cols-1 lg:grid-cols-2">
-           {/* Image Placeholder (Lifestyle) */}
-           <div className="bg-[#f0ece3] min-h-[400px] lg:min-h-[600px] flex justify-center items-center p-12 border-b lg:border-b-0 lg:border-r border-[#2c3e2e]/10">
-             <div className="text-center max-w-sm">
-                <Star className="w-8 h-8 text-[#2c3e2e]/20 mx-auto mb-4" />
-                <p className="text-[11px] font-black uppercase tracking-widest text-[#2c3e2e]/40 mb-3">[ ESPACE IMAGE LIFESTYLE ]</p>
-                <p className="text-xs font-bold text-[#4a5f4c]/50 leading-relaxed max-w-xs mx-auto">Insérez ici une photo de votre produit en situation (ex: un shaker prêt à l'emploi) depuis votre CMS Shopify.</p>
-             </div>
+           {/* Image Lifestyle (utilise la première image du produit) */}
+           <div className="bg-[#f0ece3] min-h-[400px] lg:min-h-[600px] relative border-b lg:border-b-0 lg:border-r border-[#2c3e2e]/10 overflow-hidden">
+             {product.images?.nodes?.[0] && (
+               <Image
+                 src={product.images.nodes[0].url}
+                 alt={product.images.nodes[0].altText || product.title}
+                 fill
+                 className="object-contain p-8"
+                 sizes="(max-width: 1024px) 100vw, 50vw"
+               />
+             )}
            </div>
 
            {/* Texte Explicatif */}
@@ -225,6 +229,11 @@ export default async function ProductPage({ params }: Props) {
            </div>
         </div>
       </div>
+
+      {/* ─── SECTION AVIS CLIENTS ─── */}
+      <Suspense fallback={null}>
+        <ProductReviews handle={product.handle} />
+      </Suspense>
 
       {/* ─── SECTION CROSS-SELL ─── */}
       {relatedProducts.length > 0 && (

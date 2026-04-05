@@ -73,7 +73,9 @@ export default async function NutritionLayout({ children }: { children: React.Re
       <Suspense fallback={<div className="h-[104px] bg-white border-b border-gray-100" />}>
         <Header collections={collections} />
       </Suspense>
-      <CartDrawer />
+      <Suspense fallback={null}>
+        <CartDrawer />
+      </Suspense>
       <main className="flex-1">{children}</main>
       <Suspense fallback={null}>
         <Footer />

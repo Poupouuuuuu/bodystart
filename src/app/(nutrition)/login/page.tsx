@@ -13,7 +13,9 @@ function LoginContent() {
   const { login } = useCustomer()
   const searchParams = useSearchParams()
 
-  const redirect = searchParams.get('redirect')
+  const rawRedirect = searchParams.get('redirect')
+  // Sanitisation : n'accepter que les chemins relatifs internes
+  const redirect = rawRedirect && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : null
   const isCoaching = searchParams.get('theme') === 'coaching' || (redirect?.startsWith('/coaching') ?? false)
   const authQuery = isCoaching ? '?theme=coaching' : ''
 
@@ -24,6 +26,17 @@ function LoginContent() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(form.email)) {
+      setError('Veuillez entrer une adresse email valide.')
+      return
+    }
+    if (form.password.length < 5) {
+      setError('Le mot de passe doit contenir au moins 5 caractères.')
+      return
+    }
+
     setLoading(true)
     setError(null)
     const { errors } = await login(form.email, form.password)

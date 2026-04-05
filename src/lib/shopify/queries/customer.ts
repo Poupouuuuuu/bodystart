@@ -141,3 +141,84 @@ export const CUSTOMER_RECOVER = `
     }
   }
 `
+
+// ─── ADDRESS MUTATIONS ──────────────────────────────────────────
+
+export const CUSTOMER_ADDRESS_CREATE = `
+  mutation CustomerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
+    customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
+      customerAddress {
+        id
+        address1
+        address2
+        city
+        zip
+        country
+        phone
+        firstName
+        lastName
+        company
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`
+
+export const CUSTOMER_ADDRESS_UPDATE = `
+  mutation CustomerAddressUpdate($customerAccessToken: String!, $id: ID!, $address: MailingAddressInput!) {
+    customerAddressUpdate(customerAccessToken: $customerAccessToken, id: $id, address: $address) {
+      customerAddress {
+        id
+        address1
+        address2
+        city
+        zip
+        country
+        phone
+        firstName
+        lastName
+        company
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`
+
+export const CUSTOMER_ADDRESS_DELETE = `
+  mutation CustomerAddressDelete($customerAccessToken: String!, $id: ID!) {
+    customerAddressDelete(customerAccessToken: $customerAccessToken, id: $id) {
+      deletedCustomerAddressId
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`
+
+export const CUSTOMER_DEFAULT_ADDRESS_UPDATE = `
+  mutation CustomerDefaultAddressUpdate($customerAccessToken: String!, $addressId: ID!) {
+    customerDefaultAddressUpdate(customerAccessToken: $customerAccessToken, addressId: $addressId) {
+      customer {
+        id
+        defaultAddress {
+          id
+        }
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`

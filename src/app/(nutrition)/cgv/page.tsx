@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ScrollText } from 'lucide-react'
 
 export const metadata: Metadata = { title: 'Conditions Générales de Vente' }
 
@@ -49,19 +49,51 @@ const sections = [
 
 export default function CGVPage() {
   return (
-    <div className="container py-16 md:py-24 max-w-3xl">
-      <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-700 hover:text-gray-900 mb-10 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Retour à l'accueil
-      </Link>
-      <h1 className="font-display text-4xl md:text-5xl font-black uppercase tracking-tight text-gray-900 mb-4 leading-none">Conditions Générales de Vente</h1>
-      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-12 pb-8 border-b-2 border-gray-200">Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-      <div className="space-y-12">
-        {sections.map(({ title, content }) => (
-          <section key={title}>
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">{title}</h2>
-            <p className="text-gray-700 font-medium leading-relaxed text-base">{content}</p>
-          </section>
-        ))}
+    <div className="min-h-screen bg-[#f4f6f1]">
+      <div className="container py-16 md:py-24 max-w-3xl">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#4a5f4c] hover:text-[#1a2e23] mb-10 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Retour à l&apos;accueil
+        </Link>
+
+        <div className="bg-white rounded-[20px] p-8 md:p-12 mb-10">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-full bg-[#89a890]/10 flex items-center justify-center flex-shrink-0">
+              <ScrollText className="w-6 h-6 text-[#4a5f4c]" />
+            </div>
+            <div>
+              <h1 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight text-[#1a2e23] leading-none">
+                Conditions Générales de Vente
+              </h1>
+            </div>
+          </div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#89a890] border-t border-[#89a890]/20 pt-4">
+            Dernière mise à jour :{' '}
+            {new Date().toLocaleDateString('fr-FR', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          {sections.map(({ title, content }) => (
+            <section
+              key={title}
+              className="bg-white rounded-[20px] p-8"
+            >
+              <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+                {title}
+              </h2>
+              <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+                {content}
+              </p>
+            </section>
+          ))}
+        </div>
       </div>
     </div>
   )

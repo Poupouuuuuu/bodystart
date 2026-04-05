@@ -1,15 +1,28 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, ArrowRight, MapPin, Phone, Clock } from 'lucide-react'
+import {
+  CheckCircle,
+  ArrowRight,
+  MapPin,
+  Phone,
+  Clock,
+  Dumbbell,
+  Flame,
+  Zap,
+  Moon,
+  Shield,
+  HelpCircle,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const OBJECTIFS = [
-  { value: 'prise-de-muscle', label: '💪 Prise de muscle', desc: 'Gagner en masse et en force' },
-  { value: 'perte-de-poids', label: '🔥 Perte de poids', desc: 'Affiner et garder le muscle' },
-  { value: 'energie', label: '⚡ Énergie & Endurance', desc: 'Performer plus longtemps' },
-  { value: 'recuperation', label: '🌙 Récupération', desc: 'Mieux récupérer après l\'effort' },
-  { value: 'immunite', label: '🛡️ Immunité & Santé', desc: 'Renforcer les défenses naturelles' },
-  { value: 'autre', label: '❓ Autre / Je ne sais pas', desc: 'On vous guide' },
+  { value: 'prise-de-muscle', label: 'Prise de muscle', desc: 'Gagner en masse et en force', icon: Dumbbell },
+  { value: 'perte-de-poids', label: 'Perte de poids', desc: 'Affiner et garder le muscle', icon: Flame },
+  { value: 'energie', label: 'Energie & Endurance', desc: 'Performer plus longtemps', icon: Zap },
+  { value: 'recuperation', label: 'Recuperation', desc: 'Mieux recuperer apres l\'effort', icon: Moon },
+  { value: 'immunite', label: 'Immunite & Sante', desc: 'Renforcer les defenses naturelles', icon: Shield },
+  { value: 'autre', label: 'Autre / Je ne sais pas', desc: 'On vous guide', icon: HelpCircle },
 ]
 
 export default function ConseilPage() {
@@ -33,7 +46,7 @@ export default function ConseilPage() {
       if (!res.ok) throw new Error()
       setSuccess(true)
     } catch {
-      setError('Une erreur est survenue. Veuillez réessayer ou nous appeler directement.')
+      setError('Une erreur est survenue. Veuillez reessayer ou nous appeler directement.')
     } finally {
       setLoading(false)
     }
@@ -41,41 +54,46 @@ export default function ConseilPage() {
 
   if (success) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="text-center max-w-lg mx-auto px-4">
-          <div className="w-20 h-20 bg-brand-50 border-4 border-brand-600 rounded-sm mx-auto mb-8 flex items-center justify-center shadow-[6px_6px_0_theme(colors.brand.600)]">
-            <CheckCircle className="w-10 h-10 text-brand-600" />
+      <div className="min-h-[60vh] flex items-center justify-center bg-[#f4f6f1]">
+        <div className="text-center max-w-lg mx-auto px-4 py-20">
+          <div className="w-20 h-20 bg-[#89a890]/20 rounded-full mx-auto mb-8 flex items-center justify-center">
+            <CheckCircle className="w-10 h-10 text-[#4a5f4c]" />
           </div>
-          <h1 className="font-display text-4xl font-black uppercase tracking-tight text-gray-900 mb-4 leading-none">
-            Message envoyé !
+          <h1 className="font-display text-4xl font-black uppercase tracking-tight text-[#1a2e23] mb-4 leading-none">
+            Message envoye !
           </h1>
-          <p className="text-gray-600 font-medium text-lg mb-6">
-            Nous vous recontactons sous <strong>24–48h</strong> pour fixer un rendez-vous en boutique.
+          <p className="text-[#4a5f4c] text-lg mb-8">
+            Nous vous recontactons sous <strong className="text-[#1a2e23]">24-48h</strong> pour fixer un rendez-vous en boutique.
           </p>
-          <div className="bg-brand-50 border-2 border-brand-200 rounded-sm p-5 text-left mb-8">
-            <p className="text-[10px] font-black uppercase tracking-widest text-brand-700 mb-3">Notre boutique</p>
-            <p className="font-bold text-gray-900">8 Rue du Pont des Landes, 78310 Coignières</p>
-            <p className="text-gray-500 font-medium text-sm mt-1">Ouvert 7j/7 · 11h–19h</p>
+          <div className="bg-white rounded-[20px] p-6 text-left mb-8 shadow-sm">
+            <p className="text-[11px] font-black uppercase tracking-widest text-[#89a890] mb-3">Notre boutique</p>
+            <p className="font-bold text-[#1a2e23]">8 Rue du Pont des Landes, 78310 Coignieres</p>
+            <p className="text-[#4a5f4c] text-sm mt-1">Ouvert 7j/7 -- 11h-19h</p>
           </div>
-          <a href="/" className="btn-primary inline-flex">Retour à l&apos;accueil</a>
+          <a
+            href="/"
+            className="inline-flex items-center justify-center gap-2 bg-[#1a2e23] text-white font-bold text-sm px-8 py-3.5 rounded-full hover:bg-[#1a2e23]/90 transition-colors"
+          >
+            Retour a l&apos;accueil
+          </a>
         </div>
       </div>
     )
   }
 
   return (
-    <div>
+    <div className="bg-[#f4f6f1] min-h-screen">
       {/* Hero */}
-      <div className="bg-gray-950 text-white py-16 border-b-4 border-gray-900">
+      <div className="bg-[#1a2e23] text-white py-20">
         <div className="container max-w-3xl text-center">
-          <span className="text-brand-500 text-[10px] font-black uppercase tracking-widest block border-l-4 border-brand-500 pl-3 text-left inline-block mb-6">
-            Conseil personnalisé
+          <span className="inline-block text-[11px] font-black uppercase tracking-widest text-[#89a890] mb-6">
+            Conseil personnalise
           </span>
-          <h1 className="font-display text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6 leading-none">
+          <h1 className="font-display text-4xl md:text-6xl font-black uppercase tracking-tight mb-6 leading-none">
             Parlez-nous de votre objectif
           </h1>
-          <p className="text-gray-300 font-medium text-lg max-w-xl mx-auto">
-            En 2 minutes, on prépare votre programme sur mesure. Vous venez en boutique, on s&apos;occupe du reste.
+          <p className="text-white/70 text-lg max-w-xl mx-auto">
+            En 2 minutes, on prepare votre programme sur mesure. Vous venez en boutique, on s&apos;occupe du reste.
           </p>
         </div>
       </div>
@@ -83,85 +101,136 @@ export default function ConseilPage() {
       <div className="container py-14">
         <div className="max-w-2xl mx-auto">
 
-          {/* Étapes */}
+          {/* Etapes */}
           <div className="flex items-center gap-4 mb-12">
             {[1, 2].map((s) => (
               <div key={s} className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-sm border-2 flex items-center justify-center font-black text-sm transition-all ${
+                <div className={cn(
+                  'w-9 h-9 rounded-full flex items-center justify-center font-black text-sm transition-all',
                   step >= s
-                    ? 'bg-gray-900 border-gray-900 text-white shadow-[2px_2px_0_theme(colors.brand.500)]'
-                    : 'bg-white border-gray-200 text-gray-400'
-                }`}>{s}</div>
-                <span className={`text-[10px] font-black uppercase tracking-widest ${step >= s ? 'text-gray-900' : 'text-gray-400'}`}>
-                  {s === 1 ? 'Mon objectif' : 'Mes coordonnées'}
+                    ? 'bg-[#1a2e23] text-white'
+                    : 'bg-white text-[#89a890] border border-[#89a890]/30'
+                )}>
+                  {s}
+                </div>
+                <span className={cn(
+                  'text-[11px] font-black uppercase tracking-widest',
+                  step >= s ? 'text-[#1a2e23]' : 'text-[#89a890]'
+                )}>
+                  {s === 1 ? 'Mon objectif' : 'Mes coordonnees'}
                 </span>
-                {s < 2 && <ArrowRight className="w-4 h-4 text-gray-300 ml-1" />}
+                {s < 2 && <ArrowRight className="w-4 h-4 text-[#89a890] ml-1" />}
               </div>
             ))}
           </div>
 
-          {/* Étape 1 — Objectif */}
+          {/* Etape 1 -- Objectif */}
           {step === 1 && (
             <div>
-              <h2 className="font-display text-2xl font-black uppercase tracking-tight text-gray-900 mb-8">
+              <h2 className="font-display text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-8">
                 Quel est votre objectif principal ?
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-                {OBJECTIFS.map((obj) => (
-                  <button
-                    key={obj.value}
-                    onClick={() => setObjectif(obj.value)}
-                    className={`text-left p-5 rounded-sm border-2 transition-all ${
-                      objectif === obj.value
-                        ? 'border-gray-900 shadow-[6px_6px_0_theme(colors.gray.900)] bg-white -translate-y-0.5'
-                        : 'border-gray-200 shadow-[4px_4px_0_theme(colors.gray.200)] bg-white hover:border-gray-400 hover:-translate-y-0.5'
-                    }`}
-                  >
-                    <p className="font-black text-lg text-gray-900 mb-1">{obj.label}</p>
-                    <p className="text-sm text-gray-500 font-medium">{obj.desc}</p>
-                  </button>
-                ))}
+                {OBJECTIFS.map((obj) => {
+                  const Icon = obj.icon
+                  return (
+                    <button
+                      key={obj.value}
+                      onClick={() => setObjectif(obj.value)}
+                      className={cn(
+                        'text-left p-5 rounded-[20px] transition-all',
+                        objectif === obj.value
+                          ? 'bg-[#1a2e23] text-white shadow-lg scale-[1.02]'
+                          : 'bg-white border border-transparent hover:border-[#89a890]/40 hover:shadow-md'
+                      )}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={cn(
+                          'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
+                          objectif === obj.value
+                            ? 'bg-white/15'
+                            : 'bg-[#89a890]/10'
+                        )}>
+                          <Icon className={cn(
+                            'w-5 h-5',
+                            objectif === obj.value ? 'text-white' : 'text-[#4a5f4c]'
+                          )} />
+                        </div>
+                        <div>
+                          <p className={cn(
+                            'font-bold text-base mb-0.5',
+                            objectif === obj.value ? 'text-white' : 'text-[#1a2e23]'
+                          )}>
+                            {obj.label}
+                          </p>
+                          <p className={cn(
+                            'text-sm',
+                            objectif === obj.value ? 'text-white/70' : 'text-[#4a5f4c]'
+                          )}>
+                            {obj.desc}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
               <button
                 disabled={!objectif}
                 onClick={() => setStep(2)}
-                className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0"
+                className={cn(
+                  'w-full flex items-center justify-center gap-2 bg-[#1a2e23] text-white font-bold text-sm px-8 py-4 rounded-full transition-all',
+                  objectif
+                    ? 'hover:bg-[#1a2e23]/90 hover:shadow-lg'
+                    : 'opacity-40 cursor-not-allowed'
+                )}
               >
-                Continuer <ArrowRight className="w-4 h-4 ml-2 inline-block" />
+                Continuer <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}
 
-          {/* Étape 2 — Coordonnées */}
+          {/* Etape 2 -- Coordonnees */}
           {step === 2 && (
             <form onSubmit={handleSubmit}>
               <div className="flex items-center justify-between mb-8">
-                <h2 className="font-display text-2xl font-black uppercase tracking-tight text-gray-900">
-                  Vos coordonnées
+                <h2 className="font-display text-2xl font-black uppercase tracking-tight text-[#1a2e23]">
+                  Vos coordonnees
                 </h2>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="text-[10px] font-black uppercase tracking-widest text-brand-700 hover:text-gray-900 transition-colors underline underline-offset-2"
+                  className="text-[11px] font-black uppercase tracking-widest text-[#4a5f4c] hover:text-[#1a2e23] transition-colors underline underline-offset-4"
                 >
-                  ← Modifier l&apos;objectif
+                  Modifier l&apos;objectif
                 </button>
               </div>
 
-              {/* Résumé objectif */}
-              <div className="bg-brand-50 border-2 border-brand-200 rounded-sm p-4 mb-8 flex items-center gap-3">
-                <span className="text-2xl">{OBJECTIFS.find(o => o.value === objectif)?.label.split(' ')[0]}</span>
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-brand-700">Objectif sélectionné</p>
-                  <p className="font-black text-gray-900">{OBJECTIFS.find(o => o.value === objectif)?.label}</p>
-                </div>
+              {/* Resume objectif */}
+              <div className="bg-[#1a2e23] rounded-[20px] p-5 mb-8 flex items-center gap-4">
+                {(() => {
+                  const selected = OBJECTIFS.find(o => o.value === objectif)
+                  if (!selected) return null
+                  const Icon = selected.icon
+                  return (
+                    <>
+                      <div className="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-black uppercase tracking-widest text-[#89a890]">Objectif selectionne</p>
+                        <p className="font-bold text-white">{selected.label}</p>
+                      </div>
+                    </>
+                  )
+                })()}
               </div>
 
               <div className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-700 mb-2">
-                      Prénom & Nom <span className="text-brand-600">*</span>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-[#4a5f4c] mb-2">
+                      Prenom & Nom <span className="text-[#7cb98b]">*</span>
                     </label>
                     <input
                       type="text"
@@ -169,26 +238,26 @@ export default function ConseilPage() {
                       value={form.name}
                       onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                       placeholder="Jean Dupont"
-                      className="w-full border-2 border-gray-200 rounded-sm px-4 py-3 text-sm font-medium focus:border-gray-900 focus:outline-none transition-colors"
+                      className="w-full bg-white border border-[#89a890]/20 rounded-[14px] px-4 py-3.5 text-sm text-[#1a2e23] placeholder:text-[#89a890] focus:border-[#4a5f4c] focus:ring-1 focus:ring-[#4a5f4c] focus:outline-none transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-700 mb-2">
-                      Téléphone
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-[#4a5f4c] mb-2">
+                      Telephone
                     </label>
                     <input
                       type="tel"
                       value={form.phone}
                       onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                       placeholder="06 00 00 00 00"
-                      className="w-full border-2 border-gray-200 rounded-sm px-4 py-3 text-sm font-medium focus:border-gray-900 focus:outline-none transition-colors"
+                      className="w-full bg-white border border-[#89a890]/20 rounded-[14px] px-4 py-3.5 text-sm text-[#1a2e23] placeholder:text-[#89a890] focus:border-[#4a5f4c] focus:ring-1 focus:ring-[#4a5f4c] focus:outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-gray-700 mb-2">
-                    Email <span className="text-brand-600">*</span>
+                  <label className="block text-[11px] font-black uppercase tracking-widest text-[#4a5f4c] mb-2">
+                    Email <span className="text-[#7cb98b]">*</span>
                   </label>
                   <input
                     type="email"
@@ -196,26 +265,26 @@ export default function ConseilPage() {
                     value={form.email}
                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                     placeholder="jean@exemple.com"
-                    className="w-full border-2 border-gray-200 rounded-sm px-4 py-3 text-sm font-medium focus:border-gray-900 focus:outline-none transition-colors"
+                    className="w-full bg-white border border-[#89a890]/20 rounded-[14px] px-4 py-3.5 text-sm text-[#1a2e23] placeholder:text-[#89a890] focus:border-[#4a5f4c] focus:ring-1 focus:ring-[#4a5f4c] focus:outline-none transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-gray-700 mb-2">
+                  <label className="block text-[11px] font-black uppercase tracking-widest text-[#4a5f4c] mb-2">
                     Message (facultatif)
                   </label>
                   <textarea
                     rows={4}
                     value={form.message}
                     onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                    placeholder="Décrivez votre situation, vos habitudes sportives, vos contraintes..."
-                    className="w-full border-2 border-gray-200 rounded-sm px-4 py-3 text-sm font-medium focus:border-gray-900 focus:outline-none transition-colors resize-none"
+                    placeholder="Decrivez votre situation, vos habitudes sportives, vos contraintes..."
+                    className="w-full bg-white border border-[#89a890]/20 rounded-[14px] px-4 py-3.5 text-sm text-[#1a2e23] placeholder:text-[#89a890] focus:border-[#4a5f4c] focus:ring-1 focus:ring-[#4a5f4c] focus:outline-none transition-all resize-none"
                   />
                 </div>
               </div>
 
               {error && (
-                <p className="mt-4 text-sm font-medium text-red-600 bg-red-50 border-2 border-red-200 rounded-sm px-4 py-3">
+                <p className="mt-4 text-sm font-medium text-red-700 bg-red-50 rounded-[14px] px-4 py-3">
                   {error}
                 </p>
               )}
@@ -223,36 +292,39 @@ export default function ConseilPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={cn(
+                  'w-full mt-8 flex items-center justify-center gap-2 bg-[#1a2e23] text-white font-bold text-sm px-8 py-4 rounded-full transition-all',
+                  loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#1a2e23]/90 hover:shadow-lg'
+                )}
               >
                 {loading ? 'Envoi en cours...' : 'Envoyer ma demande de conseil'}
               </button>
 
-              <p className="text-center text-[10px] font-black uppercase tracking-widest text-gray-400 mt-4">
-                Réponse sous 24–48h · Aucun engagement
+              <p className="text-center text-[11px] font-black uppercase tracking-widest text-[#89a890] mt-4">
+                Reponse sous 24-48h -- Aucun engagement
               </p>
             </form>
           )}
 
           {/* Infos boutique */}
-          <div className="mt-16 border-t-4 border-gray-900 pt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="mt-16 pt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              { icon: MapPin, label: 'Adresse', value: '8 Rue du Pont des Landes\n78310 Coignières' },
-              { icon: Clock, label: 'Horaires', value: '7j/7 · 11h–19h' },
-              { icon: Phone, label: 'Téléphone', value: '07 61 84 75 80', href: 'tel:+33761847580' },
+              { icon: MapPin, label: 'Adresse', value: '8 Rue du Pont des Landes\n78310 Coignieres' },
+              { icon: Clock, label: 'Horaires', value: '7j/7 -- 11h-19h' },
+              { icon: Phone, label: 'Telephone', value: '07 61 84 75 80', href: 'tel:+33761847580' },
             ].map(({ icon: Icon, label, value, href }) => (
-              <div key={label} className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-brand-50 border-2 border-brand-200 rounded-sm flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-5 h-5 text-brand-700" />
+              <div key={label} className="bg-white rounded-[20px] p-5 flex items-start gap-4">
+                <div className="w-10 h-10 bg-[#89a890]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5 text-[#4a5f4c]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">{label}</p>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-[#89a890] mb-1">{label}</p>
                   {href ? (
-                    <a href={href} className="font-bold text-gray-900 hover:text-brand-700 transition-colors text-sm">
+                    <a href={href} className="font-bold text-[#1a2e23] hover:text-[#7cb98b] transition-colors text-sm">
                       {value}
                     </a>
                   ) : (
-                    <p className="font-bold text-gray-900 text-sm whitespace-pre-line">{value}</p>
+                    <p className="font-bold text-[#1a2e23] text-sm whitespace-pre-line">{value}</p>
                   )}
                 </div>
               </div>
