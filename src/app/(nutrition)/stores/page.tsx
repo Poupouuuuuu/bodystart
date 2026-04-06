@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 import { MapPin, Clock, Phone, Mail, ArrowRight, Truck, ShoppingBag, CheckCircle } from 'lucide-react'
 import { BODY_START_STORES, COMING_SOON_STORES } from '@/lib/shopify/types'
 import NotifyForm from '@/components/stores/NotifyForm'
+import StoreStatus from '@/components/stores/StoreStatus'
 
 export const metadata: Metadata = {
   title: 'Nos boutiques',
   description: 'Retrouvez Body Start Nutrition en boutique. Click & Collect disponible.',
 }
 
-const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir/?api=1&destination=8+Rue+du+Pont+des+Landes+78310+Coigni%C3%A8res'
+const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'
 
 export default function StoresPage() {
   const store = BODY_START_STORES[0]
@@ -35,7 +36,7 @@ export default function StoresPage() {
             {/* Google Maps Embed */}
             <div className="aspect-video bg-[#e8ede5] relative overflow-hidden">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2635.3!2d1.9263!3d48.7508!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1sfr!2sfr!4v1"
+                src="https://maps.google.com/maps?q=48.736836,1.909592&z=17&ie=UTF8&iwloc=&output=embed"
                 className="w-full h-full border-0"
                 allowFullScreen
                 loading="lazy"
@@ -49,10 +50,7 @@ export default function StoresPage() {
               {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-green-700 mb-3">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                    Ouverte
-                  </div>
+                  <StoreStatus hours={store.hours} />
                   <h2 className="font-display font-black text-2xl md:text-3xl uppercase tracking-tighter text-[#1a2e23] leading-none">
                     {store.name}
                   </h2>
@@ -60,30 +58,28 @@ export default function StoresPage() {
               </div>
 
               {/* Infos de contact */}
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-4 text-[13px] font-medium text-[#4a5f4c]">
-                  <div className="w-10 h-10 rounded-2xl bg-[#1a2e23]/5 flex items-center justify-center flex-shrink-0">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div className="flex flex-col items-center text-center p-5 bg-[#f4f6f1] rounded-[20px]">
+                  <div className="w-11 h-11 rounded-full bg-[#1a2e23]/10 flex items-center justify-center mb-3">
                     <MapPin className="w-5 h-5 text-[#1a2e23]" />
                   </div>
-                  <div className="pt-2">
-                    <span>{store.address}</span><br />
-                    <span className="font-bold text-[#1a2e23]">{store.city}</span>
-                  </div>
+                  <span className="text-[13px] font-medium text-[#4a5f4c] leading-snug">{store.address}</span>
+                  <span className="text-[13px] font-bold text-[#1a2e23]">{store.city}</span>
                 </div>
-                <div className="flex items-center gap-4 text-[13px] font-medium text-[#4a5f4c]">
-                  <div className="w-10 h-10 rounded-2xl bg-[#1a2e23]/5 flex items-center justify-center flex-shrink-0">
+                <div className="flex flex-col items-center text-center p-5 bg-[#f4f6f1] rounded-[20px]">
+                  <div className="w-11 h-11 rounded-full bg-[#1a2e23]/10 flex items-center justify-center mb-3">
                     <Phone className="w-5 h-5 text-[#1a2e23]" />
                   </div>
-                  <a href={`tel:${store.phone.replace(/\s/g, '')}`} className="pt-0.5 hover:text-[#1a2e23] transition-colors">
+                  <a href={`tel:${store.phone.replace(/\s/g, '')}`} className="text-[13px] font-bold text-[#1a2e23] hover:text-[#4a5f4c] transition-colors">
                     {store.phone}
                   </a>
                 </div>
-                <div className="flex items-center gap-4 text-[13px] font-medium text-[#4a5f4c]">
-                  <div className="w-10 h-10 rounded-2xl bg-[#1a2e23]/5 flex items-center justify-center flex-shrink-0">
+                <div className="flex flex-col items-center text-center p-5 bg-[#f4f6f1] rounded-[20px]">
+                  <div className="w-11 h-11 rounded-full bg-[#1a2e23]/10 flex items-center justify-center mb-3">
                     <Mail className="w-5 h-5 text-[#1a2e23]" />
                   </div>
-                  <a href="mailto:contact@bodystart.fr" className="pt-0.5 hover:text-[#1a2e23] transition-colors">
-                    contact@bodystart.fr
+                  <a href="mailto:bodystartnutrition@gmail.com" className="text-[13px] font-bold text-[#1a2e23] hover:text-[#4a5f4c] transition-colors">
+                    bodystartnutrition@gmail.com
                   </a>
                 </div>
               </div>

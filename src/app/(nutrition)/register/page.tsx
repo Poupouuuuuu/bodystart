@@ -52,6 +52,18 @@ function RegisterContent() {
     if (apiErrors.length > 0) {
       setErrors(apiErrors.map((err) => err.message))
     } else {
+      // Ajout à l'audience newsletter si acceptsMarketing
+      if (form.acceptsMarketing) {
+        try {
+          await fetch('/api/newsletter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: form.email }),
+          })
+        } catch {
+          // Non bloquant — on continue
+        }
+      }
       router.push(`/account${authQuery}`)
     }
     setLoading(false)

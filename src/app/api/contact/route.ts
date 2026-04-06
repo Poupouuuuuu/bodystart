@@ -1,18 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
-import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const TO = process.env.CONTACT_EMAIL_TO ?? 'contact@bodystart.com'
+const TO = process.env.CONTACT_EMAIL_TO ?? 'bodystartnutrition@gmail.com'
 
-// ─── Rate limiter : 5 requêtes / 10 min par IP ──────────────
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, '10 m'),
-  analytics: true,
-  prefix: 'ratelimit:contact',
-})
+// ─── Rate limiter : 5 requêtes / 10 min par IP (optionnel si Upstash non configuré) ───
+let ratelimit: { limit: (key: string) => Promise<{ success: boolean; remaining: number }> } | null = null
+if (process.env.UPSTASH_REDIS_REST_URL && !process.env.UPSTASH_REDIS_REST_URL.includes('xxx')) {
+  const { Ratelimit } = require('@upstash/ratelimit')
+  const { Redis } = require('@upstash/redis')
+  ratelimit = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(5, '10 m'),
+    analytics: true,
+    prefix: 'ratelimit:contact',
+  })
+}
 
 // ─── Échappement HTML ────────────────────────────────────────
 function escapeHtml(str: string): string {
@@ -26,15 +29,17 @@ function escapeHtml(str: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    // ─── Rate limiting ───
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1'
-    const { success, remaining } = await ratelimit.limit(ip)
+    // ─── Rate limiting (skip si Upstash non configuré) ───
+    if (ratelimit) {
+      const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1'
+      const { success, remaining } = await ratelimit.limit(ip)
 
-    if (!success) {
-      return NextResponse.json(
-        { error: 'Trop de requêtes. Réessayez dans quelques minutes.' },
-        { status: 429, headers: { 'X-RateLimit-Remaining': String(remaining) } }
-      )
+      if (!success) {
+        return NextResponse.json(
+          { error: 'Trop de requêtes. Réessayez dans quelques minutes.' },
+          { status: 429, headers: { 'X-RateLimit-Remaining': String(remaining) } }
+        )
+      }
     }
 
     const body = await req.json()

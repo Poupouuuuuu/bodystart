@@ -9,9 +9,9 @@ export default function HeroSection() {
       <div className="container relative z-30 flex-grow flex flex-col lg:flex-row items-center h-full pt-12 lg:pt-0">
         
         {/* Left: Typography */}
-        <div className="w-full lg:w-[60%] relative z-20 shrink-0 pb-12 lg:pb-0 flex flex-col justify-center">
-          
-          <h1 className="font-display text-[55px] sm:text-[75px] lg:text-[110px] font-black uppercase leading-[0.85] text-[#1a2e23] mb-8 tracking-tighter relative z-20">
+        <div className="w-full lg:w-[55%] relative z-20 shrink-0 pb-16 lg:pb-0 flex flex-col justify-center">
+
+          <h1 className="font-display text-[44px] sm:text-[70px] lg:text-[100px] font-black uppercase leading-[0.85] text-[#1a2e23] mb-8 tracking-tighter relative z-20">
             COMPLÉMENTS<br />
             QUI FONT LA<br />
             <span className="text-[#89a890]">
@@ -32,7 +32,7 @@ export default function HeroSection() {
         </div>
 
         {/* Right: Dramatic Runner Image */}
-        <div className="w-full lg:w-[50%] h-[400px] lg:h-full relative z-10 flex items-end justify-center lg:justify-end mt-10 lg:mt-0 lg:absolute lg:bottom-0 lg:right-0">
+        <div className="w-full lg:w-[50%] h-[400px] lg:h-full relative z-10 flex items-end justify-center lg:justify-end mt-16 lg:mt-0 lg:absolute lg:bottom-0 lg:right-0">
           <img
             src="/hero-runner.png"
             alt="Athlète avec compléments alimentaires Body Start"

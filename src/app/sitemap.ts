@@ -9,7 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/products`, priority: 0.9, changeFrequency: 'daily' as const },
     { url: `${baseUrl}/stores`, priority: 0.8, changeFrequency: 'weekly' as const },
     { url: `${baseUrl}/about`, priority: 0.7, changeFrequency: 'monthly' as const },
-    { url: `${baseUrl}/blog`, priority: 0.8, changeFrequency: 'weekly' as const },
     { url: `${baseUrl}/coaching`, priority: 0.6, changeFrequency: 'monthly' as const },
     { url: `${baseUrl}/vetements`, priority: 0.6, changeFrequency: 'monthly' as const },
     { url: `${baseUrl}/faq`, priority: 0.7, changeFrequency: 'monthly' as const },
@@ -34,14 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: 'monthly' as const,
   }))
 
-  const blogSlugs = ['comment-choisir-sa-proteine', 'creatine-guide-complet', 'recuperation-musculaire']
-  const blogRoutes = blogSlugs.map(slug => ({
-    url: `${baseUrl}/blog/${slug}`,
-    priority: 0.7,
-    changeFrequency: 'monthly' as const,
-  }))
-
-  return [...staticRoutes, ...collectionRoutes, ...objectifRoutes, ...blogRoutes].map(route => ({
+  return [...staticRoutes, ...collectionRoutes, ...objectifRoutes].map(route => ({
     ...route,
     lastModified: now,
   }))
