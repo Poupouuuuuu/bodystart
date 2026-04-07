@@ -4,12 +4,13 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock } from 'lucide-react'
+import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, CheckCircle2 } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
+const FREE_SHIPPING_THRESHOLD = 85
 
 export default function CartDrawer() {
   const { cart, isOpen, isLoading, closeCart, updateItem, removeItem, setCartAttributes } = useCart()
@@ -21,6 +22,11 @@ export default function CartDrawer() {
 
   const items = cart?.lines?.nodes ?? []
   const isEmpty = items.length === 0
+
+  const subtotalAmount = parseFloat(cart?.cost?.subtotalAmount?.amount ?? '0')
+  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotalAmount)
+  const freeShippingProgress = Math.min(100, (subtotalAmount / FREE_SHIPPING_THRESHOLD) * 100)
+  const hasFreeShipping = subtotalAmount >= FREE_SHIPPING_THRESHOLD
 
   async function toggleClickAndCollect() {
     const newValue = !isClickAndCollect
@@ -76,6 +82,39 @@ export default function CartDrawer() {
           </button>
         </div>
 
+        {/* ─── Barre livraison gratuite ─── */}
+        {!isEmpty && !isClickAndCollect && !isCoaching && (
+          <div className="px-8 pb-5">
+            <div className="bg-white/60 border border-[#1a2e23]/5 rounded-xl p-4 shadow-sm">
+              {hasFreeShipping ? (
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#1a2e23] flex-shrink-0" />
+                  <p className="text-[12px] font-bold text-[#1a2e23]">
+                    Votre livraison est offerte !
+                  </p>
+                </div>
+              ) : (
+                <p className="text-[12px] font-medium text-[#4a5f4c] mb-2.5">
+                  Plus que{' '}
+                  <span className="font-black text-[#1a2e23]">
+                    {formatPrice({
+                      amount: remainingForFreeShipping.toFixed(2),
+                      currencyCode: cart?.cost?.subtotalAmount?.currencyCode ?? 'EUR',
+                    })}
+                  </span>{' '}
+                  pour la livraison offerte
+                </p>
+              )}
+              <div className="relative h-1.5 bg-[#1a2e23]/10 rounded-full overflow-hidden">
+                <div
+                  className="absolute inset-y-0 left-0 bg-[#1a2e23] rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${freeShippingProgress}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ─── Contenu ─── */}
         {isEmpty ? (
           /* Panier vide */
@@ -99,7 +138,7 @@ export default function CartDrawer() {
           </div>
         ) : (
           /* Liste des produits */
-          <div className="flex-1 overflow-y-auto px-8 py-2 space-y-6">
+          <div className="flex-1 overflow-y-auto px-8 pt-2 pb-8 space-y-6">
             {items.map((item) => {
               const product = item.merchandise.product
               const image = product.featuredImage
@@ -189,11 +228,11 @@ export default function CartDrawer() {
 
         {/* ─── Footer récap + checkout ─── */}
         {!isEmpty && cart && (
-          <div className="px-8 pb-8 pt-4">
-            
+          <div className="px-8 pb-8 pt-5 border-t border-[#1a2e23]/10 bg-[#eef3eb] shadow-[0_-8px_20px_-12px_rgba(26,46,35,0.1)]">
+
             {/* ─── Toggle Livraison / Click & Collect ─── */}
             {activeStore && (
-              <div className="flex bg-white/50 p-1 rounded-xl mb-6 shadow-sm border border-[#1a2e23]/5">
+              <div className="flex bg-white/70 p-1 rounded-xl mb-5 shadow-sm border border-[#1a2e23]/5">
                 <button
                   onClick={() => isClickAndCollect && toggleClickAndCollect()}
                   className={cn(

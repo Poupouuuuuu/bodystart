@@ -2,9 +2,9 @@ import Link from 'next/link'
 import { ArrowRight, Home, Search, ShoppingBag } from 'lucide-react'
 
 const QUICK_LINKS = [
-  { label: 'Protéines', href: '/collections/proteines' },
-  { label: 'Vitamines', href: '/collections/vitamines' },
-  { label: 'Performance', href: '/collections/performance' },
+  { label: 'Protéines', href: '/products?cat=proteines' },
+  { label: 'Vitamines', href: '/products?cat=sante' },
+  { label: 'Performance', href: '/products?obj=muscle' },
   { label: 'FAQ', href: '/faq' },
 ]
 

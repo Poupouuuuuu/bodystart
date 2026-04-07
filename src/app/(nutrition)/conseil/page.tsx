@@ -83,17 +83,14 @@ export default function ConseilPage() {
 
   return (
     <div className="bg-[#f4f6f1] min-h-screen">
-      {/* Hero */}
-      <div className="bg-[#1a2e23] text-white py-20">
-        <div className="container max-w-3xl text-center">
-          <span className="inline-block text-[11px] font-black uppercase tracking-widest text-[#89a890] mb-6">
-            Conseil personnalise
-          </span>
-          <h1 className="font-display text-4xl md:text-6xl font-black uppercase tracking-tight mb-6 leading-none">
-            Parlez-nous de votre objectif
+      {/* ─── Hero ─── */}
+      <div className="pt-16 pb-12 md:pt-20 md:pb-16">
+        <div className="container text-center max-w-3xl">
+          <h1 className="font-display text-[45px] md:text-[65px] lg:text-[80px] font-black uppercase text-[#1a2e23] tracking-tighter leading-none mb-6">
+            CONSEIL PERSONNALISÉ
           </h1>
-          <p className="text-white/70 text-lg max-w-xl mx-auto">
-            En 2 minutes, on prepare votre programme sur mesure. Vous venez en boutique, on s&apos;occupe du reste.
+          <p className="text-[#4a5f4c] font-medium text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+            En 2 minutes, on prépare votre programme sur mesure. Vous venez en boutique, on s&apos;occupe du reste.
           </p>
         </div>
       </div>

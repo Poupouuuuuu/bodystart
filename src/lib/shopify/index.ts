@@ -186,7 +186,7 @@ export async function updateCartAttributes(
 // ─── INVENTORY (Admin API — server-only) ─────────────────────
 
 interface AdminInventoryLevel {
-  location: { id: string; name: string }
+  location: { id: string }
   quantities: { name: string; quantity: number }[]
 }
 

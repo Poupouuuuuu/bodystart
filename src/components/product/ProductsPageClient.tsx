@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
 import { SlidersHorizontal, X, ChevronDown, Search, Minus, Plus, ShoppingCart, Package, Star } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
@@ -139,15 +140,36 @@ interface Props {
 }
 
 export default function ProductsPageClient({ products, collections }: Props) {
-  const [activeGoal, setActiveGoal] = useState('all')
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const [activeTag, setActiveTag] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+
+  // ─── Lecture initiale des query params (?cat=proteines, ?obj=muscle, ?tag=whey) ───
+  const initialCat = searchParams?.get('cat') ?? null
+  const initialObj = searchParams?.get('obj') ?? 'all'
+  const initialTag = searchParams?.get('tag') ?? null
+
+  const [activeGoal, setActiveGoal] = useState(initialObj)
+  const [activeCategory, setActiveCategory] = useState<string | null>(initialCat)
+  const [activeTag, setActiveTag] = useState<string | null>(initialTag)
   const [sortKey, setSortKey] = useState('best')
   const [showFilters, setShowFilters] = useState(false)
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200])
   const [visibleCount, setVisibleCount] = useState(12)
   const [searchQuery, setSearchQuery] = useState('')
-  const [openSections, setOpenSections] = useState<Set<string>>(new Set())
+  const [openSections, setOpenSections] = useState<Set<string>>(
+    initialCat ? new Set([initialCat]) : new Set()
+  )
+
+  // Resync si l'URL change (navigation interne via Link vers /products?cat=...)
+  useEffect(() => {
+    const cat = searchParams?.get('cat') ?? null
+    const obj = searchParams?.get('obj') ?? 'all'
+    const tag = searchParams?.get('tag') ?? null
+    setActiveCategory(cat)
+    setActiveGoal(obj)
+    setActiveTag(tag)
+    if (cat) setOpenSections((prev) => new Set(prev).add(cat))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   const hasProducts = products.length > 0
 
@@ -166,11 +188,13 @@ export default function ProductsPageClient({ products, collections }: Props) {
   )
 
   useEffect(() => { setVisibleCount(12) }, [activeGoal, activeCategory, activeTag, priceRange, sortKey, searchQuery])
-  useEffect(() => { setActiveTag(null) }, [activeCategory])
-  useEffect(() => {
+
+  // Sélection d'un objectif → reset catégorie/tag (sans interférer avec l'init URL)
+  const handleGoalClick = (key: string) => {
+    setActiveGoal(key)
     setActiveCategory(null)
     setActiveTag(null)
-  }, [activeGoal])
+  }
 
   const handleCategoryClick = (key: string) => {
     if (activeCategory === key) {
@@ -290,7 +314,7 @@ export default function ProductsPageClient({ products, collections }: Props) {
             {GOALS.map(({ key, label, image }) => (
               <button
                 key={key}
-                onClick={() => setActiveGoal(key)}
+                onClick={() => handleGoalClick(key)}
                 className={cn(
                   'flex items-center gap-2.5 px-5 py-3 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all duration-300 border',
                   activeGoal === key
@@ -299,7 +323,7 @@ export default function ProductsPageClient({ products, collections }: Props) {
                 )}
               >
                 {image && (
-                  <img src={image} alt={label} className="w-6 h-6 object-contain" />
+                  <Image src={image} alt={label} width={24} height={24} className="w-6 h-6 object-contain" />
                 )}
                 {label}
               </button>

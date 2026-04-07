@@ -19,9 +19,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const product = await getProductByHandle(params.handle)
     if (!product) return { title: 'Produit introuvable' }
+
+    const description = product.description?.slice(0, 160) ?? ''
+    const image = product.featuredImage?.url
+
     return {
       title: product.title,
-      description: product.description?.slice(0, 160) ?? '',
+      description,
+      alternates: {
+        canonical: `/products/${product.handle}`,
+      },
+      openGraph: {
+        title: product.title,
+        description,
+        type: 'website',
+        url: `/products/${product.handle}`,
+        images: image
+          ? [{ url: image, width: 1200, height: 1200, alt: product.title }]
+          : undefined,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: product.title,
+        description,
+        images: image ? [image] : undefined,
+      },
     }
   } catch {
     return { title: 'Produit' }
@@ -31,9 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   let product = null
   try {
-    console.log('[ProductPage] Fetching handle:', params.handle)
     product = await getProductByHandle(params.handle)
-    console.log('[ProductPage] Result for', params.handle, ':', product ? `FOUND (id=${product.id})` : 'NULL — produit introuvable ou brouillon')
   } catch (err) {
     console.error('[ProductPage] Erreur API pour handle:', params.handle, err)
   }
@@ -48,8 +68,9 @@ export default async function ProductPage({ params }: Props) {
       const levels = await getProductInventoryByLocation(product.id, activeStore.shopifyLocationId)
       const totalAvailable = levels.reduce((sum, v) => sum + v.available, 0)
       storeInventory[activeStore.id] = totalAvailable
-    } catch {
-      // Admin API non configurée — on continue sans stock
+      console.log('[ClickCollect] product:', product.handle, '→', totalAvailable, 'units @', activeStore.id)
+    } catch (err) {
+      console.error('[ClickCollect] inventory fetch failed for', product.handle, err)
     }
   }
 
@@ -167,7 +188,7 @@ export default async function ProductPage({ params }: Props) {
       </div>
 
       {/* ─── TRANSITION COURBEE (Wave SVG) ─── */}
-      <div className="relative w-full h-[150px] -mt-[149px] z-20 pointer-events-none overflowing-hidden">
+      <div className="relative w-full h-[150px] -mt-[149px] z-20 pointer-events-none overflow-hidden">
         <svg viewBox="0 0 1440 320" preserveAspectRatio="none" className="absolute bottom-0 w-full h-full">
           <path 
             fill="#d1dcca" 

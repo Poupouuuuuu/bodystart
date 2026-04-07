@@ -66,6 +66,8 @@ export async function getProductReviews(
 
 // Derniers avis toutes catégories (pour la home)
 export async function getLatestReviews(perPage = 6): Promise<JudgemeReview[]> {
+  // Pas de token configuré → on évite l'appel réseau qui ralentit le SSR pour rien
+  if (!API_TOKEN) return []
   try {
     const res = await fetch(
       `${BASE_URL}/reviews?api_token=${API_TOKEN}&shop_domain=${SHOP_DOMAIN}&per_page=${perPage}&page=1&rating=5`,

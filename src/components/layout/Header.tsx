@@ -4,11 +4,20 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense, useState, useEffect } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { ShoppingBag, Menu, X, ChevronDown, Search, User } from 'lucide-react'
+import { ShoppingBag, Menu, X, ChevronDown, Search, User, Loader2 } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useCustomer } from '@/context/CustomerContext'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 import type { ShopifyCollection } from '@/lib/shopify/types'
+
+type SearchResult = {
+  id: string
+  handle: string
+  title: string
+  image: string | null
+  price: string
+  currency: string
+}
 
 type NavCategory = { label: string; href: string; children?: { label: string; href: string }[] }
 
@@ -31,7 +40,9 @@ const EXCLUDED_NAV_COLLECTIONS = ['frontpage', 'home-page', 'homepage', 'selecti
 
 function buildNutritionCategories(): NavCategory[] {
   return [
+    { label: 'Accueil', href: '/' },
     { label: 'Tous les produits', href: '/products' },
+    { label: 'Packs & Économies', href: '/packs' },
     { label: 'La boutique', href: '/stores' },
     { label: 'Conseil gratuit', href: '/conseil' },
   ]
@@ -54,6 +65,9 @@ function HeaderInner({ collections = [] }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [scrolled, setScrolled] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
+  const [isSearching, setIsSearching] = useState(false)
 
   const { totalQuantity, openCart } = useCart()
   const { isLoggedIn, customer } = useCustomer()
@@ -71,6 +85,49 @@ function HeaderInner({ collections = [] }: HeaderProps) {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Live search avec debounce 200ms
+  useEffect(() => {
+    const q = searchQuery.trim()
+    if (q.length < 2) {
+      setSearchResults([])
+      setIsSearching(false)
+      return
+    }
+    setIsSearching(true)
+    const controller = new AbortController()
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/search?q=' + encodeURIComponent(q), {
+          signal: controller.signal,
+        })
+        if (!res.ok) throw new Error()
+        const data = await res.json()
+        setSearchResults(data.results ?? [])
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') setSearchResults([])
+      } finally {
+        setIsSearching(false)
+      }
+    }, 200)
+
+    return () => {
+      controller.abort()
+      clearTimeout(timer)
+    }
+  }, [searchQuery])
+
+  // Reset search en fermeture / changement de page
+  useEffect(() => {
+    if (!isSearchOpen) {
+      setSearchQuery('')
+      setSearchResults([])
+    }
+  }, [isSearchOpen])
+
+  useEffect(() => {
+    setIsSearchOpen(false)
+  }, [pathname])
 
   return (
     <header className={cn(
@@ -111,7 +168,7 @@ function HeaderInner({ collections = [] }: HeaderProps) {
               </Link>
             </div>
             <p className="hidden md:block text-xs text-white/60 font-medium py-2">
-              Livraison offerte dès 60€ · Click &amp; Collect disponible
+              Livraison offerte dès 85€ · Click &amp; Collect disponible
             </p>
           </div>
         </div>
@@ -283,42 +340,178 @@ function HeaderInner({ collections = [] }: HeaderProps) {
         {/* ─── Inline Search Dropdown ─── */}
         <div
           className={cn(
-            "absolute left-0 w-full border-b transition-all overflow-hidden z-30",
-            isSearchOpen ? "max-h-32 opacity-100 py-4" : "max-h-0 opacity-0 py-0",
+            "absolute left-0 w-full border-b transition-[max-height,opacity] duration-300 ease-out z-30 shadow-xl",
+            isSearchOpen ? "max-h-[85vh] opacity-100" : "max-h-0 opacity-0 overflow-hidden",
             isCoaching ? "bg-gray-950 border-white/10" : "bg-white border-cream-300"
           )}
           style={{ top: '100%' }}
         >
-          <form
-            className="container relative max-w-2xl mx-auto"
-            onSubmit={(e) => {
-              e.preventDefault()
-              const input = e.currentTarget.querySelector('input') as HTMLInputElement
-              const q = input?.value?.trim()
-              if (q) {
-                setIsSearchOpen(false)
-                router.push('/search?q=' + encodeURIComponent(q))
-              }
-            }}
-          >
-            <div className="relative">
-              <Search className={cn(
-                "absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5",
-                isCoaching ? "text-gray-500" : "text-gray-400"
-              )} />
-              <input
-                type="text"
-                placeholder={isCoaching ? "Rechercher un programme..." : "Rechercher un produit..."}
-                className={cn(
-                  "w-full text-sm font-medium py-4 pl-12 pr-6 rounded-full outline-none border transition-colors",
-                  isCoaching
-                    ? "bg-gray-900 border-white/10 text-white focus:border-coaching-500 placeholder-gray-600"
-                    : "bg-cream-100 border-cream-300 text-gray-900 focus:border-brand-500 placeholder-gray-400"
+          <div className="container max-w-5xl mx-auto pt-5 pb-2">
+            <form
+              className="relative"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const q = searchQuery.trim()
+                if (q) {
+                  setIsSearchOpen(false)
+                  router.push('/search?q=' + encodeURIComponent(q))
+                }
+              }}
+            >
+              <div className="relative">
+                <Search className={cn(
+                  "absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5",
+                  isCoaching ? "text-gray-500" : "text-gray-400"
+                )} />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={isCoaching ? "Rechercher un programme..." : "Rechercher un produit, une marque, un objectif..."}
+                  className={cn(
+                    "w-full text-base font-medium py-4 pl-14 pr-14 rounded-full outline-none border-2 transition-colors",
+                    isCoaching
+                      ? "bg-gray-900 border-white/10 text-white focus:border-coaching-500 placeholder-gray-600"
+                      : "bg-cream-100 border-cream-200 text-gray-900 focus:border-brand-500 placeholder-gray-400"
+                  )}
+                  autoFocus={isSearchOpen}
+                />
+                {isSearching ? (
+                  <Loader2 className={cn(
+                    "absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin",
+                    isCoaching ? "text-coaching-500" : "text-brand-500"
+                  )} />
+                ) : searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className={cn(
+                      "absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors",
+                      isCoaching ? "text-gray-400 hover:bg-white/10" : "text-gray-500 hover:bg-cream-200"
+                    )}
+                    aria-label="Effacer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 )}
-                autoFocus={isSearchOpen}
-              />
+              </div>
+            </form>
+          </div>
+
+          {/* Zone scrollable des résultats */}
+          {searchQuery.trim().length >= 2 && (
+            <div
+              className="overflow-y-auto overscroll-contain"
+              style={{ maxHeight: 'calc(85vh - 110px)' }}
+            >
+              <div className="container max-w-5xl mx-auto pb-6">
+                {searchResults.length > 0 ? (
+                  <>
+                    <p className={cn(
+                      "text-[11px] font-bold uppercase tracking-widest mb-4",
+                      isCoaching ? "text-gray-500" : "text-gray-400"
+                    )}>
+                      {searchResults.length} produit{searchResults.length > 1 ? 's' : ''} trouvé{searchResults.length > 1 ? 's' : ''}
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                      {searchResults.map((result) => (
+                        <Link
+                          key={result.id}
+                          href={`/products/${result.handle}`}
+                          onClick={() => setIsSearchOpen(false)}
+                          className={cn(
+                            "group relative flex flex-col rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5",
+                            isCoaching
+                              ? "bg-gray-900 border-white/10 hover:border-coaching-500/40 hover:shadow-lg hover:shadow-coaching-500/10"
+                              : "bg-white border-cream-200 hover:border-brand-500/40 hover:shadow-lg"
+                          )}
+                        >
+                          <div className={cn(
+                            "relative aspect-square overflow-hidden",
+                            isCoaching ? "bg-gray-800" : "bg-cream-100"
+                          )}>
+                            {result.image ? (
+                              <Image
+                                src={result.image}
+                                alt={result.title}
+                                fill
+                                sizes="(min-width: 768px) 200px, 50vw"
+                                className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <Search className={cn(
+                                  "w-8 h-8",
+                                  isCoaching ? "text-gray-700" : "text-cream-300"
+                                )} />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1 p-3">
+                            <p className={cn(
+                              "text-sm font-semibold line-clamp-2 leading-snug min-h-[2.5rem]",
+                              isCoaching ? "text-white" : "text-gray-900"
+                            )}>
+                              {result.title}
+                            </p>
+                            <p className={cn(
+                              "text-sm font-bold mt-0.5",
+                              isCoaching ? "text-coaching-500" : "text-brand-500"
+                            )}>
+                              {formatPrice({ amount: result.price, currencyCode: result.currency })}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsSearchOpen(false)
+                        router.push('/search?q=' + encodeURIComponent(searchQuery.trim()))
+                      }}
+                      className={cn(
+                        "w-full mt-6 flex items-center justify-center gap-2 text-sm font-bold py-4 rounded-full transition-all",
+                        isCoaching
+                          ? "bg-coaching-500 text-white hover:bg-coaching-cyan-400"
+                          : "bg-brand-500 text-white hover:bg-brand-600 shadow-md hover:shadow-lg"
+                      )}
+                    >
+                      Voir tous les résultats pour « {searchQuery.trim()} »
+                      <ChevronDown className="w-4 h-4 -rotate-90" />
+                    </button>
+                  </>
+                ) : (
+                  !isSearching && (
+                    <div className="text-center py-12">
+                      <div className={cn(
+                        "w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center",
+                        isCoaching ? "bg-white/5" : "bg-cream-100"
+                      )}>
+                        <Search className={cn(
+                          "w-6 h-6",
+                          isCoaching ? "text-gray-600" : "text-gray-400"
+                        )} />
+                      </div>
+                      <p className={cn(
+                        "text-sm font-semibold mb-1",
+                        isCoaching ? "text-white" : "text-gray-900"
+                      )}>
+                        Aucun produit trouvé
+                      </p>
+                      <p className={cn(
+                        "text-xs",
+                        isCoaching ? "text-gray-500" : "text-gray-500"
+                      )}>
+                        Essayez avec un autre mot-clé
+                      </p>
+                    </div>
+                  )
+                )}
+              </div>
             </div>
-          </form>
+          )}
         </div>
       </div>
 

@@ -79,18 +79,18 @@ export default function ProductGallery({ images, title, discountPct, selectedInd
           )}
         </div>
 
-        {/* Vignettes horizontales (clean & minimal) */}
+        {/* Vignettes horizontales — wrap si beaucoup de variantes pour rester dans la colonne */}
         {images.length > 1 && (
-          <div className="flex justify-center gap-4 mt-4">
+          <div className="flex flex-wrap justify-center gap-3 mt-4 px-1">
             {images.map((img, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => handleSelect(i)}
                 className={cn(
-                  'relative w-16 h-16 flex-shrink-0 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300',
+                  'relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300',
                   selectedIndex === i
-                    ? 'ring-2 ring-[#2c3e2e] scale-110 shadow-lg bg-white/50'
+                    ? 'ring-2 ring-[#2c3e2e] shadow-lg bg-white/50'
                     : 'opacity-60 hover:opacity-100 bg-white/20'
                 )}
                 aria-label={`Voir image ${i + 1}`}

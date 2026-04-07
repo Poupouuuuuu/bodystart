@@ -6,19 +6,19 @@ const CATEGORIES = [
   {
     icon: Dumbbell,
     label: 'Prise de masse',
-    href: '/collections/prise-de-masse',
+    href: '/products?obj=muscle',
     image: '/category-masse.png',
   },
   {
     icon: Activity,
     label: 'Récupération',
-    href: '/collections/recuperation',
+    href: '/products?obj=recuperation',
     image: '/category-recuperation.png',
   },
   {
     icon: ShieldPlus,
     label: 'Santé & Vitalité',
-    href: '/collections/sante',
+    href: '/products?obj=sante',
     image: '/category-sante.png',
   },
 ]

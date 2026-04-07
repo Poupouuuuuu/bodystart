@@ -32,7 +32,7 @@ export default function BrandValues() {
             Nous sélectionnons les meilleures marques de compléments alimentaires, testées par nos professionnels en boutique. Qualité, transparence et résultats : chaque produit est choisi pour vous accompagner dans vos objectifs.
           </p>
           <Link
-            href="/collections/objectifs"
+            href="/products"
             className="inline-flex items-center gap-2 bg-white text-gray-900 font-bold text-sm px-8 py-3.5 rounded-full hover:bg-white/90 transition-all shadow-lg uppercase tracking-wider"
           >
             Découvrir nos marques

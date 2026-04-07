@@ -86,7 +86,7 @@ export default function ProductSection({
       <div className="lg:pr-8">
         {/* Badge collection / Marque */}
         <Link
-          href={collectionHandle ? `/collections/${collectionHandle}` : '/products'}
+          href={collectionHandle ? `/products?cat=${collectionHandle}` : '/products'}
           className="font-bold text-[10px] uppercase tracking-[0.2em] text-[#4a5f4c] mb-4 inline-block"
         >
           {collectionName || 'BODY START NUTRITION'}
@@ -122,7 +122,7 @@ export default function ProductSection({
         <div className="flex flex-col gap-3 mt-8 pt-6 border-t border-[#2c3e2e]/10">
           <div className="flex items-center gap-3 font-bold text-[11px] tracking-widest text-[#2c3e2e] uppercase">
             <Truck className="w-4 h-4 text-[#4a5f4c]" />
-            <span>LIVRAISON OFFERTE DÈS 60 €</span>
+            <span>LIVRAISON OFFERTE DÈS 85 €</span>
           </div>
 
           {/* Badge stock en boutique */}

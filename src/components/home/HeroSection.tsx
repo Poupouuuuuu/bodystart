@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { FlaskConical, ShieldCheck, Award, Zap, Leaf } from 'lucide-react'
 
 export default function HeroSection() {
@@ -24,7 +25,7 @@ export default function HeroSection() {
           </p>
 
           <Link
-            href="/collections/objectifs"
+            href="/products"
             className="inline-flex items-center justify-center bg-[#1a2e23] text-white font-bold text-[13px] px-10 py-5 rounded-full transition-all hover:-translate-y-1 hover:shadow-xl uppercase tracking-widest w-max"
           >
             DÉCOUVRIR LES PRODUITS
@@ -33,11 +34,16 @@ export default function HeroSection() {
 
         {/* Right: Dramatic Runner Image */}
         <div className="w-full lg:w-[50%] h-[400px] lg:h-full relative z-10 flex items-end justify-center lg:justify-end mt-16 lg:mt-0 lg:absolute lg:bottom-0 lg:right-0">
-          <img
-            src="/hero-runner.png"
-            alt="Athlète avec compléments alimentaires Body Start"
-            className="w-full lg:w-[130%] max-w-[800px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)] origin-bottom lg:translate-x-12"
-          />
+          <div className="relative w-full lg:w-[130%] max-w-[800px] h-full lg:translate-x-12">
+            <Image
+              src="/hero-runner.png"
+              alt="Athlète avec compléments alimentaires Body Start"
+              fill
+              priority
+              sizes="(min-width: 1024px) 65vw, 100vw"
+              className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+            />
+          </div>
         </div>
       </div>
 

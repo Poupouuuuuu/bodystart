@@ -10,7 +10,7 @@ const FAQ_ITEMS = [
     category: 'Commandes & Livraison',
     questions: [
       { q: 'Quels sont les délais de livraison ?', a: 'Colissimo : 2 à 4 jours ouvrés. Mondial Relay : 3 à 5 jours ouvrés. Click & Collect : disponible sous 2h en boutique.' },
-      { q: 'La livraison est-elle gratuite ?', a: 'La livraison est gratuite à partir de 60€ d\'achat. En dessous, les frais sont de 5,90€ en Colissimo et 3,90€ en Mondial Relay.' },
+      { q: 'La livraison est-elle gratuite ?', a: 'La livraison est gratuite à partir de 85€ d\'achat. En dessous, les frais sont de 5,90€ en Colissimo et 3,90€ en Mondial Relay.' },
       { q: 'Comment suivre ma commande ?', a: 'Vous recevrez un email avec votre numéro de suivi dès l\'expédition de votre colis. Vous pouvez aussi consulter votre espace client.' },
       { q: 'Comment fonctionne le Click & Collect ?', a: 'Choisissez le Click & Collect au checkout. Votre commande est prête sous 2h. Présentez votre email de confirmation en boutique pour retirer vos produits.' },
     ],

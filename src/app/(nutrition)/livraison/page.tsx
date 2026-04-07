@@ -8,14 +8,14 @@ const shippingMethods = [
     Icon: Truck,
     name: 'Colissimo à domicile',
     delay: '2 à 4 jours ouvrés',
-    price: 'Gratuit dès 60€ / Sinon 5,90€',
+    price: 'Gratuit dès 85€ / Sinon 5,90€',
     details: 'Livraison à domicile avec suivi. Un numéro de suivi vous est envoyé par email.',
   },
   {
     Icon: Package,
     name: 'Mondial Relay',
     delay: '3 à 5 jours ouvrés',
-    price: 'Gratuit dès 60€ / Sinon 3,90€',
+    price: 'Gratuit dès 85€ / Sinon 3,90€',
     details: 'Retrait dans le point relais de votre choix. Pratique et économique.',
   },
   {

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const TO = process.env.CONTACT_EMAIL_TO ?? 'bodystartnutrition@gmail.com'
 
 // ─── Rate limiter : 5 requêtes / 10 min par IP (optionnel si Upstash non configuré) ───
@@ -27,8 +26,11 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;')
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: NextRequest) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
     // ─── Rate limiting (skip si Upstash non configuré) ───
     if (ratelimit) {
       const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1'

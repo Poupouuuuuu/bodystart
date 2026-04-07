@@ -76,11 +76,15 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
                   style={{ backgroundImage: "url('/Background.webp')" }}
                 >
                   <div className="absolute inset-0 flex items-end justify-center pb-6">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="relative z-10 w-auto h-[60%] object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-110"
-                    />
+                    <div className="relative z-10 w-full h-[60%]">
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 90vw"
+                        className="object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-110"
+                      />
+                    </div>
                   </div>
                   
                   {/* Subtle vignette effect at bottom for seamless landing */}

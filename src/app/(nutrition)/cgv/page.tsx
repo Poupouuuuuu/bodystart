@@ -27,7 +27,7 @@ const sections = [
   },
   {
     title: '6. Livraison',
-    content: `Les commandes sont expédiées via Colissimo ou Mondial Relay selon le choix effectué au moment de la commande. Les délais de livraison sont indiqués à titre indicatif. La livraison est offerte à partir de 60€ d'achat. Le Click & Collect est disponible dans notre boutique sous 2h après validation de la commande.`,
+    content: `Les commandes sont expédiées via Colissimo ou Mondial Relay selon le choix effectué au moment de la commande. Les délais de livraison sont indiqués à titre indicatif. La livraison est offerte à partir de 85€ d'achat. Le Click & Collect est disponible dans notre boutique sous 2h après validation de la commande.`,
   },
   {
     title: '7. Droit de rétractation',

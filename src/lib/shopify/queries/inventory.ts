@@ -13,7 +13,6 @@ export const GET_PRODUCT_INVENTORY_BY_LOCATION = `
               nodes {
                 location {
                   id
-                  name
                 }
                 quantities(names: ["available"]) {
                   name
@@ -40,7 +39,6 @@ export const GET_INVENTORY_FOR_VARIANTS = `
             nodes {
               location {
                 id
-                name
               }
               quantities(names: ["available"]) {
                 name
