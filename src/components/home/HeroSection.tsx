@@ -40,7 +40,7 @@ export default function HeroSection() {
               alt="Athlète avec compléments alimentaires Body Start"
               fill
               priority
-              sizes="(min-width: 1024px) 65vw, 100vw"
+              sizes="(min-width: 1024px) 570px, 100vw"
               className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
             />
           </div>

@@ -78,8 +78,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable} ${montserrat.variable}`}>
       <head>
-        {/* Preconnect au CDN Shopify : économise 100-300ms sur le 1er chargement d'image produit */}
-        <link rel="preconnect" href="https://cdn.shopify.com" crossOrigin="anonymous" />
+        {/* dns-prefetch suffit pour cdn.shopify.com (images produits below-the-fold) */}
         <link rel="dns-prefetch" href="https://cdn.shopify.com" />
       </head>
       <body className="min-h-screen flex flex-col">

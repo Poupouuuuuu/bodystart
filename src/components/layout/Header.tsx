@@ -187,8 +187,8 @@ function HeaderInner({ collections = [] }: HeaderProps) {
               <Image
                 src={isCoaching ? "/assets/logos/logo-coaching.png" : "/assets/logos/logo-nutrition.png"}
                 alt={isCoaching ? "Body Start Coaching" : "Body Start Nutrition"}
-                width={180}
-                height={48}
+                width={120}
+                height={40}
                 className={cn(
                   "h-10 w-auto",
                   isCoaching && "brightness-0 invert"
