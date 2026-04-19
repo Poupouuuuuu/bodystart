@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import '@/styles/globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { CustomerProvider } from '@/context/CustomerContext'
+import { CoachingAuthProvider } from '@/lib/coaching/auth/CoachingAuthProvider'
 import { Toaster } from 'react-hot-toast'
 
 // Lazy : invisible au load (montre seulement si pas de consent en localStorage)
@@ -83,9 +84,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <CustomerProvider>
-          <CartProvider>
-            {children}
-            <CookieBanner />
+          <CoachingAuthProvider>
+            <CartProvider>
+              {children}
+              <CookieBanner />
             <Toaster
               position="top-right"
               toastOptions={{
@@ -101,7 +103,8 @@ export default function RootLayout({
                 },
               }}
             />
-          </CartProvider>
+            </CartProvider>
+          </CoachingAuthProvider>
         </CustomerProvider>
       </body>
     </html>
