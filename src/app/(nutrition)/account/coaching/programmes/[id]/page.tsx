@@ -1,146 +1,115 @@
-'use client'
-
-import { Suspense } from 'react'
-import { useParams } from 'next/navigation'
+/**
+ * /account/coaching/programmes/[id]
+ *
+ * Page de visualisation d'un programme délivré.
+ * Auth obligatoire (middleware /account). Le serveur vérifie l'ownership.
+ */
+import { notFound, redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import Link from 'next/link'
-import { ArrowLeft, CheckCircle2, Clock, Calendar, Loader2 } from 'lucide-react'
-import { COACHING_PRODUCTS } from '@/lib/stripe/types'
+import { ArrowLeft, Download, Calendar } from 'lucide-react'
+import { getCustomer } from '@/lib/shopify/customer-server'
+import { getSupabaseAdminClient } from '@/lib/coaching/supabase/admin'
 
-function ProgrammeContent() {
-  const params = useParams()
-  const id = params?.id as string
-  const product = COACHING_PRODUCTS.find((p) => p.id === id)
+export const dynamic = 'force-dynamic'
 
-  if (!product) {
-    return (
-      <div className="container py-10">
-        <Link href="/account/coaching" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-900 transition-colors mb-8 group">
-          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          Retour au coaching
-        </Link>
-        <div className="text-center py-20">
-          <p className="font-black text-xl uppercase tracking-tight text-gray-900">Programme introuvable</p>
-        </div>
-      </div>
-    )
-  }
-
-  const weeks = product.durationDays ? Math.ceil(product.durationDays / 7) : null
-
-  // Exemple de contenu de programme (en production, chargé depuis Shopify metafields ou un CMS)
-  const weekPlan = weeks
-    ? Array.from({ length: weeks }, (_, i) => ({
-        week: i + 1,
-        title: i < 2 ? 'Phase d\'adaptation' : i < weeks - 2 ? 'Phase intensive' : 'Phase de consolidation',
-        focus: i < 2
-          ? 'Mise en place des bases, évaluation du niveau, ajustement nutrition'
-          : i < weeks - 2
-            ? 'Montée en charge progressive, ajustements hebdomadaires'
-            : 'Maintien des acquis, préparation de la transition',
-      }))
-    : null
-
-  return (
-    <div className="container py-10 md:py-14">
-      <Link href="/account/coaching" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-900 transition-colors mb-10 group">
-        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-        Retour au coaching
-      </Link>
-
-      {/* En-tête programme */}
-      <div className="mb-10">
-        <span className="text-[10px] font-black uppercase tracking-widest text-coaching-cyan-600 bg-coaching-cyan-50 border-2 border-coaching-cyan-200 px-3 py-1 rounded-sm inline-block mb-4">
-          {product.type === 'programme' ? 'Programme' : product.type}
-        </span>
-        <h1 className="font-display text-3xl md:text-5xl font-black uppercase tracking-tight text-gray-900 mb-4">
-          {product.name}
-        </h1>
-        <p className="text-gray-600 font-medium text-lg max-w-2xl">{product.description}</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Contenu principal */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Inclus */}
-          <div className="rounded-sm border-2 border-gray-200 p-6 shadow-[4px_4px_0_theme(colors.gray.200)]">
-            <h2 className="font-display font-black text-xl uppercase tracking-tight text-gray-900 mb-6">Ce qui est inclus</h2>
-            <ul className="space-y-3">
-              {product.features.map((f) => (
-                <li key={f} className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-coaching-cyan-500 flex-shrink-0" />
-                  <span className="text-gray-700 font-bold">{f}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Plan semaine par semaine */}
-          {weekPlan && (
-            <div className="rounded-sm border-2 border-gray-200 overflow-hidden shadow-[4px_4px_0_theme(colors.gray.200)]">
-              <div className="px-6 py-5 bg-gray-50 border-b-2 border-gray-100">
-                <h2 className="font-display font-black text-xl uppercase tracking-tight text-gray-900 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-coaching-cyan-500" />
-                  Plan semaine par semaine
-                </h2>
-              </div>
-              <div className="divide-y-2 divide-gray-100">
-                {weekPlan.map((w) => (
-                  <div key={w.week} className="px-6 py-4 hover:bg-gray-50/50 transition-colors">
-                    <div className="flex items-start gap-4">
-                      <span className="w-10 h-10 bg-gray-900 text-white rounded-sm flex items-center justify-center font-black text-sm flex-shrink-0">
-                        S{w.week}
-                      </span>
-                      <div>
-                        <p className="font-black text-sm uppercase tracking-tight text-gray-900">{w.title}</p>
-                        <p className="text-xs text-gray-500 font-bold mt-1">{w.focus}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <div className="rounded-sm border-2 border-gray-200 p-6 shadow-[4px_4px_0_theme(colors.gray.200)] sticky top-24">
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
-              <Clock className="w-3.5 h-3.5" />
-              {weeks ? `${weeks} semaines` : 'Durée illimitée'}
-            </div>
-
-            <div className="mb-6 pb-6 border-b-2 border-gray-100">
-              <span className="font-display font-black text-4xl text-gray-900">{product.price}€</span>
-              {product.stripeMode === 'subscription' && (
-                <span className="text-gray-500 text-sm font-black uppercase tracking-widest ml-1">/mois</span>
-              )}
-            </div>
-
-            <Link
-              href="/account/coaching/suivi"
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-coaching-cyan-500 text-black font-black text-[10px] uppercase tracking-widest rounded-sm border-2 border-coaching-cyan-500 hover:bg-coaching-cyan-400 transition-colors shadow-[4px_4px_0_theme(colors.gray.200)] mb-3"
-            >
-              ACCÉDER AU SUIVI
-            </Link>
-
-            <Link
-              href="/account/coaching"
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-900 font-black text-[10px] uppercase tracking-widest rounded-sm border-2 border-gray-200 hover:border-gray-900 transition-colors"
-            >
-              RETOUR AU DASHBOARD
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+export const metadata = {
+  title: 'Mon programme — Coaching',
+  robots: { index: false, follow: false },
 }
 
-export default function ProgrammePage() {
+const SHOPIFY_TOKEN_COOKIE = 'body-start-customer-token'
+
+interface ProgramData {
+  id: string
+  user_id: string
+  type: string
+  pdf_url: string | null
+  delivered_at: string | null
+  created_at: string
+  intake_id: string
+}
+
+export default async function ProgrammeDetailPage({ params }: { params: { id: string } }) {
+  const cookieStore = cookies()
+  const token = cookieStore.get(SHOPIFY_TOKEN_COOKIE)?.value
+  if (!token) redirect(`/login?redirect=/account/coaching/programmes/${params.id}`)
+
+  const customer = await getCustomer(token)
+  if (!customer) redirect('/login')
+
+  const sb = getSupabaseAdminClient()
+  const { data: profile } = await sb
+    .from('profiles')
+    .select('id')
+    .eq('shopify_customer_id', customer.id)
+    .maybeSingle()
+  if (!profile) redirect('/coaching/tarifs')
+
+  const { data: program } = await sb
+    .from('programs')
+    .select('id, user_id, type, pdf_url, delivered_at, created_at, intake_id')
+    .eq('id', params.id)
+    .maybeSingle()
+
+  if (!program) notFound()
+  const programRow = program as ProgramData
+  if (programRow.user_id !== profile.id) notFound()
+
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-coaching-cyan-500" /></div>}>
-      <ProgrammeContent />
-    </Suspense>
+    <div className="container max-w-3xl py-10">
+      <Link
+        href="/account/coaching"
+        className="inline-flex items-center gap-2 text-sm text-[#1a2e23]/60 hover:text-[#1a2e23] mb-4"
+      >
+        <ArrowLeft className="w-4 h-4" /> Retour à mon coaching
+      </Link>
+
+      <h1 className="font-display text-3xl font-black uppercase tracking-tight text-[#1a2e23] mb-2">
+        Mon programme {programRow.type === 'sport' ? 'sport' : programRow.type === 'nutrition' ? 'nutrition' : 'complet'}
+      </h1>
+      <p className="text-sm text-[#1a2e23]/60 mb-8 flex items-center gap-2">
+        <Calendar className="w-4 h-4" />
+        {programRow.delivered_at
+          ? `Délivré le ${new Date(programRow.delivered_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`
+          : 'En préparation par notre coach…'}
+      </p>
+
+      {!programRow.delivered_at ? (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-amber-900 text-sm">
+          ⏳ Notre coach finalise ton programme. Tu recevras un email dès qu&apos;il sera prêt à télécharger.
+        </div>
+      ) : programRow.pdf_url ? (
+        <div className="bg-white border-2 border-[#1a2e23]/10 rounded-2xl p-8 text-center">
+          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Download className="w-7 h-7 text-emerald-700" />
+          </div>
+          <h2 className="font-display text-xl font-bold text-[#1a2e23] mb-2">
+            Ton programme est prêt
+          </h2>
+          <p className="text-sm text-[#1a2e23]/70 mb-6 max-w-md mx-auto">
+            Télécharge le PDF ci-dessous. On te recommande de le lire en entier avant de
+            commencer, et de le sauvegarder sur ton téléphone pour t&apos;y référer en séance.
+          </p>
+          <a
+            href={`/api/coaching/pdf/${programRow.id}`}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#1a2e23] text-white text-sm font-bold uppercase tracking-wider hover:bg-[#1a2e23]/90"
+          >
+            <Download className="w-4 h-4" /> Télécharger mon PDF
+          </a>
+        </div>
+      ) : (
+        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 text-rose-900 text-sm">
+          ⚠️ Ton programme est marqué comme délivré mais le PDF est introuvable.
+          Contacte-nous pour qu&apos;on règle ça rapidement.
+        </div>
+      )}
+
+      <div className="mt-8 p-5 bg-[#1a2e23]/5 rounded-2xl text-xs text-[#1a2e23]/70">
+        <strong>📌 Bon à savoir :</strong> ton programme reste accessible à tout moment depuis ton
+        espace coaching. Si tu as des questions ou besoin d&apos;ajustements, écris-nous depuis
+        ton profil.
+      </div>
+    </div>
   )
 }
