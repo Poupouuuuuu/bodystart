@@ -4,6 +4,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Dumbbell, Brain, TrendingUp, Clock, Star, Zap, Shield, Users, ChevronRight } from 'lucide-react'
 import { COACHING_PRODUCTS } from '@/lib/stripe/types'
+const oneshot = COACHING_PRODUCTS.oneshot
+const monthly = COACHING_PRODUCTS.monthly_followup
 
 const FEATURES = [
   { icon: Dumbbell, title: 'PROGRAMMES SUR-MESURE', desc: 'Entraînements adaptés à votre niveau, vos objectifs et votre équipement disponible.' },
@@ -25,11 +27,6 @@ const ADVANTAGES = [
 ]
 
 export default function CoachingPage() {
-  const abonnement = COACHING_PRODUCTS.find((p) => p.type === 'abonnement')
-  const programmes = COACHING_PRODUCTS.filter((p) => p.type === 'programme')
-  const seance = COACHING_PRODUCTS.find((p) => p.type === 'seance')
-  const pack = COACHING_PRODUCTS.find((p) => p.type === 'pack')
-
   return (
     <div className="bg-gray-950 text-white selection:bg-coaching-cyan-500 selection:text-black">
 
@@ -105,57 +102,38 @@ export default function CoachingPage() {
             <h2 className="font-display text-4xl md:text-5xl font-black text-white uppercase tracking-tighter">TROUVEZ VOTRE FORMULE</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Programmes */}
-            {programmes.map((p) => (
-              <div key={p.id} className="bg-gray-950 border-2 border-gray-800 rounded-sm p-6 hover:border-coaching-cyan-500 transition-colors flex flex-col">
-                <span className="text-[10px] font-black uppercase tracking-widest text-coaching-cyan-400 mb-3">Programme</span>
-                <h3 className="font-black text-white text-base uppercase tracking-tight mb-2">{p.name}</h3>
-                <p className="text-gray-400 text-xs font-bold leading-relaxed mb-6 flex-1">{p.description}</p>
-                <div className="flex items-end justify-between">
-                  <span className="font-display font-black text-3xl text-white">{p.price}€</span>
-                  <Link href="/coaching/tarifs" className="text-coaching-cyan-400 text-[10px] font-black uppercase tracking-widest hover:text-coaching-cyan-300 transition-colors inline-flex items-center gap-1">
-                    Détails <ChevronRight className="w-3 h-3" />
-                  </Link>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Programme Personnalisé (one-shot 49€) */}
+            <div className="bg-gray-950 border-2 border-gray-800 rounded-sm p-8 hover:border-coaching-cyan-500 transition-colors flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-widest text-coaching-cyan-400 mb-3">One-shot</span>
+              <h3 className="font-black text-white text-xl uppercase tracking-tight mb-2">{oneshot.name}</h3>
+              <p className="text-gray-400 text-xs font-bold leading-relaxed mb-6 flex-1">{oneshot.shortDescription}</p>
+              <div className="flex items-end justify-between">
+                <span className="font-display font-black text-3xl text-white">{oneshot.priceEur}€</span>
+                <Link href="/coaching/tarifs" className="text-coaching-cyan-400 text-[10px] font-black uppercase tracking-widest hover:text-coaching-cyan-300 transition-colors inline-flex items-center gap-1">
+                  Voir détails <ChevronRight className="w-3 h-3" />
+                </Link>
               </div>
-            ))}
+            </div>
 
-            {/* Séance */}
-            {seance && (
-              <div className="bg-gray-950 border-2 border-gray-800 rounded-sm p-6 hover:border-coaching-cyan-500 transition-colors flex flex-col">
-                <span className="text-[10px] font-black uppercase tracking-widest text-coaching-cyan-400 mb-3">Séance</span>
-                <h3 className="font-black text-white text-base uppercase tracking-tight mb-2">{seance.name}</h3>
-                <p className="text-gray-400 text-xs font-bold leading-relaxed mb-6 flex-1">{seance.description}</p>
-                <div className="flex items-end justify-between">
-                  <span className="font-display font-black text-3xl text-white">{seance.price}€</span>
-                  <Link href="/coaching/tarifs" className="text-coaching-cyan-400 text-[10px] font-black uppercase tracking-widest hover:text-coaching-cyan-300 transition-colors inline-flex items-center gap-1">
-                    Détails <ChevronRight className="w-3 h-3" />
-                  </Link>
-                </div>
+            {/* Suivi Personnalisé (89€/mois) — featured */}
+            <div className="bg-gray-950 border-2 border-coaching-cyan-500 rounded-sm p-8 shadow-[8px_8px_0_#2ab0b0] flex flex-col relative">
+              <div className="absolute -top-3 right-4 bg-coaching-cyan-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-sm">
+                Le plus complet
               </div>
-            )}
-
-            {/* Abonnement — featured */}
-            {abonnement && (
-              <div className="bg-gray-950 border-2 border-coaching-cyan-500 rounded-sm p-6 shadow-[8px_8px_0_#2ab0b0] flex flex-col relative">
-                <div className="absolute -top-3 right-4 bg-coaching-cyan-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-sm">
-                  Populaire
+              <span className="text-[10px] font-black uppercase tracking-widest text-coaching-cyan-400 mb-3">Abonnement</span>
+              <h3 className="font-black text-white text-xl uppercase tracking-tight mb-2">{monthly.name}</h3>
+              <p className="text-gray-400 text-xs font-bold leading-relaxed mb-6 flex-1">{monthly.shortDescription}</p>
+              <div className="flex items-end justify-between">
+                <div>
+                  <span className="font-display font-black text-3xl text-coaching-cyan-400">{monthly.priceEur}€</span>
+                  <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest ml-1">/mois</span>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-coaching-cyan-400 mb-3">Abonnement</span>
-                <h3 className="font-black text-white text-base uppercase tracking-tight mb-2">{abonnement.name}</h3>
-                <p className="text-gray-400 text-xs font-bold leading-relaxed mb-6 flex-1">{abonnement.description}</p>
-                <div className="flex items-end justify-between">
-                  <div>
-                    <span className="font-display font-black text-3xl text-coaching-cyan-400">{abonnement.price}€</span>
-                    <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest ml-1">/mois</span>
-                  </div>
-                  <Link href="/coaching/tarifs" className="text-coaching-cyan-400 text-[10px] font-black uppercase tracking-widest hover:text-coaching-cyan-300 transition-colors inline-flex items-center gap-1">
-                    Détails <ChevronRight className="w-3 h-3" />
-                  </Link>
-                </div>
+                <Link href="/coaching/tarifs" className="text-coaching-cyan-400 text-[10px] font-black uppercase tracking-widest hover:text-coaching-cyan-300 transition-colors inline-flex items-center gap-1">
+                  Voir détails <ChevronRight className="w-3 h-3" />
+                </Link>
               </div>
-            )}
+            </div>
           </div>
 
           <div className="text-center mt-12">
