@@ -1,0 +1,46 @@
+{
+  "mode": "apply",
+  "started_at": "2026-04-20T10:25:01.013Z",
+  "archived": [
+    {
+      "priceId": "price_1TEIme2zH06v4keUeH709ANN",
+      "productId": "prod_UCiDRxYlGGOxRx",
+      "name": "Programme Prise de Masse"
+    },
+    {
+      "priceId": "price_1TEImt2zH06v4keUU3JxqGPg",
+      "productId": "prod_UCiDHQLnAQeOSb",
+      "name": "Programme Perte de Poids"
+    },
+    {
+      "priceId": "price_1TEIn62zH06v4keU07YMD66F",
+      "productId": "prod_UCiDvshTaWuOJD",
+      "name": "Séance coaching 1-on-1"
+    },
+    {
+      "priceId": "price_1TEInQ2zH06v4keUZh6mc208",
+      "productId": "prod_UCiDcFxYYycsYj",
+      "name": "Abonnement Coaching Mensuel"
+    },
+    {
+      "priceId": "price_1TEInk2zH06v4keUUD0OyEqt",
+      "productId": "prod_UCiEjRIg0bUMaH",
+      "name": "Pack Coaching 3 mois"
+    }
+  ],
+  "created": [
+    {
+      "lookup_key": "coaching_program_oneshot",
+      "productId": "prod_UMyyFL4tBbXjdr",
+      "priceId": "price_1TOF0n2zH06v4keUwvJYQlmP"
+    },
+    {
+      "lookup_key": "coaching_followup_monthly",
+      "productId": "prod_UMyypHCcPc3qH3",
+      "priceId": "price_1TOF0o2zH06v4keUpGUf5Eij"
+    }
+  ],
+  "skipped": [],
+  "errors": [],
+  "finished_at": "2026-04-20T10:25:06.074Z"
+}

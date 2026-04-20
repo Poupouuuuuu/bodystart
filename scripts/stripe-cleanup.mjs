@@ -105,7 +105,11 @@ const report = {
 }
 
 // ─── 1. Vérifier subscriptions actives sur les anciens prices ───
-async function checkActiveSubscriptions(priceId, name) {
+async function checkActiveSubscriptions(priceId, name, isRecurring) {
+  // Stripe API : `subscriptions.list({ price })` ne marche que pour les prices récurrents.
+  // Pour un price one-shot, pas de subscription possible par définition → safe to archive.
+  if (!isRecurring) return true
+
   const subs = await stripe.subscriptions.list({ price: priceId, status: 'active', limit: 1 })
   if (subs.data.length > 0) {
     console.log(`  ⚠️  ${name} a ${subs.data.length}+ subscription(s) active(s) — SKIP archivage`)
@@ -131,7 +135,8 @@ async function archiveByPriceId({ name, priceId }) {
       throw err
     }
 
-    const safe = await checkActiveSubscriptions(priceId, name)
+    const isRecurring = price.recurring !== null
+    const safe = await checkActiveSubscriptions(priceId, name, isRecurring)
     if (!safe) return
 
     const productId = typeof price.product === 'string' ? price.product : price.product.id
