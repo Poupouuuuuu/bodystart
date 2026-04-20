@@ -1,125 +1,72 @@
 // ============================================================
-// TYPES STRIPE — Coaching Body Start
+// TYPES STRIPE — Coaching Body Start (Sprint 2)
+// ============================================================
+//
+// Architecture : on identifie les produits par leur `lookup_key`
+// Stripe (et non par le price ID hardcodé). Permet de renommer
+// ou recréer un product Stripe sans modifier le code.
+//
+// Les 2 lookup_keys utilisés :
+//   - coaching_program_oneshot   : 49€ EUR one-shot
+//   - coaching_followup_monthly  : 89€ EUR mensuel
 // ============================================================
 
-export type CoachingProductType = 'programme' | 'seance' | 'abonnement' | 'pack'
+export type CoachingTier = 'oneshot' | 'monthly_followup'
 
 export interface CoachingProduct {
-  id: string
+  /** Identifiant interne stable (utilisé dans les tables Supabase). */
+  tier: CoachingTier
+  /** Lookup key Stripe — résolu en price_id à chaque checkout. */
+  stripeLookupKey: string
   name: string
-  type: CoachingProductType
-  description: string
-  stripePriceId: string
-  /** 'subscription' pour abonnement, 'payment' pour one-shot */
-  stripeMode: 'subscription' | 'payment'
-  price: number
-  /** Durée en jours (programmes/packs) ou null (abonnement = récurrent) */
-  durationDays: number | null
+  shortDescription: string
+  /** Prix en euros pour affichage UI. La source de vérité reste Stripe. */
+  priceEur: number
+  /** 'payment' = one-shot ; 'subscription' = récurrent mensuel. */
+  stripeMode: 'payment' | 'subscription'
   features: string[]
 }
 
-export interface CoachingSubscription {
-  id: string
-  customerId: string
-  stripeSubscriptionId: string
-  status: 'active' | 'canceled' | 'past_due' | 'incomplete'
-  currentPeriodEnd: string
-  plan: CoachingProduct
-}
-
-export interface CoachingSession {
-  id: string
-  customerId: string
-  date: string
-  type: 'visio' | 'presentiel'
-  status: 'scheduled' | 'completed' | 'canceled'
-  notes?: string
-}
-
-// ─── Catalogue coaching (à relier à tes Price IDs Stripe) ────
-
-export const COACHING_PRODUCTS: CoachingProduct[] = [
-  {
-    id: 'programme-prise-de-masse',
-    name: 'Programme Prise de Masse',
-    type: 'programme',
-    description: 'Plan d\'entraînement + nutrition personnalisé pour la prise de masse avec suivi hebdo.',
-    stripePriceId: 'price_1TEIme2zH06v4keUeH709ANN',
+export const COACHING_PRODUCTS: Record<CoachingTier, CoachingProduct> = {
+  oneshot: {
+    tier: 'oneshot',
+    stripeLookupKey: 'coaching_program_oneshot',
+    name: 'Programme Personnalisé',
+    shortDescription:
+      'Un programme sport / nutrition / complet sur-mesure, validé par notre coach et livré en PDF.',
+    priceEur: 49,
     stripeMode: 'payment',
-    price: 199,
-    durationDays: 84,
     features: [
-      'Programme personnalisé',
-      'Plan nutrition adapté',
-      'Suivi hebdomadaire',
-      'Accès app de suivi',
-      '-15% sur les compléments',
+      'Formulaire d\'intake détaillé (~25 questions)',
+      'Programme conçu et validé par notre coach',
+      'Programme livré en PDF téléchargeable',
+      'Recommandations produits Body Start incluses',
+      'Accès à vie à ton programme dans ton espace',
     ],
   },
-  {
-    id: 'programme-perte-de-poids',
-    name: 'Programme Perte de Poids',
-    type: 'programme',
-    description: 'Protocole perte de poids intensif avec ajustements bi-hebdomadaires.',
-    stripePriceId: 'price_1TEImt2zH06v4keUU3JxqGPg',
-    stripeMode: 'payment',
-    price: 149,
-    durationDays: 56,
-    features: [
-      'Protocole sèche personnalisé',
-      'Ajustements bi-hebdomadaires',
-      'Guide des macros',
-      '-15% sur les compléments',
-    ],
-  },
-  {
-    id: 'seance-individuelle',
-    name: 'Séance coaching individuel',
-    type: 'seance',
-    description: 'Séance d\'1h en visio ou en boutique avec un coach certifié.',
-    stripePriceId: 'price_1TEIn62zH06v4keU07YMD66F',
-    stripeMode: 'payment',
-    price: 59,
-    durationDays: null,
-    features: [
-      '1h avec un coach certifié',
-      'Visio ou en boutique',
-      'Bilan personnalisé',
-      'Plan d\'action post-séance',
-    ],
-  },
-  {
-    id: 'abonnement-mensuel',
-    name: 'Coaching mensuel illimité',
-    type: 'abonnement',
-    description: 'Accès illimité : programmes, suivi continu, séances hebdo et -15% permanent.',
-    stripePriceId: 'price_1TEInQ2zH06v4keUZh6mc208',
+  monthly_followup: {
+    tier: 'monthly_followup',
+    stripeLookupKey: 'coaching_followup_monthly',
+    name: 'Suivi Personnalisé',
+    shortDescription:
+      'Tout du Programme Personnalisé + check-in hebdomadaire avec le coach + recalcul tous les 3 mois.',
+    priceEur: 89,
     stripeMode: 'subscription',
-    price: 89,
-    durationDays: null,
     features: [
-      'Programmes illimités',
-      'Suivi continu personnalisé',
-      '1 séance/semaine incluse',
-      '-15% permanent sur les compléments',
-      'Accès prioritaire nouveautés',
+      'Tout ce qui est inclus dans le Programme Personnalisé',
+      'Check-in hebdomadaire (poids, mesures, ressenti, questions)',
+      'Réponses du coach sous 48h',
+      'Recalcul complet du programme tous les 3 mois',
+      '🎁 Code promo -15% permanent sur tout le shop',
+      'Annulable à tout moment',
     ],
   },
-  {
-    id: 'pack-3-mois',
-    name: 'Pack 3 mois',
-    type: 'pack',
-    description: 'Pack coaching 3 mois complet à utiliser à ton rythme. Économise 15%.',
-    stripePriceId: 'price_1TEInk2zH06v4keUUD0OyEqt',
-    stripeMode: 'payment',
-    price: 499,
-    durationDays: 180,
-    features: [
-      '10 séances d\'1h',
-      'Visio ou en boutique',
-      '-15% vs séances à l\'unité',
-      'Valable 6 mois',
-      '-15% sur les compléments',
-    ],
-  },
-]
+}
+
+export function getCoachingProductByLookupKey(lookupKey: string): CoachingProduct | null {
+  return Object.values(COACHING_PRODUCTS).find((p) => p.stripeLookupKey === lookupKey) ?? null
+}
+
+export function getCoachingProductByTier(tier: CoachingTier): CoachingProduct {
+  return COACHING_PRODUCTS[tier]
+}
