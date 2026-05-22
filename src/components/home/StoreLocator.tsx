@@ -68,10 +68,13 @@ export default function StoreLocator() {
             Click & Collect gratuit
           </div>
           <h2 className="font-display text-[35px] md:text-[50px] font-black uppercase text-[#f4f6f1] tracking-tighter mb-4 leading-none">
-            VENEZ NOUS VOIR EN BOUTIQUE
+            Passe nous voir en boutique
           </h2>
           <p className="text-[#89a890] text-sm md:text-base max-w-xl mx-auto font-medium">
-            Commandez en ligne et récupérez vos produits en boutique sous 2h. Conseil personnalisé et sans frais de livraison.
+            Commande en ligne, récupère à Coignières — souvent prêt en quelques minutes, on te
+            prévient dès que c&apos;est bon. Et tant que t&apos;es là, on prend 5 minutes pour
+            t&apos;aider à choisir. C&apos;est gratuit, et c&apos;est tout l&apos;intérêt d&apos;avoir
+            une vraie boutique.
           </p>
         </div>
 
@@ -161,7 +164,8 @@ export default function StoreLocator() {
                   </div>
                 </div>
                 <p className="text-white/60 text-sm leading-relaxed relative z-10">
-                  Notre deuxième boutique ouvre prochainement en Île-de-France. Soyez informé en avant-première de l'ouverture et des offres exclusives de lancement.
+                  Une 2ᵉ boutique arrive en Île-de-France. Laisse ton mail, on te prévient à
+                  l&apos;ouverture.
                 </p>
               </div>
               <Link
@@ -169,7 +173,7 @@ export default function StoreLocator() {
                 className="mt-8 inline-flex items-center justify-center gap-2 w-full py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-full text-[11px] uppercase tracking-widest font-bold transition-all relative z-10"
               >
                 <Bell className="w-4 h-4" />
-                Me prévenir de l'ouverture
+                Me prévenir
               </Link>
             </div>
           ))}

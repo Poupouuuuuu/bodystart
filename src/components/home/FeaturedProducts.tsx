@@ -50,7 +50,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
             <h2 className="font-display text-[40px] md:text-[55px] font-black uppercase text-[#1a2e23] leading-[0.9] tracking-tighter">
-              Bestsellers
+              Les plus pris en boutique
             </h2>
           </div>
           <Link

@@ -19,10 +19,10 @@ import { cn } from '@/lib/utils'
 const OBJECTIFS = [
   { value: 'prise-de-muscle', label: 'Prise de muscle', desc: 'Gagner en masse et en force', icon: Dumbbell },
   { value: 'perte-de-poids', label: 'Perte de poids', desc: 'Affiner et garder le muscle', icon: Flame },
-  { value: 'energie', label: 'Energie & Endurance', desc: 'Performer plus longtemps', icon: Zap },
-  { value: 'recuperation', label: 'Recuperation', desc: 'Mieux recuperer apres l\'effort', icon: Moon },
-  { value: 'immunite', label: 'Immunite & Sante', desc: 'Renforcer les defenses naturelles', icon: Shield },
-  { value: 'autre', label: 'Autre / Je ne sais pas', desc: 'On vous guide', icon: HelpCircle },
+  { value: 'energie', label: 'Énergie & Endurance', desc: 'Performer plus longtemps', icon: Zap },
+  { value: 'recuperation', label: 'Récupération', desc: "Mieux récupérer après l'effort", icon: Moon },
+  { value: 'immunite', label: 'Immunité & Santé', desc: 'Renforcer les défenses naturelles', icon: Shield },
+  { value: 'autre', label: 'Autre / Je ne sais pas', desc: 'On te guide', icon: HelpCircle },
 ]
 
 export default function ConseilPage() {
@@ -63,18 +63,18 @@ export default function ConseilPage() {
             Message envoye !
           </h1>
           <p className="text-[#4a5f4c] text-lg mb-8">
-            Nous vous recontactons sous <strong className="text-[#1a2e23]">24-48h</strong> pour fixer un rendez-vous en boutique.
+            On te recontacte sous <strong className="text-[#1a2e23]">24-48h</strong> pour caler ton rendez-vous en boutique.
           </p>
           <div className="bg-white rounded-[20px] p-6 text-left mb-8 shadow-sm">
             <p className="text-[11px] font-black uppercase tracking-widest text-[#89a890] mb-3">Notre boutique</p>
-            <p className="font-bold text-[#1a2e23]">8 Rue du Pont des Landes, 78310 Coignieres</p>
-            <p className="text-[#4a5f4c] text-sm mt-1">Ouvert 7j/7 -- 11h-19h</p>
+            <p className="font-bold text-[#1a2e23]">8 Rue du Pont des Landes, 78310 Coignières</p>
+            <p className="text-[#4a5f4c] text-sm mt-1">Ouvert 7j/7 · 11h-19h</p>
           </div>
           <a
             href="/"
             className="inline-flex items-center justify-center gap-2 bg-[#1a2e23] text-white font-bold text-sm px-8 py-3.5 rounded-full hover:bg-[#1a2e23]/90 transition-colors"
           >
-            Retour a l&apos;accueil
+            Retour à l&apos;accueil
           </a>
         </div>
       </div>
@@ -86,11 +86,12 @@ export default function ConseilPage() {
       {/* ─── Hero ─── */}
       <div className="pt-16 pb-12 md:pt-20 md:pb-16">
         <div className="container text-center max-w-3xl">
-          <h1 className="font-display text-[45px] md:text-[65px] lg:text-[80px] font-black uppercase text-[#1a2e23] tracking-tighter leading-none mb-6">
-            CONSEIL PERSONNALISÉ
+          <h1 className="font-display text-[40px] md:text-[58px] lg:text-[70px] font-black uppercase text-[#1a2e23] tracking-tighter leading-none mb-6">
+            Dis-nous ton objectif,<br />on prépare le reste
           </h1>
           <p className="text-[#4a5f4c] font-medium text-base md:text-lg max-w-xl mx-auto leading-relaxed">
-            En 2 minutes, on prépare votre programme sur mesure. Vous venez en boutique, on s&apos;occupe du reste.
+            En 2 minutes, on te prépare une sélection sur-mesure. Tu passes en boutique récupérer,
+            on prend le temps de t&apos;expliquer.
           </p>
         </div>
       </div>
@@ -114,7 +115,7 @@ export default function ConseilPage() {
                   'text-[11px] font-black uppercase tracking-widest',
                   step >= s ? 'text-[#1a2e23]' : 'text-[#89a890]'
                 )}>
-                  {s === 1 ? 'Mon objectif' : 'Mes coordonnees'}
+                  {s === 1 ? 'Mon objectif' : 'Mes coordonnées'}
                 </span>
                 {s < 2 && <ArrowRight className="w-4 h-4 text-[#89a890] ml-1" />}
               </div>
@@ -192,7 +193,7 @@ export default function ConseilPage() {
             <form onSubmit={handleSubmit}>
               <div className="flex items-center justify-between mb-8">
                 <h2 className="font-display text-2xl font-black uppercase tracking-tight text-[#1a2e23]">
-                  Vos coordonnees
+                  Tes coordonnées
                 </h2>
                 <button
                   type="button"
