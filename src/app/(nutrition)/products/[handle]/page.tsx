@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { getProductByHandle, getProductInventoryByLocation, getCollectionByHandle } from '@/lib/shopify'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import ProductSection from '@/components/product/ProductSection'
+import LeConseilBodyStart from '@/components/product/LeConseilBodyStart'
 import NutritionAndScience from '@/components/product/NutritionAndScience'
 import ProductReviews from '@/components/product/ProductReviews'
 import RelatedProducts from '@/components/product/RelatedProducts'
@@ -187,6 +188,13 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </div>
 
+      {/* ─── NOUVEAU : Le conseil BodyStart ─── */}
+      <div className="bg-white py-12 -mt-16 relative z-10">
+        <div className="container max-w-4xl">
+          <LeConseilBodyStart handle={product.handle} />
+        </div>
+      </div>
+
       {/* ─── TRANSITION COURBEE (Wave SVG) ─── */}
       <div className="relative w-full h-[150px] -mt-[149px] z-20 pointer-events-none overflow-hidden">
         <svg viewBox="0 0 1440 320" preserveAspectRatio="none" className="absolute bottom-0 w-full h-full">
@@ -242,7 +250,7 @@ export default async function ProductPage({ params }: Props) {
            {/* Texte Explicatif */}
            <div className="flex flex-col justify-center p-12 lg:p-24 bg-white">
              <h2 className="font-display text-4xl md:text-5xl font-black uppercase text-[#2c3e2e] tracking-tighter mb-8">
-                Une Pureté Inégalée.
+                Pourquoi on l&apos;a sélectionné
              </h2>
              <div className="text-[#4a5f4c] text-[15px] font-medium leading-relaxed space-y-6" 
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml || `<p>${product.description}</p>` }} 

@@ -26,36 +26,48 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart-nutriti
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    template: '%s | BodyStart Nutrition',
-    default: 'BodyStart Nutrition — Compléments alimentaires & Sport',
+    template: '%s | BodyStart',
+    default: 'BodyStart — Compléments sport & santé à Coignières (78)',
   },
-  description: 'Découvrez les compléments alimentaires BodyStart Nutrition : protéines, vitamines, créatine, BCAA. Livraison Colissimo & Mondial Relay. Click & Collect en boutique.',
-  keywords: ['compléments alimentaires', 'nutrition sportive', 'protéines whey', 'créatine', 'BCAA', 'body start', 'compléments sport', 'click and collect', 'coignières'],
-  authors: [{ name: 'BodyStart Nutrition' }],
+  description:
+    "BodyStart, ta boutique de compléments sport et santé à Coignières. Conseil d'humain en magasin, produits propres et bien dosés, livraison dans le 78, Click & Collect en 2h.",
+  keywords: [
+    'compléments alimentaires Coignières',
+    'whey',
+    'créatine',
+    'magnésium',
+    'oméga 3',
+    'collagène',
+    'nutrition sportive Yvelines',
+    'click and collect 78',
+    'BodyStart',
+  ],
+  authors: [{ name: 'BodyStart' }],
   creator: 'BodyStart',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    siteName: 'BodyStart Nutrition',
+    siteName: 'BodyStart',
     locale: 'fr_FR',
     type: 'website',
     url: SITE_URL,
-    title: 'BodyStart Nutrition — Compléments alimentaires premium',
-    description: 'Formules scientifiques, ingrédients tracés, dosages précis. Livraison rapide, Click & Collect disponible.',
+    title: 'BodyStart — Compléments sport & santé à Coignières',
+    description:
+      "Conseil d'humain, produits propres, livrés dans le 78. On consomme ce qu'on vend.",
     images: [
       {
         url: '/assets/logos/logo-nutrition.png',
         width: 1200,
         height: 630,
-        alt: 'BodyStart Nutrition',
+        alt: 'BodyStart',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BodyStart Nutrition',
-    description: 'Compléments alimentaires premium pour sportifs exigeants.',
+    title: 'BodyStart — Compléments sport & santé',
+    description: 'Compléments sport et santé, conseillés à Coignières, livrés dans le 78.',
     images: ['/assets/logos/logo-nutrition.png'],
   },
   robots: {
