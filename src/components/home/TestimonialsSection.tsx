@@ -69,7 +69,7 @@ const FALLBACK_REVIEWS = [
   },
   {
     name: 'Julie M.',
-    text: 'J\'ai commencé la musculation il y a 6 mois et l\'équipe m\'a orientée vers les bons compléments pour débuter. Résultat : une bien meilleure récupération et plus d\'énergie au quotidien. Merci Body Start !',
+    text: 'J\'ai commencé la musculation il y a 6 mois et l\'équipe m\'a orientée vers les bons compléments pour débuter. Résultat : une bien meilleure récupération et plus d\'énergie au quotidien. Merci BodyStart !',
     product: 'Clear Pro Creatine',
     rating: 5,
   },
@@ -111,7 +111,7 @@ export default async function TestimonialsSection() {
                   key={r.id}
                   name={r.reviewer.name}
                   text={r.body}
-                  product="Complément Body Start"
+                  product="Complément BodyStart"
                   rating={r.rating}
                 />
               ))

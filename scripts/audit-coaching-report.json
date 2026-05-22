@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-05-22T23:12:05.343Z",
+  "stripe": {
+    "products": [
+      {
+        "id": "prod_UMyypHCcPc3qH3",
+        "name": "BodyStart Coaching — Suivi Personnalisé",
+        "active": true,
+        "metadata": {
+          "delivery": "digital_pdf+coaching",
+          "tier": "monthly_followup"
+        }
+      },
+      {
+        "id": "prod_UMyyFL4tBbXjdr",
+        "name": "BodyStart Coaching — Programme Personnalisé",
+        "active": true,
+        "metadata": {
+          "delivery": "digital_pdf",
+          "tier": "oneshot"
+        }
+      }
+    ],
+    "prices_by_lookup_key": {
+      "coaching_program_oneshot": [
+        {
+          "id": "price_1TOF0n2zH06v4keUwvJYQlmP",
+          "product": "prod_UMyyFL4tBbXjdr",
+          "unit_amount": 4900,
+          "recurring": null
+        }
+      ],
+      "coaching_followup_monthly": [
+        {
+          "id": "price_1TOF0o2zH06v4keUpGUf5Eij",
+          "product": "prod_UMyypHCcPc3qH3",
+          "unit_amount": 8900,
+          "recurring": {
+            "interval": "month",
+            "interval_count": 1,
+            "meter": null,
+            "trial_period_days": null,
+            "usage_type": "licensed"
+          }
+        }
+      ]
+    },
+    "subscriptions": [],
+    "payment_intents": [
+      {
+        "id": "pi_3TEyl32zH06v4keU12giDFKY",
+        "amount": 7500,
+        "currency": "eur",
+        "status": "succeeded",
+        "customer": "cus_UDPay7kk915Y4M",
+        "description": "Subscription creation",
+        "created": 1774473273,
+        "metadata": {}
+      },
+      {
+        "id": "pi_3TExbA2zH06v4keU1T6rX22X",
+        "amount": 7500,
+        "currency": "eur",
+        "status": "succeeded",
+        "customer": "cus_UDONAfhwtFWfBk",
+        "description": "Subscription creation",
+        "created": 1774468816,
+        "metadata": {}
+      },
+      {
+        "id": "pi_3TEsj52zH06v4keU0Ipw2xYs",
+        "amount": 7500,
+        "currency": "eur",
+        "status": "succeeded",
+        "customer": "cus_UDJLQ6LfEyEeku",
+        "description": "Subscription creation",
+        "created": 1774450087,
+        "metadata": {}
+      }
+    ]
+  },
+  "supabase": {
+    "coaching_orders": [],
+    "subscriptions": [],
+    "intakes": [],
+    "programs": []
+  },
+  "errors": [
+    {
+      "table": "coaching_orders",
+      "message": "TypeError: fetch failed"
+    },
+    {
+      "table": "subscriptions",
+      "message": "TypeError: fetch failed"
+    },
+    {
+      "table": "intakes",
+      "message": "TypeError: fetch failed"
+    },
+    {
+      "table": "programs",
+      "message": "TypeError: fetch failed"
+    }
+  ]
+}

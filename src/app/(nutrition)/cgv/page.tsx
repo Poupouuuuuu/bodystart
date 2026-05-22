@@ -7,23 +7,23 @@ export const metadata: Metadata = { title: 'Conditions Générales de Vente' }
 const sections = [
   {
     title: '1. Objet',
-    content: `Les présentes Conditions Générales de Vente (CGV) régissent les ventes effectuées sur le site bodystart.fr par la société Body Start, ci-après dénommée "le Vendeur". Toute commande implique l'acceptation sans réserve des présentes CGV.`,
+    content: `Les présentes Conditions Générales de Vente (CGV) régissent les ventes effectuées sur le site bodystart.fr par la société BodyStart, ci-après dénommée "le Vendeur". Toute commande implique l'acceptation sans réserve des présentes CGV.`,
   },
   {
     title: '2. Produits',
-    content: `Les produits proposés à la vente sont des compléments alimentaires. Les photographies et descriptions des produits sont données à titre indicatif. Body Start se réserve le droit de modifier la composition des produits sous réserve de maintenir leur qualité équivalente. Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain.`,
+    content: `Les produits proposés à la vente sont des compléments alimentaires. Les photographies et descriptions des produits sont données à titre indicatif. BodyStart se réserve le droit de modifier la composition des produits sous réserve de maintenir leur qualité équivalente. Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain.`,
   },
   {
     title: '3. Prix',
-    content: `Les prix sont indiqués en euros TTC (toutes taxes comprises). Body Start se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au prix en vigueur au moment de la validation de la commande. Les frais de livraison sont indiqués lors du processus de commande.`,
+    content: `Les prix sont indiqués en euros TTC (toutes taxes comprises). BodyStart se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au prix en vigueur au moment de la validation de la commande. Les frais de livraison sont indiqués lors du processus de commande.`,
   },
   {
     title: '4. Commandes',
-    content: `La commande est définitive après validation du paiement. Body Start se réserve le droit d'annuler toute commande pour des raisons légitimes (rupture de stock, adresse de livraison erronée, litige antérieur...). Vous recevrez un email de confirmation dès validation de votre commande.`,
+    content: `La commande est définitive après validation du paiement. BodyStart se réserve le droit d'annuler toute commande pour des raisons légitimes (rupture de stock, adresse de livraison erronée, litige antérieur...). Vous recevrez un email de confirmation dès validation de votre commande.`,
   },
   {
     title: '5. Paiement',
-    content: `Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express) via notre prestataire Shopify Payments, sécurisé par protocole SSL. Body Start ne conserve aucune donnée bancaire.`,
+    content: `Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express) via notre prestataire Shopify Payments, sécurisé par protocole SSL. BodyStart ne conserve aucune donnée bancaire.`,
   },
   {
     title: '6. Livraison',
@@ -35,7 +35,7 @@ const sections = [
   },
   {
     title: '8. Garanties',
-    content: `Body Start garantit la conformité des produits aux descriptions figurant sur le site. En cas de produit défectueux ou non conforme, vous disposez de 2 ans à compter de la livraison pour invoquer la garantie légale de conformité.`,
+    content: `BodyStart garantit la conformité des produits aux descriptions figurant sur le site. En cas de produit défectueux ou non conforme, vous disposez de 2 ans à compter de la livraison pour invoquer la garantie légale de conformité.`,
   },
   {
     title: '9. Données personnelles',

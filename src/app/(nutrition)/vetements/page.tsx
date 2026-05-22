@@ -31,7 +31,7 @@ export default function VetementsPage() {
       <div className="relative overflow-hidden">
         <Image
           src="/assets/images/objectif-energie.jpg"
-          alt="Body Start Sport V\u00eatements"
+          alt="BodyStart Sport V\u00eatements"
           fill
           className="object-cover opacity-20"
           priority
@@ -51,7 +51,7 @@ export default function VetementsPage() {
             </h1>
 
             <p className="text-white/60 text-xl leading-relaxed mb-10 max-w-xl">
-              La collection Body Start Sport arrive. Des v&ecirc;tements techniques con&ccedil;us pour les sportifs qui refusent de choisir entre performance et style.
+              La collection BodyStart Sport arrive. Des v&ecirc;tements techniques con&ccedil;us pour les sportifs qui refusent de choisir entre performance et style.
             </p>
 
             {!sent ? (

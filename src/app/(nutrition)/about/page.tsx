@@ -5,8 +5,8 @@ import { ArrowRight, Target, Heart, Leaf, Users, Star, Package, Truck, Award, Fl
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'A propos de Body Start',
-  description: "Découvrez l'histoire et les valeurs de Body Start Nutrition.",
+  title: 'A propos de BodyStart',
+  description: "Découvrez l'histoire et les valeurs de BodyStart Nutrition.",
 }
 
 const values = [
@@ -52,7 +52,7 @@ export default function AboutPage() {
       <div className="relative bg-[#1a2e23] text-white py-28 md:py-36 overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&q=80"
-          alt="Salle de sport Body Start"
+          alt="Salle de sport BodyStart"
           fill
           className="object-cover opacity-20"
           priority
@@ -68,7 +68,7 @@ export default function AboutPage() {
             La nutrition qui vous ressemble
           </h1>
           <p className="text-white/70 font-medium text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-            Body Start est née d&apos;une conviction simple : les sportifs méritent des compléments transparents, efficaces, sans faux marketing ni ingrédients inutiles.
+            BodyStart est née d&apos;une conviction simple : les sportifs méritent des compléments transparents, efficaces, sans faux marketing ni ingrédients inutiles.
           </p>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function AboutPage() {
             Notre mission
           </h2>
           <p className="text-[#4a5f4c] font-medium text-lg leading-relaxed max-w-2xl mx-auto">
-            Rendre la nutrition sportive accessible, transparente et efficace. Chaque produit Body Start est sélectionné ou formulé avec des ingrédients tracés, aux dosages validés par la recherche scientifique.
+            Rendre la nutrition sportive accessible, transparente et efficace. Chaque produit BodyStart est sélectionné ou formulé avec des ingrédients tracés, aux dosages validés par la recherche scientifique.
           </p>
         </section>
 
@@ -121,7 +121,7 @@ export default function AboutPage() {
         {/* Chiffres cles */}
         <section className="mb-24 bg-[#1a2e23] rounded-[24px] p-8 md:p-14 text-white">
           <h2 className="font-display text-2xl md:text-3xl font-black uppercase tracking-tight mb-10 text-center">
-            Body Start en chiffres
+            BodyStart en chiffres
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {stats.map(({ value, label, Icon }) => (
@@ -146,7 +146,7 @@ export default function AboutPage() {
             Une équipe passionnée
           </h2>
           <p className="text-[#4a5f4c]/70 font-medium max-w-xl mx-auto mb-10">
-            Body Start est fondée par des sportifs, pour des sportifs. Notre équipe de conseillers formés en nutrition est disponible en boutique et par email.
+            BodyStart est fondée par des sportifs, pour des sportifs. Notre équipe de conseillers formés en nutrition est disponible en boutique et par email.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
             {team.map(({ name, role, Icon }) => (

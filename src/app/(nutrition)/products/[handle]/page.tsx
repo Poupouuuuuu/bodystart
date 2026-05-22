@@ -109,7 +109,7 @@ export default async function ProductPage({ params }: Props) {
     image: product.featuredImage?.url ?? '',
     brand: {
       '@type': 'Brand',
-      name: product.vendor || 'Body Start Nutrition',
+      name: product.vendor || 'BodyStart Nutrition',
     },
     offers: {
       '@type': 'Offer',
@@ -121,7 +121,7 @@ export default async function ProductPage({ params }: Props) {
         : 'https://schema.org/OutOfStock',
       seller: {
         '@type': 'Organization',
-        name: 'Body Start Nutrition',
+        name: 'BodyStart Nutrition',
       },
     },
   }

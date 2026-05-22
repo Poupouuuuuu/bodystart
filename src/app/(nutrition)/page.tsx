@@ -17,7 +17,7 @@ const StoreLocator = dynamic(() => import('@/components/home/StoreLocator'), {
 export const metadata: Metadata = {
   title: 'Accueil',
   description:
-    'Body Start Nutrition — Compléments alimentaires premium pour sportifs. Livraison rapide, Click & Collect disponible.',
+    'BodyStart Nutrition — Compléments alimentaires premium pour sportifs. Livraison rapide, Click & Collect disponible.',
 }
 
 // Sections async isolées → streaming via Suspense pour ne pas bloquer le Hero (LCP)

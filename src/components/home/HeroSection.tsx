@@ -37,7 +37,7 @@ export default function HeroSection() {
           <div className="relative w-full lg:w-[130%] max-w-[800px] h-full lg:translate-x-12">
             <Image
               src="/hero-runner.png"
-              alt="Athlète avec compléments alimentaires Body Start"
+              alt="Athlète avec compléments alimentaires BodyStart"
               fill
               priority
               sizes="(min-width: 1024px) 570px, 100vw"

@@ -6,8 +6,8 @@ import type { ShopifyProduct } from '@/lib/shopify/types'
 import { Search, PackageSearch } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Recherche — Body Start Nutrition',
-  description: 'Recherchez parmi tous les produits Body Start Nutrition.',
+  title: 'Recherche — BodyStart Nutrition',
+  description: 'Recherchez parmi tous les produits BodyStart Nutrition.',
 }
 
 interface SearchPageProps {

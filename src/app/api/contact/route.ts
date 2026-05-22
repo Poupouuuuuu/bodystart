@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     const objectifLabel = objectifLabels[objectif] ?? escapeHtml(objectif)
 
     await resend.emails.send({
-      from: 'Body Start Nutrition <onboarding@resend.dev>',
+      from: 'BodyStart Nutrition <onboarding@resend.dev>',
       to: TO,
       replyTo: email,
       subject: `🏋️ Nouvelle demande de conseil — ${safeName}`,
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0;">
           <div style="background: #111827; padding: 32px; text-align: center;">
             <h1 style="color: #ffffff; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin: 0;">
-              Body Start Nutrition
+              BodyStart Nutrition
             </h1>
             <p style="color: #6b7280; margin: 8px 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">
               Nouvelle demande de conseil
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
 
           <div style="background: #f9fafb; padding: 20px 32px; border-top: 2px solid #e5e7eb;">
             <p style="margin: 0; font-size: 12px; color: #9ca3af; text-align: center;">
-              📍 Body Start Nutrition — 8 Rue du Pont des Landes, 78310 Coignières · 07 61 84 75 80
+              📍 BodyStart Nutrition — 8 Rue du Pont des Landes, 78310 Coignières · 07 61 84 75 80
             </p>
           </div>
         </div>
@@ -127,14 +127,14 @@ export async function POST(req: NextRequest) {
 
     // Email de confirmation au client
     await resend.emails.send({
-      from: 'Body Start Nutrition <onboarding@resend.dev>',
+      from: 'BodyStart Nutrition <onboarding@resend.dev>',
       to: email,
-      subject: 'Votre demande de conseil a bien été reçue — Body Start',
+      subject: 'Votre demande de conseil a bien été reçue — BodyStart',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #111827; padding: 32px; text-align: center;">
             <h1 style="color: #ffffff; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin: 0;">
-              Body Start Nutrition
+              BodyStart Nutrition
             </h1>
           </div>
           <div style="padding: 32px; background: #ffffff;">

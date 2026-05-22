@@ -1,5 +1,5 @@
 // ============================================================
-// TYPES STRIPE — Coaching Body Start
+// TYPES STRIPE — Coaching BodyStart
 // ============================================================
 
 export type CoachingProductType = 'programme' | 'seance' | 'abonnement' | 'pack'
