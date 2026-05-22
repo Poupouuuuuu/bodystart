@@ -1,5 +1,5 @@
 // ============================================================
-// TYPES SHOPIFY — Body Start
+// TYPES SHOPIFY — BodyStart
 // ============================================================
 
 export interface ShopifyImage {
@@ -152,7 +152,7 @@ export interface ShopifyBlog {
   articles: { nodes: ShopifyArticle[] }
 }
 
-// Boutiques Body Start (Click & Collect)
+// Boutiques BodyStart (Click & Collect)
 export interface BodyStartStore {
   id: string
   name: string
@@ -171,7 +171,7 @@ export interface BodyStartStore {
 export const BODY_START_STORES: BodyStartStore[] = [
   {
     id: 'boutique-coignieres',
-    name: 'Body Start Nutrition — Coignières',
+    name: 'BodyStart Nutrition — Coignières',
     shopifyLocationId: 'gid://shopify/Location/114075795838',
     isActive: true,
     address: '8 Rue du Pont des Landes',
@@ -187,7 +187,7 @@ export const BODY_START_STORES: BodyStartStore[] = [
 export const COMING_SOON_STORES = [
   {
     id: 'boutique-b',
-    name: 'Body Start Nutrition — Boutique 2',
+    name: 'BodyStart Nutrition — Boutique 2',
     city: 'Bientôt disponible',
     openingDate: 'Ouverture prochaine',
   },

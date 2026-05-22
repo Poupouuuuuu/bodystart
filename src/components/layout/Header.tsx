@@ -186,7 +186,7 @@ function HeaderInner({ collections = [] }: HeaderProps) {
             <Link href={isCoaching ? "/coaching" : "/"} className="flex-shrink-0">
               <Image
                 src={isCoaching ? "/assets/logos/logo-coaching.png" : "/assets/logos/logo-nutrition.png"}
-                alt={isCoaching ? "Body Start Coaching" : "Body Start Nutrition"}
+                alt={isCoaching ? "BodyStart Coaching" : "BodyStart Nutrition"}
                 width={120}
                 height={40}
                 className={cn(

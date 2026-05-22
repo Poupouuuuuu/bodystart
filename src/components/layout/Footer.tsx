@@ -75,7 +75,7 @@ export default function Footer() {
               <Link href="/" className="inline-block mb-5">
                 <Image
                   src="/assets/logos/logo-nutrition.png"
-                  alt="Body Start Nutrition"
+                  alt="BodyStart Nutrition"
                   width={150}
                   height={40}
                   className="h-9 w-auto"
@@ -175,7 +175,7 @@ export default function Footer() {
           {/* ─── Bottom Bar ─── */}
           <div className="border-t border-cream-200 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-gray-500">
-              © {new Date().getFullYear()} Body Start. Tous droits réservés.
+              © {new Date().getFullYear()} BodyStart. Tous droits réservés.
             </p>
             <div className="flex flex-wrap justify-center gap-4 md:gap-6">
               {FOOTER_LINKS.legal.map((link) => (
