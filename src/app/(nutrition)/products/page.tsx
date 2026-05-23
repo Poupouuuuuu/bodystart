@@ -7,7 +7,7 @@ export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Tous les produits',
-  description: 'Découvrez toute la gamme Body Start Nutrition : protéines, vitamines, créatine, BCAA et plus.',
+  description: 'Découvrez toute la gamme BodyStart Nutrition : protéines, vitamines, créatine, BCAA et plus.',
 }
 
 export default async function ProductsPage() {

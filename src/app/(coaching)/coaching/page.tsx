@@ -1,3 +1,6 @@
+// STANDBY 2026-05-23 : route masquee (redirect 301 vers /products via middleware).
+// Code conserve volontairement — voir tech-specs/site-rewrite-copy-v1.md §7.4 et brief recentrage.
+// Pour relancer : retirer le path de STANDBY_PATHS dans src/middleware.ts.
 'use client'
 
 import Link from 'next/link'
@@ -19,7 +22,7 @@ const TESTIMONIALS = [
 ]
 
 const ADVANTAGES = [
-  { icon: Zap, title: '-15% PERMANENT', desc: 'Sur tous les compléments et vêtements Body Start, automatiquement appliqué.' },
+  { icon: Zap, title: '-15% PERMANENT', desc: 'Sur tous les compléments et vêtements BodyStart, automatiquement appliqué.' },
   { icon: Shield, title: 'SANS ENGAGEMENT', desc: 'Programmes one-shot ou abonnement mensuel résiliable à tout moment.' },
   { icon: Users, title: 'VISIO OU BOUTIQUE', desc: 'Séances individuelles en visio ou en personne dans notre boutique de Coignières.' },
 ]
@@ -37,7 +40,7 @@ export default function CoachingPage() {
       <div className="relative overflow-hidden border-b-4 border-gray-900">
         <Image
           src="/assets/images/objectif-muscle.jpg"
-          alt="Coaching Body Start"
+          alt="Coaching BodyStart"
           fill
           className="object-cover opacity-30 grayscale contrast-125 mix-blend-overlay"
           priority

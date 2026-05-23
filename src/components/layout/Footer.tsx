@@ -2,8 +2,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   Instagram,
-  Facebook,
-  Music2,
   MapPin,
   Phone,
   Clock,
@@ -13,14 +11,26 @@ import {
   Headphones,
 } from 'lucide-react'
 
+// Footer — copy spec §3.9 et §3.10
+//
+// Note : "Sante & bien-etre" est remonte en 3e position (pas en dernier)
+// pour incarner le positionnement 50/50 sport/sante. cf. spec §3.10.
+//
+// Reseaux sociaux : on ne garde QUE Instagram (lien reel quand disponible).
+// Facebook + TikTok masques tant que les comptes ne sont pas prets (spec §3.10).
+//
+// Forfaits livraison sous 85€ (decision Adam 2026-05-23) :
+//   - Mondial Relay : 4,90€
+//   - Colissimo (domicile) : 6,90€
+// Au-dessus de 85€ : offerte (les deux methodes).
 const FOOTER_LINKS = {
   boutique: [
     { label: 'Tous les produits', href: '/products' },
     { label: 'Packs & Économies', href: '/packs' },
+    { label: 'Santé & bien-être', href: '/products?cat=sante' },
     { label: 'Protéines', href: '/products?cat=proteines' },
     { label: 'Créatine', href: '/products?cat=creatine' },
     { label: 'Boosters', href: '/products?cat=boosters' },
-    { label: 'Santé & Bien-être', href: '/products?cat=sante' },
   ],
   compte: [
     { label: 'Mon Compte', href: '/account' },
@@ -35,12 +45,31 @@ const FOOTER_LINKS = {
   ],
 }
 
+// 4 nouvelles puces (copy spec §3.9)
 const TRUST_BADGES = [
-  { icon: ShieldCheck, label: 'Paiement sécurisé', sub: 'CB, Visa, Mastercard' },
-  { icon: Truck, label: 'Livraison 48h', sub: 'Offerte dès 85€' },
-  { icon: Store, label: 'Click & Collect', sub: 'Retrait en boutique' },
-  { icon: Headphones, label: 'SAV réactif', sub: '7j/7 par téléphone' },
+  {
+    icon: ShieldCheck,
+    label: 'Paiement sécurisé',
+    sub: 'CB, Visa, Mastercard',
+  },
+  {
+    icon: Truck,
+    label: 'Livraison offerte dès 85€',
+    sub: 'Sinon dès 4,90€ (relais)',
+  },
+  {
+    icon: Store,
+    label: 'Click & Collect gratuit',
+    sub: 'Souvent prêt en quelques minutes',
+  },
+  {
+    icon: Headphones,
+    label: 'On répond 7j/7',
+    sub: 'Au téléphone et en boutique',
+  },
 ]
+
+const INSTAGRAM_URL = 'https://www.instagram.com/bodystart_nutrition/'
 
 export default function Footer() {
   return (
@@ -75,36 +104,26 @@ export default function Footer() {
               <Link href="/" className="inline-block mb-5">
                 <Image
                   src="/assets/logos/logo-nutrition.png"
-                  alt="Body Start Nutrition"
+                  alt="BodyStart"
                   width={150}
                   height={40}
                   className="h-9 w-auto"
                 />
               </Link>
               <p className="text-gray-600 text-sm leading-relaxed mb-6 max-w-xs">
-                Compléments alimentaires de qualité premium. L&apos;expert en nutrition sportive et performances.
+                Compléments sport et santé, conseillés à Coignières, livrés dans le 78.
               </p>
+              {/* Reseaux sociaux : Instagram visible, Facebook+TikTok masques tant
+                  qu'on n'a pas de comptes prets (spec §3.10). */}
               <div className="flex gap-2.5">
                 <a
-                  href="#"
-                  aria-label="Instagram"
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram BodyStart"
                   className="w-9 h-9 rounded-full bg-cream-100 flex items-center justify-center text-gray-700 hover:bg-brand-500 hover:text-white transition-colors"
                 >
                   <Instagram className="w-4 h-4" />
-                </a>
-                <a
-                  href="#"
-                  aria-label="Facebook"
-                  className="w-9 h-9 rounded-full bg-cream-100 flex items-center justify-center text-gray-700 hover:bg-brand-500 hover:text-white transition-colors"
-                >
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a
-                  href="#"
-                  aria-label="TikTok"
-                  className="w-9 h-9 rounded-full bg-cream-100 flex items-center justify-center text-gray-700 hover:bg-brand-500 hover:text-white transition-colors"
-                >
-                  <Music2 className="w-4 h-4" />
                 </a>
               </div>
             </div>
@@ -175,7 +194,7 @@ export default function Footer() {
           {/* ─── Bottom Bar ─── */}
           <div className="border-t border-cream-200 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-gray-500">
-              © {new Date().getFullYear()} Body Start. Tous droits réservés.
+              © {new Date().getFullYear()} BodyStart. Tous droits réservés.
             </p>
             <div className="flex flex-wrap justify-center gap-4 md:gap-6">
               {FOOTER_LINKS.legal.map((link) => (

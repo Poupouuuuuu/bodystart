@@ -13,7 +13,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.com'
 const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Body Start Nutrition',
+  name: 'BodyStart Nutrition',
   url: SITE_URL,
   logo: `${SITE_URL}/assets/logos/logo-nutrition.png`,
   description: 'Compléments alimentaires premium pour sportifs. Livraison rapide, Click & Collect en boutique.',
@@ -31,7 +31,7 @@ const localBusinessJsonLd = [
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': `${SITE_URL}/#boutique-coignieres`,
-    name: 'Body Start Nutrition — Coignières',
+    name: 'BodyStart Nutrition — Coignières',
     image: `${SITE_URL}/assets/logos/logo-nutrition.png`,
     telephone: '+33761847580',
     url: `${SITE_URL}/stores`,
