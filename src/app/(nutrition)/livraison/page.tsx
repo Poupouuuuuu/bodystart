@@ -114,7 +114,7 @@ export default function LivraisonPage() {
             
             <div className="flex items-start gap-4 relative z-10">
               <div className="w-6 h-6 rounded-full bg-[#1a2e23] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">1</div>
-              <p><strong className="font-black text-[#1a2e23] uppercase tracking-tight">14 jours</strong> pour changer d&apos;avis — droit de rétractation légal.</p>
+              <p><strong className="font-black text-[#1a2e23] uppercase tracking-tight">14 jours</strong> pour changer d&apos;avis (droit de rétractation légal).</p>
             </div>
             <div className="flex items-start gap-4 relative z-10">
               <div className="w-6 h-6 rounded-full bg-[#1a2e23] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">2</div>

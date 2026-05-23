@@ -23,7 +23,7 @@ export default function HeroSection() {
 
           <p className="text-[#4a5f4c] text-lg md:text-xl font-medium leading-relaxed mb-10 max-w-[520px]">
             Que tu veuilles prendre du muscle ou juste te sentir mieux au quotidien, on t&apos;aide à
-            choisir ce qui te sert vraiment — et à zapper le reste. Produits propres, bien dosés,
+            choisir ce qui te sert vraiment, et à zapper le reste. Produits propres, bien dosés,
             testés par nous.
           </p>
 

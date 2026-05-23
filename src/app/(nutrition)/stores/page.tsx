@@ -94,7 +94,7 @@ export default function StoresPage() {
                     <div key={i} className="flex justify-between text-[13px] font-medium">
                       <span className="text-[#4a5f4c]">{h.day}</span>
                       <span className={h.open === 'Fermé' ? 'text-[#89a890]' : 'text-[#1a2e23] font-bold'}>
-                        {h.open === 'Fermé' ? 'Fermé' : `${h.open} – ${h.close}`}
+                        {h.open === 'Fermé' ? 'Fermé' : `${h.open} à ${h.close}`}
                       </span>
                     </div>
                   ))}

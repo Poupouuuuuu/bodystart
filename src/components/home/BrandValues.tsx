@@ -30,7 +30,7 @@ export default function BrandValues() {
           </h2>
           <p className="text-white/85 text-sm md:text-base leading-relaxed max-w-md mb-8">
             On ne référence pas tout ce qui existe. On teste les marques, on lit les étiquettes, on
-            vérifie les dosages — et on ne met en rayon que ce qu&apos;on prendrait nous-mêmes. Si
+            vérifie les dosages, et on ne met en rayon que ce qu&apos;on prendrait nous-mêmes. Si
             un produit ne sert à rien, on te le dira.
           </p>
           <Link

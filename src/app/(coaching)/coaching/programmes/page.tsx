@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Target, Flame } from 'lucid
 import { COACHING_PRODUCTS } from '@/lib/stripe/types'
 
 export const metadata: Metadata = {
-  title: 'Programmes Coaching — BodyStart',
+  title: 'Programmes Coaching, BodyStart',
   description: 'Programmes d\'entraînement personnalisés : transformation 12 semaines, sèche 8 semaines, séances individuelles et packs coaching.',
 }
 

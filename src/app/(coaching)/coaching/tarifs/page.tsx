@@ -76,7 +76,7 @@ export default function CoachingTarifsPage() {
     <div className="min-h-screen bg-gray-950 text-white pt-24 pb-16">
       {isTestMode && (
         <div className="bg-yellow-400 text-black text-center py-2 text-[10px] font-black uppercase tracking-widest">
-          MODE TEST — Aucun vrai paiement ne sera effectué
+          MODE TEST · Aucun vrai paiement ne sera effectué
         </div>
       )}
 

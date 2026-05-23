@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     template: '%s | BodyStart',
-    default: 'BodyStart — Compléments sport & santé à Coignières (78)',
+    default: 'BodyStart, compléments sport et santé à Coignières (78)',
   },
   description:
     "BodyStart, ta boutique de compléments sport et santé à Coignières. Conseil d'humain en magasin, produits propres et bien dosés, livraison dans le 78, Click & Collect en 2h.",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     type: 'website',
     url: SITE_URL,
-    title: 'BodyStart — Compléments sport & santé à Coignières',
+    title: 'BodyStart, compléments sport et santé à Coignières',
     description:
       "Conseil d'humain, produits propres, livrés dans le 78. On consomme ce qu'on vend.",
     images: [
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BodyStart — Compléments sport & santé',
+    title: 'BodyStart, compléments sport et santé',
     description: 'Compléments sport et santé, conseillés à Coignières, livrés dans le 78.',
     images: ['/assets/logos/logo-nutrition.png'],
   },

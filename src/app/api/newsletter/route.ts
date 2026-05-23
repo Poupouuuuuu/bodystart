@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
           </div>
           <div style="background: #f9fafb; padding: 20px 32px; border-top: 2px solid #e5e7eb;">
             <p style="margin: 0; font-size: 12px; color: #9ca3af; text-align: center;">
-              BodyStart Nutrition — 8 Rue du Pont des Landes, 78310 Coignieres
+              BodyStart Nutrition · 8 Rue du Pont des Landes, 78310 Coignières
             </p>
           </div>
         </div>

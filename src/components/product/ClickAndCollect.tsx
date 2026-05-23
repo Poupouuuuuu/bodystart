@@ -58,7 +58,7 @@ export default function ClickAndCollect({ availableInStores = {} }: ClickAndColl
                     <p key={i} className="text-xs text-gray-400">
                       <span className="font-medium text-gray-600">{h.day}</span>
                       {' '}
-                      {h.open === 'Fermé' ? <span className="text-red-400">Fermé</span> : <span>{h.open} – {h.close}</span>}
+                      {h.open === 'Fermé' ? <span className="text-red-400">Fermé</span> : <span>{h.open} à {h.close}</span>}
                     </p>
                   ))}
                 </div>
