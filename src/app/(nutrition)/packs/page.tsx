@@ -6,7 +6,7 @@ import ProductCard from '@/components/product/ProductCard'
 import { formatPrice } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'Packs & Économies — Body Start Nutrition',
+  title: 'Packs & Économies — BodyStart Nutrition',
   description:
     'Économisez en regroupant nos meilleurs produits. Packs prêts à l’emploi pour la prise de muscle, la perte de poids et la récupération.',
 }

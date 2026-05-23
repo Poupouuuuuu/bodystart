@@ -38,7 +38,7 @@ export default function MentionsLegalesPage() {
             </div>
             <div className="bg-[#f4f6f1] rounded-2xl p-6 md:p-8 text-base text-[#4a5f4c] font-medium space-y-3">
               <p>
-                <strong className="font-black text-[#1a2e23]">Raison sociale :</strong> Body Start [Forme juridique à compléter]
+                <strong className="font-black text-[#1a2e23]">Raison sociale :</strong> BodyStart [Forme juridique à compléter]
               </p>
               <p>
                 <strong className="font-black text-[#1a2e23]">SIRET :</strong> À compléter
@@ -85,7 +85,7 @@ export default function MentionsLegalesPage() {
               Propriété intellectuelle
             </h2>
             <p className="text-[#4a5f4c] font-medium text-base leading-relaxed">
-              L&apos;ensemble du contenu de ce site (textes, images, logos, icônes) est la propriété exclusive de Body Start et est protégé par les lois françaises et internationales relatives à la propriété intellectuelle. Toute reproduction, distribution ou utilisation sans autorisation préalable est strictement interdite.
+              L&apos;ensemble du contenu de ce site (textes, images, logos, icônes) est la propriété exclusive de BodyStart et est protégé par les lois françaises et internationales relatives à la propriété intellectuelle. Toute reproduction, distribution ou utilisation sans autorisation préalable est strictement interdite.
             </p>
           </section>
 
@@ -94,7 +94,7 @@ export default function MentionsLegalesPage() {
               Limitation de responsabilité
             </h2>
             <p className="text-[#4a5f4c] font-medium text-base leading-relaxed">
-              Body Start s&apos;efforce d&apos;assurer l&apos;exactitude des informations diffusées sur ce site. Cependant, Body Start ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition. En conséquence, Body Start décline toute responsabilité pour toute imprécision, inexactitude ou omission portant sur des informations disponibles sur ce site.
+              BodyStart s&apos;efforce d&apos;assurer l&apos;exactitude des informations diffusées sur ce site. Cependant, BodyStart ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition. En conséquence, BodyStart décline toute responsabilité pour toute imprécision, inexactitude ou omission portant sur des informations disponibles sur ce site.
             </p>
           </section>
 

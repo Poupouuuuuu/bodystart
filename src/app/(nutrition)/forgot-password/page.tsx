@@ -41,7 +41,7 @@ function ForgotPasswordContent() {
           <Link href={isCoaching ? "/coaching" : "/"} className="inline-flex items-center gap-2 mb-6">
             <Image 
               src={isCoaching ? "/assets/logos/logo-coaching.png" : "/assets/logos/logo-nutrition.png"} 
-              alt="Body Start" 
+              alt="BodyStart" 
               width={160} 
               height={48} 
               className="h-10 w-auto" 

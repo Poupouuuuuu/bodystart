@@ -1,9 +1,13 @@
+// STANDBY 2026-05-23 : coaching + vetements masques de la nav
+// (cf. tech-specs/site-rewrite-copy-v1.md §2 et brief recentrage)
+// Logique `isCoaching` retiree : tout le site est desormais nutrition-only.
+// Switcher d'univers retire au profit d'un bandeau promo simple.
 'use client'
 
 import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense, useState, useEffect } from 'react'
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { ShoppingBag, Menu, X, ChevronDown, Search, User, Loader2 } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useCustomer } from '@/context/CustomerContext'
@@ -21,32 +25,13 @@ type SearchResult = {
 
 type NavCategory = { label: string; href: string; children?: { label: string; href: string }[] }
 
-const COACHING_CATEGORIES: NavCategory[] = [
-  { label: 'Programmes', href: '/coaching/programmes' },
-  { label: 'Le Suivi', href: '/coaching/suivi' },
-  { label: 'Résultats', href: '/coaching/resultats' },
-  { label: 'Tarifs', href: '/coaching/tarifs' },
+const NAV_CATEGORIES: NavCategory[] = [
+  { label: 'Accueil', href: '/' },
+  { label: 'Tous les produits', href: '/products' },
+  { label: 'Packs & Économies', href: '/packs' },
+  { label: 'La boutique', href: '/stores' },
+  { label: 'Conseil gratuit', href: '/conseil' },
 ]
-
-const OBJECTIFS_CHILDREN = [
-  { label: 'Prise de muscle', href: '/objectifs/prise-de-muscle' },
-  { label: 'Perte de poids', href: '/objectifs/perte-de-poids' },
-  { label: 'Énergie & Endurance', href: '/objectifs/energie' },
-  { label: 'Récupération', href: '/objectifs/recuperation' },
-  { label: 'Immunité', href: '/objectifs/immunite' },
-]
-
-const EXCLUDED_NAV_COLLECTIONS = ['frontpage', 'home-page', 'homepage', 'selections', 'all']
-
-function buildNutritionCategories(): NavCategory[] {
-  return [
-    { label: 'Accueil', href: '/' },
-    { label: 'Tous les produits', href: '/products' },
-    { label: 'Packs & Économies', href: '/packs' },
-    { label: 'La boutique', href: '/stores' },
-    { label: 'Conseil gratuit', href: '/conseil' },
-  ]
-}
 
 interface HeaderProps {
   collections?: ShopifyCollection[]
@@ -60,10 +45,9 @@ export default function Header(props: HeaderProps) {
   )
 }
 
-function HeaderInner({ collections = [] }: HeaderProps) {
+function HeaderInner(_props: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [scrolled, setScrolled] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
@@ -73,12 +57,6 @@ function HeaderInner({ collections = [] }: HeaderProps) {
   const { isLoggedIn, customer } = useCustomer()
   const router = useRouter()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-
-  const isCoaching = pathname?.startsWith('/coaching') || searchParams?.get('theme') === 'coaching'
-  const nutritionCategories = buildNutritionCategories()
-  const activeCategories = isCoaching ? COACHING_CATEGORIES : nutritionCategories
-  const authQuery = isCoaching ? '?theme=coaching' : ''
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -134,124 +112,42 @@ function HeaderInner({ collections = [] }: HeaderProps) {
       'sticky top-0 z-50 transition-shadow duration-300',
       scrolled ? 'shadow-md' : 'shadow-none'
     )}>
-      {/* ─── Barre switcher univers ─── */}
+      {/* ─── Bandeau promo (top bar) ─── */}
       <div className="bg-[#1A1A1A] relative z-50">
         <div className="container">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Link
-                href="/"
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap transition-colors",
-                  !isCoaching ? "text-white" : "text-white/50 hover:text-white/80"
-                )}
-              >
-                {!isCoaching && <span className="w-1.5 h-1.5 bg-brand-500 rounded-full" />}
-                Nutrition
-              </Link>
-              <Link
-                href="/coaching"
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap transition-colors",
-                  isCoaching ? "text-white" : "text-white/50 hover:text-white/80"
-                )}
-              >
-                {isCoaching && <span className="w-1.5 h-1.5 bg-coaching-500 rounded-full" />}
-                Coaching
-              </Link>
-              <Link
-                href="/vetements"
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white/50 hover:text-white/80 transition-colors whitespace-nowrap"
-              >
-                Vêtements
-                <span className="hidden sm:inline text-[10px] bg-white/10 text-white/50 px-2 py-0.5 rounded-full font-medium">Bientôt</span>
-              </Link>
-            </div>
-            <p className="hidden md:block text-xs text-white/60 font-medium py-2">
-              Livraison offerte dès 85€ · Click &amp; Collect disponible
-            </p>
-          </div>
+          <p className="text-center text-[11px] text-white/80 font-medium py-2">
+            Livraison offerte dès 85€ · Click &amp; Collect gratuit · Conseil gratuit en boutique
+          </p>
         </div>
       </div>
 
       {/* ─── Header principal ─── */}
-      <div className={cn(
-        "border-b transition-colors relative z-40",
-        isCoaching ? "bg-gray-950 border-white/10" : "bg-white border-cream-300"
-      )}>
+      <div className="border-b transition-colors relative z-40 bg-white border-cream-300">
         <nav className="container relative">
           <div className="flex items-center justify-between h-16 gap-4">
 
             {/* Logo */}
-            <Link href={isCoaching ? "/coaching" : "/"} className="flex-shrink-0">
+            <Link href="/" className="flex-shrink-0">
               <Image
-                src={isCoaching ? "/assets/logos/logo-coaching.png" : "/assets/logos/logo-nutrition.png"}
-                alt={isCoaching ? "Body Start Coaching" : "Body Start Nutrition"}
+                src="/assets/logos/logo-nutrition.png"
+                alt="BodyStart"
                 width={120}
                 height={40}
-                className={cn(
-                  "h-10 w-auto",
-                  isCoaching && "brightness-0 invert"
-                )}
+                className="h-10 w-auto"
                 priority
               />
             </Link>
 
             {/* Nav desktop */}
             <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
-              {activeCategories.map((item) => (
-                <div
+              {NAV_CATEGORIES.map((item) => (
+                <Link
                   key={item.label}
-                  className="relative"
-                  onMouseEnter={() => item.children && setActiveDropdown(item.label)}
-                  onMouseLeave={() => setActiveDropdown(null)}
+                  href={item.href}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap text-gray-700 hover:text-brand-500 hover:bg-brand-50"
                 >
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap",
-                      isCoaching ? "text-white hover:text-coaching-500 hover:bg-white/5" : "text-gray-700 hover:text-brand-500 hover:bg-brand-50"
-                    )}
-                  >
-                    {item.label}
-                    {item.children && (
-                      <ChevronDown className={cn(
-                        'w-3.5 h-3.5 transition-transform duration-200',
-                        activeDropdown === item.label && 'rotate-180'
-                      )} />
-                    )}
-                  </Link>
-
-                  {item.children && (
-                    <div className={cn(
-                      "absolute top-full left-1/2 -translate-x-1/2 pt-2 w-56 z-50",
-                      "transition-all duration-150 ease-out",
-                      activeDropdown === item.label
-                        ? "opacity-100 visible translate-y-0 pointer-events-auto"
-                        : "opacity-0 invisible -translate-y-1 pointer-events-none"
-                    )}>
-                      <div className={cn(
-                        "rounded-2xl py-2 border shadow-lg",
-                        isCoaching ? "bg-gray-950 border-white/10" : "bg-white border-cream-300"
-                      )}>
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.label}
-                            href={child.href}
-                            className={cn(
-                              "block px-4 py-2.5 text-sm font-medium transition-colors",
-                              isCoaching ? "text-white hover:bg-white/5 hover:text-coaching-500"
-                                         : "text-gray-700 hover:bg-brand-50 hover:text-brand-500"
-                            )}
-                            onClick={() => setActiveDropdown(null)}
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  {item.label}
+                </Link>
               ))}
             </div>
 
@@ -260,11 +156,7 @@ function HeaderInner({ collections = [] }: HeaderProps) {
               {/* Recherche */}
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={cn(
-                  "hidden md:flex p-2 rounded-full transition-colors",
-                  isCoaching ? "text-white hover:text-coaching-500 hover:bg-white/5"
-                             : "text-gray-700 hover:text-brand-500 hover:bg-brand-50"
-                )}
+                className="hidden md:flex p-2 rounded-full transition-colors text-gray-700 hover:text-brand-500 hover:bg-brand-50"
                 aria-label="Rechercher"
               >
                 {isSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
@@ -273,29 +165,19 @@ function HeaderInner({ collections = [] }: HeaderProps) {
               {/* Mon compte */}
               {isLoggedIn ? (
                 <Link
-                  href={`/account${authQuery}`}
-                  className={cn(
-                    "hidden md:flex items-center gap-2 px-3 py-2 rounded-full transition-colors text-sm font-medium",
-                    isCoaching ? "text-white hover:bg-white/5" : "text-gray-700 hover:bg-brand-50"
-                  )}
+                  href="/account"
+                  className="hidden md:flex items-center gap-2 px-3 py-2 rounded-full transition-colors text-sm font-medium text-gray-700 hover:bg-brand-50"
                   aria-label="Mon compte"
                 >
-                  <div className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold",
-                    isCoaching ? "bg-coaching-500 text-white" : "bg-brand-500 text-white"
-                  )}>
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-brand-500 text-white">
                     {customer?.firstName?.[0]?.toUpperCase() ?? <User className="w-3.5 h-3.5" />}
                   </div>
                   <span className="hidden lg:inline">{customer?.firstName ?? 'Compte'}</span>
                 </Link>
               ) : (
                 <Link
-                  href={`/login${authQuery}`}
-                  className={cn(
-                    "hidden md:flex p-2 rounded-full transition-colors",
-                    isCoaching ? "text-white hover:text-coaching-500 hover:bg-white/5"
-                               : "text-gray-700 hover:text-brand-500 hover:bg-brand-50"
-                  )}
+                  href="/login"
+                  className="hidden md:flex p-2 rounded-full transition-colors text-gray-700 hover:text-brand-500 hover:bg-brand-50"
                   aria-label="Connexion"
                 >
                   <User className="w-5 h-5" />
@@ -305,12 +187,7 @@ function HeaderInner({ collections = [] }: HeaderProps) {
               {/* Panier */}
               <button
                 onClick={openCart}
-                className={cn(
-                  "relative flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-bold transition-all ml-1",
-                  isCoaching
-                    ? "bg-coaching-500 hover:bg-coaching-cyan-400"
-                    : "bg-brand-500 hover:bg-brand-600 shadow-md hover:shadow-lg"
-                )}
+                className="relative flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-bold transition-all ml-1 bg-brand-500 hover:bg-brand-600 shadow-md hover:shadow-lg"
                 aria-label="Ouvrir le panier"
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -324,10 +201,7 @@ function HeaderInner({ collections = [] }: HeaderProps) {
 
               {/* Burger mobile */}
               <button
-                className={cn(
-                  "lg:hidden p-2 rounded-full transition-colors ml-1",
-                  isCoaching ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-cream-200"
-                )}
+                className="lg:hidden p-2 rounded-full transition-colors ml-1 text-gray-700 hover:bg-cream-200"
                 onClick={() => setMobileOpen(!mobileOpen)}
                 aria-label="Menu"
               >
@@ -340,9 +214,8 @@ function HeaderInner({ collections = [] }: HeaderProps) {
         {/* ─── Inline Search Dropdown ─── */}
         <div
           className={cn(
-            "absolute left-0 w-full border-b transition-[max-height,opacity] duration-300 ease-out z-30 shadow-xl",
-            isSearchOpen ? "max-h-[85vh] opacity-100" : "max-h-0 opacity-0 overflow-hidden",
-            isCoaching ? "bg-gray-950 border-white/10" : "bg-white border-cream-300"
+            "absolute left-0 w-full border-b transition-[max-height,opacity] duration-300 ease-out z-30 shadow-xl bg-white border-cream-300",
+            isSearchOpen ? "max-h-[85vh] opacity-100" : "max-h-0 opacity-0 overflow-hidden"
           )}
           style={{ top: '100%' }}
         >
@@ -359,36 +232,22 @@ function HeaderInner({ collections = [] }: HeaderProps) {
               }}
             >
               <div className="relative">
-                <Search className={cn(
-                  "absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5",
-                  isCoaching ? "text-gray-500" : "text-gray-400"
-                )} />
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={isCoaching ? "Rechercher un programme..." : "Rechercher un produit, une marque, un objectif..."}
-                  className={cn(
-                    "w-full text-base font-medium py-4 pl-14 pr-14 rounded-full outline-none border-2 transition-colors",
-                    isCoaching
-                      ? "bg-gray-900 border-white/10 text-white focus:border-coaching-500 placeholder-gray-600"
-                      : "bg-cream-100 border-cream-200 text-gray-900 focus:border-brand-500 placeholder-gray-400"
-                  )}
+                  placeholder="Rechercher un produit, une marque, un objectif..."
+                  className="w-full text-base font-medium py-4 pl-14 pr-14 rounded-full outline-none border-2 transition-colors bg-cream-100 border-cream-200 text-gray-900 focus:border-brand-500 placeholder-gray-400"
                   autoFocus={isSearchOpen}
                 />
                 {isSearching ? (
-                  <Loader2 className={cn(
-                    "absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin",
-                    isCoaching ? "text-coaching-500" : "text-brand-500"
-                  )} />
+                  <Loader2 className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-brand-500" />
                 ) : searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery('')}
-                    className={cn(
-                      "absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors",
-                      isCoaching ? "text-gray-400 hover:bg-white/10" : "text-gray-500 hover:bg-cream-200"
-                    )}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors text-gray-500 hover:bg-cream-200"
                     aria-label="Effacer"
                   >
                     <X className="w-4 h-4" />
@@ -407,10 +266,7 @@ function HeaderInner({ collections = [] }: HeaderProps) {
               <div className="container max-w-5xl mx-auto pb-6">
                 {searchResults.length > 0 ? (
                   <>
-                    <p className={cn(
-                      "text-[11px] font-bold uppercase tracking-widest mb-4",
-                      isCoaching ? "text-gray-500" : "text-gray-400"
-                    )}>
+                    <p className="text-[11px] font-bold uppercase tracking-widest mb-4 text-gray-400">
                       {searchResults.length} produit{searchResults.length > 1 ? 's' : ''} trouvé{searchResults.length > 1 ? 's' : ''}
                     </p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
@@ -419,17 +275,9 @@ function HeaderInner({ collections = [] }: HeaderProps) {
                           key={result.id}
                           href={`/products/${result.handle}`}
                           onClick={() => setIsSearchOpen(false)}
-                          className={cn(
-                            "group relative flex flex-col rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5",
-                            isCoaching
-                              ? "bg-gray-900 border-white/10 hover:border-coaching-500/40 hover:shadow-lg hover:shadow-coaching-500/10"
-                              : "bg-white border-cream-200 hover:border-brand-500/40 hover:shadow-lg"
-                          )}
+                          className="group relative flex flex-col rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 bg-white border-cream-200 hover:border-brand-500/40 hover:shadow-lg"
                         >
-                          <div className={cn(
-                            "relative aspect-square overflow-hidden",
-                            isCoaching ? "bg-gray-800" : "bg-cream-100"
-                          )}>
+                          <div className="relative aspect-square overflow-hidden bg-cream-100">
                             {result.image ? (
                               <Image
                                 src={result.image}
@@ -440,24 +288,15 @@ function HeaderInner({ collections = [] }: HeaderProps) {
                               />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <Search className={cn(
-                                  "w-8 h-8",
-                                  isCoaching ? "text-gray-700" : "text-cream-300"
-                                )} />
+                                <Search className="w-8 h-8 text-cream-300" />
                               </div>
                             )}
                           </div>
                           <div className="flex flex-col gap-1 p-3">
-                            <p className={cn(
-                              "text-sm font-semibold line-clamp-2 leading-snug min-h-[2.5rem]",
-                              isCoaching ? "text-white" : "text-gray-900"
-                            )}>
+                            <p className="text-sm font-semibold line-clamp-2 leading-snug min-h-[2.5rem] text-gray-900">
                               {result.title}
                             </p>
-                            <p className={cn(
-                              "text-sm font-bold mt-0.5",
-                              isCoaching ? "text-coaching-500" : "text-brand-500"
-                            )}>
+                            <p className="text-sm font-bold mt-0.5 text-brand-500">
                               {formatPrice({ amount: result.price, currencyCode: result.currency })}
                             </p>
                           </div>
@@ -471,12 +310,7 @@ function HeaderInner({ collections = [] }: HeaderProps) {
                         setIsSearchOpen(false)
                         router.push('/search?q=' + encodeURIComponent(searchQuery.trim()))
                       }}
-                      className={cn(
-                        "w-full mt-6 flex items-center justify-center gap-2 text-sm font-bold py-4 rounded-full transition-all",
-                        isCoaching
-                          ? "bg-coaching-500 text-white hover:bg-coaching-cyan-400"
-                          : "bg-brand-500 text-white hover:bg-brand-600 shadow-md hover:shadow-lg"
-                      )}
+                      className="w-full mt-6 flex items-center justify-center gap-2 text-sm font-bold py-4 rounded-full transition-all bg-brand-500 text-white hover:bg-brand-600 shadow-md hover:shadow-lg"
                     >
                       Voir tous les résultats pour « {searchQuery.trim()} »
                       <ChevronDown className="w-4 h-4 -rotate-90" />
@@ -485,25 +319,13 @@ function HeaderInner({ collections = [] }: HeaderProps) {
                 ) : (
                   !isSearching && (
                     <div className="text-center py-12">
-                      <div className={cn(
-                        "w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center",
-                        isCoaching ? "bg-white/5" : "bg-cream-100"
-                      )}>
-                        <Search className={cn(
-                          "w-6 h-6",
-                          isCoaching ? "text-gray-600" : "text-gray-400"
-                        )} />
+                      <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-cream-100">
+                        <Search className="w-6 h-6 text-gray-400" />
                       </div>
-                      <p className={cn(
-                        "text-sm font-semibold mb-1",
-                        isCoaching ? "text-white" : "text-gray-900"
-                      )}>
+                      <p className="text-sm font-semibold mb-1 text-gray-900">
                         Aucun produit trouvé
                       </p>
-                      <p className={cn(
-                        "text-xs",
-                        isCoaching ? "text-gray-500" : "text-gray-500"
-                      )}>
+                      <p className="text-xs text-gray-500">
                         Essayez avec un autre mot-clé
                       </p>
                     </div>
@@ -517,55 +339,24 @@ function HeaderInner({ collections = [] }: HeaderProps) {
 
       {/* ─── Menu mobile ─── */}
       {mobileOpen && (
-        <div className={cn(
-          "lg:hidden border-t max-h-[80vh] overflow-y-auto animate-slide-up relative z-50",
-          isCoaching ? "bg-gray-950 border-white/10" : "bg-white border-cream-300"
-        )}>
+        <div className="lg:hidden border-t max-h-[80vh] overflow-y-auto animate-slide-up relative z-50 bg-white border-cream-300">
           <div className="container py-4 space-y-1">
-            {activeCategories.map((item) => (
-              <div key={item.label}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "flex items-center justify-between px-4 py-3.5 text-sm font-medium transition-colors rounded-2xl",
-                    isCoaching ? "text-white hover:bg-white/5 hover:text-coaching-500"
-                               : "text-gray-700 hover:bg-brand-50 hover:text-brand-500"
-                  )}
-                  onClick={() => !item.children && setMobileOpen(false)}
-                >
-                  {item.label}
-                </Link>
-                {item.children && (
-                  <div className="ml-4 pl-4 border-l-2 border-cream-300 space-y-0.5 mb-2 mt-1">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.label}
-                        href={child.href}
-                        className={cn(
-                          "block py-2.5 text-sm font-medium transition-colors",
-                          isCoaching ? "text-gray-400 hover:text-coaching-500" : "text-gray-500 hover:text-brand-500"
-                        )}
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+            {NAV_CATEGORIES.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="flex items-center justify-between px-4 py-3.5 text-sm font-medium transition-colors rounded-2xl text-gray-700 hover:bg-brand-50 hover:text-brand-500"
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.label}
+              </Link>
             ))}
 
             {/* Mobile Auth */}
-            <div className={cn(
-              "border-y py-4 my-4",
-              isCoaching ? "border-white/10" : "border-cream-300"
-            )}>
+            <div className="border-y py-4 my-4 border-cream-300">
               <Link
-                href={isLoggedIn ? `/account${authQuery}` : `/login${authQuery}`}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors rounded-2xl",
-                  isCoaching ? "text-white hover:text-coaching-500" : "text-gray-700 hover:text-brand-500"
-                )}
+                href={isLoggedIn ? '/account' : '/login'}
+                className="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors rounded-2xl text-gray-700 hover:text-brand-500"
                 onClick={() => setMobileOpen(false)}
               >
                 <User className="w-4 h-4" />

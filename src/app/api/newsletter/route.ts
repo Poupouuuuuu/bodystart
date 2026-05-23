@@ -49,14 +49,14 @@ export async function POST(req: NextRequest) {
     // Email de bienvenue
     const safeEmail = escapeHtml(email)
     await resend.emails.send({
-      from: 'Body Start Nutrition <onboarding@resend.dev>',
+      from: 'BodyStart Nutrition <onboarding@resend.dev>',
       to: email,
-      subject: 'Bienvenue dans la communauté Body Start ! Votre code -10%',
+      subject: 'Bienvenue dans la communauté BodyStart ! Votre code -10%',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #111827; padding: 32px; text-align: center;">
             <h1 style="color: #ffffff; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin: 0;">
-              Body Start Nutrition
+              BodyStart Nutrition
             </h1>
           </div>
           <div style="padding: 32px; background: #ffffff;">
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
           </div>
           <div style="background: #f9fafb; padding: 20px 32px; border-top: 2px solid #e5e7eb;">
             <p style="margin: 0; font-size: 12px; color: #9ca3af; text-align: center;">
-              Body Start Nutrition — 8 Rue du Pont des Landes, 78310 Coignieres
+              BodyStart Nutrition — 8 Rue du Pont des Landes, 78310 Coignieres
             </p>
           </div>
         </div>

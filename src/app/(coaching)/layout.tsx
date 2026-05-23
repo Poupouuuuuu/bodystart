@@ -1,3 +1,6 @@
+// STANDBY 2026-05-23 : route masquee (redirect 301 vers /products via middleware).
+// Code conserve volontairement — voir tech-specs/site-rewrite-copy-v1.md §7.4 et brief recentrage.
+// Pour relancer : retirer le path de STANDBY_PATHS dans src/middleware.ts.
 import { Suspense } from 'react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'

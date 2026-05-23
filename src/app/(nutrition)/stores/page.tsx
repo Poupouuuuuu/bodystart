@@ -6,7 +6,7 @@ import StoreStatus from '@/components/stores/StoreStatus'
 
 export const metadata: Metadata = {
   title: 'Nos boutiques',
-  description: 'Retrouvez Body Start Nutrition en boutique. Click & Collect disponible.',
+  description: 'Retrouvez BodyStart Nutrition en boutique. Click & Collect disponible.',
 }
 
 const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'
@@ -41,7 +41,7 @@ export default function StoresPage() {
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Body Start Nutrition - Coignières"
+                title="BodyStart Nutrition - Coignières"
               />
               <div className="absolute inset-0 pointer-events-none border-b border-[#1a2e23]/5" />
             </div>

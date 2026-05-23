@@ -92,7 +92,7 @@ function RegisterContent() {
           <Link href={isCoaching ? "/coaching" : "/"} className="inline-flex items-center gap-2 mb-6">
             <Image
               src={isCoaching ? "/assets/logos/logo-coaching.png" : "/assets/logos/logo-nutrition.png"}
-              alt="Body Start"
+              alt="BodyStart"
               width={160}
               height={48}
               className="h-10 w-auto"
@@ -105,7 +105,7 @@ function RegisterContent() {
             Créer un compte
           </h1>
           <p className={cn("font-medium text-sm", isCoaching ? "text-gray-400" : "text-[#4a5f4c]")}>
-            Rejoignez la communauté Body Start
+            Rejoignez la communauté BodyStart
           </p>
         </div>
 
@@ -215,7 +215,7 @@ function RegisterContent() {
                 "text-[12px] font-medium leading-snug",
                 isCoaching ? "text-gray-400" : "text-[#4a5f4c]"
               )}>
-                Je souhaite recevoir les offres exclusives et l'actualité Body Start
+                Je souhaite recevoir les offres exclusives et l'actualité BodyStart
               </span>
             </label>
 

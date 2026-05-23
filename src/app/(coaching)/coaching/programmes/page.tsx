@@ -1,10 +1,13 @@
+// STANDBY 2026-05-23 : route masquee (redirect 301 vers /products via middleware).
+// Code conserve volontairement — voir tech-specs/site-rewrite-copy-v1.md §7.4 et brief recentrage.
+// Pour relancer : retirer le path de STANDBY_PATHS dans src/middleware.ts.
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Target, Flame } from 'lucide-react'
 import { COACHING_PRODUCTS } from '@/lib/stripe/types'
 
 export const metadata: Metadata = {
-  title: 'Programmes Coaching — Body Start',
+  title: 'Programmes Coaching — BodyStart',
   description: 'Programmes d\'entraînement personnalisés : transformation 12 semaines, sèche 8 semaines, séances individuelles et packs coaching.',
 }
 

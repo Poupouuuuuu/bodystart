@@ -5,7 +5,6 @@ import HeroSection from '@/components/home/HeroSection'
 import ShopByObjective from '@/components/home/ShopByObjective'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
 import BrandValues from '@/components/home/BrandValues'
-import TestimonialsSection from '@/components/home/TestimonialsSection'
 import UniversSection from '@/components/home/UniversSection'
 import { getFeaturedProducts } from '@/lib/shopify'
 
@@ -17,7 +16,7 @@ const StoreLocator = dynamic(() => import('@/components/home/StoreLocator'), {
 export const metadata: Metadata = {
   title: 'Accueil',
   description:
-    'Body Start Nutrition — Compléments alimentaires premium pour sportifs. Livraison rapide, Click & Collect disponible.',
+    "BodyStart — Compléments sport et santé à Coignières (78). Conseil d'humain, produits propres et bien dosés, Click & Collect gratuit.",
 }
 
 // Sections async isolées → streaming via Suspense pour ne pas bloquer le Hero (LCP)
@@ -50,9 +49,9 @@ export default function HomePage() {
       <BrandValues />
       <ShopByObjective />
 
-      <Suspense fallback={<SectionFallback minHeight="500px" />}>
-        <TestimonialsSection />
-      </Suspense>
+      {/* STANDBY 2026-05-23 : section Avis clients retiree (placeholder generique
+          fictif). A reactiver via TestimonialsSection une fois qu'on a des vrais
+          avis Google. Cf. tech-specs/site-rewrite-copy-v1.md §3.6. */}
 
       <StoreLocator />
       <UniversSection />
