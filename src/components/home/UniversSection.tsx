@@ -22,7 +22,7 @@ export default function UniversSection() {
             </h2>
           </div>
           <p className="text-[#4a5f4c] text-sm md:text-base max-w-sm pb-2 font-medium">
-            Compléments sport et santé, propres et bien dosés. Le cœur de notre métier — et tout
+            Compléments sport et santé, propres et bien dosés. Le cœur de notre métier, et tout
             ce sur quoi on se concentre aujourd&apos;hui.
           </p>
         </div>

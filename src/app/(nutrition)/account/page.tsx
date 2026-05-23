@@ -523,7 +523,7 @@ function ReferralPanel({ customer }: { customer: NonNullable<ReturnType<typeof u
         </div>
       </div>
       <div className="bg-[#1a2e23]/5 rounded-[20px] p-6 text-center">
-        <p className="text-[#1a2e23] font-display font-bold text-sm uppercase tracking-tight">Programme de parrainage — Bientôt actif</p>
+        <p className="text-[#1a2e23] font-display font-bold text-sm uppercase tracking-tight">Programme de parrainage, bientôt actif</p>
         <p className="text-[#4a5f4c] text-[12px] mt-1 font-medium">Le système de récompenses sera lancé prochainement.</p>
       </div>
     </div>

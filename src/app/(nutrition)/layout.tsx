@@ -31,7 +31,7 @@ const localBusinessJsonLd = [
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': `${SITE_URL}/#boutique-coignieres`,
-    name: 'BodyStart Nutrition — Coignières',
+    name: 'BodyStart Nutrition, Coignières',
     image: `${SITE_URL}/assets/logos/logo-nutrition.png`,
     telephone: '+33761847580',
     url: `${SITE_URL}/stores`,

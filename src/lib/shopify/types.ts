@@ -171,14 +171,14 @@ export interface BodyStartStore {
 export const BODY_START_STORES: BodyStartStore[] = [
   {
     id: 'boutique-coignieres',
-    name: 'BodyStart Nutrition — Coignières',
+    name: 'BodyStart Nutrition, Coignières',
     shopifyLocationId: 'gid://shopify/Location/114075795838',
     isActive: true,
     address: '8 Rue du Pont des Landes',
     city: '78310 Coignières',
     phone: '07 61 84 75 80',
     hours: [
-      { day: 'Lundi – Dimanche', open: '11:00', close: '19:00' },
+      { day: 'Lundi à Dimanche', open: '11:00', close: '19:00' },
     ],
   },
 ]
@@ -187,7 +187,7 @@ export const BODY_START_STORES: BodyStartStore[] = [
 export const COMING_SOON_STORES = [
   {
     id: 'boutique-b',
-    name: 'BodyStart Nutrition — Boutique 2',
+    name: 'BodyStart Nutrition, Boutique 2',
     city: 'Bientôt disponible',
     openingDate: 'Ouverture prochaine',
   },

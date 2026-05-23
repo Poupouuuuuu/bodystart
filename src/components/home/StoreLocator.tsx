@@ -24,7 +24,8 @@ function useIsStoreOpen(hours: { day: string; open: string; close: string }[]) {
       for (const h of hours) {
         if (h.open === 'Fermé') continue
 
-        const isAllDays = h.day.includes('–') && h.day.includes('Lundi') && h.day.includes('Dimanche')
+        // Detecte une plage "Lundi a Dimanche" (jours d'ouverture toute la semaine)
+        const isAllDays = h.day.includes('Lundi') && h.day.includes('Dimanche')
         const isToday = isAllDays || h.day.includes(todayName)
 
         if (isToday) {
@@ -71,7 +72,7 @@ export default function StoreLocator() {
             Passe nous voir en boutique
           </h2>
           <p className="text-[#89a890] text-sm md:text-base max-w-xl mx-auto font-medium">
-            Commande en ligne, récupère à Coignières — souvent prêt en quelques minutes, on te
+            Commande en ligne, récupère à Coignières. C&apos;est souvent prêt en quelques minutes, on te
             prévient dès que c&apos;est bon. Et tant que t&apos;es là, on prend 5 minutes pour
             t&apos;aider à choisir. C&apos;est gratuit, et c&apos;est tout l&apos;intérêt d&apos;avoir
             une vraie boutique.
@@ -118,7 +119,7 @@ export default function StoreLocator() {
                     {h.day}
                   </span>
                   <span className={h.open === 'Fermé' ? 'text-[#89a890]' : 'text-[#1a2e23] font-bold'}>
-                    {h.open === 'Fermé' ? 'Fermé' : `${h.open} – ${h.close}`}
+                    {h.open === 'Fermé' ? 'Fermé' : `${h.open} à ${h.close}`}
                   </span>
                 </div>
               ))}

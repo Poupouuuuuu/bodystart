@@ -6,7 +6,7 @@ import ProductCard from '@/components/product/ProductCard'
 import { formatPrice } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'Packs & Économies — BodyStart Nutrition',
+  title: 'Packs & Économies, BodyStart Nutrition',
   description:
     'Économisez en regroupant nos meilleurs produits. Packs prêts à l’emploi pour la prise de muscle, la perte de poids et la récupération.',
 }
@@ -68,7 +68,7 @@ export default async function PacksPage() {
           {[
             { icon: Percent, title: 'Remise immédiate', desc: 'Le pack coûte moins cher que les produits séparés' },
             { icon: Package, title: 'Routine clé en main', desc: 'Tout ce qu’il vous faut pour atteindre votre objectif' },
-            { icon: Gift, title: 'Livraison offerte', desc: 'Dès 85€ d’achat — la plupart des packs sont éligibles' },
+            { icon: Gift, title: 'Livraison offerte', desc: 'Dès 85€ d’achat, la plupart des packs sont éligibles' },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="bg-white rounded-[20px] p-5 flex items-start gap-4 shadow-sm">
               <div className="w-10 h-10 bg-[#89a890]/10 rounded-full flex items-center justify-center flex-shrink-0">

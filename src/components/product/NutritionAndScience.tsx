@@ -90,7 +90,7 @@ function parseMetafieldToRows(val: string): NutritionRow[] {
       const [label, ...rest] = line.split(':')
       return {
         label: label.trim(),
-        value: rest.join(':').trim() || '—',
+        value: rest.join(':').trim() || '-',
       }
     })
   }

@@ -15,11 +15,11 @@ interface WorkoutEntry {
 }
 
 const WORKOUT_TYPES = [
-  'Musculation — Haut du corps',
-  'Musculation — Bas du corps',
-  'Musculation — Full body',
-  'Cardio — HIIT',
-  'Cardio — Endurance',
+  'Musculation, haut du corps',
+  'Musculation, bas du corps',
+  'Musculation, full body',
+  'Cardio HIIT',
+  'Cardio endurance',
   'Stretching / Mobilité',
   'Autre',
 ]

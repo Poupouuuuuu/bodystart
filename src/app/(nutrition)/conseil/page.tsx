@@ -299,7 +299,7 @@ export default function ConseilPage() {
               </button>
 
               <p className="text-center text-[11px] font-black uppercase tracking-widest text-[#89a890] mt-4">
-                Reponse sous 24-48h -- Aucun engagement
+                Réponse sous 24 à 48h, aucun engagement
               </p>
             </form>
           )}
@@ -307,9 +307,9 @@ export default function ConseilPage() {
           {/* Infos boutique */}
           <div className="mt-16 pt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              { icon: MapPin, label: 'Adresse', value: '8 Rue du Pont des Landes\n78310 Coignieres' },
-              { icon: Clock, label: 'Horaires', value: '7j/7 -- 11h-19h' },
-              { icon: Phone, label: 'Telephone', value: '07 61 84 75 80', href: 'tel:+33761847580' },
+              { icon: MapPin, label: 'Adresse', value: '8 Rue du Pont des Landes\n78310 Coignières' },
+              { icon: Clock, label: 'Horaires', value: '7j/7, 11h à 19h' },
+              { icon: Phone, label: 'Téléphone', value: '07 61 84 75 80', href: 'tel:+33761847580' },
             ].map(({ icon: Icon, label, value, href }) => (
               <div key={label} className="bg-white rounded-[20px] p-5 flex items-start gap-4">
                 <div className="w-10 h-10 bg-[#89a890]/10 rounded-full flex items-center justify-center flex-shrink-0">
