@@ -116,7 +116,7 @@ function HeaderInner(_props: HeaderProps) {
       <div className="bg-[#1A1A1A] relative z-50">
         <div className="container">
           <p className="text-center text-[11px] text-white/80 font-medium py-2">
-            Livraison offerte dès 85€ · Click &amp; Collect gratuit · -10&nbsp;% abonnés Insta (lancement)
+            Livraison offerte dès 85€ · Click &amp; Collect gratuit · Conseil gratuit en boutique
           </p>
         </div>
       </div>
