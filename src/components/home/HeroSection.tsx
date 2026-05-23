@@ -18,8 +18,7 @@ export default function HeroSection() {
 
           <h1 className="font-display text-[40px] sm:text-[60px] lg:text-[78px] font-black uppercase leading-[0.95] text-[#1a2e23] mb-7 tracking-tighter relative z-20">
             Les bons compléments.<br />
-            Le bon conseil.<br />
-            <span className="text-[#89a890]">Sans bullshit.</span>
+            <span className="text-[#89a890]">Le bon conseil.</span>
           </h1>
 
           <p className="text-[#4a5f4c] text-lg md:text-xl font-medium leading-relaxed mb-10 max-w-[520px]">
