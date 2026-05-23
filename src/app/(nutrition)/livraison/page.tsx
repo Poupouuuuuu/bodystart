@@ -3,10 +3,10 @@ import { Truck, Store, Package, RotateCcw } from 'lucide-react'
 
 export const metadata: Metadata = { title: 'Livraison & Retours' }
 
-// Tarifs livraison — copy spec §3.9 :
-//  - C&C : gratuit, souvent prêt en quelques minutes
-//  - Domicile/relais : 48–72h, offert dès 85€, forfait sous 85€ a definir
-//    → placeholder {{FORFAIT_PORT}} a remplacer une fois cale
+// Tarifs livraison — decision Adam 2026-05-23 :
+//  - Click & Collect : gratuit, souvent pret en quelques minutes
+//  - Mondial Relay (point relais) : 48-72h, offerte des 85EUR, sinon 4,90EUR
+//  - Colissimo (domicile)         : 48-72h, offerte des 85EUR, sinon 6,90EUR
 const shippingMethods = [
   {
     Icon: Store,
@@ -16,18 +16,18 @@ const shippingMethods = [
     details: "Retire ta commande en boutique à Coignières. On te prévient dès que c'est prêt.",
   },
   {
-    Icon: Truck,
-    name: 'Colissimo à domicile',
-    delay: '48 à 72h',
-    price: 'Offerte dès 85€ · sinon {{FORFAIT_PORT}}',
-    details: 'Livraison à domicile avec suivi. Un numéro de suivi est envoyé par email.',
-  },
-  {
     Icon: Package,
     name: 'Mondial Relay',
     delay: '48 à 72h',
-    price: 'Offerte dès 85€ · sinon {{FORFAIT_PORT}}',
+    price: 'Offerte dès 85€ · sinon 4,90€',
     details: 'Retrait dans le point relais de ton choix. Pratique et économique.',
+  },
+  {
+    Icon: Truck,
+    name: 'Colissimo à domicile',
+    delay: '48 à 72h',
+    price: 'Offerte dès 85€ · sinon 6,90€',
+    details: 'Livraison à domicile avec suivi. Un numéro de suivi est envoyé par email.',
   },
 ]
 

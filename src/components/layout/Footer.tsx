@@ -19,8 +19,10 @@ import {
 // Reseaux sociaux : on ne garde QUE Instagram (lien reel quand disponible).
 // Facebook + TikTok masques tant que les comptes ne sont pas prets (spec §3.10).
 //
-// Placeholder {{FORFAIT_PORT}} : le montant du forfait livraison sous 85EUR
-// n'est pas encore tranche (decision spec §3.9). A remplacer une fois cale.
+// Forfaits livraison sous 85€ (decision Adam 2026-05-23) :
+//   - Mondial Relay : 4,90€
+//   - Colissimo (domicile) : 6,90€
+// Au-dessus de 85€ : offerte (les deux methodes).
 const FOOTER_LINKS = {
   boutique: [
     { label: 'Tous les produits', href: '/products' },
@@ -53,7 +55,7 @@ const TRUST_BADGES = [
   {
     icon: Truck,
     label: 'Livraison offerte dès 85€',
-    sub: 'Sinon forfait {{FORFAIT_PORT}}', // a remplacer une fois cale (cf. spec §3.9)
+    sub: 'Sinon dès 4,90€ (relais)',
   },
   {
     icon: Store,
