@@ -3,38 +3,37 @@
  *
  * Webhook Shopify orders/paid → finalize_order_loyalty.
  *
+ * Sprint L3 : interpretation des codes de reduction utilises.
+ *
  * Flow :
- *   1. Lire le RAW body (necessaire pour HMAC).
- *   2. Verifier signature HMAC SHA256 via SHOPIFY_WEBHOOK_SECRET.
- *      Rejeter en 401 si invalide. C'est la frontiere de confiance.
- *   3. Parser le payload → telephone E.164 + sous-total cents + discount codes.
- *   4. Lookup loyalty_customer par phone. Si absent → log + 200 (rien a creer,
- *      Shopify n'a pas notre app loyalty installee chez ce client).
- *   5. Appeler finalizeOrderLoyalty(...) avec channel='online'.
- *      L'idempotence est geree cote Postgres via loyalty_processed_orders.
+ *   1. RAW body + HMAC SHA256 → 401 si invalide
+ *   2. Parser le payload → phone E.164, sous-total cents, discount_codes[]
+ *   3. Si pas de phone : marquer order processed + 200 (skip propre)
+ *   4. Lookup loyalty_customer par phone. Si absent : pareil skip.
+ *   5. Pour chaque code utilise : lookup parrain (loyalty_customers.referral_code)
+ *      + lookup redemption (loyalty_redemptions.discount_code de cet acheteur, 'reserved')
+ *   6. interpretDiscountCodes → { referredByCodeUsed, spentLoyaltyCents, appliedRedemptionId }
+ *   7. Appeler finalizeOrderLoyalty(channel='online', ...)
+ *   8. Si appliedRedemptionId : update loyalty_redemptions SET status='applied', shopify_order_id
  *
- * En L2 : on N'EXTRAIT PAS la cagnotte utilisee (spent_loyalty_cents=0).
- *   La methode A (codes Admin API + table loyalty_redemptions) sera ajoutee
- *   au Sprint L3.
- *
- * En L2 : on n'enregistre PAS le code parrain utilise pendant le checkout —
- *   c'est le referred_by_code stocke a l'inscription qui fait foi (UI L4
- *   permettra a un user existant de scanner un code).
+ * Idempotence cote Postgres via loyalty_processed_orders.
  */
 import { NextResponse } from 'next/server'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { verifyShopifyHmac } from '@/lib/loyalty/verify-hmac'
 import { parseShopifyOrder } from '@/lib/loyalty/parse-shopify-order'
 import { finalizeOrderLoyalty } from '@/lib/loyalty/finalize'
+import {
+  interpretDiscountCodes,
+  type ReferralCodeLookup,
+  type RedemptionLookup,
+} from '@/lib/loyalty/interpret-discount-codes'
 
 export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs' // crypto + supabase-js
+export const runtime = 'nodejs'
 
 export async function POST(req: Request) {
-  // 1. RAW body (avant tout parsing JSON)
   const rawBody = await req.text()
-
-  // 2. HMAC verification
   const hmacHeader = req.headers.get('x-shopify-hmac-sha256')
   const secret = process.env.SHOPIFY_WEBHOOK_SECRET
 
@@ -43,8 +42,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'webhook_not_configured' }, { status: 500 })
   }
 
-  const validHmac = verifyShopifyHmac({ rawBody, hmacHeader, secret })
-  if (!validHmac) {
+  if (!verifyShopifyHmac({ rawBody, hmacHeader, secret })) {
     console.warn(
       '[loyalty webhook] HMAC invalide. shop=%s topic=%s',
       req.headers.get('x-shopify-shop-domain'),
@@ -53,7 +51,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'invalid_hmac' }, { status: 401 })
   }
 
-  // 3. Parse payload
   let parsed: ReturnType<typeof parseShopifyOrder>
   try {
     const payload = JSON.parse(rawBody)
@@ -63,10 +60,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'parse_error' }, { status: 400 })
   }
 
+  const supabase = getLoyaltyAdminClient()
+
   if (!parsed.phoneE164) {
-    // Pas de telephone → impossible de matcher un loyalty_customer.
-    // On marque l'order comme processed pour eviter les retry inutiles.
-    const supabase = getLoyaltyAdminClient()
     await supabase
       .from('loyalty_processed_orders')
       .upsert({ shopify_order_id: parsed.shopifyOrderId }, { onConflict: 'shopify_order_id' })
@@ -77,8 +73,7 @@ export async function POST(req: Request) {
     })
   }
 
-  // 4. Lookup loyalty_customer par phone
-  const supabase = getLoyaltyAdminClient()
+  // Lookup customer par phone
   const { data: customer, error: lookupErr } = await supabase
     .from('loyalty_customers')
     .select('id')
@@ -86,12 +81,11 @@ export async function POST(req: Request) {
     .maybeSingle()
 
   if (lookupErr) {
-    console.error('[loyalty webhook] lookup error:', lookupErr)
+    console.error('[loyalty webhook] customer lookup error:', lookupErr)
     return NextResponse.json({ error: 'lookup_failed' }, { status: 500 })
   }
 
   if (!customer) {
-    // Pas inscrit → on note l'order traite pour ne pas retry, puis 200.
     await supabase
       .from('loyalty_processed_orders')
       .upsert({ shopify_order_id: parsed.shopifyOrderId }, { onConflict: 'shopify_order_id' })
@@ -103,19 +97,84 @@ export async function POST(req: Request) {
     })
   }
 
-  // 5. Appel finalize (atomique cote Postgres)
+  // ─── L3 : interpretation des codes de reduction ───
+  let referralLookups: ReferralCodeLookup[] = []
+  let redemptionLookups: RedemptionLookup[] = []
+
+  if (parsed.discountCodes.length > 0) {
+    // Lookup parrains (codes BS-* qui appartiennent a un autre customer)
+    const { data: parrains } = await supabase
+      .from('loyalty_customers')
+      .select('id, referral_code')
+      .in('referral_code', parsed.discountCodes)
+    referralLookups = (parrains ?? []).map((p) => ({
+      code: p.referral_code,
+      ownerId: p.id,
+    }))
+
+    // Lookup redemptions de cet acheteur
+    const { data: redemptions } = await supabase
+      .from('loyalty_redemptions')
+      .select('id, discount_code, amount_cents, status, customer_id')
+      .eq('customer_id', customer.id)
+      .in('discount_code', parsed.discountCodes)
+    redemptionLookups = (redemptions ?? []).map((r) => ({
+      code: r.discount_code,
+      id: r.id,
+      amountCents: r.amount_cents,
+      status: r.status as RedemptionLookup['status'],
+      customerId: r.customer_id,
+    }))
+  }
+
+  const interpreted = interpretDiscountCodes({
+    discountCodes: parsed.discountCodes,
+    buyerCustomerId: customer.id,
+    referralLookups,
+    redemptionLookups,
+  })
+
+  if (interpreted.diagnostics.length > 0) {
+    console.log(
+      '[loyalty webhook] discount diagnostics for order %s:',
+      parsed.shopifyOrderId,
+      interpreted.diagnostics
+    )
+  }
+
+  // ─── Appel finalize (atomique cote Postgres) ───
   try {
     const result = await finalizeOrderLoyalty(supabase, {
       customerId: customer.id,
       orderRef: parsed.shopifyOrderId,
       paidItemsCents: parsed.paidItemsCents,
-      spentLoyaltyCents: 0, // L3 ajoutera le lookup loyalty_redemptions
-      referredByCodeUsed: null, // L4 ajoutera la possibilite de saisir un code post-inscription
+      spentLoyaltyCents: interpreted.spentLoyaltyCents,
+      referredByCodeUsed: interpreted.referredByCodeUsed,
       channel: 'online',
       staffUserId: null,
     })
 
-    return NextResponse.json({ ok: true, result })
+    // Marquer la redemption appliquee (apres finalize OK, dans le meme contexte)
+    if (interpreted.appliedRedemptionId && !result.idempotentSkip) {
+      const { error: updateErr } = await supabase
+        .from('loyalty_redemptions')
+        .update({
+          status: 'applied',
+          shopify_order_id: parsed.shopifyOrderId,
+        })
+        .eq('id', interpreted.appliedRedemptionId)
+        .eq('status', 'reserved') // defense : ne pas ecraser si deja applied
+      if (updateErr) {
+        // Non-bloquant pour la reponse webhook, mais loggue
+        console.error(
+          '[loyalty webhook] failed to mark redemption applied:',
+          interpreted.appliedRedemptionId,
+          updateErr.message
+        )
+      }
+    }
+
+    return NextResponse.json({ ok: true, result, diagnostics: interpreted.diagnostics })
   } catch (err) {
     console.error('[loyalty webhook] finalize error:', err)
     return NextResponse.json(
