@@ -1,0 +1,73 @@
+name: pgTAP loyalty tests
+
+# Trigger sur changement de migrations, tests, ou workflow lui-meme
+on:
+  push:
+    branches: [main, feat/loyalty]
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - '.github/workflows/pgtap.yml'
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - '.github/workflows/pgtap.yml'
+  workflow_dispatch:
+
+jobs:
+  pgtap:
+    name: Apply migrations + run pgTAP
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL 16 + pgTAP + pg_prove
+        run: |
+          # ubuntu-24.04 a postgresql-16 dispo nativement
+          sudo apt-get update
+          sudo apt-get install -y \
+            postgresql-16 \
+            postgresql-contrib-16 \
+            postgresql-16-pgtap \
+            libtap-parser-sourcehandler-pgtap-perl
+          sudo systemctl start postgresql
+
+      - name: Create CI database + user
+        run: |
+          sudo -u postgres psql -c "CREATE USER ci WITH PASSWORD 'ci' SUPERUSER"
+          sudo -u postgres createdb -O ci bodystart_test
+
+      - name: Install pgtap extension
+        env:
+          PGPASSWORD: ci
+        run: |
+          psql -h localhost -U ci -d bodystart_test -c "CREATE EXTENSION IF NOT EXISTS pgtap"
+          psql -h localhost -U ci -d bodystart_test -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+
+      - name: Apply CI stubs (auth schema, roles)
+        env:
+          PGPASSWORD: ci
+        run: |
+          psql -h localhost -U ci -d bodystart_test -v ON_ERROR_STOP=1 -f supabase/tests/ci_init.sql
+
+      - name: Apply migrations (in order)
+        env:
+          PGPASSWORD: ci
+        run: |
+          for f in $(ls supabase/migrations/*.sql | sort); do
+            echo "▶ Applying $f"
+            psql -h localhost -U ci -d bodystart_test -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Run pgTAP tests
+        env:
+          PGPASSWORD: ci
+        run: |
+          # pg_prove execute tous les fichiers *.test.sql, parse TAP output,
+          # echoue si une assertion echoue.
+          pg_prove --verbose -h localhost -U ci -d bodystart_test \
+            supabase/tests/finalize.test.sql \
+            supabase/tests/loyalty_staff.test.sql
