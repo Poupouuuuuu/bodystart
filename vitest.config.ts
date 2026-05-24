@@ -15,7 +15,13 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json-summary', 'html'],
       include: ['src/lib/loyalty/**/*.ts'],
-      exclude: ['src/lib/loyalty/**/*.test.ts', 'src/lib/loyalty/**/*.spec.ts'],
+      exclude: [
+        'src/lib/loyalty/**/*.test.ts',
+        'src/lib/loyalty/**/*.spec.ts',
+        // Wrapper d'init Supabase sans logique metier — testable
+        // seulement via E2E (Sprint L5 avec supabase local).
+        'src/lib/loyalty/supabase-admin.ts',
+      ],
       thresholds: {
         // Cible spec V2 §10 : minimum 80% sur lib/loyalty/
         lines: 80,
