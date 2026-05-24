@@ -14,7 +14,7 @@
  *
  * Validation Zod + libphonenumber-js (E.164).
  */
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { normalizeToE164 } from '@/lib/loyalty/phone'
@@ -24,6 +24,26 @@ import { createReferralDiscountCode } from '@/lib/shopify/loyalty-discounts'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+
+// ─── Rate limiter Upstash : 5 inscriptions/upserts / 10 min par IP ───
+// Skip si Upstash non configure (dev local sans Redis) ; sinon protection
+// anti-spam stricte (cf. spec V2 §8).
+let rateLimiter: { limit: (key: string) => Promise<{ success: boolean; remaining: number }> } | null = null
+if (
+  process.env.UPSTASH_REDIS_REST_URL &&
+  !process.env.UPSTASH_REDIS_REST_URL.includes('xxx')
+) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { Ratelimit } = require('@upstash/ratelimit')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { Redis } = require('@upstash/redis')
+  rateLimiter = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(5, '10 m'),
+    analytics: true,
+    prefix: 'ratelimit:loyalty:upsert',
+  })
+}
 
 const BodySchema = z.object({
   phone: z.string().min(5).max(32),
@@ -83,7 +103,25 @@ async function tryCreateReferralCodeShopify(
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  // ─── Rate limiting (skip si Upstash non configure) ───
+  if (rateLimiter) {
+    const ip =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      req.headers.get('x-real-ip') ??
+      '127.0.0.1'
+    const { success, remaining } = await rateLimiter.limit(ip)
+    if (!success) {
+      return NextResponse.json(
+        {
+          error: 'rate_limited',
+          detail: 'Trop de demandes. Réessaye dans quelques minutes.',
+        },
+        { status: 429, headers: { 'X-RateLimit-Remaining': String(remaining) } }
+      )
+    }
+  }
+
   let parsed: z.infer<typeof BodySchema>
   try {
     const body = await req.json()
