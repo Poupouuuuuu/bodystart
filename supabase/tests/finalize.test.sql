@@ -194,25 +194,16 @@ set first_purchase_at = now() - interval '13 months',
     referral_commission_until = now() - interval '1 month'
 where id = '22222222-2222-2222-2222-222222222222';
 
--- snapshot du solde parrain avant
-do $$
-declare
-  v_balance_before integer;
-  v_result jsonb;
-begin
-  select loyalty_balance_cents into v_balance_before
-  from public.loyalty_customers
-  where id = '11111111-1111-1111-1111-111111111111';
-
-  v_result := public.finalize_order_loyalty(
-    '22222222-2222-2222-2222-222222222222'::uuid,
-    'TEST-D-ORDER1',
-    10000, 0, null, 'online', null
-  );
-
-  perform pg_temp.set_test_meta('d_balance_before', v_balance_before::text);
-  perform pg_temp.set_test_meta('d_commission', (v_result->>'commission_to_referrer_cents'));
-end $$;
+-- D0. Appel hors fenetre : doit s'executer sans erreur (pas de throw)
+-- La verification "pas de credit" se fait dans D1/D2 ci-dessous
+select lives_ok(
+  $$ select public.finalize_order_loyalty(
+       '22222222-2222-2222-2222-222222222222'::uuid,
+       'TEST-D-ORDER1',
+       10000, 0, null, 'online', null
+     ) $$,
+  'D0 : finalize hors fenetre 12 mois ne throw pas'
+);
 
 select is(
   (select loyalty_balance_cents from public.loyalty_customers where id = '11111111-1111-1111-1111-111111111111'),
@@ -278,11 +269,6 @@ select throws_like(
   '%p_channel%',
   'Validation : channel inconnu → exception'
 );
-
--- ─── Helper temp pour set_test_meta (placeholder, pas critique) ───
--- (utilise dans D pour stocker des valeurs entre blocs ; ignorable)
-create or replace function pg_temp.set_test_meta(k text, v text) returns void
-language plpgsql as $$ begin perform 1; end $$;
 
 select * from finish();
 
