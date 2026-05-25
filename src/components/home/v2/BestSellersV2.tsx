@@ -60,42 +60,54 @@ export default function BestSellersV2({ products }: BestSellersV2Props) {
               <Link
                 key={product.id}
                 href={`/products/${product.handle}`}
-                className="group bg-white rounded-2xl border border-spruce/10 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(45,90,45,0.08)]"
+                className="group bg-white rounded-2xl border border-spruce/10 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(45,90,45,0.08)] flex flex-col"
               >
-                {/* Image carre, fond blanc, padding genereux */}
-                <div className="relative aspect-square bg-white overflow-hidden">
-                  {/* Badges */}
-                  <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
+                {/* Zone image avec Background vegetal /Background.webp
+                    (meme traitement que /products — cf. ProductsPageClient.tsx
+                    + FeaturedProducts.tsx V1) */}
+                <div
+                  className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden"
+                  style={{ backgroundImage: "url('/Background.webp')" }}
+                >
+                  {/* Badges au-dessus du fond vegetal */}
+                  <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5">
                     {isFirst && (
-                      <span className="inline-flex items-center bg-mustard text-mustard-ink text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                      <span className="inline-flex items-center bg-mustard text-mustard-ink text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
                         Best-seller
                       </span>
                     )}
                     {isSante && (
-                      <span className="inline-flex items-center bg-sage text-spruce text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                      <span className="inline-flex items-center bg-sage text-spruce text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
                         Santé
                       </span>
                     )}
                   </div>
 
-                  {image ? (
-                    <Image
-                      src={image.url}
-                      alt={image.altText ?? product.title}
-                      fill
-                      sizes="(min-width: 1024px) 280px, 50vw"
-                      className="object-contain p-6 transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-ink-mute/40">
-                      <span className="text-xs font-semibold">Photo a venir</span>
-                    </div>
-                  )}
+                  {/* Image produit en bas-centre, ombre portee, hover scale */}
+                  <div className="absolute inset-0 flex items-end justify-center pb-4">
+                    {image ? (
+                      <Image
+                        src={image.url}
+                        alt={image.altText ?? product.title}
+                        width={220}
+                        height={220}
+                        sizes="(min-width: 1024px) 280px, 50vw"
+                        className="relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="relative z-10 w-16 h-16 bg-white/30 rounded-full flex items-center justify-center mb-6">
+                        <span className="font-display font-black text-xl text-white/60">BS</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Gradient fondu blanc en bas (raccord visuel avec la carte) */}
+                  <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent z-0" />
                 </div>
 
                 {/* Infos produit */}
-                <div className="p-5">
-                  <h3 className="font-display font-bold text-[15px] text-ink leading-tight mb-2 line-clamp-2">
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <h3 className="font-display font-bold text-[15px] text-ink leading-tight mb-3 line-clamp-2">
                     {product.title}
                   </h3>
                   <div className="flex items-center justify-between">
