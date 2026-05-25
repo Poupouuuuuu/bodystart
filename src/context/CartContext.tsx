@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes } from '@/lib/shopify'
+import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes } from '@/lib/shopify'
 import type { ShopifyCart } from '@/lib/shopify/types'
 import toast from 'react-hot-toast'
 
@@ -16,6 +16,8 @@ interface CartContextType {
   updateItem: (lineId: string, quantity: number) => Promise<void>
   removeItem: (lineId: string) => Promise<void>
   setCartAttributes: (attributes: { key: string; value: string }[]) => Promise<void>
+  applyDiscountCode: (code: string) => Promise<void>
+  removeDiscountCode: (code: string) => Promise<void>
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -113,10 +115,45 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cart])
 
+  // Remplace l'integralite des codes promos du cart par la liste fournie
+  // (cartDiscountCodesUpdate ecrase, n'ajoute pas). Pour ajouter sans
+  // detruire les codes existants, on merge avant d'envoyer.
+  const applyDiscountCode = useCallback(async (code: string) => {
+    if (!cart) return
+    setIsLoading(true)
+    try {
+      const current = (cart.discountCodes ?? []).map((c) => c.code)
+      const next = current.includes(code) ? current : [...current, code]
+      const updatedCart = await updateCartDiscountCodes(cart.id, next)
+      setCart(updatedCart)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur lors de l\'application du code')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }, [cart])
+
+  const removeDiscountCode = useCallback(async (code: string) => {
+    if (!cart) return
+    setIsLoading(true)
+    try {
+      const next = (cart.discountCodes ?? []).map((c) => c.code).filter((c) => c !== code)
+      const updatedCart = await updateCartDiscountCodes(cart.id, next)
+      setCart(updatedCart)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur lors du retrait du code')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }, [cart])
+
   return (
     <CartContext.Provider value={{
       cart, isLoading, isOpen, totalQuantity,
       openCart, closeCart, addItem, updateItem, removeItem, setCartAttributes,
+      applyDiscountCode, removeDiscountCode,
     }}>
       {children}
     </CartContext.Provider>

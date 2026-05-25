@@ -54,6 +54,10 @@ const CART_FRAGMENT = `
         currencyCode
       }
     }
+    discountCodes {
+      code
+      applicable
+    }
   }
 `
 
@@ -116,6 +120,21 @@ export const UPDATE_CART_ATTRIBUTES = `
     cartAttributesUpdate(cartId: $cartId, attributes: $attributes) {
       cart {
         ...CartFragment
+      }
+    }
+  }
+`
+
+export const UPDATE_CART_DISCOUNT_CODES = `
+  ${CART_FRAGMENT}
+  mutation UpdateCartDiscountCodes($cartId: ID!, $discountCodes: [String!]) {
+    cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
+      cart {
+        ...CartFragment
+      }
+      userErrors {
+        field
+        message
       }
     }
   }
