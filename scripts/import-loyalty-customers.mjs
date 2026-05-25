@@ -382,6 +382,12 @@ async function main() {
   const created = []
   const insertFailures = []
   const shopifyFailures = []
+  // Client cree + code Shopify cree mais UPDATE Supabase de l'ID Shopify a echoue.
+  // Cas typique : colonne shopify_referral_discount_id non visible (cache PostgREST,
+  // migration manquante). Distinct de shopifyFailures car le code Shopify EXISTE bien,
+  // c'est juste le lien reverse en DB qui manque. A reparer via le script
+  // scripts/reconcile-shopify-discount-ids.mjs.
+  const linkFailures = []
 
   for (let i = 0; i < toCreate.length; i++) {
     const customer = toCreate[i]
@@ -443,6 +449,13 @@ async function main() {
         .eq('id', inserted.id)
       if (updateErr) {
         process.stdout.write(`shopify=OK mais update DB ECHEC : ${updateErr.message}\n`)
+        linkFailures.push({
+          e164: customer.e164,
+          id: inserted.id,
+          code: inserted.referral_code,
+          shopifyId,
+          reason: updateErr.message,
+        })
       } else {
         process.stdout.write(`shopify=OK\n`)
       }
@@ -471,10 +484,16 @@ async function main() {
   }
 
   // Phase 5 : rapport final
+  const partialSuccess = created.length - linkFailures.length
   console.log(`\n━━━ RAPPORT FINAL ━━━`)
-  console.log(`  Crees                       : ${created.length}`)
-  console.log(`  Echecs insert DB            : ${insertFailures.length}`)
-  console.log(`  Echecs code Shopify         : ${shopifyFailures.length} (clients crees, code a retry)`)
+  console.log(`  Crees DB + code Shopify OK + lien stocke : ${partialSuccess}`)
+  console.log(`  Crees DB + code Shopify OK MAIS lien manquant : ${linkFailures.length} (a reconcilier)`)
+  console.log(`  Echecs insert DB                              : ${insertFailures.length}`)
+  console.log(`  Echecs creation code Shopify                  : ${shopifyFailures.length} (a retry)`)
+  console.log(``)
+  console.log(`  → Total clients crees en DB : ${created.length}`)
+  console.log(`  → Total echecs partiels     : ${linkFailures.length + shopifyFailures.length}`)
+  console.log(`  → Total echecs durs         : ${insertFailures.length}`)
   console.log(``)
 
   if (insertFailures.length > 0) {
@@ -486,7 +505,7 @@ async function main() {
   }
 
   if (shopifyFailures.length > 0) {
-    console.log(`Echecs code Shopify (clients crees, a retry manuellement) :`)
+    console.log(`Echecs creation code Shopify (clients crees, code a recreer manuellement) :`)
     for (const f of shopifyFailures) {
       console.log(`  ${f.e164} (id=${f.id.slice(0, 8)} code=${f.code}) : ${f.reason.slice(0, 120)}`)
     }
@@ -494,9 +513,32 @@ async function main() {
     console.log(`Pour retry les codes Shopify failed, query SQL :`)
     console.log(`  SELECT id, phone, referral_code, shopify_referral_discount_last_error`)
     console.log(`  FROM loyalty_customers_with_failed_referral_code;`)
+    console.log(``)
   }
 
-  process.exit(insertFailures.length > 0 ? 2 : 0)
+  if (linkFailures.length > 0) {
+    console.log(`Liens DB ↔ Shopify manquants (code Shopify cree, ID non persiste cote DB) :`)
+    for (const f of linkFailures.slice(0, 30)) {
+      console.log(`  ${f.e164} (id=${f.id.slice(0, 8)} code=${f.code}) : ${f.reason.slice(0, 120)}`)
+    }
+    if (linkFailures.length > 30) {
+      console.log(`  ... et ${linkFailures.length - 30} autres`)
+    }
+    console.log(``)
+    console.log(`Cause typique : colonne shopify_referral_discount_id absente (migration 00006)`)
+    console.log(`OU cache PostgREST pas refresh (Supabase Dashboard > Settings > API > Reload schema).`)
+    console.log(`Une fois la colonne accessible, lance :`)
+    console.log(`  node scripts/reconcile-shopify-discount-ids.mjs`)
+    console.log(``)
+  }
+
+  // Exit code :
+  //   0 = tout OK
+  //   2 = au moins un echec partiel (linkFailures OU shopifyFailures, clients crees)
+  //   3 = au moins un echec dur (insertFailures, client pas cree)
+  if (insertFailures.length > 0) process.exit(3)
+  if (linkFailures.length > 0 || shopifyFailures.length > 0) process.exit(2)
+  process.exit(0)
 }
 
 main().catch((err) => {
