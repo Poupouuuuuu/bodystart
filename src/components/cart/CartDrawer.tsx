@@ -8,6 +8,7 @@ import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, Check
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
+import { CagnotteCartWidget } from './CagnotteCartWidget'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
 const FREE_SHIPPING_THRESHOLD = 85
@@ -225,6 +226,9 @@ export default function CartDrawer() {
             })}
           </div>
         )}
+
+        {/* ─── Widget Cagnotte (loyalty) ─── */}
+        {!isEmpty && !isCoaching && <CagnotteCartWidget />}
 
         {/* ─── Footer récap + checkout ─── */}
         {!isEmpty && cart && (

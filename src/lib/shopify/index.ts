@@ -16,6 +16,7 @@ import {
   REMOVE_FROM_CART,
   GET_CART,
   UPDATE_CART_ATTRIBUTES,
+  UPDATE_CART_DISCOUNT_CODES,
 } from './queries/cart'
 import {
   GET_BLOG_ARTICLES,
@@ -181,6 +182,25 @@ export async function updateCartAttributes(
     { cartId, attributes }
   )
   return data.cartAttributesUpdate.cart
+}
+
+export async function updateCartDiscountCodes(
+  cartId: string,
+  discountCodes: string[]
+) {
+  const data = await shopifyFetch<{
+    cartDiscountCodesUpdate: {
+      cart: ShopifyCart
+      userErrors: { field: string[]; message: string }[]
+    }
+  }>(UPDATE_CART_DISCOUNT_CODES, { cartId, discountCodes })
+  const userErrors = data.cartDiscountCodesUpdate.userErrors
+  if (userErrors.length > 0) {
+    throw new Error(
+      `[updateCartDiscountCodes] ${userErrors.map((e) => e.message).join(' | ')}`
+    )
+  }
+  return data.cartDiscountCodesUpdate.cart
 }
 
 // ─── INVENTORY (Admin API — server-only) ─────────────────────
