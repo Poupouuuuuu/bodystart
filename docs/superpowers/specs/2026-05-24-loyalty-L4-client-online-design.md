@@ -444,7 +444,7 @@ Règles strictes appliquées :
 **Hero**
 
 ```
-Titre :       Tu kiffes, ton pote profite, tu gagnes.
+Titre :       Tu recommandes, ton pote économise, tu gagnes.
 
 Sous-titre :  Le programme parrainage BodyStart, c'est simple. Tu partages
               ton code, ton pote a 5 € sur sa première commande, et tu
@@ -488,9 +488,11 @@ Comment j'utilise ma cagnotte ?
   choisis le montant, jusqu'à 50 % du total de ta commande.
 
 C'est cumulable avec d'autres remises ?
-  Ta cagnotte se cumule avec les codes promo classiques. Par
-  contre, un code parrain ne se cumule pas avec un autre code
-  parrain (le premier rentré gagne).
+  Sur une commande, c'est un code à la fois. Ta cagnotte s'applique
+  comme une remise sur ton panier ; tu ne peux pas l'empiler avec
+  un autre code promo, donc tu prends le plus avantageux. Pareil
+  pour le code parrain : un seul code par commande, le plus
+  avantageux gagne.
 
 Mes 5 % s'arrêtent quand ?
   12 mois après la première commande de ton pote. Après, il reste
@@ -528,9 +530,18 @@ Code big :     BS-XXXXX  (monospace, énorme, tracking)
 Boutons :      [Copier]  [Partager WhatsApp]  [Partager]
 
 Message WhatsApp pré-rempli (URL-encoded) :
-  "Salut ! Je commande mes compléments sur bodystart.fr. T'as 5 €
+  "Salut ! Je commande mes compléments sur {SITE_DOMAIN}. T'as 5 €
   de remise sur ta première commande avec mon code BS-XXXXX (à
-  partir de 40 € d'achat). Lien direct : https://bodystart.fr"
+  partir de 40 € d'achat). Lien direct : {SITE_URL}"
+
+Injection : le composant React lit `process.env.NEXT_PUBLIC_SITE_URL`
+au build (ex. https://bodystart.vercel.app, https://bodystart.fr, etc.).
+{SITE_URL} = la variable complète. {SITE_DOMAIN} = la même valeur avec
+le protocole strippé (ex. "bodystart.vercel.app"). Helper utilitaire
+`src/lib/site-url.ts` qui expose `getSiteUrl()` et `getSiteDomain()`,
+fallback `''` si la variable n'est pas définie (le copy reste lisible :
+"Lien direct : " sans rien derrière, ce qui est acceptable en dev).
+Aucune URL en dur dans le copy nulle part.
 ```
 
 **Bloc « Comment ça marche » (compact, version courte de la page publique)**
@@ -707,6 +718,8 @@ assertions) restent valides. CI continue de tourner sur push.
 ## 7. Fichiers touchés (récap pour le plan implémentation)
 
 **Nouveaux** :
+- `src/lib/site-url.ts` (helper getSiteUrl/getSiteDomain depuis NEXT_PUBLIC_SITE_URL)
+- `src/lib/site-url.test.ts`
 - `src/lib/loyalty/session.ts`
 - `src/lib/loyalty/preview-core.ts`
 - `src/lib/loyalty/preview-core.test.ts`
