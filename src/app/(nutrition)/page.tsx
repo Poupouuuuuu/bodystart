@@ -1,19 +1,17 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import dynamic from 'next/dynamic'
-import HeroSection from '@/components/home/HeroSection'
-import ShopByObjective from '@/components/home/ShopByObjective'
-import FeaturedProducts from '@/components/home/FeaturedProducts'
-import BrandValues from '@/components/home/BrandValues'
-import UniversSection from '@/components/home/UniversSection'
+import HeroV2 from '@/components/home/v2/HeroV2'
+import BrandValuesV2 from '@/components/home/v2/BrandValuesV2'
+import BestSellersV2 from '@/components/home/v2/BestSellersV2'
+import ShopByObjectiveV2 from '@/components/home/v2/ShopByObjectiveV2'
+import ConseilDifferenciantV2 from '@/components/home/v2/ConseilDifferenciantV2'
+import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
+import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import { getFeaturedProducts } from '@/lib/shopify'
-
-// Below-the-fold + client → lazy-load (économise du JS dans le bundle initial pour le LCP)
-const StoreLocator = dynamic(() => import('@/components/home/StoreLocator'), {
-  loading: () => <div style={{ minHeight: '500px' }} aria-hidden="true" />,
-})
-
 import { buildPageMetadata } from '@/lib/seo'
+
+// REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
+// Ordre des sections : §B.Home.1-8 (avis retire, cf. site-rewrite-copy-v1.md §3.6)
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/',
@@ -22,18 +20,18 @@ export const metadata: Metadata = buildPageMetadata({
     "BodyStart, compléments sport et santé à Coignières (78). Conseil d'humain, produits propres et bien dosés, Click & Collect gratuit.",
 })
 
-// Sections async isolées → streaming via Suspense pour ne pas bloquer le Hero (LCP)
-async function FeaturedProductsAsync() {
+// Sections async isolees → streaming via Suspense pour ne pas bloquer le Hero (LCP)
+async function BestSellersAsync() {
   let products: import('@/lib/shopify/types').ShopifyProduct[] = []
   try {
     products = await getFeaturedProducts()
   } catch {
-    // Sans clés API, section vide
+    // Sans cles API, section vide
   }
-  return <FeaturedProducts products={products} />
+  return <BestSellersV2 products={products} />
 }
 
-// Skeleton léger pour éviter le CLS pendant le streaming
+// Skeleton leger pour eviter le CLS pendant le streaming
 function SectionFallback({ minHeight = '500px' }: { minHeight?: string }) {
   return <div style={{ minHeight }} aria-hidden="true" />
 }
@@ -41,23 +39,31 @@ function SectionFallback({ minHeight = '500px' }: { minHeight?: string }) {
 export default function HomePage() {
   return (
     <>
-      {/* Above-the-fold : rendu immédiat, pas de fetch bloquant */}
-      <HeroSection />
+      {/* 1. Hero (LCP, rendu immediat) */}
+      <HeroV2 />
 
-      {/* Sections data-driven streamées en parallèle */}
+      {/* 2. Bandeau reassurance */}
+      <BrandValuesV2 />
+
+      {/* 3. Best-sellers (data Shopify, streame) */}
       <Suspense fallback={<SectionFallback minHeight="600px" />}>
-        <FeaturedProductsAsync />
+        <BestSellersAsync />
       </Suspense>
 
-      <BrandValues />
-      <ShopByObjective />
+      {/* 4. Trouve ton objectif */}
+      <ShopByObjectiveV2 />
 
-      {/* STANDBY 2026-05-23 : section Avis clients retiree (placeholder generique
-          fictif). A reactiver via TestimonialsSection une fois qu'on a des vrais
-          avis Google. Cf. tech-specs/site-rewrite-copy-v1.md §3.6. */}
+      {/* 5. Le conseil qu'aucun site n'a (differenciateur) */}
+      <ConseilDifferenciantV2 />
 
-      <StoreLocator />
-      <UniversSection />
+      {/* 6. Bande parrainage (exploite loyalty L4) */}
+      <BandeauParrainageV2 />
+
+      {/* 7. Boutique & Click & Collect */}
+      <StoreCallV2 />
+
+      {/* 8. Avis : retire (cf. site-rewrite-copy-v1.md §3.6). A reactiver
+             quand on a de vrais avis Google. */}
     </>
   )
 }
