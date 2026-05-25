@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Cookie, ChevronDown } from 'lucide-react'
+import { Cookie, X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const CONSENT_KEY = 'body-start-cookie-consent'
@@ -18,6 +18,11 @@ const DEFAULT_PREFERENCES: CookiePreferences = {
   marketing: false,
 }
 
+/**
+ * Cookie banner V2 (redesign 2026-05-26) — barre discrete bas de page,
+ * non bloquante, dans la palette DA claire.
+ * Cf. tech-specs/redesign-v2-direction-artistique.md §A.Palette + §A.Composants
+ */
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false)
   const [showCustomize, setShowCustomize] = useState(false)
@@ -48,108 +53,137 @@ export default function CookieBanner() {
   if (!visible) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[60] p-4 sm:p-6">
-      <div className="container max-w-2xl mx-auto">
-        <div className="bg-[#1a2e23] border border-white/10 rounded-[24px] shadow-2xl p-6 sm:p-8">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-              <Cookie className="w-4.5 h-4.5 text-[#7cb98b]" />
-            </div>
-            <h3 className="text-white font-display font-black uppercase tracking-tight text-base">
-              Ce site utilise des cookies
-            </h3>
+    <div
+      role="region"
+      aria-label="Préférences cookies"
+      className="fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-spruce/15 shadow-[0_-4px_20px_rgba(45,90,45,0.06)]"
+    >
+      <div className="container py-3 md:py-4">
+        {/* ─── Ligne principale : texte court + actions, en flex (compact) ─── */}
+        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-5">
+          <div className="flex items-start md:items-center gap-3 flex-1 min-w-0">
+            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-sage flex items-center justify-center mt-0.5 md:mt-0">
+              <Cookie className="w-4 h-4 text-spruce" strokeWidth={2} />
+            </span>
+            <p className="text-[13px] text-ink leading-snug">
+              On utilise des cookies pour faire tourner le site et mesurer l&apos;audience.
+              {' '}
+              <a href="/cookies" className="underline underline-offset-2 text-spruce hover:text-fresh-deep">
+                En savoir plus
+              </a>
+            </p>
           </div>
 
-          <p className="text-white/50 text-[13px] font-medium leading-relaxed mb-6 pl-12">
-            Nous utilisons des cookies pour améliorer votre expérience, analyser le trafic et personnaliser le contenu.
-          </p>
-
-          {/* Zone personnalisation */}
-          {showCustomize && (
-            <div className="mb-6 space-y-3 bg-white/5 border border-white/10 rounded-2xl p-5 ml-12">
-              {/* Nécessaires — toujours actif */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-white text-[11px] font-bold uppercase tracking-widest">Nécessaires</span>
-                  <p className="text-white/40 text-[11px] font-medium mt-0.5">Fonctionnement du site, panier, connexion</p>
-                </div>
-                <div className="w-10 h-6 bg-[#7cb98b] rounded-full flex items-center justify-end px-1 cursor-not-allowed">
-                  <div className="w-4 h-4 bg-white rounded-full" />
-                </div>
-              </div>
-
-              {/* Analytics */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-white text-[11px] font-bold uppercase tracking-widest">Analytiques</span>
-                  <p className="text-white/40 text-[11px] font-medium mt-0.5">Mesure d&apos;audience, amélioration du site</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setPreferences((p) => ({ ...p, analytics: !p.analytics }))}
-                  className={cn(
-                    'w-10 h-6 rounded-full flex items-center px-1 transition-colors',
-                    preferences.analytics ? 'bg-[#7cb98b] justify-end' : 'bg-white/20 justify-start'
-                  )}
-                >
-                  <div className="w-4 h-4 bg-white rounded-full" />
-                </button>
-              </div>
-
-              {/* Marketing */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-white text-[11px] font-bold uppercase tracking-widest">Marketing</span>
-                  <p className="text-white/40 text-[11px] font-medium mt-0.5">Publicités personnalisées, réseaux sociaux</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setPreferences((p) => ({ ...p, marketing: !p.marketing }))}
-                  className={cn(
-                    'w-10 h-6 rounded-full flex items-center px-1 transition-colors',
-                    preferences.marketing ? 'bg-[#7cb98b] justify-end' : 'bg-white/20 justify-start'
-                  )}
-                >
-                  <div className="w-4 h-4 bg-white rounded-full" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Boutons */}
-          <div className="flex flex-col sm:flex-row gap-3 pl-12">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <button
-              onClick={acceptAll}
-              className="flex-1 py-3.5 bg-white text-[#1a2e23] font-bold uppercase tracking-widest text-[10px] rounded-full hover:bg-white/90 hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-lg"
+              onClick={() => setShowCustomize((v) => !v)}
+              className="hidden md:inline-flex items-center gap-1 text-[12px] font-semibold text-ink-mute hover:text-spruce transition-colors px-3 py-2"
+              aria-expanded={showCustomize}
             >
-              Tout accepter
+              Personnaliser
+              <ChevronDown className={cn('w-3.5 h-3.5 transition-transform', showCustomize && 'rotate-180')} />
             </button>
             <button
               onClick={rejectAll}
-              className="flex-1 py-3.5 text-white font-bold uppercase tracking-widest text-[10px] rounded-full border border-white/20 hover:bg-white/10 transition-all"
+              className="text-[13px] font-semibold text-spruce border border-spruce/30 hover:border-spruce hover:bg-spruce/5 transition-colors px-4 py-2 rounded-full"
             >
-              Tout refuser
+              Refuser
             </button>
-            {showCustomize ? (
-              <button
-                onClick={saveCustom}
-                className="flex-1 py-3.5 bg-[#7cb98b] text-[#1a2e23] font-bold uppercase tracking-widest text-[10px] rounded-full hover:bg-[#89c897] transition-all shadow-lg"
-              >
-                Enregistrer
-              </button>
-            ) : (
-              <button
-                onClick={() => setShowCustomize(true)}
-                className="flex-1 py-3.5 text-white font-bold uppercase tracking-widest text-[10px] rounded-full border border-white/20 hover:bg-white/10 transition-all flex items-center justify-center gap-2"
-              >
-                Personnaliser
-                <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-            )}
+            <button
+              onClick={acceptAll}
+              className="text-[13px] font-semibold text-white bg-fresh hover:bg-fresh-deep transition-colors px-4 py-2 rounded-full"
+            >
+              Accepter
+            </button>
+            <button
+              onClick={rejectAll}
+              aria-label="Fermer (refuser non-essentiels)"
+              className="md:hidden flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-ink-mute hover:bg-spruce/5 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         </div>
+
+        {/* ─── Lien Personnaliser mobile (caché en desktop, deja en ligne) ─── */}
+        <button
+          onClick={() => setShowCustomize((v) => !v)}
+          className="md:hidden mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-ink-mute hover:text-spruce transition-colors"
+          aria-expanded={showCustomize}
+        >
+          Personnaliser
+          <ChevronDown className={cn('w-3.5 h-3.5 transition-transform', showCustomize && 'rotate-180')} />
+        </button>
+
+        {/* ─── Panneau personnalisation, slide-in compact au-dessus ─── */}
+        {showCustomize && (
+          <div className="mt-4 pt-4 border-t border-spruce/10 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <CategoryRow
+              label="Nécessaires"
+              desc="Panier, connexion, préférences"
+              checked={true}
+              disabled
+            />
+            <CategoryRow
+              label="Analytiques"
+              desc="Mesure d'audience anonyme"
+              checked={preferences.analytics}
+              onChange={(v) => setPreferences((p) => ({ ...p, analytics: v }))}
+            />
+            <CategoryRow
+              label="Marketing"
+              desc="Publicités personnalisées"
+              checked={preferences.marketing}
+              onChange={(v) => setPreferences((p) => ({ ...p, marketing: v }))}
+            />
+            <div className="md:col-span-3 flex justify-end">
+              <button
+                onClick={saveCustom}
+                className="text-[13px] font-semibold text-white bg-fresh hover:bg-fresh-deep transition-colors px-5 py-2 rounded-full"
+              >
+                Enregistrer mes choix
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+    </div>
+  )
+}
+
+function CategoryRow({
+  label,
+  desc,
+  checked,
+  disabled,
+  onChange,
+}: {
+  label: string
+  desc: string
+  checked: boolean
+  disabled?: boolean
+  onChange?: (v: boolean) => void
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3 bg-canvas border border-spruce/10 rounded-xl p-3">
+      <div className="min-w-0">
+        <p className="text-[12px] font-semibold text-ink leading-tight">{label}</p>
+        <p className="text-[11px] text-ink-mute leading-snug mt-0.5">{desc}</p>
+      </div>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => !disabled && onChange?.(!checked)}
+        className={cn(
+          'flex-shrink-0 w-9 h-5 rounded-full flex items-center px-0.5 transition-colors',
+          checked ? 'bg-fresh justify-end' : 'bg-spruce/15 justify-start',
+          disabled && 'opacity-60 cursor-not-allowed'
+        )}
+        aria-checked={checked}
+        role="switch"
+      >
+        <span className="w-4 h-4 bg-white rounded-full shadow-sm" />
+      </button>
     </div>
   )
 }

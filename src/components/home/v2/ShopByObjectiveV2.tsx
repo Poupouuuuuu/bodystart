@@ -39,8 +39,8 @@ const OBJECTIVES = [
 export default function ShopByObjectiveV2() {
   return (
     <section className="bg-white">
-      <div className="container py-20 md:py-28">
-        <div className="max-w-2xl mb-12">
+      <div className="container py-14 md:py-18">
+        <div className="max-w-2xl mb-9">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
             Trouve ton objectif
           </p>

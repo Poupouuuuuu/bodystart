@@ -17,7 +17,7 @@ const VALUES = [
 export default function BrandValuesV2() {
   return (
     <section className="bg-white border-y border-spruce/10">
-      <div className="container py-8 md:py-10">
+      <div className="container py-6 md:py-7">
         <ul className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
           {VALUES.map(({ icon: Icon, label }) => (
             <li key={label} className="flex items-center gap-3 justify-center lg:justify-start">

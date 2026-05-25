@@ -30,8 +30,8 @@ export default function BestSellersV2({ products }: BestSellersV2Props) {
 
   return (
     <section className="bg-canvas">
-      <div className="container py-20 md:py-28">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+      <div className="container py-14 md:py-18">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-9">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
               Les plus pris en boutique

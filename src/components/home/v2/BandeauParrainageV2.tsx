@@ -11,8 +11,8 @@ import { Gift, ArrowRight } from 'lucide-react'
 export default function BandeauParrainageV2() {
   return (
     <section className="bg-white">
-      <div className="container py-16 md:py-20">
-        <div className="bg-canvas rounded-3xl border border-spruce/10 p-8 md:p-12 lg:p-16">
+      <div className="container py-12 md:py-14">
+        <div className="bg-canvas rounded-3xl border border-spruce/10 p-7 md:p-10 lg:p-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-center">
             <div className="flex items-start gap-5">
               <span className="flex-shrink-0 w-14 h-14 rounded-full bg-sage flex items-center justify-center">

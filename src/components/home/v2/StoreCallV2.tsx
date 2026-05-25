@@ -14,8 +14,8 @@ export default function StoreCallV2() {
 
   return (
     <section className="bg-canvas">
-      <div className="container py-20 md:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-10 lg:gap-16 items-center">
+      <div className="container py-14 md:py-18">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-10 lg:gap-14 items-center">
           {/* Texte */}
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">

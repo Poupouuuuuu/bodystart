@@ -11,8 +11,8 @@ import { Store, MessageCircle, ArrowRight } from 'lucide-react'
 export default function ConseilDifferenciantV2() {
   return (
     <section className="bg-canvas">
-      <div className="container py-20 md:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="container py-14 md:py-18">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* Visuel boutique (placeholder en attendant photo Adam) */}
           <div className="order-2 lg:order-1">
             <div
