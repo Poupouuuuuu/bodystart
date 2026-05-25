@@ -1,0 +1,11 @@
+phone,first_name,email
++33612345678,Adam,adam@example.fr
+0687654321,Theo,
+"+33 6 11 22 33 44","Marie","marie@example.fr"
+06.55.44.33.22,Lucas,
++33611111111,Doublon-Phone,doublon@example.fr
++33611111111,Doublon-Phone-Bis,bis@example.fr
+,Manque-Phone,nophone@example.fr
++33623456789,,noname@example.fr
+not-a-phone,Invalide,bad@example.fr
++1234567,Trop-Court,short@example.fr
