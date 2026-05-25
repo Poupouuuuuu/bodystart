@@ -9,20 +9,44 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ─── Palette Nutrition — Nature Premium ─────────────────
+        // ─── REDESIGN V2 — Palette source de verite ─────────────
+        // cf. tech-specs/redesign-v2-direction-artistique.md §A.Palette
+        // Regle : vert JAMAIS en grande surface, surfaces claires dominantes.
+        // Utilisation a-la-Tailwind : `bg-canvas`, `text-ink`, `bg-fresh`, etc.
+
+        // Surfaces (cream + blanc)
+        canvas:  '#FAF8F3',  // fond principal page
+        // 'card' n'est pas defini : utiliser `bg-white` (norme Tailwind)
+
+        // Verts (CTA + titres). JAMAIS de grande surface vert.
+        fresh:   '#3B7A3F',  // boutons / CTA, hover plus fonce
+        'fresh-deep': '#2F6433',  // hover des CTA fresh
+        spruce:  '#2D5A2D',  // titres forts, accents verts
+        sage:    '#EEF4EC',  // pastilles benefices, surfaces vert pale
+
+        // Textes
+        ink:     '#2A2A2A',  // texte courant
+        'ink-mute': '#6B6B66',  // texte secondaire (gris doux)
+
+        // Accents contextuels (badges, alertes — limite a 1-2 elements/section)
+        mustard:     '#C9A227',  // best-seller, medaille
+        'mustard-ink': '#5C4A14',  // texte brun fonce sur fond mustard
+        terracotta:  '#B85C3E',  // promo, stock bas, alerte
+
+        // ─── V1 (DEPRECATED, conserve pour pages non-refondues) ──
+        // A retirer au fur et a mesure que les pages migrent vers V2.
         brand: {
           50:  '#E8F0EA',
           100: '#D1E1D5',
           200: '#A3C3AB',
           300: '#75A581',
           400: '#478757',
-          500: '#2D5A3D',  // vert sauge principal
+          500: '#2D5A3D',
           600: '#234832',
           700: '#1A3626',
           800: '#11241A',
           900: '#09120D',
         },
-        // ─── Crème (fonds) ──────────────────────────────────────
         cream: {
           50:  '#FDFBF8',
           100: '#F8F4EE',
@@ -30,7 +54,6 @@ const config: Config = {
           300: '#E2D9CE',
           400: '#C9BDB0',
         },
-        // STANDBY 2026-05-25 : palettes coaching retirees, coaching mono-theme nutrition
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],

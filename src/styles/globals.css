@@ -2,16 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── CSS Variables — BodyStart — Nature Premium ────────── */
+/* ─── CSS Variables — BodyStart ──────────────────────────── */
 :root {
-  /* Couleurs Nutrition */
+  /* ─── REDESIGN V2 (source de verite, cf. tailwind.config.ts) ─── */
+  /* Surfaces */
+  --color-canvas: #FAF8F3;       /* fond principal page */
+  /* card = #FFFFFF (utiliser bg-white) */
+
+  /* Verts (jamais en grande surface) */
+  --color-fresh: #3B7A3F;        /* CTA */
+  --color-fresh-deep: #2F6433;   /* hover CTA */
+  --color-spruce: #2D5A2D;       /* titres forts, accents */
+  --color-sage: #EEF4EC;         /* pastilles benefices */
+
+  /* Textes */
+  --color-ink: #2A2A2A;
+  --color-ink-mute: #6B6B66;
+
+  /* Accents contextuels */
+  --color-mustard: #C9A227;
+  --color-mustard-ink: #5C4A14;
+  --color-terracotta: #B85C3E;
+
+  /* ─── V1 (DEPRECATED, conserve pour pages non-refondues) ─── */
   --color-brand-primary: #2D5A3D;
   --color-brand-accent: #478757;
   --color-brand-dark: #1A3626;
   --color-brand-light: #E8F0EA;
   --color-brand-bg: #F8F4EE;
-
-  /* Crème */
   --color-cream: #F8F4EE;
   --color-cream-dark: #F0EBE1;
   --color-cream-border: #E2D9CE;
@@ -22,7 +40,7 @@
 
   /* Espacements */
   --section-padding: 5rem 0;
-  --container-max: 1280px;
+  --container-max: 1200px;
   --container-padding: 1.5rem;
 }
 
@@ -74,7 +92,8 @@
 /* ─── Components ─────────────────────────────────────────── */
 @layer components {
   .container {
-    @apply max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8;
+    /* V2 : max 1200px (cf. DA §espacement) avec marges laterales genereuses */
+    @apply max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8;
   }
 
   .section {
