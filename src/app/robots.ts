@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 
-const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart-nutrition.fr').replace(/\/$/, '')
+// Fallback : domaine reel actuel (Vercel), pas un domaine devine.
+const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app').replace(/\/$/, '')
 
 export default function robots(): MetadataRoute.Robots {
   return {

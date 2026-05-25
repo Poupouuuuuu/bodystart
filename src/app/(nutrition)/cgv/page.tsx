@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ScrollText } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = { title: 'Conditions Générales de Vente' }
+export const metadata: Metadata = buildPageMetadata({
+  path: '/cgv',
+  title: 'Conditions Générales de Vente',
+  description: 'Les conditions générales de vente du site BodyStart.',
+})
 
 const sections = [
   {

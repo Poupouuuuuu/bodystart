@@ -3,11 +3,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Target, Heart, Leaf, Users, Star, Package, Truck, Award, FlaskConical, Dumbbell } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/about',
   title: 'A propos de BodyStart',
   description: "Découvrez l'histoire et les valeurs de BodyStart Nutrition.",
-}
+})
 
 const values = [
   {

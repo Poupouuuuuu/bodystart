@@ -2,11 +2,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Dumbbell, Flame, Zap, Moon, ShieldCheck } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/objectifs',
   title: 'Shop by objectif',
   description: 'Trouvez les compl\u00e9ments adapt\u00e9s \u00e0 votre objectif sportif.',
-}
+})
 
 const OBJECTIFS = [
   {

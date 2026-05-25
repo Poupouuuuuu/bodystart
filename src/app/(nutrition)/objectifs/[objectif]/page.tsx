@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { ArrowLeft, ArrowRight, Dumbbell, Flame, Zap, Moon, ShieldCheck } from 'lucide-react'
 import { getProducts } from '@/lib/shopify'
 import ProductCard from '@/components/product/ProductCard'
+import { buildPageMetadata } from '@/lib/seo'
 
 const OBJECTIF_IMAGES: Record<string, string> = {
   'prise-de-muscle': '/assets/images/objectif-muscle.jpg',
@@ -48,7 +49,11 @@ const OBJECTIVES_META: Record<string, { title: string; icon: typeof Dumbbell; de
 
 export async function generateMetadata({ params }: { params: { objectif: string } }): Promise<Metadata> {
   const meta = OBJECTIVES_META[params.objectif]
-  return { title: meta ? meta.title : 'Objectif' }
+  return buildPageMetadata({
+    path: `/objectifs/${params.objectif}`,
+    title: meta ? meta.title : 'Objectif',
+    description: meta?.description,
+  })
 }
 
 export default async function ObjectifPage({ params }: { params: { objectif: string } }) {

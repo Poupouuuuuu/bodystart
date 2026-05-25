@@ -13,11 +13,14 @@ const StoreLocator = dynamic(() => import('@/components/home/StoreLocator'), {
   loading: () => <div style={{ minHeight: '500px' }} aria-hidden="true" />,
 })
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from '@/lib/seo'
+
+export const metadata: Metadata = buildPageMetadata({
+  path: '/',
   title: 'Accueil',
   description:
     "BodyStart, compléments sport et santé à Coignières (78). Conseil d'humain, produits propres et bien dosés, Click & Collect gratuit.",
-}
+})
 
 // Sections async isolées → streaming via Suspense pour ne pas bloquer le Hero (LCP)
 async function FeaturedProductsAsync() {

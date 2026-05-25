@@ -11,6 +11,7 @@ import NutritionAndScience from '@/components/product/NutritionAndScience'
 import ProductReviews from '@/components/product/ProductReviews'
 import RelatedProducts from '@/components/product/RelatedProducts'
 import { ChevronRight, Star } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/seo'
 
 interface Props {
   params: { handle: string }
@@ -24,28 +25,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const description = product.description?.slice(0, 160) ?? ''
     const image = product.featuredImage?.url
 
-    return {
+    return buildPageMetadata({
+      path: `/products/${product.handle}`,
       title: product.title,
       description,
-      alternates: {
-        canonical: `/products/${product.handle}`,
-      },
-      openGraph: {
-        title: product.title,
-        description,
-        type: 'website',
-        url: `/products/${product.handle}`,
-        images: image
-          ? [{ url: image, width: 1200, height: 1200, alt: product.title }]
-          : undefined,
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: product.title,
-        description,
-        images: image ? [image] : undefined,
-      },
-    }
+      ogImage: image,
+      // Next.js 14.2 Metadata supporte 'website' | 'article' uniquement (pas 'product').
+      // Le rich snippet produit est gere via le schema.org JSON-LD du composant ProductSection.
+      ogType: 'website',
+    })
   } catch {
     return { title: 'Produit' }
   }
@@ -86,7 +74,8 @@ export default async function ProductPage({ params }: Props) {
     }
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.com'
+  // Fallback : domaine reel actuel (Vercel), pas un domaine devine.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app'
   const mainVariant = product.variants.nodes[0]
   const hasDiscount =
     mainVariant?.compareAtPrice &&
