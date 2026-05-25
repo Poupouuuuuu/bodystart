@@ -475,17 +475,38 @@ function ReviewsPanel() {
 // ═══════════════════════════════════════════════════════════
 // PAGE PRINCIPALE
 // ═══════════════════════════════════════════════════════════
+// Tabs adressables via ?tab=... (exclut 'order-detail' qui est un sub-state interne)
+const URL_TABS: readonly Tab[] = ['overview','orders','addresses','profile','reviews','referral','cagnotte'] as const
+function isUrlTab(value: string | null | undefined): value is Tab {
+  return !!value && (URL_TABS as readonly string[]).includes(value)
+}
+
 function AccountContent() {
   const router = useRouter()
   const { customer, isLoading, isLoggedIn, logout } = useCustomer()
   const searchParams = useSearchParams()
-  const tabFromUrl = searchParams.get('tab') as Tab | null
-  const [activeTab, setActiveTab] = useState<Tab>(
-    tabFromUrl && ['overview','orders','addresses','profile','reviews','referral','cagnotte'].includes(tabFromUrl)
-      ? tabFromUrl
-      : 'overview'
-  )
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const t = searchParams.get('tab')
+    return isUrlTab(t) ? t : 'overview'
+  })
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+
+  // Sync activeTab quand l'URL change (deep-links internes Cagnotte <-> Parrainage,
+  // widget panier, page /parrainage). useState ne re-lit pas son initialiseur,
+  // donc on a besoin d'un useEffect reactif a searchParams.
+  useEffect(() => {
+    const t = searchParams.get('tab')
+    if (isUrlTab(t)) {
+      setActiveTab((prev) => {
+        if (prev === t) return prev
+        // Scroll en haut au changement d'onglet (UX : on ne reste pas en bas du panneau precedent)
+        if (typeof window !== 'undefined') {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+        return t
+      })
+    }
+  }, [searchParams])
 
   useEffect(() => {
     if (!isLoading && !isLoggedIn) router.push('/login')
