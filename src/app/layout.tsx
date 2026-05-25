@@ -5,6 +5,7 @@ import '@/styles/globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { CustomerProvider } from '@/context/CustomerContext'
 import { Toaster } from 'react-hot-toast'
+import { getSiteUrl } from '@/lib/site-url'
 
 // Lazy : invisible au load (montre seulement si pas de consent en localStorage)
 const CookieBanner = dynamic(() => import('@/components/ui/CookieBanner'), { ssr: false })
@@ -21,7 +22,11 @@ const montserrat = Montserrat({
   display: 'swap',
 })
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart-nutrition.fr').replace(/\/$/, '')
+// metadataBase doit etre une URL valide. getSiteUrl() lit NEXT_PUBLIC_SITE_URL
+// (configure sur Vercel) ; fallback = domaine reel actuel pour que new URL() ne
+// throw pas en dev local sans config. Aucun domaine non confirme n'est inscrit
+// dans le code : le seul fallback est l'URL Vercel actuellement deployee.
+const SITE_URL = getSiteUrl() || 'https://bodystart.vercel.app'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -44,14 +49,14 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'BodyStart' }],
   creator: 'BodyStart',
-  alternates: {
-    canonical: '/',
-  },
+  // Pas de alternates.canonical ni openGraph.url ici : ces 2 champs sont
+  // par-page (cf. src/lib/seo.ts). Sans definition globale, Next.js
+  // n'emet pas de balise canonical heritee qui polluerait toutes les pages
+  // sans override.
   openGraph: {
     siteName: 'BodyStart',
     locale: 'fr_FR',
     type: 'website',
-    url: SITE_URL,
     title: 'BodyStart, compléments sport et santé à Coignières',
     description:
       "Conseil d'humain, produits propres, livrés dans le 78. On consomme ce qu'on vend.",

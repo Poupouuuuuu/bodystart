@@ -1,7 +1,12 @@
 import type { Metadata } from 'next'
 import { Truck, Store, Package, RotateCcw } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = { title: 'Livraison & Retours' }
+export const metadata: Metadata = buildPageMetadata({
+  path: '/livraison',
+  title: 'Livraison & Retours',
+  description: 'Click & Collect gratuit, Mondial Relay 4,90€, Colissimo 6,90€. Livraison offerte dès 85€.',
+})
 
 // Tarifs livraison — decision Adam 2026-05-23 :
 //  - Click & Collect : gratuit, souvent pret en quelques minutes

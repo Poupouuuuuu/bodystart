@@ -2,8 +2,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Cookie, Lock, BarChart3, Megaphone } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = { title: 'Politique des cookies' }
+export const metadata: Metadata = buildPageMetadata({
+  path: '/cookies',
+  title: 'Politique des cookies',
+  description: 'Les cookies utilisés sur le site BodyStart et comment les gérer.',
+})
 
 const cookieTypes = [
   {

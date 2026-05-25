@@ -3,11 +3,13 @@ import { MapPin, Clock, Phone, Mail, ArrowRight, Truck, ShoppingBag, CheckCircle
 import { BODY_START_STORES, COMING_SOON_STORES } from '@/lib/shopify/types'
 import NotifyForm from '@/components/stores/NotifyForm'
 import StoreStatus from '@/components/stores/StoreStatus'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/stores',
   title: 'Nos boutiques',
   description: 'Retrouvez BodyStart Nutrition en boutique. Click & Collect disponible.',
-}
+})
 
 const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'
 

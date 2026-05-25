@@ -4,11 +4,15 @@ import ProductCard from '@/components/product/ProductCard'
 import SearchBar from '@/components/ui/SearchBar'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { Search, PackageSearch } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+// Page noindex : pas d'interet SEO (resultats varient par query, page mince).
+export const metadata: Metadata = buildPageMetadata({
+  path: '/search',
   title: 'Recherche, BodyStart Nutrition',
   description: 'Recherchez parmi tous les produits BodyStart Nutrition.',
-}
+  noIndex: true,
+})
 
 interface SearchPageProps {
   searchParams: { q?: string }

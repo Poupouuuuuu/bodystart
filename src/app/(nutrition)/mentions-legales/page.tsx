@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Scale, Building2, Server } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = { title: 'Mentions légales' }
+export const metadata: Metadata = buildPageMetadata({
+  path: '/mentions-legales',
+  title: 'Mentions légales',
+  description: 'Mentions légales du site BodyStart.',
+})
 
 export default function MentionsLegalesPage() {
   return (

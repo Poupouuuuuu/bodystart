@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Shield, ChevronRight } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = { title: 'Politique de confidentialité' }
+export const metadata: Metadata = buildPageMetadata({
+  path: '/confidentialite',
+  title: 'Politique de confidentialité',
+  description: 'Comment BodyStart traite tes données personnelles, conformément au RGPD.',
+})
 
 export default function ConfidentialitePage() {
   return (

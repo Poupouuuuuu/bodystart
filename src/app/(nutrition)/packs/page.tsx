@@ -4,12 +4,14 @@ import { Package, Percent, Gift, ArrowRight, Sparkles } from 'lucide-react'
 import { getCollectionByHandle } from '@/lib/shopify'
 import ProductCard from '@/components/product/ProductCard'
 import { formatPrice } from '@/lib/utils'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/packs',
   title: 'Packs & Économies, BodyStart Nutrition',
   description:
     'Économisez en regroupant nos meilleurs produits. Packs prêts à l’emploi pour la prise de muscle, la perte de poids et la récupération.',
-}
+})
 
 export const revalidate = 60 // 1min — facilite les tests pendant la phase de création des packs côté Shopify
 

@@ -124,16 +124,12 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 > ⚠️  Le terminal `stripe listen` doit rester ouvert pendant toute la session de test.
 > La CLI affiche un webhook signing secret temporaire — utiliser celui de `.env.local` si déjà configuré.
 
-### Activation coaching manuelle (debug)
+### Activation coaching manuelle
 
-Si le webhook ne se déclenche pas, un endpoint de debug est disponible **uniquement en développement** :
-
-```bash
-# Activer le coaching pour un client par email
-curl "http://localhost:3000/api/debug/activate-coaching?email=client@exemple.fr"
-```
-
-Cet endpoint met à jour les metafields Shopify (`coaching.active=true`) et crée le code promo -15%.
+Le coaching est en **STANDBY** depuis 2026-05-23 (cf. middleware redirect 301).
+La route de debug `/api/debug/activate-coaching` a été supprimée le 2026-05-25
+pour fermer la surface d'attaque (trou de sécu en prod). Si le coaching est
+relancé un jour, il faudra rebâtir un outil admin propre (authentifié staff).
 
 ### Cartes test Stripe
 

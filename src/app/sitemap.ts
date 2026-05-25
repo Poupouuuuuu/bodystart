@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getProducts } from '@/lib/shopify'
 
-const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart-nutrition.fr').replace(/\/$/, '')
+// Fallback : domaine reel actuel (Vercel), pas un domaine devine.
+const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app').replace(/\/$/, '')
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
@@ -12,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/packs`, priority: 0.85, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/stores`, priority: 0.8, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/conseil`, priority: 0.8, changeFrequency: 'monthly' },
+    { url: `${BASE_URL}/parrainage`, priority: 0.75, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/about`, priority: 0.7, changeFrequency: 'monthly' },
     // STANDBY 2026-05-23 : /coaching et /vetements hors sitemap (redirect 301 vers /products)
     { url: `${BASE_URL}/faq`, priority: 0.7, changeFrequency: 'monthly' },

@@ -2,12 +2,14 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { Gift, Users, ShoppingBag, ArrowRight } from 'lucide-react'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/parrainage',
   title: 'Parrainage BodyStart : 5 € pour ton pote, 5 % pour toi',
   description:
     'Partage ton code parrain BodyStart. Ton pote a 5 € sur sa première commande, tu gagnes 5 % de ses achats pendant 12 mois. Aucune carte, aucune appli.',
-}
+})
 
 const STEPS = [
   {

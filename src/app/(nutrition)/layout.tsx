@@ -8,7 +8,8 @@ import BackToTop from '@/components/ui/BackToTop'
 import { getCollections } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/shopify/types'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.com'
+// Fallback : domaine reel actuel (Vercel), pas un domaine devine. Cf. root layout.
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app').replace(/\/$/, '')
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
