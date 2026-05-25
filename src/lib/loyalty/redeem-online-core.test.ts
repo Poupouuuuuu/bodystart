@@ -28,7 +28,9 @@ describe('executeRedeem', () => {
       appliedCents: 2000,
     })
     vi.mocked(reserveRedemption).mockResolvedValue({
+      id: 'red-1',
       discountCode: 'BS-CAGNOTTE-XYZ12',
+      shopifyDiscountNodeId: 'gid://shopify/DiscountAutomaticNode/1',
       amountCents: 2000,
       expiresAt: '2026-05-24T15:30:00Z',
     })
@@ -100,7 +102,9 @@ describe('executeRedeem', () => {
       appliedCents: 2000,
     })
     vi.mocked(reserveRedemption).mockResolvedValue({
+      id: 'red-1',
       discountCode: 'BS-CAGNOTTE-XYZ12',
+      shopifyDiscountNodeId: 'gid://shopify/DiscountAutomaticNode/1',
       amountCents: 2000,
       expiresAt: '2026-05-24T15:30:00Z',
     })
