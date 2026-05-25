@@ -1,20 +1,22 @@
 'use client'
 
-import { useEffect, useState, useMemo, Suspense } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
   User, Package, MapPin, LogOut, ChevronRight, ShoppingBag, Star,
-  Gift, Dumbbell, Plus, Pencil, Trash2, X, Loader2, Save, Copy, Users
+  Gift, Dumbbell, Plus, Pencil, Trash2, X, Loader2, Save, Wallet
 } from 'lucide-react'
+import { CagnottePanel } from '@/components/account/CagnottePanel'
+import { ReferralPanel } from '@/components/account/ReferralPanel'
 import { useCustomer } from '@/context/CustomerContext'
 import { updateCustomer, getStoredToken } from '@/lib/shopify/customer'
 import type { AddressInput } from '@/lib/shopify/customer'
 import { formatPrice, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
-type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'coaching'
+type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte' | 'coaching'
 
 // ═══════════════════════════════════════════════════════════
 // PANNEAU : Aperçu (dernières commandes)
@@ -471,73 +473,18 @@ function ReviewsPanel() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// PANNEAU : Parrainage
-// ═══════════════════════════════════════════════════════════
-function ReferralPanel({ customer }: { customer: NonNullable<ReturnType<typeof useCustomer>['customer']> }) {
-  const referralCode = useMemo(() => {
-    const name = customer.firstName?.toUpperCase().slice(0, 4) ?? 'XXXX'
-    const idStr = customer.id ?? ''
-    let hash = 0
-    for (let i = 0; i < idStr.length; i++) hash = ((hash << 5) - hash + idStr.charCodeAt(i)) | 0
-    return `BS-${name}${String(Math.abs(hash) % 10000).padStart(4, '0')}`
-  }, [customer.id, customer.firstName])
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="font-display text-[28px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none mb-2">Parrainage</h2>
-        <p className="text-[#4a5f4c] font-medium text-sm">Invitez vos amis et gagnez des récompenses ensemble.</p>
-      </div>
-      <div className="bg-[#1a2e23] text-white rounded-[28px] p-8 md:p-10 relative overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#4a5f4c 1px, transparent 1px), linear-gradient(90deg, #4a5f4c 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center border border-white/10"><Gift className="w-6 h-6" /></div>
-            <div>
-              <p className="font-display font-black uppercase tracking-tight">Votre code parrainage</p>
-              <p className="text-white/50 text-sm font-medium">Partagez-le avec vos amis</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <code className="flex-1 bg-white/10 border border-white/10 rounded-2xl px-5 py-4 font-mono font-bold text-xl tracking-widest text-center">{referralCode}</code>
-            <button onClick={() => { navigator.clipboard.writeText(referralCode); toast.success('Code copié !') }} className="p-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl transition-colors"><Copy className="w-5 h-5" /></button>
-          </div>
-        </div>
-      </div>
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-8 shadow-sm">
-        <h3 className="font-display font-black uppercase tracking-tight text-[#1a2e23] mb-6 flex items-center gap-2 text-lg"><Users className="w-5 h-5 text-[#89a890]" /> Comment ça marche ?</h3>
-        <div className="space-y-5">
-          {[
-            { step: '01', title: 'Partagez votre code', desc: 'Envoyez votre code à vos amis sportifs.' },
-            { step: '02', title: 'Votre ami commande', desc: 'Il utilise votre code et bénéficie de -10% sur sa première commande.' },
-            { step: '03', title: 'Vous êtes récompensé', desc: "Vous recevez un bon d'achat de 10€ crédité sur votre compte." },
-          ].map(({ step, title, desc }) => (
-            <div key={step} className="flex gap-4">
-              <div className="w-10 h-10 bg-[#1a2e23] text-white rounded-full flex items-center justify-center font-display font-bold text-sm flex-shrink-0">{step}</div>
-              <div className="pt-1.5">
-                <p className="font-display font-bold text-[#1a2e23] text-sm uppercase tracking-tight">{title}</p>
-                <p className="text-[#4a5f4c] text-sm font-medium">{desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="bg-[#1a2e23]/5 rounded-[20px] p-6 text-center">
-        <p className="text-[#1a2e23] font-display font-bold text-sm uppercase tracking-tight">Programme de parrainage, bientôt actif</p>
-        <p className="text-[#4a5f4c] text-[12px] mt-1 font-medium">Le système de récompenses sera lancé prochainement.</p>
-      </div>
-    </div>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════
 // PAGE PRINCIPALE
 // ═══════════════════════════════════════════════════════════
 function AccountContent() {
   const router = useRouter()
   const { customer, isLoading, isLoggedIn, logout } = useCustomer()
   const searchParams = useSearchParams()
-  const [activeTab, setActiveTab] = useState<Tab>('overview')
+  const tabFromUrl = searchParams.get('tab') as Tab | null
+  const [activeTab, setActiveTab] = useState<Tab>(
+    tabFromUrl && ['overview','orders','addresses','profile','reviews','referral','cagnotte','coaching'].includes(tabFromUrl)
+      ? tabFromUrl
+      : 'overview'
+  )
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
 
   const isCoaching = searchParams.get('theme') === 'coaching'
@@ -573,8 +520,9 @@ function AccountContent() {
   const navItems: { icon: typeof Package; label: string; tab: Tab; count?: number }[] = [
     { icon: Package, label: 'Mes commandes', tab: 'orders', count: customer.orders?.nodes?.length },
     { icon: MapPin, label: 'Mes adresses', tab: 'addresses' },
-    { icon: Star, label: 'Mes avis', tab: 'reviews' },
+    { icon: Wallet, label: 'Ma cagnotte', tab: 'cagnotte' },
     { icon: Gift, label: 'Parrainage', tab: 'referral' },
+    { icon: Star, label: 'Mes avis', tab: 'reviews' },
     { icon: Dumbbell, label: 'Mon coaching', tab: 'coaching' },
   ]
 
@@ -586,7 +534,8 @@ function AccountContent() {
       case 'addresses': return <AddressesPanel customer={customer} />
       case 'profile': return <ProfilePanel customer={customer} />
       case 'reviews': return <ReviewsPanel />
-      case 'referral': return <ReferralPanel customer={customer} />
+      case 'referral': return <ReferralPanel />
+      case 'cagnotte': return <CagnottePanel />
       case 'coaching': return (
         <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-12 text-center shadow-sm">
           <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6"><Dumbbell className="w-8 h-8 text-[#89a890]" /></div>

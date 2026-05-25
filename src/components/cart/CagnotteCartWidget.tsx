@@ -1,0 +1,189 @@
+'use client'
+
+import { useState, useMemo } from 'react'
+import Link from 'next/link'
+import { Wallet, Check, X, Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { useLoyaltyMe } from '@/hooks/useLoyaltyMe'
+import { useCart } from '@/hooks/useCart'
+
+// Prefix des codes generes par createRedemptionDiscountCode (cf. src/lib/shopify/loyalty-discounts.ts)
+const LOYALTY_CODE_PREFIX = 'LY-'
+const MIN_BALANCE_CENTS = 2000
+const CAP_RATIO = 0.5
+
+function formatEuros(cents: number): string {
+  return (cents / 100).toLocaleString('fr-FR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }) + ' €'
+}
+
+function eurosToCents(amount: string | number): number {
+  const n = typeof amount === 'string' ? parseFloat(amount) : amount
+  return Math.round(n * 100)
+}
+
+export function CagnotteCartWidget() {
+  const { state, refresh } = useLoyaltyMe()
+  const { cart, applyDiscountCode, removeDiscountCode } = useCart()
+  const [redeemAmount, setRedeemAmount] = useState(0)
+  const [busy, setBusy] = useState(false)
+
+  const subtotalCents = useMemo(
+    () => eurosToCents(cart?.cost?.subtotalAmount?.amount ?? '0'),
+    [cart]
+  )
+
+  // Detection cagnotte appliquee : si un discountCode du cart commence par LY-
+  const appliedLoyaltyCode = useMemo(() => {
+    const codes = cart?.discountCodes ?? []
+    return codes.find((c) => c.code.startsWith(LOYALTY_CODE_PREFIX))
+  }, [cart])
+
+  // Cas A : logged_out / loading / error -> rien
+  if (state.kind === 'logged_out' || state.kind === 'loading' || state.kind === 'error') {
+    return null
+  }
+
+  // Cas B : not_enrolled -> CTA activer
+  if (state.kind === 'not_enrolled') {
+    return (
+      <div className="bg-[#f4f6f1] border border-[#1a2e23]/5 rounded-xl p-4 mx-8 mb-4">
+        <p className="text-[12px] text-[#4a5f4c] font-medium mb-3">
+          Active ton programme fidélité pour gagner sur tes prochaines commandes.
+        </p>
+        <Link
+          href="/account?tab=cagnotte"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#1a2e23] text-white text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all"
+        >
+          Activer
+        </Link>
+      </div>
+    )
+  }
+
+  const { customer } = state
+  const balanceCents = customer.loyaltyBalanceCents
+
+  // Cas E : cagnotte deja appliquee
+  if (appliedLoyaltyCode) {
+    const handleRemove = async () => {
+      if (!appliedLoyaltyCode) return
+      setBusy(true)
+      try {
+        await removeDiscountCode(appliedLoyaltyCode.code)
+        toast.success('Cagnotte retirée')
+      } catch {
+        toast.error('Impossible de retirer la cagnotte')
+      } finally {
+        setBusy(false)
+      }
+    }
+    return (
+      <div className="bg-[#e8f0e3] border border-[#1a2e23]/10 rounded-xl p-4 mx-8 mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <Check className="w-4 h-4 text-[#1a2e23] flex-shrink-0" />
+          <p className="text-[12px] font-bold text-[#1a2e23] truncate">
+            Cagnotte appliquée
+          </p>
+        </div>
+        <button
+          onClick={handleRemove}
+          disabled={busy}
+          className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-[#4a5f4c] hover:text-[#1a2e23] disabled:opacity-50"
+        >
+          {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}
+          Retirer
+        </button>
+      </div>
+    )
+  }
+
+  // Cas C : enrolled, balance < 20 €
+  if (balanceCents < MIN_BALANCE_CENTS) {
+    return (
+      <div className="bg-[#f4f6f1] border border-[#1a2e23]/5 rounded-xl px-4 py-3 mx-8 mb-4 flex items-center gap-2">
+        <Wallet className="w-4 h-4 text-[#89a890] flex-shrink-0" />
+        <p className="text-[12px] font-medium text-[#4a5f4c]">
+          Cagnotte : <span className="font-bold text-[#1a2e23]">{formatEuros(balanceCents)}</span> · Utilisable dès 20 €
+        </p>
+      </div>
+    )
+  }
+
+  // Cas D : enrolled, balance >= 20 €, slider
+  const cap = Math.floor(subtotalCents * CAP_RATIO)
+  const maxRedeemCents = Math.min(balanceCents, cap)
+
+  async function handleApply() {
+    if (redeemAmount < 1 || redeemAmount > maxRedeemCents) return
+    setBusy(true)
+    try {
+      const res = await fetch('/api/loyalty/me/redeem-online', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          cartSubtotalCents: subtotalCents,
+          requestedAmountCents: redeemAmount,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        toast.error(json.detail ?? 'Impossible d\'appliquer ta cagnotte')
+        return
+      }
+      await applyDiscountCode(json.redemption.discountCode)
+      toast.success(`Cagnotte appliquée : -${formatEuros(redeemAmount)}`)
+      refresh()
+      setRedeemAmount(0)
+    } catch {
+      toast.error('Problème réseau. Réessaye.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="bg-white border border-[#1a2e23]/5 rounded-xl p-5 mx-8 mb-4 shadow-sm">
+      <div className="flex items-center gap-2 mb-3">
+        <Wallet className="w-4 h-4 text-[#1a2e23]" />
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#1a2e23]">Ta cagnotte</p>
+      </div>
+
+      <p className="text-[13px] font-medium text-[#4a5f4c] mb-4">
+        Tu as <span className="font-bold text-[#1a2e23]">{formatEuros(balanceCents)}</span> disponibles
+      </p>
+
+      <input
+        type="range"
+        min={0}
+        max={maxRedeemCents}
+        step={100}
+        value={redeemAmount}
+        onChange={(e) => setRedeemAmount(Number(e.target.value))}
+        className="w-full mb-3 accent-[#1a2e23]"
+      />
+
+      <p className="text-[12px] text-[#4a5f4c] font-medium mb-4">
+        {redeemAmount === 0
+          ? 'Choisis le montant à utiliser'
+          : <>Tu utilises <span className="font-bold text-[#1a2e23]">{formatEuros(redeemAmount)}</span> sur cette commande</>}
+      </p>
+
+      <button
+        onClick={handleApply}
+        disabled={busy || redeemAmount === 0}
+        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all disabled:opacity-40"
+      >
+        {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+        Appliquer {redeemAmount > 0 ? formatEuros(redeemAmount) : ''}
+      </button>
+
+      <p className="text-[11px] text-[#89a890] font-medium mt-3 text-center">
+        Plafond 50 % du panier. Ne s&apos;utilise pas sur les frais de port.
+      </p>
+    </div>
+  )
+}

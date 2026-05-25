@@ -1,33 +1,20 @@
 /**
  * POST /api/loyalty/redeem-online
  *
- * Reserve une cagnotte cote DB + cree un code Shopify (endsAt 1h).
+ * SECURITY (L4) : meme pattern que /api/loyalty/preview.
+ *   - Staff session OU X-Staff-Token (M2M).
+ *   - Plus d'acces public anonyme.
  *
- * Flow :
- *   1. Validation Zod + E.164
- *   2. Lookup customer (par phone)
- *   3. Sweep lazy : passe les anciennes reservations 'reserved' expirees en 'expired'
- *   4. validateRedemptionRequest (spec V2 §3 : min 20€ + cap 50% panier)
- *   5. reserveRedemption (cree code Shopify + insert DB)
- *   6. Retourne { discountCode, amountCents, expiresAt }
- *
- * Body : { phone, cartSubtotalCents, requestedAmountCents }
- *
- * Reponses :
- *   200 { ok, redemption: { discountCode, amountCents, expiresAt } }
- *   400 invalid_body / invalid_phone / validation_failed (avec reason + maxAllowed)
- *   404 customer_not_found
- *   500 shopify_failed / db_failed
+ * Body : { phone: E.164, cartSubtotalCents, requestedAmountCents }
+ * Reponse : { ok, redemption: { discountCode, amountCents, expiresAt } }
  */
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import crypto from 'node:crypto'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
+import { getStaffFromRequest, type StaffContext } from '@/lib/loyalty/staff-session'
 import { normalizeToE164 } from '@/lib/loyalty/phone'
-import {
-  validateRedemptionRequest,
-  expireOldRedemptions,
-  reserveRedemption,
-} from '@/lib/loyalty/redemption'
+import { executeRedeem } from '@/lib/loyalty/redeem-online-core'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -38,7 +25,44 @@ const BodySchema = z.object({
   requestedAmountCents: z.number().int().min(1),
 })
 
-export async function POST(req: Request) {
+function timingSafeEqualStr(a: string, b: string): boolean {
+  const ba = Buffer.from(a, 'utf8')
+  const bb = Buffer.from(b, 'utf8')
+  if (ba.length !== bb.length) return false
+  try {
+    return crypto.timingSafeEqual(ba, bb)
+  } catch {
+    return false
+  }
+}
+
+type AuthResult =
+  | { kind: 'staff_session'; staff: StaffContext }
+  | { kind: 'm2m_secret' }
+  | { kind: 'unauthorized' }
+
+async function authenticate(req: NextRequest): Promise<AuthResult> {
+  const staff = await getStaffFromRequest()
+  if (staff) return { kind: 'staff_session', staff }
+  const expectedSecret = process.env.LOYALTY_STAFF_SECRET
+  if (expectedSecret) {
+    const provided = req.headers.get('x-staff-token') ?? ''
+    if (provided && timingSafeEqualStr(provided, expectedSecret)) {
+      return { kind: 'm2m_secret' }
+    }
+  }
+  return { kind: 'unauthorized' }
+}
+
+export async function POST(req: NextRequest) {
+  const auth = await authenticate(req)
+  if (auth.kind === 'unauthorized') {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
+  if (auth.kind === 'm2m_secret') {
+    console.warn('[redeem-online] AUDIT M2M : appel via X-Staff-Token')
+  }
+
   let parsed: z.infer<typeof BodySchema>
   try {
     const body = await req.json()
@@ -72,53 +96,30 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'customer_not_found' }, { status: 404 })
   }
 
-  // Sweep lazy DB-side : libere mentalement les vieilles reservations expirees
-  try {
-    await expireOldRedemptions(supabase, customer.id)
-  } catch (err) {
-    // Non-bloquant : on continue, le pire qui peut arriver est un message d'erreur
-    // au client si une autre reservation active bloque sa demande.
-    console.warn('[redeem-online] expireOldRedemptions failed (non-blocking):', err)
-  }
-
-  const validation = validateRedemptionRequest({
-    balanceCents: customer.loyalty_balance_cents,
+  const result = await executeRedeem({
+    supabase,
+    customer: {
+      id: customer.id,
+      phone: customer.phone,
+      loyaltyBalanceCents: customer.loyalty_balance_cents,
+    },
     cartSubtotalCents: parsed.cartSubtotalCents,
     requestedAmountCents: parsed.requestedAmountCents,
   })
-  if (!validation.ok) {
-    return NextResponse.json(
-      {
-        error: 'validation_failed',
-        reason: validation.reason,
-        maxAllowedCents: validation.maxAllowedCents,
-      },
-      { status: 400 }
-    )
+
+  if (!result.ok) {
+    if (result.kind === 'validation') {
+      return NextResponse.json(
+        {
+          error: 'validation_failed',
+          reason: result.reason,
+          maxAllowedCents: result.maxAllowedCents,
+        },
+        { status: 400 }
+      )
+    }
+    return NextResponse.json({ error: 'reserve_failed', detail: result.detail }, { status: 500 })
   }
 
-  try {
-    const reservation = await reserveRedemption(supabase, {
-      customerId: customer.id,
-      customerHint: customer.phone,
-      amountCents: validation.appliedCents,
-      cartSubtotalCents: parsed.cartSubtotalCents,
-    })
-
-    return NextResponse.json({
-      ok: true,
-      redemption: {
-        discountCode: reservation.discountCode,
-        amountCents: reservation.amountCents,
-        expiresAt: reservation.expiresAt,
-      },
-    })
-  } catch (err) {
-    console.error('[redeem-online] reserve failed:', err)
-    const msg = err instanceof Error ? err.message : 'unknown'
-    return NextResponse.json(
-      { error: 'reserve_failed', detail: msg },
-      { status: 500 }
-    )
-  }
+  return NextResponse.json({ ok: true, redemption: result.redemption })
 }

@@ -112,6 +112,11 @@ export interface CartItem {
   }
 }
 
+export interface CartDiscountCode {
+  code: string
+  applicable: boolean
+}
+
 export interface ShopifyCart {
   id: string
   checkoutUrl: string
@@ -124,6 +129,7 @@ export interface ShopifyCart {
     totalAmount: ShopifyMoney
     totalTaxAmount: ShopifyMoney | null
   }
+  discountCodes: CartDiscountCode[]
 }
 
 // Blog
