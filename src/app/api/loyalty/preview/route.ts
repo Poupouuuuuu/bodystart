@@ -1,34 +1,106 @@
 /**
  * POST /api/loyalty/preview
  *
- * Lecture seule (pas d'effet de bord) : renvoie au front l'etat necessaire
- * pour afficher le widget cagnotte au checkout.
+ * SECURITY (Sprint L4) :
+ *   - PRIORITAIRE : session staff Supabase Auth (cookies).
+ *   - FALLBACK M2M : header X-Staff-Token = LOYALTY_STAFF_SECRET.
+ *   - Plus jamais d'acces public anonyme (clients web passent par /me/preview).
  *
- * Body : { phone: E.164, cartSubtotalCents: integer > 0 }
+ * Rate limit Upstash (defense en profondeur) : 30 req/min/IP.
  *
- * Reponse :
- *   { balanceCents, maxRedeemableCents, eligible: boolean, reason?: string }
- *
- * Pas d'auth requise (info non sensible : on retourne juste un montant calcule
- * a partir du panier public + du solde du customer dont on connait le phone).
- * Le solde reel n'est revele qu'a quelqu'un qui connait le phone E.164 du client,
- * ce qui est acceptable pour un widget checkout.
+ * Body : { phone: E.164, cartSubtotalCents: integer >= 0 }
+ * Reponse : { balanceCents, maxRedeemableCents, eligible, reason?, config }
  */
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import crypto from 'node:crypto'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
+import { getStaffFromRequest, type StaffContext } from '@/lib/loyalty/staff-session'
 import { normalizeToE164 } from '@/lib/loyalty/phone'
-import { maxRedeemableCents, REDEEM_MIN_BALANCE_CENTS } from '@/lib/loyalty/calculate'
+import { buildPreview } from '@/lib/loyalty/preview-core'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+
+// ─── Rate limiter Upstash : 30 req/min par IP ───
+let rateLimiter: { limit: (key: string) => Promise<{ success: boolean; remaining: number }> } | null = null
+if (
+  process.env.UPSTASH_REDIS_REST_URL &&
+  !process.env.UPSTASH_REDIS_REST_URL.includes('xxx')
+) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { Ratelimit } = require('@upstash/ratelimit')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { Redis } = require('@upstash/redis')
+  rateLimiter = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(30, '1 m'),
+    analytics: true,
+    prefix: 'ratelimit:loyalty:preview',
+  })
+}
 
 const BodySchema = z.object({
   phone: z.string().min(5).max(32),
   cartSubtotalCents: z.number().int().min(0),
 })
 
-export async function POST(req: Request) {
+function timingSafeEqualStr(a: string, b: string): boolean {
+  const ba = Buffer.from(a, 'utf8')
+  const bb = Buffer.from(b, 'utf8')
+  if (ba.length !== bb.length) return false
+  try {
+    return crypto.timingSafeEqual(ba, bb)
+  } catch {
+    return false
+  }
+}
+
+type AuthResult =
+  | { kind: 'staff_session'; staff: StaffContext }
+  | { kind: 'm2m_secret' }
+  | { kind: 'unauthorized' }
+
+async function authenticate(req: NextRequest): Promise<AuthResult> {
+  const staff = await getStaffFromRequest()
+  if (staff) return { kind: 'staff_session', staff }
+
+  const expectedSecret = process.env.LOYALTY_STAFF_SECRET
+  if (expectedSecret) {
+    const provided = req.headers.get('x-staff-token') ?? ''
+    if (provided && timingSafeEqualStr(provided, expectedSecret)) {
+      return { kind: 'm2m_secret' }
+    }
+  }
+  return { kind: 'unauthorized' }
+}
+
+export async function POST(req: NextRequest) {
+  // ─── Auth obligatoire (staff session OU secret M2M) ───
+  const auth = await authenticate(req)
+  if (auth.kind === 'unauthorized') {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
+  if (auth.kind === 'm2m_secret') {
+    console.warn('[preview] AUDIT M2M : appel via X-Staff-Token (staff_user_id=null)')
+  }
+
+  // ─── Rate limit (defense en profondeur, meme en mode auth) ───
+  if (rateLimiter) {
+    const ip =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      req.headers.get('x-real-ip') ??
+      '127.0.0.1'
+    const { success, remaining } = await rateLimiter.limit(ip)
+    if (!success) {
+      return NextResponse.json(
+        { error: 'rate_limited', detail: 'Trop de demandes.' },
+        { status: 429, headers: { 'X-RateLimit-Remaining': String(remaining) } }
+      )
+    }
+  }
+
+  // ─── Parse body ───
   let parsed: z.infer<typeof BodySchema>
   try {
     const body = await req.json()
@@ -45,6 +117,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'invalid_phone' }, { status: 400 })
   }
 
+  // ─── Lookup customer + delegue a buildPreview ───
   const supabase = getLoyaltyAdminClient()
   const { data: customer, error } = await supabase
     .from('loyalty_customers')
@@ -56,35 +129,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'lookup_failed', detail: error.message }, { status: 500 })
   }
 
-  // Phone inconnu : reponse "vide" mais 200 (le widget affichera juste "Tu n'as pas de cagnotte")
   if (!customer) {
+    // Phone inconnu : reponse "vide" mais 200 (le widget caisse affichera juste "Pas de cagnotte")
     return NextResponse.json({
       balanceCents: 0,
       maxRedeemableCents: 0,
       eligible: false,
       reason: 'customer_not_found',
+      config: { minBalanceCents: 2000, cartCapRatio: 0.5 },
     })
   }
 
-  const balanceCents = customer.loyalty_balance_cents
-  const max = maxRedeemableCents(parsed.cartSubtotalCents, balanceCents)
-
-  const eligible = max > 0
-  let reason: string | undefined
-  if (!eligible) {
-    if (balanceCents < REDEEM_MIN_BALANCE_CENTS) reason = 'balance_below_minimum'
-    else if (parsed.cartSubtotalCents <= 0) reason = 'invalid_cart'
-    else reason = 'no_redeemable_amount'
-  }
-
-  return NextResponse.json({
-    balanceCents,
-    maxRedeemableCents: max,
-    eligible,
-    ...(reason ? { reason } : {}),
-    config: {
-      minBalanceCents: REDEEM_MIN_BALANCE_CENTS,
-      cartCapRatio: 0.5,
-    },
+  const preview = buildPreview({
+    customer: { id: customer.id, loyaltyBalanceCents: customer.loyalty_balance_cents },
+    cartSubtotalCents: parsed.cartSubtotalCents,
   })
+  return NextResponse.json(preview)
 }
