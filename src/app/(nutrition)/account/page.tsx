@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   User, Package, MapPin, LogOut, ChevronRight, ShoppingBag, Star,
-  Gift, Dumbbell, Plus, Pencil, Trash2, X, Loader2, Save, Wallet
+  Gift, Plus, Pencil, Trash2, X, Loader2, Save, Wallet
 } from 'lucide-react'
 import { CagnottePanel } from '@/components/account/CagnottePanel'
 import { ReferralPanel } from '@/components/account/ReferralPanel'
@@ -16,7 +16,7 @@ import type { AddressInput } from '@/lib/shopify/customer'
 import { formatPrice, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
-type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte' | 'coaching'
+type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte'
 
 // ═══════════════════════════════════════════════════════════
 // PANNEAU : Aperçu (dernières commandes)
@@ -481,22 +481,19 @@ function AccountContent() {
   const searchParams = useSearchParams()
   const tabFromUrl = searchParams.get('tab') as Tab | null
   const [activeTab, setActiveTab] = useState<Tab>(
-    tabFromUrl && ['overview','orders','addresses','profile','reviews','referral','cagnotte','coaching'].includes(tabFromUrl)
+    tabFromUrl && ['overview','orders','addresses','profile','reviews','referral','cagnotte'].includes(tabFromUrl)
       ? tabFromUrl
       : 'overview'
   )
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
 
-  const isCoaching = searchParams.get('theme') === 'coaching'
-  const authQuery = isCoaching ? '?theme=coaching' : ''
-
   useEffect(() => {
-    if (!isLoading && !isLoggedIn) router.push(`/login${authQuery}`)
-  }, [isLoading, isLoggedIn, router, authQuery])
+    if (!isLoading && !isLoggedIn) router.push('/login')
+  }, [isLoading, isLoggedIn, router])
 
   async function handleLogout() {
     await logout()
-    router.push(isCoaching ? '/coaching' : '/')
+    router.push('/')
   }
 
   const handleViewOrderDetail = (id: string) => {
@@ -523,7 +520,6 @@ function AccountContent() {
     { icon: Wallet, label: 'Ma cagnotte', tab: 'cagnotte' },
     { icon: Gift, label: 'Parrainage', tab: 'referral' },
     { icon: Star, label: 'Mes avis', tab: 'reviews' },
-    { icon: Dumbbell, label: 'Mon coaching', tab: 'coaching' },
   ]
 
   const renderPanel = () => {
@@ -536,16 +532,6 @@ function AccountContent() {
       case 'reviews': return <ReviewsPanel />
       case 'referral': return <ReferralPanel />
       case 'cagnotte': return <CagnottePanel />
-      case 'coaching': return (
-        <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-12 text-center shadow-sm">
-          <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6"><Dumbbell className="w-8 h-8 text-[#89a890]" /></div>
-          <h2 className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-lg mb-2">Coaching</h2>
-          <p className="text-sm text-[#4a5f4c] mb-8 max-w-sm mx-auto font-medium">Votre espace coaching sera disponible après souscription à un programme.</p>
-          <Link href="/coaching/tarifs" className="inline-flex items-center gap-2 px-8 py-4 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg">
-            Voir les programmes
-          </Link>
-        </div>
-      )
       default: return null
     }
   }

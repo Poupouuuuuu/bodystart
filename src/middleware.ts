@@ -1,6 +1,9 @@
 // STANDBY 2026-05-23 : coaching + vetements masques, redirect 301 vers /products
 // L5 2026-05-XX : protection /staff/* (auth Supabase Auth obligatoire,
 // vrai check en haut du Server Component via requireStaff())
+// 2026-05-25 : redirect 301 /account/coaching/* vers /account (onglet
+// coaching retire de la nav, on rend les sous-pages inatteignables visuellement
+// sans toucher au code parke STANDBY)
 import { NextRequest, NextResponse } from 'next/server'
 
 const NUTRITION_PROTECTED_PATHS = ['/account']
@@ -12,6 +15,9 @@ const SUPABASE_AUTH_COOKIE_PREFIX = 'sb-' // les cookies @supabase/ssr commencen
 
 // Routes mises en standby : redirect permanent vers /products
 const STANDBY_PATHS = ['/coaching', '/vetements']
+
+// Sous-routes /account/coaching/* en standby : redirect 301 vers /account
+const ACCOUNT_COACHING_PREFIX = '/account/coaching'
 
 function hasSupabaseAuthCookie(req: NextRequest): boolean {
   // @supabase/ssr stocke la session dans 1 ou 2 cookies nommes
@@ -37,6 +43,14 @@ export function middleware(req: NextRequest) {
   if (isStandby) {
     const url = req.nextUrl.clone()
     url.pathname = '/products'
+    url.search = ''
+    return NextResponse.redirect(url, 301)
+  }
+
+  // ─── Redirection 301 /account/coaching/* vers /account (standby coaching) ───
+  if (pathname === ACCOUNT_COACHING_PREFIX || pathname.startsWith(ACCOUNT_COACHING_PREFIX + '/')) {
+    const url = req.nextUrl.clone()
+    url.pathname = '/account'
     url.search = ''
     return NextResponse.redirect(url, 301)
   }
