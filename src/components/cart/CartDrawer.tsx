@@ -1,9 +1,11 @@
 'use client'
 
+// STANDBY 2026-05-23 : coaching masque (cf. middleware redirect 301).
+// Le toggle isCoaching a ete retire de CartDrawer en 2026-05-25 : tout le panier
+// est desormais nutrition-only (titre "Mon Panier", CTA "ACHETER MAINTENANT").
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname, useSearchParams } from 'next/navigation'
 import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, CheckCircle2 } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
@@ -15,9 +17,6 @@ const FREE_SHIPPING_THRESHOLD = 85
 
 export default function CartDrawer() {
   const { cart, isOpen, isLoading, closeCart, updateItem, removeItem, setCartAttributes } = useCart()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const isCoaching = pathname?.startsWith('/coaching') || searchParams?.get('theme') === 'coaching'
 
   const [isClickAndCollect, setIsClickAndCollect] = useState(false)
 
@@ -72,7 +71,7 @@ export default function CartDrawer() {
         {/* ─── Header ─── */}
         <div className="flex items-center justify-between px-8 py-7">
           <h2 className="text-[18px] font-black uppercase text-[#1a2e23]">
-            {isCoaching ? "Résumé Coaching" : "Mon Panier"}
+            Mon Panier
           </h2>
           <button
             onClick={closeCart}
@@ -84,7 +83,7 @@ export default function CartDrawer() {
         </div>
 
         {/* ─── Barre livraison gratuite ─── */}
-        {!isEmpty && !isClickAndCollect && !isCoaching && (
+        {!isEmpty && !isClickAndCollect && (
           <div className="px-8 pb-5">
             <div className="bg-white/60 border border-[#1a2e23]/5 rounded-xl p-4 shadow-sm">
               {hasFreeShipping ? (
@@ -125,16 +124,11 @@ export default function CartDrawer() {
               Ajoutez des produits pour voir votre résumé de commande.
             </p>
             <Link
-              href={isCoaching ? "/coaching" : "/products"}
+              href="/products"
               onClick={closeCart}
-              className={cn(
-                "py-4 h-14 w-full text-[13px] font-bold tracking-widest rounded-full inline-flex justify-center items-center transition-all",
-                isCoaching
-                  ? "bg-[#2ab0b0] text-white hover:bg-[#1a9898]"
-                  : "bg-[#1a2e23] text-white hover:bg-[#2c4c39]"
-              )}
+              className="py-4 h-14 w-full text-[13px] font-bold tracking-widest rounded-full inline-flex justify-center items-center transition-all bg-[#1a2e23] text-white hover:bg-[#2c4c39]"
             >
-              {isCoaching ? "VOIR LE COACHING" : "ACHETER MAINTENANT"}
+              ACHETER MAINTENANT
             </Link>
           </div>
         ) : (
@@ -228,7 +222,7 @@ export default function CartDrawer() {
         )}
 
         {/* ─── Widget Cagnotte (loyalty) ─── */}
-        {!isEmpty && !isCoaching && <CagnotteCartWidget />}
+        {!isEmpty && <CagnotteCartWidget />}
 
         {/* ─── Footer récap + checkout ─── */}
         {!isEmpty && cart && (
@@ -294,12 +288,7 @@ export default function CartDrawer() {
             <div className="flex flex-col gap-3">
               <a
                 href={cart.checkoutUrl}
-                className={cn(
-                  "w-full h-14 flex items-center justify-center text-[14px] font-bold uppercase tracking-widest rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5",
-                  isCoaching
-                    ? "bg-[#2ab0b0] text-white hover:bg-[#1a9898]"
-                    : "bg-[#1a2e23] text-white hover:bg-[#2e4f3c]"
-                )}
+                className="w-full h-14 flex items-center justify-center text-[14px] font-bold uppercase tracking-widest rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 bg-[#1a2e23] text-white hover:bg-[#2e4f3c]"
               >
                 {isClickAndCollect ? 'VALIDER LE RETRAIT' : 'PAIEMENT SÉCURISÉ'}
               </a>

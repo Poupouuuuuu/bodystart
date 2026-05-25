@@ -30,17 +30,7 @@ const config: Config = {
           300: '#E2D9CE',
           400: '#C9BDB0',
         },
-        // ─── Palette Coaching ───────────────────────────────────
-        coaching: {
-          50:  '#E6F7F7',
-          500: '#2AB0B0',
-          900: '#0D1F1F',
-        },
-        'coaching-cyan': {
-          400: '#3dc8c8',
-          500: '#2ab0b0',
-          600: '#1a9898',
-        },
+        // STANDBY 2026-05-25 : palettes coaching retirees, coaching mono-theme nutrition
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
