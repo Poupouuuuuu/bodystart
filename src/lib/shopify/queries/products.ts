@@ -146,7 +146,8 @@ export const GET_PRODUCT_BY_HANDLE = `
         { namespace: "custom", key: "valeurs_nutritionnelles" },
         { namespace: "custom", key: "ingredients" },
         { namespace: "custom", key: "usage" },
-        { namespace: "custom", key: "nutrition_facts" }
+        { namespace: "custom", key: "nutrition_facts" },
+        { namespace: "custom", key: "format" }
       ]) {
         namespace
         key
