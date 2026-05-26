@@ -80,9 +80,39 @@ export default function BuyBoxV2({
     }
   }
 
-  const handleImageChange = useCallback((index: number) => {
-    setSelectedImageIndex(index)
-  }, [])
+  /**
+   * Sens inverse galerie → selecteur de saveur (synchro bidirectionnelle).
+   *
+   * Quand on clique une vignette, on remonte cette image au mapping
+   * variant.image.url existant (deja utilise pour le sens forward
+   * saveur → image). Si elle correspond au featured media d'une variante,
+   * on bascule aussi la selection de saveur/format pour que le pill
+   * actif suive l'image affichee.
+   *
+   * Cas image secondaire (produit avec plus d'images que de variantes) :
+   * matchingVariant est undefined, on update juste l'index image sans
+   * toucher a la variante selectionnee. Pas de desselection, pas de reset.
+   */
+  const handleImageChange = useCallback(
+    (index: number) => {
+      setSelectedImageIndex(index)
+
+      const clickedImage = images[index]
+      if (!clickedImage) return
+
+      const matchingVariant = variants.find((v) => v.image?.url === clickedImage.url)
+      if (!matchingVariant) return // image secondaire non rattachee a une variante
+      if (matchingVariant.id === selectedVariant.id) return // deja selectionnee
+
+      setSelectedVariant(matchingVariant)
+      const parts = matchingVariant.title.split(' / ').map((s) => s.trim())
+      const flavor = parts[0]
+      const size = parts[1] ?? ''
+      if (flavor) setSelectedFlavor(flavor)
+      setSelectedSize(size)
+    },
+    [images, variants, selectedVariant.id]
+  )
 
   async function handleAddToCart() {
     if (!selectedVariant.availableForSale) return
