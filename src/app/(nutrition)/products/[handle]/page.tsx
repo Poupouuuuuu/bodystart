@@ -13,9 +13,11 @@ import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
 import LeConseilBodyStartV2 from '@/components/product/v2/LeConseilBodyStartV2'
 import AQuoiCaSertV2 from '@/components/product/v2/AQuoiCaSertV2'
 import NutritionTableV2 from '@/components/product/v2/NutritionTableV2'
+import CompositionV2 from '@/components/product/v2/CompositionV2'
 import ProductDescriptionV2 from '@/components/product/v2/ProductDescriptionV2'
 import ReviewsV2 from '@/components/product/v2/ReviewsV2'
 import CrossSellV2 from '@/components/product/v2/CrossSellV2'
+import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
 import { buildPageMetadata } from '@/lib/seo'
 
 // Force fresh render a chaque visite : stock boutique doit etre a jour.
@@ -265,8 +267,11 @@ export default async function ProductPage({ params }: Props) {
       {/* ─── A quoi ca sert (3 cartes) ─── */}
       <AQuoiCaSertV2 />
 
-      {/* ─── Valeurs nutritionnelles ─── */}
+      {/* ─── Valeurs nutritionnelles (metafield custom.valeurs_nutritionnelles) ─── */}
       <NutritionTableV2 metafields={product.metafields} />
+
+      {/* ─── Composition + Allergenes (metafields custom.composition + custom.allergenes) ─── */}
+      <CompositionV2 metafields={product.metafields} />
 
       {/* ─── Description longue ─── */}
       <ProductDescriptionV2
@@ -281,6 +286,9 @@ export default async function ProductPage({ params }: Props) {
       {relatedProducts.length > 0 && (
         <CrossSellV2 products={relatedProducts} currentHandle={product.handle} />
       )}
+
+      {/* ─── Precautions d'emploi (statique, legal, identique sur toutes fiches) ─── */}
+      <PrecautionsEmploiV2 />
     </>
   )
 }

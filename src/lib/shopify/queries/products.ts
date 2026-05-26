@@ -147,7 +147,8 @@ export const GET_PRODUCT_BY_HANDLE = `
         { namespace: "custom", key: "ingredients" },
         { namespace: "custom", key: "usage" },
         { namespace: "custom", key: "nutrition_facts" },
-        { namespace: "custom", key: "format" }
+        { namespace: "custom", key: "format" },
+        { namespace: "custom", key: "allergenes" }
       ]) {
         namespace
         key
