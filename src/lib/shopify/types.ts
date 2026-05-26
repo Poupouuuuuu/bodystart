@@ -178,7 +178,12 @@ export const BODY_START_STORES: BodyStartStore[] = [
   {
     id: 'boutique-coignieres',
     name: 'BodyStart Nutrition, Coignières',
-    shopifyLocationId: 'gid://shopify/Location/114075795838',
+    // ID Shopify de l'emplacement "BodyStart Coignières" sur le store
+    // bodystart-nutrition-2 (mis a jour 2026-05-26 : l'ancien
+    // 114075795838 pointait vers une location obsolete, le stock
+    // affichait toujours "Indisponible en boutique" malgre 50 unites
+    // reelles activees par Click & Collect).
+    shopifyLocationId: 'gid://shopify/Location/119350657366',
     isActive: true,
     address: '8 Rue du Pont des Landes',
     city: '78310 Coignières',
