@@ -272,45 +272,24 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
   return (
     <div className="bg-canvas min-h-screen">
       {/* ─── Hero ─── */}
-      <div className="pt-12 pb-8 md:pt-14 md:pb-10">
+      {/* Pills objectifs retirees 2026-05-26 : le "shop by objectif" vit
+          sur la home (ShopByObjectiveV2), pas besoin de le dupliquer ici.
+          La logique activeGoal/setActiveGoal/handleGoalClick reste en place
+          pour supporter les deep-links ?obj=... venant de la home, et le
+          chip filtre actif "Muscle/Energie/..." apparait normalement si
+          un visiteur arrive avec ce param. */}
+      <div className="pt-10 pb-4 md:pt-12 md:pb-6">
         <div className="container">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
             Catalogue
           </p>
-          <h1 className="font-display text-[34px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-8">
+          <h1 className="font-display text-[34px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight">
             Nos produits
           </h1>
-
-          {/* Objectifs — pills sentence case */}
-          <div className="flex items-center gap-2 flex-wrap">
-            {GOALS.map(({ key, label, image }) => (
-              <button
-                key={key}
-                onClick={() => handleGoalClick(key)}
-                className={cn(
-                  'inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold transition-colors border',
-                  activeGoal === key
-                    ? 'bg-spruce text-white border-spruce'
-                    : 'bg-white text-ink border-spruce/15 hover:border-spruce/40'
-                )}
-              >
-                {image && (
-                  <Image
-                    src={image}
-                    alt=""
-                    width={18}
-                    height={18}
-                    className="w-[18px] h-[18px] object-contain"
-                  />
-                )}
-                {label}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
-      <div className="container pb-16">
+      <div className="container pb-10">
         {/* ─── Barre de contrôle ─── */}
         <div className="flex items-center justify-between mb-6 gap-4">
           <p className="text-[13px] text-ink-mute">
@@ -644,14 +623,14 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                 </div>
 
                 {visibleCount < filtered.length && (
-                  <div className="text-center mt-10">
+                  <div className="text-center mt-6">
                     <button
                       onClick={() => setVisibleCount((prev) => prev + 12)}
                       className="inline-flex items-center gap-2 px-8 py-3 bg-fresh text-white rounded-full text-[14px] font-semibold hover:bg-fresh-deep transition-colors"
                     >
                       Voir plus
                     </button>
-                    <p className="text-[12px] text-ink-mute mt-3">
+                    <p className="text-[12px] text-ink-mute mt-2.5">
                       {Math.min(visibleCount, filtered.length)} sur {filtered.length} produits
                       affichés
                     </p>
@@ -697,6 +676,13 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
 }
 
 // ─── Carte produit V2 (allegee, palette DA) ────────────────────────
+
+/** Capitalise la 1re lettre uniquement (sentence case, pas title case). */
+function capitalizeFirst(s: string): string {
+  if (!s) return s
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 interface ProductCardShopProps {
   product: ShopifyProduct
   stockAtStore?: number
@@ -816,10 +802,10 @@ function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
           </h3>
         </Link>
 
-        {/* Une ligne de benefice court (optionnelle) */}
+        {/* Une ligne de benefice court (optionnelle, capitalisee) */}
         {shortBenefit && (
           <p className="text-[12px] text-ink-mute leading-snug mb-3 line-clamp-1">
-            {shortBenefit}
+            {capitalizeFirst(shortBenefit)}
           </p>
         )}
 
