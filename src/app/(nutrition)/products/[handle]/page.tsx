@@ -1,16 +1,20 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { getProductByHandle, getProductInventoryByLocation, getCollectionByHandle } from '@/lib/shopify'
+import { ChevronRight } from 'lucide-react'
+import {
+  getProductByHandle,
+  getProductInventoryByLocation,
+  getCollectionByHandle,
+} from '@/lib/shopify'
 import { BODY_START_STORES } from '@/lib/shopify/types'
-import ProductSection from '@/components/product/ProductSection'
-import LeConseilBodyStart from '@/components/product/LeConseilBodyStart'
-import NutritionAndScience from '@/components/product/NutritionAndScience'
-import ProductReviews from '@/components/product/ProductReviews'
-import RelatedProducts from '@/components/product/RelatedProducts'
-import { ChevronRight, Star } from 'lucide-react'
+import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
+import LeConseilBodyStartV2 from '@/components/product/v2/LeConseilBodyStartV2'
+import AQuoiCaSertV2 from '@/components/product/v2/AQuoiCaSertV2'
+import NutritionTableV2 from '@/components/product/v2/NutritionTableV2'
+import ProductDescriptionV2 from '@/components/product/v2/ProductDescriptionV2'
+import ReviewsV2 from '@/components/product/v2/ReviewsV2'
+import CrossSellV2 from '@/components/product/v2/CrossSellV2'
 import { buildPageMetadata } from '@/lib/seo'
 
 interface Props {
@@ -31,12 +35,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       ogImage: image,
       // Next.js 14.2 Metadata supporte 'website' | 'article' uniquement (pas 'product').
-      // Le rich snippet produit est gere via le schema.org JSON-LD du composant ProductSection.
+      // Le rich snippet produit est gere via le schema.org JSON-LD ci-dessous.
       ogType: 'website',
     })
   } catch {
     return { title: 'Produit' }
   }
+}
+
+// Tags Shopify qui donnent une pastille benefice automatique sur la buy box
+const BENEFIT_TAGS_MAP: Record<string, string> = {
+  whey: 'Whey isolat',
+  'sans-sucre': 'Sans sucre',
+  vegan: '100% végétal',
+  'anti-dopage': 'Certifié anti-dopage',
+  'sans-gluten': 'Sans gluten',
+  'made-in-france': 'Fabriqué en France',
+  bio: 'Bio',
+}
+
+function extractBenefits(tags: string[]): string[] {
+  const out: string[] = []
+  for (const tag of tags) {
+    const label = BENEFIT_TAGS_MAP[tag.toLowerCase()]
+    if (label && !out.includes(label)) out.push(label)
+  }
+  return out.slice(0, 4) // max 4 pastilles
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -49,32 +73,31 @@ export default async function ProductPage({ params }: Props) {
 
   if (!product) notFound()
 
-  // Fetch stock en boutique physique
+  // Stock boutique physique
   const activeStore = BODY_START_STORES.find((s) => s.isActive)
-  let storeInventory: Record<string, number> = {}
+  const storeInventory: Record<string, number> = {}
   if (activeStore?.shopifyLocationId) {
     try {
       const levels = await getProductInventoryByLocation(product.id, activeStore.shopifyLocationId)
       const totalAvailable = levels.reduce((sum, v) => sum + v.available, 0)
       storeInventory[activeStore.id] = totalAvailable
-      console.log('[ClickCollect] product:', product.handle, '→', totalAvailable, 'units @', activeStore.id)
     } catch (err) {
       console.error('[ClickCollect] inventory fetch failed for', product.handle, err)
     }
   }
 
-  // Fetch produits de la même collection pour les recommandations
+  // Produits cross-sell (meme collection)
   let relatedProducts: import('@/lib/shopify/types').ShopifyProduct[] = []
   if (product.collections?.nodes?.[0]?.handle) {
     try {
       const collection = await getCollectionByHandle(product.collections.nodes[0].handle, 5)
       relatedProducts = collection?.products?.nodes ?? []
     } catch {
-      // On continue sans les recommandations
+      // On continue sans recommandations
     }
   }
 
-  // Fallback : domaine reel actuel (Vercel), pas un domaine devine.
+  // SEO + JSON-LD (rich snippets)
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app'
   const mainVariant = product.variants.nodes[0]
   const hasDiscount =
@@ -90,6 +113,7 @@ export default async function ProductPage({ params }: Props) {
 
   const collectionName = product.collections?.nodes?.[0]?.title ?? null
   const collectionHandle = product.collections?.nodes?.[0]?.handle ?? null
+  const benefits = extractBenefits(product.tags ?? [])
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -97,10 +121,7 @@ export default async function ProductPage({ params }: Props) {
     name: product.title,
     description: product.description?.slice(0, 500) ?? '',
     image: product.featuredImage?.url ?? '',
-    brand: {
-      '@type': 'Brand',
-      name: product.vendor || 'BodyStart Nutrition',
-    },
+    brand: { '@type': 'Brand', name: product.vendor || 'BodyStart Nutrition' },
     offers: {
       '@type': 'Offer',
       url: `${siteUrl}/products/${product.handle}`,
@@ -109,10 +130,7 @@ export default async function ProductPage({ params }: Props) {
       availability: mainVariant?.availableForSale
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
-      seller: {
-        '@type': 'Organization',
-        name: 'BodyStart Nutrition',
-      },
+      seller: { '@type': 'Organization', name: 'BodyStart Nutrition' },
     },
   }
 
@@ -120,18 +138,8 @@ export default async function ProductPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Accueil',
-        item: siteUrl,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Produits',
-        item: `${siteUrl}/products`,
-      },
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: 'Produits', item: `${siteUrl}/products` },
       {
         '@type': 'ListItem',
         position: 3,
@@ -140,6 +148,13 @@ export default async function ProductPage({ params }: Props) {
       },
     ],
   }
+
+  const images =
+    product.images?.nodes.length
+      ? product.images.nodes
+      : product.featuredImage
+        ? [product.featuredImage]
+        : []
 
   return (
     <>
@@ -152,117 +167,87 @@ export default async function ProductPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      {/* ─── SECTION HERO — Solid Background ─── */}
-      <div className="relative pb-32 pt-16 md:pt-24 z-10 bg-[#f4f6f1]">
-        <div className="container relative z-10">
+      {/* ─── Fil d'ariane ─── */}
+      <nav
+        aria-label="Fil d'ariane"
+        className="bg-canvas border-b border-spruce/10"
+      >
+        <div className="container py-4">
+          <ol className="flex items-center gap-1.5 text-[12px] text-ink-mute">
+            <li>
+              <Link href="/" className="hover:text-spruce transition-colors">
+                Accueil
+              </Link>
+            </li>
+            <ChevronRight className="w-3 h-3" />
+            <li>
+              <Link href="/products" className="hover:text-spruce transition-colors">
+                Produits
+              </Link>
+            </li>
+            {collectionName && (
+              <>
+                <ChevronRight className="w-3 h-3" />
+                <li>
+                  <Link
+                    href={`/products?cat=${collectionHandle}`}
+                    className="hover:text-spruce transition-colors"
+                  >
+                    {collectionName}
+                  </Link>
+                </li>
+              </>
+            )}
+            <ChevronRight className="w-3 h-3" />
+            <li className="text-spruce font-medium truncate">{product.title}</li>
+          </ol>
+        </div>
+      </nav>
 
-
-          <ProductSection
-            images={
-              product.images?.nodes.length
-                ? product.images.nodes
-                : product.featuredImage
-                  ? [product.featuredImage]
-                  : []
-            }
+      {/* ─── Buy box : galerie + panneau achat ─── */}
+      <section className="bg-canvas">
+        <div className="container py-10 md:py-14">
+          <BuyBoxV2
+            images={images}
             variants={product.variants.nodes}
             title={product.title}
             discountPct={discountPct}
-            productTitle={product.title}
             collectionName={collectionName}
             collectionHandle={collectionHandle}
             activeStore={activeStore}
             storeInventory={storeInventory}
+            benefits={benefits}
           />
         </div>
-      </div>
+      </section>
 
-      {/* ─── NOUVEAU : Le conseil BodyStart ─── */}
-      <div className="bg-white py-12 -mt-16 relative z-10">
-        <div className="container max-w-4xl">
-          <LeConseilBodyStart handle={product.handle} />
-        </div>
-      </div>
-
-      {/* ─── TRANSITION COURBEE (Wave SVG) ─── */}
-      <div className="relative w-full h-[150px] -mt-[149px] z-20 pointer-events-none overflow-hidden">
-        <svg viewBox="0 0 1440 320" preserveAspectRatio="none" className="absolute bottom-0 w-full h-full">
-          <path 
-            fill="#d1dcca" 
-            fillOpacity="1" 
-            d="M0,192L80,181.3C160,171,320,149,480,165.3C640,181,800,235,960,234.7C1120,235,1280,181,1360,154.7L1440,128L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"
-          ></path>
-        </svg>
-      </div>
-
-      {/* ─── SECTION VERT SAUGE : Nutrition Facts & Science ─── */}
-      <div className="bg-[#d1dcca] py-16 relative z-10 w-full border-b border-white/20">
-         <div className="container">
-           <NutritionAndScience metafields={product.metafields} />
-         </div>
-      </div>
-
-      {/* ─── NOUVEAU TICKER PREUVE SOCIALE ─── */}
-      <div className="w-full bg-[#1a2e23] border-b border-[#2c3e2e]/20 py-5 overflow-hidden flex whitespace-nowrap">
-        <div className="animate-marquee inline-block relative">
-          <div className="flex gap-16 items-center">
-            {Array(4).fill([
-              "« Meilleure digestion de ma vie » - Thomas B.",
-              "« Se dilue parfaitement, zéro grumeau » - Sarah M.",
-              "« Un goût incroyable, au quotidien » - Julien D.",
-              "« Pureté impressionnante » - Alex T."
-            ]).flat().map((text, i) => (
-              <span key={i} className="text-[11px] font-bold uppercase tracking-widest text-[#89b397] flex items-center gap-3">
-                 <div className="flex"><Star className="w-3.5 h-3.5 text-[#d1dcca] fill-current" /><Star className="w-3.5 h-3.5 text-[#d1dcca] fill-current" /><Star className="w-3.5 h-3.5 text-[#d1dcca] fill-current" /><Star className="w-3.5 h-3.5 text-[#d1dcca] fill-current" /><Star className="w-3.5 h-3.5 text-[#d1dcca] fill-current" /></div> {text}
-              </span>
-            ))}
+      {/* ─── Le conseil BodyStart (place haut, juste apres buy box) ─── */}
+      <section className="bg-white">
+        <div className="container py-12 md:py-16">
+          <div className="max-w-4xl mx-auto">
+            <LeConseilBodyStartV2 handle={product.handle} />
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ─── SECTION LIFESTYLE : Split-Screen ─── */}
-      <div className="bg-white">
-        <div className="grid grid-cols-1 lg:grid-cols-2">
-           {/* Image Lifestyle (utilise la première image du produit) */}
-           <div className="bg-[#f0ece3] min-h-[400px] lg:min-h-[600px] relative border-b lg:border-b-0 lg:border-r border-[#2c3e2e]/10 overflow-hidden">
-             {product.images?.nodes?.[0] && (
-               <Image
-                 src={product.images.nodes[0].url}
-                 alt={product.images.nodes[0].altText || product.title}
-                 fill
-                 className="object-contain p-8"
-                 sizes="(max-width: 1024px) 100vw, 50vw"
-               />
-             )}
-           </div>
+      {/* ─── A quoi ca sert (3 cartes) ─── */}
+      <AQuoiCaSertV2 />
 
-           {/* Texte Explicatif */}
-           <div className="flex flex-col justify-center p-12 lg:p-24 bg-white">
-             <h2 className="font-display text-4xl md:text-5xl font-black uppercase text-[#2c3e2e] tracking-tighter mb-8">
-                Pourquoi on l&apos;a sélectionné
-             </h2>
-             <div className="text-[#4a5f4c] text-[15px] font-medium leading-relaxed space-y-6" 
-                  dangerouslySetInnerHTML={{ __html: product.descriptionHtml || `<p>${product.description}</p>` }} 
-             />
-           </div>
-        </div>
-      </div>
+      {/* ─── Valeurs nutritionnelles ─── */}
+      <NutritionTableV2 metafields={product.metafields} />
 
-      {/* ─── SECTION AVIS CLIENTS ─── */}
-      <Suspense fallback={null}>
-        <ProductReviews handle={product.handle} />
-      </Suspense>
+      {/* ─── Description longue ─── */}
+      <ProductDescriptionV2
+        descriptionHtml={product.descriptionHtml}
+        description={product.description}
+      />
 
-      {/* ─── SECTION CROSS-SELL ─── */}
+      {/* ─── Avis ─── */}
+      <ReviewsV2 />
+
+      {/* ─── Cross-sell + nudge franco ─── */}
       {relatedProducts.length > 0 && (
-        <div className="bg-[#f2efe9] py-24 border-t border-[#2c3e2e]/10">
-          <div className="container">
-            <h2 className="text-sm font-black uppercase tracking-widest text-[#2c3e2e] mb-12 text-center">
-              Pour aller plus loin
-            </h2>
-            <RelatedProducts products={relatedProducts} currentHandle={product.handle} />
-          </div>
-        </div>
+        <CrossSellV2 products={relatedProducts} currentHandle={product.handle} />
       )}
     </>
   )
