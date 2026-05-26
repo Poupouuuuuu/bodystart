@@ -9,17 +9,17 @@ const POINTS = [
   {
     icon: FlaskConical,
     title: 'Analysé en labo',
-    desc: 'Chaque batch passe par un labo independant pour verifier la composition reelle vs ce qui est annonce.',
+    desc: 'Chaque batch passe par un labo indépendant pour vérifier la composition réelle vs ce qui est annoncé.',
   },
   {
     icon: Activity,
-    title: 'Effet recherche',
-    desc: 'Recuperation, soutien immunitaire ou apport proteique : un objectif clair par produit, pas un melange flou.',
+    title: 'Effet recherché',
+    desc: 'Récupération, soutien immunitaire ou apport protéique : un objectif clair par produit, pas un mélange flou.',
   },
   {
     icon: Leaf,
-    title: 'Ingredients propres',
-    desc: 'On lit les etiquettes a ta place. Pas d\'additifs douteux, pas de remplissage, dosages reels.',
+    title: 'Ingrédients propres',
+    desc: 'On lit les étiquettes à ta place. Pas d\'additifs douteux, pas de remplissage, dosages réels.',
   },
 ] as const
 

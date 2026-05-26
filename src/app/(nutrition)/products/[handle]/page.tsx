@@ -6,6 +6,7 @@ import {
   getProductByHandle,
   getProductInventoryByLocation,
   getCollectionByHandle,
+  getFeaturedProducts,
 } from '@/lib/shopify'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
@@ -17,8 +18,28 @@ import ReviewsV2 from '@/components/product/v2/ReviewsV2'
 import CrossSellV2 from '@/components/product/v2/CrossSellV2'
 import { buildPageMetadata } from '@/lib/seo'
 
+// Force fresh render a chaque visite : stock boutique doit etre a jour.
+// Sans ca, le rendu peut etre mis en cache (Next.js 14 SSR cache automatique
+// sur les routes statiques apparentes). Le check 'Click & Collect 50 unites'
+// d'Adam doit afficher correctement '"En stock"' immediatement apres activation.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface Props {
   params: { handle: string }
+}
+
+/**
+ * Extrait le format/grammage depuis les metafields Shopify.
+ * Cherche les cles courantes en namespace 'custom' ou par defaut :
+ *   format, grammage, taille, weight
+ * Retourne null si aucun metafield correspondant.
+ */
+function extractFormat(metafields?: import('@/lib/shopify/types').ShopifyMetafield[] | null): string | null {
+  if (!metafields || metafields.length === 0) return null
+  const FORMAT_KEYS = new Set(['format', 'grammage', 'taille', 'weight'])
+  const found = metafields.find((m) => m && FORMAT_KEYS.has(m.key?.toLowerCase()))
+  return found?.value?.trim() || null
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -86,14 +107,23 @@ export default async function ProductPage({ params }: Props) {
     }
   }
 
-  // Produits cross-sell (meme collection)
+  // Produits cross-sell (meme collection) avec fallback featured products
+  // si le produit n'a pas de collection rattachee.
   let relatedProducts: import('@/lib/shopify/types').ShopifyProduct[] = []
   if (product.collections?.nodes?.[0]?.handle) {
     try {
       const collection = await getCollectionByHandle(product.collections.nodes[0].handle, 5)
       relatedProducts = collection?.products?.nodes ?? []
     } catch {
-      // On continue sans recommandations
+      // On continue sans recommandations de collection
+    }
+  }
+  if (relatedProducts.length === 0) {
+    // Fallback : featured products (4 cartes garanties si Shopify renvoie quelque chose)
+    try {
+      relatedProducts = await getFeaturedProducts()
+    } catch {
+      // Pas de cross-sell affiche si tout echoue (graceful)
     }
   }
 
@@ -114,6 +144,7 @@ export default async function ProductPage({ params }: Props) {
   const collectionName = product.collections?.nodes?.[0]?.title ?? null
   const collectionHandle = product.collections?.nodes?.[0]?.handle ?? null
   const benefits = extractBenefits(product.tags ?? [])
+  const format = extractFormat(product.metafields)
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -217,6 +248,7 @@ export default async function ProductPage({ params }: Props) {
             activeStore={activeStore}
             storeInventory={storeInventory}
             benefits={benefits}
+            format={format}
           />
         </div>
       </section>

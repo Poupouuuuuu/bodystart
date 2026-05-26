@@ -18,6 +18,8 @@ interface BuyBoxV2Props {
   activeStore?: BodyStartStore
   storeInventory: Record<string, number>
   benefits?: string[]
+  /** Format / grammage du produit (ex: "1,5 kg"). Source : metafield Shopify. */
+  format?: string | null
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -42,6 +44,7 @@ export default function BuyBoxV2({
   activeStore,
   storeInventory,
   benefits = [],
+  format = null,
 }: BuyBoxV2Props) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ShopifyProductVariant>(variants[0])
@@ -163,9 +166,15 @@ export default function BuyBoxV2({
           </Link>
 
           {/* Titre */}
-          <h1 className="font-display text-[28px] md:text-[36px] lg:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-5">
+          <h1 className="font-display text-[28px] md:text-[36px] lg:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-2">
             {title}
           </h1>
+
+          {/* Format / grammage (metafield Shopify) */}
+          {format && (
+            <p className="text-[14px] text-ink-mute font-medium mb-5">{format}</p>
+          )}
+          {!format && <div className="mb-5" />}
 
           {/* Pastilles benefices (sage + spruce) */}
           {benefits.length > 0 && (
