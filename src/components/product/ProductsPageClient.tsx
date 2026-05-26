@@ -1,41 +1,29 @@
 'use client'
 
+/**
+ * /products catalogue V2 — DA claire.
+ * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Catalogue
+ *
+ * Refonte 2026-05-26 : logique de filtrage/state inchangee, refonte
+ * visuelle complete (sentence case partout, palette V2, carte produit
+ * allegee sans note pseudo-aleatoire ni selecteur qty, badges DA).
+ */
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
-import { SlidersHorizontal, X, ChevronDown, Search, Minus, Plus, ShoppingCart, Package, Star } from 'lucide-react'
+import { SlidersHorizontal, X, ChevronDown, Search, Plus, Package } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
 import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 
-// ─── Objectifs / Goals (bandeau haut) ───
+// ─── Objectifs (bandeau haut) ───
 const GOALS: { key: string; label: string; image: string | null; linkedCategories: string[] }[] = [
   { key: 'all', label: 'Tout voir', image: null, linkedCategories: [] },
-  {
-    key: 'muscle',
-    label: 'Muscle',
-    image: '/Logomuscle.png',
-    linkedCategories: ['proteines', 'creatine', 'acides-amines'],
-  },
-  {
-    key: 'energie',
-    label: 'Énergie',
-    image: '/Logoenergy.png',
-    linkedCategories: ['boosters', 'snacks'],
-  },
-  {
-    key: 'recuperation',
-    label: 'Récupération',
-    image: '/Logo-recuperation.png',
-    linkedCategories: ['acides-amines', 'sante'],
-  },
-  {
-    key: 'sante',
-    label: 'Santé',
-    image: '/Logo-sante-vitalite.png',
-    linkedCategories: ['sante', 'bruleurs'],
-  },
+  { key: 'muscle', label: 'Muscle', image: '/Logomuscle.png', linkedCategories: ['proteines', 'creatine', 'acides-amines'] },
+  { key: 'energie', label: 'Énergie', image: '/Logoenergy.png', linkedCategories: ['boosters', 'snacks'] },
+  { key: 'recuperation', label: 'Récupération', image: '/Logo-recuperation.png', linkedCategories: ['acides-amines', 'sante'] },
+  { key: 'sante', label: 'Santé', image: '/Logo-sante-vitalite.png', linkedCategories: ['sante', 'bruleurs'] },
 ]
 
 // ─── Tri ───
@@ -49,100 +37,75 @@ const SORT_OPTIONS = [
 
 // ─── Catégories ───
 const CATEGORIES = [
-  {
-    key: 'proteines',
-    label: 'Protéines',
-    collectionHandle: 'proteines',
-    subcategories: [
-      { tag: 'whey', label: 'Whey classique' },
-      { tag: 'isolate', label: 'Isolate' },
-      { tag: 'gainer', label: 'Gainer' },
-      { tag: 'caseine', label: 'Caséine' },
-    ],
-  },
-  {
-    key: 'creatine',
-    label: 'Créatine',
-    collectionHandle: 'creatine',
-    subcategories: [
-      { tag: 'monohydrate', label: 'Monohydrate' },
-    ],
-  },
-  {
-    key: 'acides-amines',
-    label: 'Acides Aminés',
-    collectionHandle: 'acides-amines',
-    subcategories: [
-      { tag: 'bcaa', label: 'BCAA' },
-      { tag: 'eaa', label: 'EAA' },
-      { tag: 'glutamine', label: 'Glutamine' },
-      { tag: 'citrulline', label: 'Citrulline' },
-    ],
-  },
-  {
-    key: 'sante',
-    label: 'Santé & Bien-être',
-    collectionHandle: 'sante-bien-etre',
-    subcategories: [
-      { tag: 'omega', label: 'Oméga' },
-      { tag: 'vitamine', label: 'Vitamines' },
-      { tag: 'collagene', label: 'Collagènes' },
-      { tag: 'magnesium', label: 'Magnésium' },
-      { tag: 'mineraux', label: 'Minéraux' },
-      { tag: 'electrolytes', label: 'Électrolytes' },
-      { tag: 'multivitamine', label: 'Multivitamines' },
-    ],
-  },
-  {
-    key: 'boosters',
-    label: 'Boosters',
-    collectionHandle: 'boosters',
-    subcategories: [
-      { tag: 'pre-workout', label: 'Pré-workout' },
-      { tag: 'pump', label: 'Pump' },
-      { tag: 'testo', label: 'Testo booster' },
-    ],
-  },
-  {
-    key: 'bruleurs',
-    label: 'Brûleurs de graisse',
-    collectionHandle: 'bruleurs-de-graisse',
-    subcategories: [
-      { tag: 'carnitine', label: 'Carnitine' },
-      { tag: 'cla', label: 'CLA' },
-      { tag: 'thermo', label: 'Thermo / Draineur' },
-    ],
-  },
-  {
-    key: 'snacks',
-    label: 'Snacks & Barres',
-    collectionHandle: 'snacks-barres',
-    subcategories: [
-      { tag: 'barre', label: 'Barres' },
-      { tag: 'boisson', label: 'Boissons' },
-    ],
-  },
-  {
-    key: 'accessoires',
-    label: 'Accessoires',
-    collectionHandle: 'accessoires',
-    subcategories: [
-      { tag: 'shaker', label: 'Shakers' },
-      { tag: 'sangle', label: 'Sangles' },
-      { tag: 'ceinture', label: 'Ceintures' },
-    ],
-  },
+  { key: 'proteines', label: 'Protéines', collectionHandle: 'proteines', subcategories: [
+    { tag: 'whey', label: 'Whey classique' },
+    { tag: 'isolate', label: 'Isolate' },
+    { tag: 'gainer', label: 'Gainer' },
+    { tag: 'caseine', label: 'Caséine' },
+  ]},
+  { key: 'creatine', label: 'Créatine', collectionHandle: 'creatine', subcategories: [
+    { tag: 'monohydrate', label: 'Monohydrate' },
+  ]},
+  { key: 'acides-amines', label: 'Acides aminés', collectionHandle: 'acides-amines', subcategories: [
+    { tag: 'bcaa', label: 'BCAA' },
+    { tag: 'eaa', label: 'EAA' },
+    { tag: 'glutamine', label: 'Glutamine' },
+    { tag: 'citrulline', label: 'Citrulline' },
+  ]},
+  { key: 'sante', label: 'Santé & bien-être', collectionHandle: 'sante-bien-etre', subcategories: [
+    { tag: 'omega', label: 'Oméga' },
+    { tag: 'vitamine', label: 'Vitamines' },
+    { tag: 'collagene', label: 'Collagènes' },
+    { tag: 'magnesium', label: 'Magnésium' },
+    { tag: 'mineraux', label: 'Minéraux' },
+    { tag: 'electrolytes', label: 'Électrolytes' },
+    { tag: 'multivitamine', label: 'Multivitamines' },
+  ]},
+  { key: 'boosters', label: 'Boosters', collectionHandle: 'boosters', subcategories: [
+    { tag: 'pre-workout', label: 'Pré-workout' },
+    { tag: 'pump', label: 'Pump' },
+    { tag: 'testo', label: 'Testo booster' },
+  ]},
+  { key: 'bruleurs', label: 'Brûleurs de graisse', collectionHandle: 'bruleurs-de-graisse', subcategories: [
+    { tag: 'carnitine', label: 'Carnitine' },
+    { tag: 'cla', label: 'CLA' },
+    { tag: 'thermo', label: 'Thermo / Draineur' },
+  ]},
+  { key: 'snacks', label: 'Snacks & barres', collectionHandle: 'snacks-barres', subcategories: [
+    { tag: 'barre', label: 'Barres' },
+    { tag: 'boisson', label: 'Boissons' },
+  ]},
+  { key: 'accessoires', label: 'Accessoires', collectionHandle: 'accessoires', subcategories: [
+    { tag: 'shaker', label: 'Shakers' },
+    { tag: 'sangle', label: 'Sangles' },
+    { tag: 'ceinture', label: 'Ceintures' },
+  ]},
 ]
+
+// Tags Shopify qui qualifient un produit comme "sante" (badge sage)
+const SANTE_TAGS = new Set(['sante', 'santé', 'omega', 'omega-3', 'magnesium', 'vitamine', 'collagene', 'collagene-marin', 'immunite'])
+
+function isSanteProduct(p: ShopifyProduct): boolean {
+  return (p.tags ?? []).some((t) => SANTE_TAGS.has(t.toLowerCase()))
+}
+
+function isBestSeller(p: ShopifyProduct): boolean {
+  return (p.tags ?? []).some((t) => {
+    const tag = t.toLowerCase()
+    return tag === 'best-seller' || tag === 'bestseller' || tag === 'best_seller'
+  })
+}
 
 interface Props {
   products: ShopifyProduct[]
   collections: ShopifyCollection[]
+  /** Stock total a Coignieres par productId (fetch server side via getInventoryForVariants) */
+  stockByProductId?: Record<string, number>
 }
 
-export default function ProductsPageClient({ products, collections }: Props) {
+export default function ProductsPageClient({ products, stockByProductId = {} }: Props) {
   const searchParams = useSearchParams()
 
-  // ─── Lecture initiale des query params (?cat=proteines, ?obj=muscle, ?tag=whey) ───
   const initialCat = searchParams?.get('cat') ?? null
   const initialObj = searchParams?.get('obj') ?? 'all'
   const initialTag = searchParams?.get('tag') ?? null
@@ -159,7 +122,6 @@ export default function ProductsPageClient({ products, collections }: Props) {
     initialCat ? new Set([initialCat]) : new Set()
   )
 
-  // Resync si l'URL change (navigation interne via Link vers /products?cat=...)
   useEffect(() => {
     const cat = searchParams?.get('cat') ?? null
     const obj = searchParams?.get('obj') ?? 'all'
@@ -182,14 +144,15 @@ export default function ProductsPageClient({ products, collections }: Props) {
     })
   }
 
-  const currentCategory = useMemo(() =>
-    CATEGORIES.find((c) => c.key === activeCategory) ?? null,
+  const currentCategory = useMemo(
+    () => CATEGORIES.find((c) => c.key === activeCategory) ?? null,
     [activeCategory]
   )
 
-  useEffect(() => { setVisibleCount(12) }, [activeGoal, activeCategory, activeTag, priceRange, sortKey, searchQuery])
+  useEffect(() => {
+    setVisibleCount(12)
+  }, [activeGoal, activeCategory, activeTag, priceRange, sortKey, searchQuery])
 
-  // Sélection d'un objectif → reset catégorie/tag (sans interférer avec l'init URL)
   const handleGoalClick = (key: string) => {
     setActiveGoal(key)
     setActiveCategory(null)
@@ -222,17 +185,18 @@ export default function ProductsPageClient({ products, collections }: Props) {
     setActiveTag(activeTag === tag ? null : tag)
   }
 
-  // ─── Filtrage ───
+  // ─── Filtrage (logique inchangee de la V1) ───
   const filtered = useMemo(() => {
     let result = [...products]
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim()
-      result = result.filter((p) =>
-        p.title.toLowerCase().includes(q) ||
-        p.productType?.toLowerCase().includes(q) ||
-        p.vendor?.toLowerCase().includes(q) ||
-        p.tags.some((t) => t.toLowerCase().includes(q))
+      result = result.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.productType?.toLowerCase().includes(q) ||
+          p.vendor?.toLowerCase().includes(q) ||
+          p.tags.some((t) => t.toLowerCase().includes(q))
       )
     }
 
@@ -253,9 +217,7 @@ export default function ProductsPageClient({ products, collections }: Props) {
         p.collections?.nodes?.some((c) => c.handle === currentCategory.collectionHandle)
       )
       if (activeTag) {
-        result = result.filter((p) =>
-          p.tags.some((t) => t.toLowerCase() === activeTag)
-        )
+        result = result.filter((p) => p.tags.some((t) => t.toLowerCase() === activeTag))
       }
     }
 
@@ -266,10 +228,18 @@ export default function ProductsPageClient({ products, collections }: Props) {
 
     switch (sortKey) {
       case 'price-asc':
-        result.sort((a, b) => parseFloat(a.priceRange.minVariantPrice.amount) - parseFloat(b.priceRange.minVariantPrice.amount))
+        result.sort(
+          (a, b) =>
+            parseFloat(a.priceRange.minVariantPrice.amount) -
+            parseFloat(b.priceRange.minVariantPrice.amount)
+        )
         break
       case 'price-desc':
-        result.sort((a, b) => parseFloat(b.priceRange.minVariantPrice.amount) - parseFloat(a.priceRange.minVariantPrice.amount))
+        result.sort(
+          (a, b) =>
+            parseFloat(b.priceRange.minVariantPrice.amount) -
+            parseFloat(a.priceRange.minVariantPrice.amount)
+        )
         break
       case 'name':
         result.sort((a, b) => a.title.localeCompare(b.title))
@@ -300,30 +270,38 @@ export default function ProductsPageClient({ products, collections }: Props) {
   }, [products])
 
   return (
-    <div className="bg-[#f4f6f1] min-h-screen">
-      
-      {/* ─── Hero Header Premium ─── */}
-      <div className="pt-12 pb-10 md:pt-16 md:pb-14 bg-[#f4f6f1]">
+    <div className="bg-canvas min-h-screen">
+      {/* ─── Hero ─── */}
+      <div className="pt-12 pb-8 md:pt-14 md:pb-10">
         <div className="container">
-          <h1 className="font-display text-[45px] md:text-[65px] lg:text-[80px] font-black uppercase text-[#1a2e23] tracking-tighter leading-none mb-10 text-center">
-            NOS PRODUITS
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+            Catalogue
+          </p>
+          <h1 className="font-display text-[34px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-8">
+            Nos produits
           </h1>
 
-          {/* Objectifs — Pilules élégantes */}
-          <div className="flex items-center justify-center gap-3 md:gap-4 flex-wrap">
+          {/* Objectifs — pills sentence case */}
+          <div className="flex items-center gap-2 flex-wrap">
             {GOALS.map(({ key, label, image }) => (
               <button
                 key={key}
                 onClick={() => handleGoalClick(key)}
                 className={cn(
-                  'flex items-center gap-2.5 px-5 py-3 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all duration-300 border',
+                  'inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold transition-colors border',
                   activeGoal === key
-                    ? 'bg-[#1a2e23] text-white border-[#1a2e23] shadow-lg'
-                    : 'bg-white/60 text-[#4a5f4c] border-[#1a2e23]/10 hover:bg-white hover:border-[#1a2e23]/30'
+                    ? 'bg-spruce text-white border-spruce'
+                    : 'bg-white text-ink border-spruce/15 hover:border-spruce/40'
                 )}
               >
                 {image && (
-                  <Image src={image} alt={label} width={24} height={24} className="w-6 h-6 object-contain" />
+                  <Image
+                    src={image}
+                    alt=""
+                    width={18}
+                    height={18}
+                    className="w-[18px] h-[18px] object-contain"
+                  />
                 )}
                 {label}
               </button>
@@ -334,112 +312,131 @@ export default function ProductsPageClient({ products, collections }: Props) {
 
       <div className="container pb-16">
         {/* ─── Barre de contrôle ─── */}
-        <div className="flex items-center justify-between mb-8 gap-4">
-          <p className="text-[13px] text-[#4a5f4c] font-medium">
-            {Math.min(visibleCount, filtered.length)} sur {filtered.length} produit{filtered.length > 1 ? 's' : ''}
+        <div className="flex items-center justify-between mb-6 gap-4">
+          <p className="text-[13px] text-ink-mute">
+            {Math.min(visibleCount, filtered.length)} sur {filtered.length} produit
+            {filtered.length > 1 ? 's' : ''}
           </p>
 
-          <div className="flex items-center gap-3">
-            {/* Bouton filtres mobile */}
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden flex items-center gap-2 px-5 py-2.5 bg-white rounded-full text-[11px] font-bold uppercase tracking-widest text-[#1a2e23] border border-[#1a2e23]/10 shadow-sm"
+              className="lg:hidden inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-semibold text-spruce border border-spruce/15 hover:border-spruce/40 transition-colors"
             >
               <SlidersHorizontal className="w-4 h-4" />
               Filtres
             </button>
 
-            {/* Recherche Desktop */}
             <div className="relative hidden md:block">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#89a890]" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-mute" />
               <input
                 type="text"
-                placeholder="Rechercher..."
+                placeholder="Rechercher…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-white rounded-full text-sm font-medium text-[#1a2e23] border border-[#1a2e23]/10 shadow-sm pl-10 pr-4 py-2.5 w-[200px] focus:outline-none focus:border-[#1a2e23]/30 focus:w-[260px] transition-all placeholder:text-[#89a890]"
+                className="bg-white rounded-full text-[13px] text-ink border border-spruce/15 pl-10 pr-4 py-2 w-[200px] focus:outline-none focus:border-spruce/40 focus:w-[260px] transition-all placeholder:text-ink-mute"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 top-1/2 -translate-y-1/2"
+                  aria-label="Effacer la recherche"
                 >
-                  <X className="w-3.5 h-3.5 text-[#89a890] hover:text-[#1a2e23]" />
+                  <X className="w-3.5 h-3.5 text-ink-mute hover:text-spruce" />
                 </button>
               )}
             </div>
 
-            {/* Tri */}
             <div className="relative">
               <select
                 value={sortKey}
                 onChange={(e) => setSortKey(e.target.value)}
-                className="appearance-none bg-white rounded-full text-sm font-medium text-[#1a2e23] border border-[#1a2e23]/10 shadow-sm pl-4 pr-10 py-2.5 cursor-pointer focus:outline-none focus:border-[#1a2e23]/30"
+                className="appearance-none bg-white rounded-full text-[13px] text-ink border border-spruce/15 pl-4 pr-10 py-2 cursor-pointer focus:outline-none focus:border-spruce/40"
               >
                 {SORT_OPTIONS.map((o) => (
-                  <option key={o.key} value={o.key}>{o.label}</option>
+                  <option key={o.key} value={o.key}>
+                    {o.label}
+                  </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#89a890] pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-mute pointer-events-none" />
             </div>
           </div>
         </div>
 
         {/* Recherche mobile */}
-        <div className="md:hidden mb-6">
+        <div className="md:hidden mb-5">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#89a890]" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-mute" />
             <input
               type="text"
-              placeholder="Rechercher un produit..."
+              placeholder="Rechercher un produit…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white rounded-full text-sm font-medium text-[#1a2e23] border border-[#1a2e23]/10 shadow-sm pl-10 pr-10 py-2.5 focus:outline-none focus:border-[#1a2e23]/30 placeholder:text-[#89a890]"
+              className="w-full bg-white rounded-full text-[13px] text-ink border border-spruce/15 pl-10 pr-10 py-2.5 focus:outline-none focus:border-spruce/40 placeholder:text-ink-mute"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2"
+                aria-label="Effacer la recherche"
               >
-                <X className="w-3.5 h-3.5 text-[#89a890]" />
+                <X className="w-3.5 h-3.5 text-ink-mute" />
               </button>
             )}
           </div>
         </div>
 
         <div className="flex gap-8">
-          {/* ─── Sidebar filtres ─── */}
-          <aside className={cn(
-            'w-[240px] flex-shrink-0 transition-all',
-            showFilters ? 'fixed inset-0 z-50 bg-black/50 lg:relative lg:bg-transparent lg:z-auto' : 'hidden lg:block'
-          )}>
-            <div className={cn(
-              'bg-white/70 backdrop-blur-xl rounded-[24px] border border-[#1a2e23]/5 p-6 shadow-sm',
-              showFilters && 'fixed right-0 top-0 h-full w-[300px] rounded-none z-50 overflow-y-auto lg:relative lg:rounded-[24px] lg:h-auto lg:w-auto'
-            )}>
+          {/* ─── Sidebar ─── */}
+          <aside
+            className={cn(
+              'w-[240px] flex-shrink-0 transition-all',
+              showFilters
+                ? 'fixed inset-0 z-50 bg-ink/40 lg:relative lg:bg-transparent lg:z-auto'
+                : 'hidden lg:block'
+            )}
+          >
+            <div
+              className={cn(
+                'bg-white rounded-2xl border border-spruce/10 p-6',
+                showFilters &&
+                  'fixed right-0 top-0 h-full w-[300px] rounded-none z-50 overflow-y-auto lg:relative lg:rounded-2xl lg:h-auto lg:w-auto'
+              )}
+            >
               {/* Close mobile */}
-              <div className="flex items-center justify-between mb-6 lg:hidden">
-                <span className="font-display font-black text-lg uppercase text-[#1a2e23] tracking-tight">Filtres</span>
-                <button onClick={() => setShowFilters(false)}>
-                  <X className="w-5 h-5 text-[#4a5f4c]" />
+              <div className="flex items-center justify-between mb-5 lg:hidden">
+                <span className="font-display font-extrabold text-[18px] text-spruce">Filtres</span>
+                <button onClick={() => setShowFilters(false)} aria-label="Fermer les filtres">
+                  <X className="w-5 h-5 text-ink-mute" />
                 </button>
               </div>
 
-              {/* ── Prix ── */}
-              <div className="mb-5">
+              {/* Prix */}
+              <div className="mb-4">
                 <button
                   onClick={() => toggleSection('prix')}
-                  className="flex items-center justify-between w-full mb-3"
+                  className="flex items-center justify-between w-full mb-2.5"
                 >
-                  <h4 className="font-display font-black text-[11px] uppercase tracking-widest text-[#1a2e23]">
+                  <h4 className="text-[12px] font-semibold uppercase tracking-[0.15em] text-ink">
                     Prix
                   </h4>
-                  <ChevronDown className={cn('w-4 h-4 text-[#89a890] transition-transform duration-200', openSections.has('prix') && 'rotate-180')} />
+                  <ChevronDown
+                    className={cn(
+                      'w-4 h-4 text-ink-mute transition-transform',
+                      openSections.has('prix') && 'rotate-180'
+                    )}
+                  />
                 </button>
-                <div className={cn('overflow-hidden transition-all duration-200', openSections.has('prix') ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0')}>
-                  <div className="flex items-center justify-between text-[12px] text-[#4a5f4c] font-medium mb-3">
-                    <span>{priceRange[0]}€</span>
-                    <span>{priceRange[1]}€</span>
+                <div
+                  className={cn(
+                    'overflow-hidden transition-all',
+                    openSections.has('prix') ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+                  )}
+                >
+                  <div className="flex items-center justify-between text-[12px] text-ink-mute mb-2">
+                    <span>{priceRange[0]} €</span>
+                    <span>{priceRange[1]} €</span>
                   </div>
                   <input
                     type="range"
@@ -447,78 +444,90 @@ export default function ProductsPageClient({ products, collections }: Props) {
                     max={200}
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="w-full accent-[#1a2e23]"
+                    className="w-full accent-fresh"
                   />
                 </div>
               </div>
 
-              <div className="border-t border-[#1a2e23]/5 my-3" />
+              <div className="border-t border-spruce/10 my-3" />
 
-              {/* ── Bouton "Tous les produits" ── */}
+              {/* Tous les produits */}
               <button
-                onClick={() => { setActiveCategory(null); setActiveTag(null) }}
+                onClick={() => {
+                  setActiveCategory(null)
+                  setActiveTag(null)
+                }}
                 className={cn(
-                  'flex items-center justify-between w-full text-left text-[13px] py-2.5 px-4 rounded-2xl transition-all mb-3 font-bold',
-                  !activeCategory
-                    ? 'bg-[#1a2e23] text-white'
-                    : 'text-[#1a2e23] hover:bg-[#1a2e23]/5'
+                  'flex items-center justify-between w-full text-left text-[13px] py-2 px-3 rounded-xl transition-colors mb-1 font-semibold',
+                  !activeCategory ? 'bg-spruce text-white' : 'text-ink hover:bg-spruce/5'
                 )}
               >
                 <span>Tous les produits</span>
-                <span className={cn('text-[11px]', !activeCategory ? 'text-white/60' : 'text-[#89a890]')}>
+                <span className={cn('text-[11px]', !activeCategory ? 'text-white/70' : 'text-ink-mute')}>
                   {products.length}
                 </span>
               </button>
 
-              {/* ── Catégories ── */}
-              {visibleCategories.map((cat, index) => {
+              {/* Catégories */}
+              {visibleCategories.map((cat) => {
                 const isActive = activeCategory === cat.key
                 const count = categoryCounts[cat.key] ?? 0
-
                 return (
                   <div key={cat.key}>
                     <button
                       onClick={() => handleCategoryClick(cat.key)}
                       className={cn(
-                        'flex items-center justify-between w-full text-left text-[13px] py-2.5 px-4 rounded-2xl transition-all font-bold',
+                        'flex items-center justify-between w-full text-left text-[13px] py-2 px-3 rounded-xl transition-colors font-semibold',
                         isActive && !activeTag
-                          ? 'bg-[#1a2e23] text-white'
+                          ? 'bg-spruce text-white'
                           : isActive
-                            ? 'text-[#1a2e23] bg-[#1a2e23]/5'
-                            : 'text-[#1a2e23] hover:bg-[#1a2e23]/5'
+                            ? 'text-spruce bg-sage/40'
+                            : 'text-ink hover:bg-spruce/5'
                       )}
                     >
                       <span>{cat.label}</span>
                       <div className="flex items-center gap-2">
-                        <span className={cn('text-[11px]', isActive ? (activeTag ? 'text-[#1a2e23]/40' : 'text-white/60') : 'text-[#89a890]')}>
-                          {count}
-                        </span>
+                        {count > 0 && (
+                          <span
+                            className={cn(
+                              'text-[11px]',
+                              isActive && !activeTag ? 'text-white/70' : 'text-ink-mute'
+                            )}
+                          >
+                            {count}
+                          </span>
+                        )}
                         {cat.subcategories.length > 0 && (
-                          <ChevronDown className={cn(
-                            'w-3.5 h-3.5 transition-transform duration-200',
-                            isActive ? (activeTag ? 'text-[#1a2e23]/40' : 'text-white/60') : 'text-[#89a890]',
-                            openSections.has(cat.key) && 'rotate-180'
-                          )} />
+                          <ChevronDown
+                            className={cn(
+                              'w-3.5 h-3.5 transition-transform',
+                              isActive && !activeTag ? 'text-white/70' : 'text-ink-mute',
+                              openSections.has(cat.key) && 'rotate-180'
+                            )}
+                          />
                         )}
                       </div>
                     </button>
 
-                    {/* Sous-catégories (tags) */}
                     {cat.subcategories.length > 0 && (
-                      <div className={cn(
-                        'overflow-hidden transition-all duration-200',
-                        openSections.has(cat.key) ? 'max-h-[400px] opacity-100 mt-1' : 'max-h-0 opacity-0'
-                      )}>
-                        <div className="space-y-0.5 pl-4 border-l-2 border-[#1a2e23]/10 ml-4">
+                      <div
+                        className={cn(
+                          'overflow-hidden transition-all',
+                          openSections.has(cat.key)
+                            ? 'max-h-[400px] opacity-100 mt-1 mb-1'
+                            : 'max-h-0 opacity-0'
+                        )}
+                      >
+                        <div className="space-y-0.5 pl-3 ml-3 border-l border-spruce/10">
                           {cat.subcategories.map((sub) => (
                             <button
                               key={sub.tag}
                               onClick={() => selectTag(cat.key, sub.tag)}
                               className={cn(
-                                'flex items-center w-full text-left text-[13px] py-1.5 px-3 rounded-xl transition-all',
+                                'flex items-center w-full text-left text-[13px] py-1.5 px-3 rounded-lg transition-colors',
                                 isActive && activeTag === sub.tag
-                                  ? 'bg-[#1a2e23] text-white font-bold'
-                                  : 'text-[#4a5f4c] hover:text-[#1a2e23] hover:bg-[#1a2e23]/5'
+                                  ? 'bg-sage text-spruce font-semibold'
+                                  : 'text-ink-mute hover:text-spruce hover:bg-spruce/5'
                               )}
                             >
                               {sub.label}
@@ -527,17 +536,12 @@ export default function ProductsPageClient({ products, collections }: Props) {
                         </div>
                       </div>
                     )}
-
-                    {index < visibleCategories.length - 1 && (
-                      <div className="border-t border-[#1a2e23]/5 my-1.5" />
-                    )}
                   </div>
                 )
               })}
 
-              <div className="border-t border-[#1a2e23]/5 my-4" />
+              <div className="border-t border-spruce/10 my-4" />
 
-              {/* Reset */}
               <button
                 onClick={() => {
                   setActiveGoal('all')
@@ -547,7 +551,7 @@ export default function ProductsPageClient({ products, collections }: Props) {
                   setSortKey('best')
                   setSearchQuery('')
                 }}
-                className="w-full py-2.5 text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] hover:text-[#1a2e23] border border-[#1a2e23]/10 rounded-full transition-colors"
+                className="w-full py-2.5 text-[12px] font-semibold text-spruce border border-spruce/20 rounded-full hover:bg-spruce/5 transition-colors"
               >
                 Réinitialiser les filtres
               </button>
@@ -556,14 +560,18 @@ export default function ProductsPageClient({ products, collections }: Props) {
 
           {/* ─── Grille produits ─── */}
           <div className="flex-1 min-w-0">
-            {/* Chips filtres actifs */}
-            {(activeGoal !== 'all' || activeCategory || activeTag || searchQuery || priceRange[1] < 200) && (
-              <div className="flex flex-wrap items-center gap-2 mb-6">
-                <span className="text-[11px] text-[#89a890] font-bold uppercase tracking-widest mr-1">Filtres :</span>
+            {/* Chips filtres actifs - palette claire */}
+            {(activeGoal !== 'all' ||
+              activeCategory ||
+              activeTag ||
+              searchQuery ||
+              priceRange[1] < 200) && (
+              <div className="flex flex-wrap items-center gap-2 mb-5">
+                <span className="text-[12px] text-ink-mute mr-1">Filtres :</span>
                 {activeGoal !== 'all' && (
                   <button
                     onClick={() => setActiveGoal('all')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1a2e23]/10 text-[#1a2e23] rounded-full text-[11px] font-bold hover:bg-[#1a2e23]/20 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {GOALS.find((g) => g.key === activeGoal)?.label}
                     <X className="w-3 h-3" />
@@ -571,8 +579,11 @@ export default function ProductsPageClient({ products, collections }: Props) {
                 )}
                 {currentCategory && (
                   <button
-                    onClick={() => { setActiveCategory(null); setActiveTag(null) }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1a2e23]/10 text-[#1a2e23] rounded-full text-[11px] font-bold hover:bg-[#1a2e23]/20 transition-colors"
+                    onClick={() => {
+                      setActiveCategory(null)
+                      setActiveTag(null)
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {currentCategory.label}
                     <X className="w-3 h-3" />
@@ -581,7 +592,7 @@ export default function ProductsPageClient({ products, collections }: Props) {
                 {activeTag && currentCategory && (
                   <button
                     onClick={() => setActiveTag(null)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1a2e23]/10 text-[#1a2e23] rounded-full text-[11px] font-bold hover:bg-[#1a2e23]/20 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {currentCategory.subcategories.find((s) => s.tag === activeTag)?.label ?? activeTag}
                     <X className="w-3 h-3" />
@@ -590,24 +601,30 @@ export default function ProductsPageClient({ products, collections }: Props) {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1a2e23]/10 text-[#1a2e23] rounded-full text-[11px] font-bold hover:bg-[#1a2e23]/20 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
-                    &quot;{searchQuery}&quot;
+                    « {searchQuery} »
                     <X className="w-3 h-3" />
                   </button>
                 )}
                 {priceRange[1] < 200 && (
                   <button
                     onClick={() => setPriceRange([0, 200])}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1a2e23]/10 text-[#1a2e23] rounded-full text-[11px] font-bold hover:bg-[#1a2e23]/20 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
-                    Max {priceRange[1]}€
+                    Max {priceRange[1]} €
                     <X className="w-3 h-3" />
                   </button>
                 )}
                 <button
-                  onClick={() => { setActiveGoal('all'); setActiveCategory(null); setActiveTag(null); setPriceRange([0, 200]); setSearchQuery('') }}
-                  className="text-[11px] text-[#89a890] hover:text-[#1a2e23] underline underline-offset-4 ml-1 font-medium"
+                  onClick={() => {
+                    setActiveGoal('all')
+                    setActiveCategory(null)
+                    setActiveTag(null)
+                    setPriceRange([0, 200])
+                    setSearchQuery('')
+                  }}
+                  className="text-[12px] text-ink-mute hover:text-spruce underline underline-offset-4 ml-1"
                 >
                   Tout effacer
                 </button>
@@ -618,49 +635,58 @@ export default function ProductsPageClient({ products, collections }: Props) {
               <>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-5 lg:gap-6">
                   {filtered.slice(0, visibleCount).map((product) => (
-                    <ProductCardShop key={product.id} product={product} />
+                    <ProductCardShop
+                      key={product.id}
+                      product={product}
+                      stockAtStore={stockByProductId[product.id]}
+                    />
                   ))}
                 </div>
 
-                {/* Charger plus */}
                 {visibleCount < filtered.length && (
-                  <div className="text-center mt-12">
+                  <div className="text-center mt-10">
                     <button
                       onClick={() => setVisibleCount((prev) => prev + 12)}
-                      className="inline-flex items-center gap-2 px-10 py-4 bg-[#1a2e23] text-white rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-[#2e4f3c] transition-all shadow-lg hover:-translate-y-0.5"
+                      className="inline-flex items-center gap-2 px-8 py-3 bg-fresh text-white rounded-full text-[14px] font-semibold hover:bg-fresh-deep transition-colors"
                     >
-                      Charger plus
+                      Voir plus
                     </button>
-                    <p className="text-[11px] text-[#89a890] mt-3 font-medium">
-                      {Math.min(visibleCount, filtered.length)} sur {filtered.length} produits affichés
+                    <p className="text-[12px] text-ink-mute mt-3">
+                      {Math.min(visibleCount, filtered.length)} sur {filtered.length} produits
+                      affichés
                     </p>
                   </div>
                 )}
               </>
             ) : hasProducts && filtered.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6">
-                  <Package className="w-8 h-8 text-[#89a890]" />
+              <div className="text-center py-16">
+                <div className="w-16 h-16 rounded-full bg-sage flex items-center justify-center mx-auto mb-5">
+                  <Package className="w-7 h-7 text-spruce" />
                 </div>
-                <h3 className="font-display font-black text-xl text-[#1a2e23] mb-2 uppercase tracking-tight">
+                <h3 className="font-display font-extrabold text-[20px] text-spruce mb-2">
                   {activeCategory ? 'Cette catégorie arrive bientôt' : 'Aucun produit trouvé'}
                 </h3>
-                <p className="text-[#4a5f4c] text-sm mb-8 max-w-sm mx-auto font-medium">
+                <p className="text-ink-mute text-[14px] mb-6 max-w-sm mx-auto">
                   {activeCategory
-                    ? 'Nous préparons cette sélection. Inscris-toi à la newsletter pour être notifié dès leur arrivée !'
-                    : 'Essaie de modifier tes filtres ou ta recherche pour trouver ce que tu cherches.'
-                  }
+                    ? 'On prépare cette sélection. Inscris-toi à la newsletter pour être notifié.'
+                    : 'Essaie de modifier tes filtres ou ta recherche.'}
                 </p>
                 <button
-                  onClick={() => { setActiveGoal('all'); setActiveCategory(null); setActiveTag(null); setPriceRange([0, 200]); setSearchQuery('') }}
-                  className="px-8 py-4 bg-[#1a2e23] text-white rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-[#2e4f3c] transition-all shadow-lg"
+                  onClick={() => {
+                    setActiveGoal('all')
+                    setActiveCategory(null)
+                    setActiveTag(null)
+                    setPriceRange([0, 200])
+                    setSearchQuery('')
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-fresh text-white rounded-full text-[14px] font-semibold hover:bg-fresh-deep transition-colors"
                 >
                   Voir tous les produits
                 </button>
               </div>
             ) : (
-              <div className="text-center py-20">
-                <p className="text-[#4a5f4c] font-medium">Connectez Shopify pour afficher vos produits</p>
+              <div className="text-center py-16">
+                <p className="text-ink-mute">Connecte Shopify pour afficher tes produits.</p>
               </div>
             )}
           </div>
@@ -670,53 +696,61 @@ export default function ProductsPageClient({ products, collections }: Props) {
   )
 }
 
-// ─── Note pseudo-aléatoire déterministe basée sur le handle du produit ───
-function getProductRating(handle: string): { rating: number; count: number; badge: string | null } {
-  let hash = 0
-  for (let i = 0; i < handle.length; i++) {
-    hash = ((hash << 5) - hash) + handle.charCodeAt(i)
-    hash |= 0
-  }
-  const rating = 4.0 + (Math.abs(hash % 10) / 10)
-  const count = 8 + Math.abs(hash % 45)
-  
-  const badgeVal = Math.abs(hash % 100)
-  let badge: string | null = null
-  if (badgeVal < 10) badge = 'Nouveau'
-  else if (badgeVal < 25) badge = 'Best-Seller'
-  
-  return { rating: Math.round(rating * 10) / 10, count, badge }
+// ─── Carte produit V2 (allegee, palette DA) ────────────────────────
+interface ProductCardShopProps {
+  product: ShopifyProduct
+  stockAtStore?: number
 }
 
-// ─── Card produit premium DNVB ───
-function ProductCardShop({ product }: { product: ShopifyProduct }) {
+function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
   const variant = product.variants.nodes[0]
   const { addItem } = useCart()
   const [adding, setAdding] = useState(false)
-  const [qty, setQty] = useState(1)
-  const { rating, count: reviewCount, badge: randomBadge } = getProductRating(product.handle)
 
-  const isNew = product.tags.some(t => t.toLowerCase().includes('nouveau') || t.toLowerCase().includes('new'))
-  const isBest = product.tags.some(t => t.toLowerCase().includes('best-seller') || t.toLowerCase().includes('bestseller'))
-  const finalBadge = isNew ? 'Nouveau' : isBest ? 'Best-Seller' : randomBadge
+  // Vrai libelle categorie (collection title preferee, sinon productType, sinon null)
+  const categoryLabel = product.collections?.nodes?.[0]?.title ?? product.productType ?? null
 
-  const productLabel = product.collections?.nodes?.[0]?.title || product.productType || 'Nutrition'
+  // Bénéfice court : on prend le 1er tag "humain" lisible si disponible
+  // (filtre les tags techniques sante/whey/vegan etc. qui font deja office de badge)
+  const TECHNICAL_TAGS = new Set([
+    'best-seller', 'bestseller', 'nouveau', 'new', 'sante', 'santé', 'whey', 'vegan',
+    'sans-sucre', 'sans-gluten', 'bio', 'anti-dopage', 'made-in-france',
+  ])
+  const shortBenefit = (product.tags ?? []).find(
+    (t) => t.length <= 30 && !TECHNICAL_TAGS.has(t.toLowerCase()) && !t.includes('_')
+  )
+
+  const isSante = isSanteProduct(product)
+  const isBest = isBestSeller(product)
+  const showLowStock = stockAtStore !== undefined && stockAtStore > 0 && stockAtStore <= 5
+
+  // Promo si compareAtPrice > price
+  const hasDiscount =
+    variant?.compareAtPrice &&
+    parseFloat(variant.compareAtPrice.amount) > parseFloat(variant.price.amount)
+  const discountPct = hasDiscount
+    ? Math.round(
+        ((parseFloat(variant!.compareAtPrice!.amount) - parseFloat(variant!.price.amount)) /
+          parseFloat(variant!.compareAtPrice!.amount)) *
+          100
+      )
+    : null
 
   async function handleAdd(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
     if (!variant?.availableForSale) return
     setAdding(true)
-    for (let i = 0; i < qty; i++) {
+    try {
       await addItem(variant.id)
+    } finally {
+      setAdding(false)
     }
-    setAdding(false)
-    setQty(1)
   }
 
   return (
-    <div className="rounded-[28px] overflow-hidden flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-[#1a2e23]/5 group bg-white">
-      {/* Zone image avec Background.webp */}
+    <div className="rounded-2xl overflow-hidden flex flex-col bg-white border border-spruce/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(45,90,45,0.08)] group">
+      {/* Zone image avec fond vegetal */}
       <Link
         href={`/products/${product.handle}`}
         className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden block"
@@ -729,31 +763,38 @@ function ProductCardShop({ product }: { product: ShopifyProduct }) {
               alt={product.featuredImage.altText ?? product.title}
               width={200}
               height={200}
-              className="relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-110"
+              className="relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="relative z-10 w-20 h-20 bg-white/30 rounded-full flex items-center justify-center mb-8">
-              <span className="font-display font-black text-2xl text-white/60">BS</span>
+            <div className="relative z-10 w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-8">
+              <span className="font-display font-bold text-lg text-white/70">BS</span>
             </div>
           )}
         </div>
-        
-        {/* Gradient fondu en bas */}
+
+        {/* Gradient fondu blanc en bas (raccord avec la carte) */}
         <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent z-0" />
 
-        {/* Badges */}
-        <div className="absolute top-4 left-4 z-20 flex flex-col gap-1.5 items-start">
-          {variant?.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > parseFloat(variant.price.amount) && (
-            <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-500 text-white shadow-sm">
-              -{Math.round(((parseFloat(variant.compareAtPrice.amount) - parseFloat(variant.price.amount)) / parseFloat(variant.compareAtPrice.amount)) * 100)}%
+        {/* Badges discrets - palette DA */}
+        <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5 items-start">
+          {discountPct && (
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-terracotta text-white">
+              -{discountPct}%
             </span>
           )}
-          {finalBadge && (
-            <span className={cn(
-              "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm",
-              finalBadge === 'Nouveau' ? "bg-[#1a2e23] text-white" : "bg-[#eea22b] text-[#1a2e23]"
-            )}>
-              {finalBadge}
+          {isBest && (
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-mustard text-mustard-ink">
+              Best-seller
+            </span>
+          )}
+          {isSante && (
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-sage text-spruce">
+              Santé
+            </span>
+          )}
+          {showLowStock && (
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-terracotta text-white">
+              Plus que {stockAtStore} en stock
             </span>
           )}
         </div>
@@ -761,88 +802,72 @@ function ProductCardShop({ product }: { product: ShopifyProduct }) {
 
       {/* Contenu */}
       <div className="p-5 flex flex-col flex-1">
-        {/* Type de produit */}
-        <span className="text-[10px] font-bold text-[#89a890] uppercase tracking-widest mb-2 truncate">
-          {productLabel}
-        </span>
+        {/* Libelle categorie reelle (si dispo) */}
+        {categoryLabel && (
+          <span className="text-[11px] text-ink-mute font-medium mb-1.5">
+            {categoryLabel}
+          </span>
+        )}
 
+        {/* Titre - sentence case (pas d'uppercase CSS) */}
         <Link href={`/products/${product.handle}`}>
-          <h3 className="font-display font-bold text-[#1a2e23] text-sm leading-snug mb-2 line-clamp-2 min-h-[2.5rem] hover:text-[#4a5f4c] transition-colors uppercase tracking-wide">
+          <h3 className="font-display font-bold text-spruce text-[15px] leading-snug mb-1.5 line-clamp-2 min-h-[2.5rem] hover:text-fresh-deep transition-colors">
             {product.title}
           </h3>
         </Link>
 
-        {/* Étoiles */}
-        <div className="flex items-center gap-1.5 mb-4">
-          <div className="flex items-center gap-0.5">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className={cn(
-                  'w-3 h-3',
-                  star <= Math.floor(rating) ? 'text-[#1a2e23] fill-[#1a2e23]' : 'text-[#1a2e23]/15 fill-[#1a2e23]/15'
-                )}
-              />
-            ))}
-          </div>
-          <span className="text-[10px] font-medium text-[#89a890]">
-            {rating} ({reviewCount})
-          </span>
-        </div>
+        {/* Une ligne de benefice court (optionnelle) */}
+        {shortBenefit && (
+          <p className="text-[12px] text-ink-mute leading-snug mb-3 line-clamp-1">
+            {shortBenefit}
+          </p>
+        )}
 
-        {/* Prix + quantité */}
-        <div className="flex items-center justify-between mb-4 mt-auto">
+        {/* Prix + bouton ajout discret (icone +) */}
+        <div className="flex items-center justify-between mt-auto pt-2">
           <div className="flex items-baseline gap-2">
-            <span className="font-black text-[#1a2e23] text-xl">
+            <span className="font-display font-extrabold text-spruce text-[18px]">
               {formatPrice(product.priceRange.minVariantPrice)}
             </span>
-            {variant?.compareAtPrice && (
-              <span className="text-xs text-[#89a890] line-through">
+            {variant?.compareAtPrice && hasDiscount && (
+              <span className="text-[12px] text-ink-mute line-through">
                 {formatPrice(variant.compareAtPrice)}
               </span>
             )}
           </div>
 
-          {/* Sélecteur quantité */}
-          {variant?.availableForSale && (
-            <div className="flex items-center border border-[#1a2e23]/10 rounded-full overflow-hidden">
-              <button
-                onClick={(e) => { e.preventDefault(); setQty((q) => Math.max(1, q - 1)) }}
-                className="w-7 h-7 flex items-center justify-center text-[#4a5f4c] hover:bg-[#1a2e23]/5 transition-colors"
-              >
-                <Minus className="w-3 h-3" />
-              </button>
-              <span className="w-6 text-center text-xs font-bold text-[#1a2e23]">{qty}</span>
-              <button
-                onClick={(e) => { e.preventDefault(); setQty((q) => Math.min(10, q + 1)) }}
-                className="w-7 h-7 flex items-center justify-center text-[#4a5f4c] hover:bg-[#1a2e23]/5 transition-colors"
-              >
-                <Plus className="w-3 h-3" />
-              </button>
-            </div>
-          )}
+          <button
+            onClick={handleAdd}
+            disabled={!variant?.availableForSale || adding}
+            aria-label={`Ajouter ${product.title} au panier`}
+            className={cn(
+              'flex items-center justify-center w-9 h-9 rounded-full transition-colors',
+              variant?.availableForSale && !adding
+                ? 'bg-fresh text-white hover:bg-fresh-deep'
+                : 'bg-spruce/10 text-spruce/30 cursor-not-allowed'
+            )}
+          >
+            {adding ? (
+              <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+            ) : (
+              <Plus className="w-4 h-4" />
+            )}
+          </button>
         </div>
-
-        <button
-          onClick={handleAdd}
-          disabled={!variant?.availableForSale || adding}
-          className={cn(
-            'w-full py-3.5 text-[11px] uppercase font-bold tracking-widest rounded-full transition-all flex items-center justify-center gap-2',
-            variant?.availableForSale && !adding
-              ? 'bg-[#1a2e23] text-white hover:bg-[#2e4f3c] shadow-md hover:shadow-lg'
-              : 'bg-[#1a2e23]/10 text-[#89a890] cursor-not-allowed'
-          )}
-        >
-          {adding ? (
-            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-          ) : (
-            <ShoppingCart className="w-4 h-4" />
-          )}
-          {adding ? 'Ajout...' : variant?.availableForSale ? 'Ajouter au panier' : 'Indisponible'}
-        </button>
       </div>
     </div>
   )
