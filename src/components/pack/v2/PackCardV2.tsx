@@ -84,8 +84,12 @@ export default function PackCardV2({ product }: PackCardV2Props) {
       className="group flex flex-col bg-white rounded-2xl border border-spruce/10 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_10px_36px_rgba(45,90,45,0.08)]"
     >
       {/* ─── Visuel ─── */}
+      {/* aspect-square + sizing PAR LARGEUR (pas hauteur) pour que les pots
+       * remplissent visuellement la carte au lieu de flotter dedans. La
+       * largeur de la stack est fixee a ~92%, chaque pot prend une part
+       * egale (flex-1) et garde son aspect ratio via object-contain. */}
       <div
-        className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden"
+        className="relative w-full aspect-square bg-cover bg-bottom bg-no-repeat overflow-hidden"
         style={{ backgroundImage: "url('/Background.webp')" }}
       >
         {/* Pastille economies (mustard) */}
@@ -96,61 +100,46 @@ export default function PackCardV2({ product }: PackCardV2Props) {
         )}
 
         {hasComponents ? (
-          // Pots des composants empiles sur le fond. Plus il y en a, plus
-          // on resserre (negative margin) pour rester dans la zone visible.
-          <div className="absolute inset-0 flex items-end justify-center pb-5">
+          <div className="absolute inset-0 flex items-end justify-center pb-3 md:pb-4 px-3">
             <div
-              className={`flex items-end justify-center ${
+              className={`flex items-end justify-center w-full transition-transform duration-500 group-hover:scale-[1.03] ${
                 componentImages.length >= 4
-                  ? '-space-x-7 md:-space-x-9'
+                  ? '-space-x-6 md:-space-x-8'
                   : componentImages.length === 3
-                    ? '-space-x-5 md:-space-x-7'
-                    : '-space-x-3 md:-space-x-5'
+                    ? '-space-x-4 md:-space-x-6'
+                    : '-space-x-2 md:-space-x-3'
               }`}
             >
-              {componentImages.slice(0, 5).map((img, i) => {
-                // Taille decroissante des cotes pour donner du relief
-                const heightPct =
-                  componentImages.length >= 4
-                    ? '54%'
-                    : componentImages.length === 3
-                      ? '60%'
-                      : '65%'
-                return (
-                  <div
-                    key={`${img.url}-${i}`}
-                    className="relative transition-transform duration-500 group-hover:scale-105"
-                    style={{ height: heightPct, zIndex: 10 + i }}
-                  >
-                    <Image
-                      src={img.url}
-                      alt={img.altText ?? img.productTitle}
-                      width={200}
-                      height={200}
-                      className="h-full w-auto object-contain drop-shadow-2xl"
-                    />
-                  </div>
-                )
-              })}
+              {componentImages.slice(0, 5).map((img, i) => (
+                <Image
+                  key={`${img.url}-${i}`}
+                  src={img.url}
+                  alt={img.altText ?? img.productTitle}
+                  width={260}
+                  height={260}
+                  className="flex-1 w-0 min-w-0 h-auto object-contain drop-shadow-2xl"
+                  style={{ zIndex: 10 + i }}
+                />
+              ))}
             </div>
           </div>
         ) : product.featuredImage ? (
           // Fallback : bundle a quand meme une featuredImage uploadee
-          <div className="absolute inset-0 flex items-end justify-center pb-5">
+          <div className="absolute inset-0 flex items-end justify-center pb-3 md:pb-4">
             <Image
               src={product.featuredImage.url}
               alt={product.featuredImage.altText ?? product.title}
-              width={260}
-              height={260}
-              className="relative z-10 w-auto h-[68%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+              width={300}
+              height={300}
+              className="relative z-10 w-auto h-[85%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
             />
           </div>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Package className="w-12 h-12 text-spruce/30" />
+            <Package className="w-14 h-14 text-spruce/30" />
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent z-0" />
+        <div className="absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-white to-transparent z-0" />
       </div>
 
       {/* ─── Corps ─── */}

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Truck } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice } from '@/lib/utils'
+import { isBundle, getBundleComponentImages } from '@/lib/shopify/bundle'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 
 interface CrossSellV2Props {
@@ -66,6 +67,25 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
           {items.map((product) => {
             const variant = product.variants.nodes[0]
+            const productIsBundle = isBundle(product)
+            const componentImages = productIsBundle ? getBundleComponentImages(product) : []
+            const hasComponents = componentImages.length > 0
+
+            // Echelle dynamique de la stack pour s'adapter a la petite zone visuelle
+            // d'une carte cross-sell (4 colonnes desktop, plus compact que /packs).
+            const overlapClass =
+              componentImages.length >= 4
+                ? '-space-x-5 md:-space-x-7'
+                : componentImages.length === 3
+                  ? '-space-x-4 md:-space-x-5'
+                  : '-space-x-2 md:-space-x-3'
+            const stackWidthClass =
+              componentImages.length >= 4
+                ? 'w-[88%]'
+                : componentImages.length === 3
+                  ? 'w-[80%]'
+                  : 'w-[68%]'
+
             return (
               <Link
                 key={product.id}
@@ -77,7 +97,24 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                   style={{ backgroundImage: "url('/Background.webp')" }}
                 >
                   <div className="absolute inset-0 flex items-end justify-center pb-4">
-                    {product.featuredImage ? (
+                    {hasComponents ? (
+                      // Bundle : stack des images des composants
+                      <div
+                        className={`flex items-end ${overlapClass} ${stackWidthClass} transition-transform duration-500 group-hover:scale-105`}
+                      >
+                        {componentImages.slice(0, 5).map((img, i) => (
+                          <Image
+                            key={`${img.url}-${i}`}
+                            src={img.url}
+                            alt={img.altText ?? img.productTitle}
+                            width={160}
+                            height={160}
+                            className="flex-1 w-0 min-w-0 h-auto object-contain drop-shadow-2xl"
+                            style={{ zIndex: 10 + i }}
+                          />
+                        ))}
+                      </div>
+                    ) : product.featuredImage ? (
                       <Image
                         src={product.featuredImage.url}
                         alt={product.featuredImage.altText ?? product.title}

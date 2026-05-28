@@ -7,6 +7,7 @@ import { formatPrice, cn } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
 import BundleGalleryV2 from './BundleGalleryV2'
+import BundleSelectorsV2 from './BundleSelectorsV2'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
 import type { BundleComponentImage } from '@/lib/shopify/bundle'
 
@@ -223,69 +224,84 @@ export default function BuyBoxV2({
               )}
           </div>
 
-          {/* Selecteur saveur */}
-          {variants.length > 1 && flavors.length > 1 && (
-            <div className="mb-5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2.5">
-                Saveur
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {flavors.map((flavor) => {
-                  const isAvailable = variants.some(
-                    (v) => v.title.includes(flavor) && v.availableForSale
-                  )
-                  return (
-                    <button
-                      key={flavor}
-                      onClick={() => handleOptionChange(flavor, selectedSize)}
-                      disabled={!isAvailable}
-                      className={cn(
-                        'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
-                        selectedFlavor === flavor
-                          ? 'border-spruce bg-spruce text-white'
-                          : 'border-spruce/20 text-spruce hover:border-spruce/40',
-                        !isAvailable && 'opacity-40 cursor-not-allowed line-through'
-                      )}
-                    >
-                      {flavor}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+          {/* Selecteurs : BundleSelectorsV2 si bundle, sinon saveur/format produit normal */}
+          {isBundleMode ? (
+            <BundleSelectorsV2
+              variants={variants}
+              selectedVariant={selectedVariant}
+              onVariantChange={(v) => {
+                setSelectedVariant(v)
+                // Pour un bundle on ne resync pas la galerie (BundleGalleryV2
+                // ne depend pas du variant courant), donc on s'arrete la.
+              }}
+            />
+          ) : (
+            <>
+              {/* Selecteur saveur (produit non-bundle) */}
+              {variants.length > 1 && flavors.length > 1 && (
+                <div className="mb-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2.5">
+                    Saveur
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {flavors.map((flavor) => {
+                      const isAvailable = variants.some(
+                        (v) => v.title.includes(flavor) && v.availableForSale
+                      )
+                      return (
+                        <button
+                          key={flavor}
+                          onClick={() => handleOptionChange(flavor, selectedSize)}
+                          disabled={!isAvailable}
+                          className={cn(
+                            'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
+                            selectedFlavor === flavor
+                              ? 'border-spruce bg-spruce text-white'
+                              : 'border-spruce/20 text-spruce hover:border-spruce/40',
+                            !isAvailable && 'opacity-40 cursor-not-allowed line-through'
+                          )}
+                        >
+                          {flavor}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
 
-          {/* Selecteur format */}
-          {variants.length > 1 && defaultSizes.length > 1 && (
-            <div className="mb-5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2.5">
-                Format
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {defaultSizes.map((size) => {
-                  const isAvailable = variants.some(
-                    (v) =>
-                      v.title.includes(selectedFlavor) && v.title.includes(size) && v.availableForSale
-                  )
-                  return (
-                    <button
-                      key={size}
-                      onClick={() => handleOptionChange(selectedFlavor, size)}
-                      disabled={!isAvailable}
-                      className={cn(
-                        'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
-                        selectedSize === size
-                          ? 'border-spruce bg-spruce text-white'
-                          : 'border-spruce/20 text-spruce hover:border-spruce/40',
-                        !isAvailable && 'opacity-40 cursor-not-allowed line-through'
-                      )}
-                    >
-                      {size}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
+              {/* Selecteur format (produit non-bundle) */}
+              {variants.length > 1 && defaultSizes.length > 1 && (
+                <div className="mb-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2.5">
+                    Format
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {defaultSizes.map((size) => {
+                      const isAvailable = variants.some(
+                        (v) =>
+                          v.title.includes(selectedFlavor) && v.title.includes(size) && v.availableForSale
+                      )
+                      return (
+                        <button
+                          key={size}
+                          onClick={() => handleOptionChange(selectedFlavor, size)}
+                          disabled={!isAvailable}
+                          className={cn(
+                            'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
+                            selectedSize === size
+                              ? 'border-spruce bg-spruce text-white'
+                              : 'border-spruce/20 text-spruce hover:border-spruce/40',
+                            !isAvailable && 'opacity-40 cursor-not-allowed line-through'
+                          )}
+                        >
+                          {size}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Quantite + Ajouter au panier */}
