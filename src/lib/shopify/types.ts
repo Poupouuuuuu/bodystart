@@ -19,11 +19,17 @@ export interface ShopifyBundleComponent {
   productVariant: {
     id: string
     title: string
+    // Image variant-specific (ex: Iso Zero chocolat aura sa propre photo).
+    // Si null, fallback sur product.featuredImage cote helper.
+    image: ShopifyImage | null
     product: {
       id: string
       handle: string
       title: string
       featuredImage: ShopifyImage | null
+      // Metafields produit du composant (au moins custom.format pour
+      // afficher le grammage dans le label du selecteur de la fiche pack).
+      metafields?: (ShopifyMetafield | null)[]
     }
   }
 }

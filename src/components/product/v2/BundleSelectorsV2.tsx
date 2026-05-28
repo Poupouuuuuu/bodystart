@@ -2,7 +2,6 @@
 
 import { ChevronDown } from 'lucide-react'
 import { useMemo } from 'react'
-import { cn } from '@/lib/utils'
 import type { ShopifyProductVariant } from '@/lib/shopify/types'
 
 interface BundleSelectorsV2Props {
@@ -14,12 +13,16 @@ interface BundleSelectorsV2Props {
 interface ComponentAxis {
   productTitle: string
   productHandle: string
-  // Valeurs uniques de productVariant.title vu sur cette position de composant
-  // a travers tous les bundle variants. C'est la liste de choix pour ce composant.
+  /** Grammage / contenance lu sur le metafield custom.format du produit composant. */
+  format: string | null
+  /**
+   * Valeurs uniques de productVariant.title observees a cet indice de
+   * composant a travers tous les bundle variants. C'est la liste de choix
+   * pour ce composant.
+   */
   options: string[]
 }
 
-const PILLS_MAX_OPTIONS = 5
 const DEFAULT_VARIANT_TITLE = 'Default Title'
 
 /**
@@ -35,13 +38,14 @@ const DEFAULT_VARIANT_TITLE = 'Default Title'
  *
  * On reconstruit donc, pour chaque INDICE de composant (0..N-1) :
  *   - le nom du produit (= label du selecteur)
+ *   - le grammage (lu sur metafield custom.format du produit composant)
  *   - la liste des `productVariant.title` uniques observes a cet indice
- *     a travers tous les bundle variants (= options du selecteur)
  *
- * Rendu UI :
- *   - 1 option seulement → "Nom du produit — inclus" (texte gris, pas de selecteur)
- *   - 2..5 options → pills (coherent avec le selecteur non-bundle)
- *   - >=6 options → <select> deroulant style DA V2 (pour ne pas charger l'ecran)
+ * Rendu UI (decision Adam) :
+ *   - 1 option seulement → "Nom — inclus" (texte gris, pas de selecteur)
+ *   - 2+ options → TOUJOURS dropdown <select> DA V2 (border spruce/15,
+ *     focus ring vert frais), meme avec 2-3 options. Coherence visuelle
+ *     dans la fiche bundle ou des composants ont 10 saveurs et d'autres 3.
  *
  * Lorsqu'on change une option d'un composant, on cherche le bundle variant
  * qui satisfait la nouvelle combinaison complete et on remonte au parent.
@@ -53,8 +57,7 @@ export default function BundleSelectorsV2({
   selectedVariant,
   onVariantChange,
 }: BundleSelectorsV2Props) {
-  // Construire les axes a partir de variants[0].components (titre produit)
-  // + balayage de tous les variants (collecte des options uniques).
+  // Construire les axes a partir de variants[0].components.
   const axes: ComponentAxis[] = useMemo(() => {
     const v0 = variants[0]
     const comps0 = v0?.components?.nodes ?? []
@@ -67,9 +70,15 @@ export default function BundleSelectorsV2({
         const title = compK?.productVariant?.title
         if (title) optionsSet.set(title, true)
       }
+      const format = (() => {
+        const metafields = c0.productVariant.product.metafields ?? []
+        const found = metafields.find((m) => m && m.key === 'format')
+        return found?.value?.trim() || null
+      })()
       return {
         productTitle: c0.productVariant.product.title,
         productHandle: c0.productVariant.product.handle,
+        format,
         options: Array.from(optionsSet.keys()),
       }
     })
@@ -115,15 +124,20 @@ export default function BundleSelectorsV2({
     <div className="space-y-5 mb-2">
       {axes.map((axis, k) => {
         const isLocked = axis.options.length === 1
-        const isPills = axis.options.length <= PILLS_MAX_OPTIONS
         const lockedValue = axis.options[0]
         const isDefaultOnly = isLocked && lockedValue === DEFAULT_VARIANT_TITLE
 
+        // Label : "ISO ZERO 100% WHEY — 1,5 kg" si format renseigne, sinon
+        // juste le nom. Pas de tiret orphelin si format vide.
+        const label = axis.format
+          ? `${axis.productTitle} — ${axis.format}`
+          : axis.productTitle
+
         return (
           <div key={`axis-${k}`}>
-            {/* Label = nom du produit composant */}
+            {/* Label = nom du produit composant + format eventuel */}
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2.5">
-              {axis.productTitle}
+              {label}
             </p>
 
             {isLocked ? (
@@ -133,42 +147,13 @@ export default function BundleSelectorsV2({
                   ? 'Inclus dans le pack'
                   : `${lockedValue} · Inclus dans le pack`}
               </p>
-            ) : isPills ? (
-              // 2..5 options : pills
-              <div className="flex flex-wrap gap-2">
-                {axis.options.map((opt) => {
-                  const isSelected = currentSelection[k] === opt
-                  // Disponibilite : existe-t-il un variant ou ce composant=opt et availableForSale ?
-                  const isAvailable = variants.some(
-                    (v) =>
-                      (v.components?.nodes?.[k]?.productVariant?.title ?? '') === opt &&
-                      v.availableForSale
-                  )
-                  return (
-                    <button
-                      key={opt}
-                      onClick={() => handleAxisChange(k, opt)}
-                      disabled={!isAvailable}
-                      className={cn(
-                        'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
-                        isSelected
-                          ? 'border-spruce bg-spruce text-white'
-                          : 'border-spruce/20 text-spruce hover:border-spruce/40',
-                        !isAvailable && 'opacity-40 cursor-not-allowed line-through'
-                      )}
-                    >
-                      {opt}
-                    </button>
-                  )
-                })}
-              </div>
             ) : (
-              // >=6 options : select deroulant
-              <div className="relative inline-block w-full sm:w-auto sm:min-w-[280px]">
+              // 2+ options : TOUJOURS dropdown <select> DA V2
+              <div className="relative inline-block w-full sm:max-w-[360px]">
                 <select
                   value={currentSelection[k] ?? ''}
                   onChange={(e) => handleAxisChange(k, e.target.value)}
-                  className="appearance-none w-full bg-white border border-spruce/20 rounded-full pl-4 pr-11 py-2.5 text-[13px] font-semibold text-spruce hover:border-spruce/40 transition-colors cursor-pointer focus:outline-none focus:border-spruce"
+                  className="appearance-none w-full bg-white border border-spruce/15 rounded-full pl-4 pr-11 py-2.5 text-[13px] font-semibold text-spruce hover:border-spruce/30 transition-colors cursor-pointer focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30"
                 >
                   {axis.options.map((opt) => {
                     const isAvailable = variants.some(

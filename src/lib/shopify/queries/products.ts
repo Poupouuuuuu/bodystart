@@ -129,6 +129,12 @@ export const GET_PRODUCT_BY_HANDLE = `
               productVariant {
                 id
                 title
+                image {
+                  url
+                  altText
+                  width
+                  height
+                }
                 product {
                   id
                   handle
@@ -138,6 +144,14 @@ export const GET_PRODUCT_BY_HANDLE = `
                     altText
                     width
                     height
+                  }
+                  metafields(identifiers: [
+                    { namespace: "custom", key: "format" }
+                  ]) {
+                    namespace
+                    key
+                    value
+                    type
                   }
                 }
               }

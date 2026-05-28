@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
@@ -8,8 +8,8 @@ import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
 import BundleGalleryV2 from './BundleGalleryV2'
 import BundleSelectorsV2 from './BundleSelectorsV2'
+import { getBundleComponentDetailsFromVariant } from '@/lib/shopify/bundle'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
-import type { BundleComponentImage } from '@/lib/shopify/bundle'
 
 interface BuyBoxV2Props {
   images: ShopifyImage[]
@@ -24,12 +24,15 @@ interface BuyBoxV2Props {
   /** Format / grammage du produit (ex: "1,5 kg"). Source : metafield Shopify. */
   format?: string | null
   /**
-   * Si renseigne et non vide, on bascule en mode bundle : la galerie a
-   * gauche devient BundleGalleryV2 (grille des composants sur fond
-   * vegetal) au lieu de ProductGalleryV2. La logique d'achat (variants,
-   * saveur, panier, sticky bar) reste exactement la meme.
+   * Si true, on bascule en mode bundle : galerie gauche = BundleGalleryV2
+   * (grille des composants sur fond vegetal, dynamique selon la variante
+   * de bundle selectionnee) + selecteurs par composant via BundleSelectorsV2.
+   * La logique d'achat (panier, sticky bar) reste exactement la meme.
+   *
+   * On derive les details bundle dynamiquement de selectedVariant en
+   * interne (image variant-specific, format, etc.).
    */
-  bundleComponents?: BundleComponentImage[]
+  isBundle?: boolean
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -55,9 +58,8 @@ export default function BuyBoxV2({
   storeInventory,
   benefits = [],
   format = null,
-  bundleComponents = [],
+  isBundle = false,
 }: BuyBoxV2Props) {
-  const isBundleMode = bundleComponents.length > 0
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ShopifyProductVariant>(variants[0])
   const [quantity, setQuantity] = useState(1)
@@ -65,6 +67,16 @@ export default function BuyBoxV2({
   const [added, setAdded] = useState(false)
   const [isStickyVisible, setIsStickyVisible] = useState(false)
   const { addItem } = useCart()
+
+  // Mode bundle : on derive les details des composants depuis la variante
+  // ACTUELLEMENT selectionnee. Quand BundleSelectorsV2 change la variante,
+  // ce useMemo recompute → BundleGalleryV2 re-render avec les bonnes
+  // images (image variant-specific en priorite, sinon featuredImage produit).
+  const bundleDetails = useMemo(() => {
+    if (!isBundle) return []
+    return getBundleComponentDetailsFromVariant(selectedVariant)
+  }, [isBundle, selectedVariant])
+  const isBundleMode = bundleDetails.length > 0
 
   // Saveurs / formats
   const flavors = Array.from(new Set(variants.map((v) => v.title.split(' / ')[0]?.trim() || v.title)))
@@ -160,7 +172,7 @@ export default function BuyBoxV2({
         <div className="lg:sticky lg:top-24">
           {isBundleMode ? (
             <BundleGalleryV2
-              components={bundleComponents}
+              components={bundleDetails}
               title={title}
               discountPct={discountPct}
             />

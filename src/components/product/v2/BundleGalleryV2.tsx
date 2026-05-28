@@ -2,10 +2,16 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import type { BundleComponentImage } from '@/lib/shopify/bundle'
+import type { BundleComponentDetail } from '@/lib/shopify/bundle'
 
 interface BundleGalleryV2Props {
-  components: BundleComponentImage[]
+  /**
+   * Detail des composants pour la variante de bundle ACTUELLEMENT
+   * selectionnee. L'image utilisee est la variant-image si presente
+   * (sinon featuredImage du produit). Le composant re-render quand la
+   * selection change cote BuyBoxV2.
+   */
+  components: BundleComponentDetail[]
   title: string
   discountPct: number | null
 }
@@ -73,23 +79,26 @@ export default function BundleGalleryV2({
 
         <div className="absolute inset-0 flex items-end justify-center pb-8 md:pb-10">
           <div className={`flex items-end justify-center ${overlapClass}`}>
-            {components.slice(0, 5).map((c, i) => (
-              <div
-                key={`${c.url}-${i}`}
-                className="relative"
-                style={{ height: heightPct, zIndex: 10 + i }}
-                title={c.productTitle}
-              >
-                <Image
-                  src={c.url}
-                  alt={c.altText ?? c.productTitle}
-                  width={420}
-                  height={420}
-                  priority={i === 0}
-                  className="h-full w-auto object-contain drop-shadow-2xl"
-                />
-              </div>
-            ))}
+            {components.slice(0, 5).map((c, i) => {
+              if (!c.image?.url) return null
+              return (
+                <div
+                  key={`${c.productHandle}-${i}-${c.variantTitle}`}
+                  className="relative transition-all duration-300"
+                  style={{ height: heightPct, zIndex: 10 + i }}
+                  title={c.productTitle}
+                >
+                  <Image
+                    src={c.image.url}
+                    alt={c.image.altText ?? `${c.productTitle} ${c.variantTitle}`}
+                    width={420}
+                    height={420}
+                    priority={i === 0}
+                    className="h-full w-auto object-contain drop-shadow-2xl"
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
 
@@ -110,13 +119,15 @@ export default function BundleGalleryV2({
                 className="group flex items-center gap-3 bg-white border border-spruce/10 rounded-xl p-2.5 hover:border-spruce/30 transition-colors"
               >
                 <div className="relative w-10 h-10 flex-shrink-0 bg-sage/40 rounded-lg overflow-hidden">
-                  <Image
-                    src={c.url}
-                    alt={c.altText ?? c.productTitle}
-                    fill
-                    sizes="40px"
-                    className="object-contain p-1"
-                  />
+                  {c.image?.url && (
+                    <Image
+                      src={c.image.url}
+                      alt={c.image.altText ?? c.productTitle}
+                      fill
+                      sizes="40px"
+                      className="object-contain p-1"
+                    />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[12.5px] font-semibold text-ink leading-tight truncate group-hover:text-spruce transition-colors">

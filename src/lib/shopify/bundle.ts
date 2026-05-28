@@ -11,7 +11,7 @@
  * "pack" avant adoption de l'app). On veut garantir que l'UI bundle
  * ne se declenche que sur de vrais bundles.
  */
-import type { ShopifyProduct, ShopifyBundleComponent } from './types'
+import type { ShopifyProduct, ShopifyBundleComponent, ShopifyProductVariant, ShopifyImage } from './types'
 
 export interface BundleComponentImage {
   url: string
@@ -21,6 +21,31 @@ export interface BundleComponentImage {
   productTitle: string
   productHandle: string
   quantity: number
+}
+
+/**
+ * Description riche d'un composant pour une variante de bundle donnee.
+ * - image : image de la variante du composant (variant-specific) ;
+ *   fallback featuredImage du produit composant.
+ * - format : grammage / contenance lu sur le metafield custom.format
+ *   du produit composant (peut etre null si absent).
+ * - variantTitle : titre de la variante du composant actuellement
+ *   choisie (ex : "Chocolat", "Vanille").
+ */
+export interface BundleComponentDetail {
+  image: ShopifyImage | null
+  productTitle: string
+  productHandle: string
+  format: string | null
+  variantTitle: string
+  quantity: number
+}
+
+function extractComponentFormat(c: ShopifyBundleComponent): string | null {
+  const metafields = c.productVariant.product.metafields ?? []
+  const found = metafields.find((m) => m && m.key === 'format')
+  const val = found?.value?.trim()
+  return val || null
 }
 
 /**
@@ -70,4 +95,35 @@ export function getBundleComponentImages(product: ShopifyProduct): BundleCompone
       }
     })
     .filter((x): x is BundleComponentImage => x !== null)
+}
+
+/**
+ * Description detaillee des composants pour UNE variante de bundle donnee
+ * (variant-aware). Utilisee cote fiche pack pour rendre le hero (galerie)
+ * dynamique selon la selection en cours dans BundleSelectorsV2.
+ *
+ * Priorite image : variant-image > product.featuredImage > null.
+ * Le format est lu sur le produit (pas la variante) car c'est le
+ * grammage cote contenant — meme pour toutes les saveurs.
+ *
+ * Renvoie un tableau de la MEME longueur que selectedVariant.components,
+ * avec une entree par composant meme si image est null (le rendu cote UI
+ * gere le placeholder pour ne pas decaler la grille).
+ */
+export function getBundleComponentDetailsFromVariant(
+  variant: ShopifyProductVariant | undefined
+): BundleComponentDetail[] {
+  const components: ShopifyBundleComponent[] = variant?.components?.nodes ?? []
+  return components.map((c) => {
+    const variantImage = c.productVariant.image
+    const productImage = c.productVariant.product.featuredImage
+    return {
+      image: variantImage ?? productImage ?? null,
+      productTitle: c.productVariant.product.title,
+      productHandle: c.productVariant.product.handle,
+      format: extractComponentFormat(c),
+      variantTitle: c.productVariant.title,
+      quantity: c.quantity,
+    }
+  })
 }
