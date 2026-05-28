@@ -14,6 +14,20 @@ export interface ShopifyMoney {
   currencyCode: string
 }
 
+export interface ShopifyBundleComponent {
+  quantity: number
+  productVariant: {
+    id: string
+    title: string
+    product: {
+      id: string
+      handle: string
+      title: string
+      featuredImage: ShopifyImage | null
+    }
+  }
+}
+
 export interface ShopifyProductVariant {
   id: string
   title: string
@@ -26,6 +40,12 @@ export interface ShopifyProductVariant {
     name: string
     value: string
   }[]
+  // Bundles : presents uniquement si la variante est un bundle
+  // (Shopify Bundles app). requiresComponents = true alors.
+  requiresComponents?: boolean
+  components?: {
+    nodes: ShopifyBundleComponent[]
+  }
 }
 
 export interface ShopifyProduct {

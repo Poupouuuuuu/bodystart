@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Truck, Package } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
+import { getBundleComponentImages } from '@/lib/shopify/bundle'
 import type { ShopifyProduct, ShopifyMetafield } from '@/lib/shopify/types'
 
 interface PackCardV2Props {
@@ -63,7 +64,16 @@ export default function PackCardV2({ product }: PackCardV2Props) {
   const savingsAmount = hasSavings ? compareAmount - priceAmount : 0
   const currency = variant?.price.currencyCode ?? 'EUR'
 
-  const components = countComposition(product.metafields)
+  // Source de verite visuelle = images des composants du bundle.
+  // Adam : les bundles n'ont pas (et n'auront pas) d'image propre uploadee,
+  // on construit donc le visuel a partir des featuredImage des produits
+  // composants, accessibles via variants[0].components.productVariant.product.
+  const componentImages = getBundleComponentImages(product)
+  const hasComponents = componentImages.length > 0
+
+  // Composants : on prefere le compte des composants Storefront, fallback
+  // sur le metafield custom.composition s'il est rempli.
+  const components = hasComponents ? componentImages.length : countComposition(product.metafields)
   const benefit = extractShortBenefit(product.description)
 
   const isFranco = priceAmount >= FRANCO_THRESHOLD
@@ -85,7 +95,47 @@ export default function PackCardV2({ product }: PackCardV2Props) {
           </div>
         )}
 
-        {product.featuredImage ? (
+        {hasComponents ? (
+          // Pots des composants empiles sur le fond. Plus il y en a, plus
+          // on resserre (negative margin) pour rester dans la zone visible.
+          <div className="absolute inset-0 flex items-end justify-center pb-5">
+            <div
+              className={`flex items-end justify-center ${
+                componentImages.length >= 4
+                  ? '-space-x-7 md:-space-x-9'
+                  : componentImages.length === 3
+                    ? '-space-x-5 md:-space-x-7'
+                    : '-space-x-3 md:-space-x-5'
+              }`}
+            >
+              {componentImages.slice(0, 5).map((img, i) => {
+                // Taille decroissante des cotes pour donner du relief
+                const heightPct =
+                  componentImages.length >= 4
+                    ? '54%'
+                    : componentImages.length === 3
+                      ? '60%'
+                      : '65%'
+                return (
+                  <div
+                    key={`${img.url}-${i}`}
+                    className="relative transition-transform duration-500 group-hover:scale-105"
+                    style={{ height: heightPct, zIndex: 10 + i }}
+                  >
+                    <Image
+                      src={img.url}
+                      alt={img.altText ?? img.productTitle}
+                      width={200}
+                      height={200}
+                      className="h-full w-auto object-contain drop-shadow-2xl"
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ) : product.featuredImage ? (
+          // Fallback : bundle a quand meme une featuredImage uploadee
           <div className="absolute inset-0 flex items-end justify-center pb-5">
             <Image
               src={product.featuredImage.url}

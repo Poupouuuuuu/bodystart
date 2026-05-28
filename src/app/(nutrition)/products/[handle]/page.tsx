@@ -9,6 +9,7 @@ import {
   getFeaturedProducts,
 } from '@/lib/shopify'
 import { BODY_START_STORES } from '@/lib/shopify/types'
+import { isBundle, getBundleComponentImages } from '@/lib/shopify/bundle'
 import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
 import LeConseilBodyStartV2 from '@/components/product/v2/LeConseilBodyStartV2'
 import AQuoiCaSertV2 from '@/components/product/v2/AQuoiCaSertV2'
@@ -189,6 +190,14 @@ export default async function ProductPage({ params }: Props) {
         ? [product.featuredImage]
         : []
 
+  // Detection bundle (Shopify Bundles app) : si oui, on substitue la
+  // galerie produit par la grille des images des composants. Le panneau
+  // d'achat reste identique (variants, saveur, panier — tout marche).
+  // Pour les bundles, les images "components" sont la source de verite
+  // visuelle car les bundles n'ont pas (et n'auront pas) de photo propre.
+  const productIsBundle = isBundle(product)
+  const bundleComponents = productIsBundle ? getBundleComponentImages(product) : []
+
   return (
     <>
       <script
@@ -251,6 +260,7 @@ export default async function ProductPage({ params }: Props) {
             storeInventory={storeInventory}
             benefits={benefits}
             format={format}
+            bundleComponents={bundleComponents}
           />
         </div>
       </section>

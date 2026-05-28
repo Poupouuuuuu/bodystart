@@ -122,6 +122,27 @@ export const GET_PRODUCT_BY_HANDLE = `
             name
             value
           }
+          requiresComponents
+          components(first: 12) {
+            nodes {
+              quantity
+              productVariant {
+                id
+                title
+                product {
+                  id
+                  handle
+                  title
+                  featuredImage {
+                    url
+                    altText
+                    width
+                    height
+                  }
+                }
+              }
+            }
+          }
         }
       }
       priceRange {

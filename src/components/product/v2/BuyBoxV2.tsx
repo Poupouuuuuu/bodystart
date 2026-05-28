@@ -6,7 +6,9 @@ import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck } from 'luc
 import { formatPrice, cn } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
+import BundleGalleryV2 from './BundleGalleryV2'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
+import type { BundleComponentImage } from '@/lib/shopify/bundle'
 
 interface BuyBoxV2Props {
   images: ShopifyImage[]
@@ -20,6 +22,13 @@ interface BuyBoxV2Props {
   benefits?: string[]
   /** Format / grammage du produit (ex: "1,5 kg"). Source : metafield Shopify. */
   format?: string | null
+  /**
+   * Si renseigne et non vide, on bascule en mode bundle : la galerie a
+   * gauche devient BundleGalleryV2 (grille des composants sur fond
+   * vegetal) au lieu de ProductGalleryV2. La logique d'achat (variants,
+   * saveur, panier, sticky bar) reste exactement la meme.
+   */
+  bundleComponents?: BundleComponentImage[]
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -45,7 +54,9 @@ export default function BuyBoxV2({
   storeInventory,
   benefits = [],
   format = null,
+  bundleComponents = [],
 }: BuyBoxV2Props) {
+  const isBundleMode = bundleComponents.length > 0
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ShopifyProductVariant>(variants[0])
   const [quantity, setQuantity] = useState(1)
@@ -146,13 +157,21 @@ export default function BuyBoxV2({
       <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-start">
         {/* ─── Galerie ─── */}
         <div className="lg:sticky lg:top-24">
-          <ProductGalleryV2
-            images={images}
-            title={title}
-            discountPct={discountPct}
-            selectedIndex={selectedImageIndex}
-            onImageChange={handleImageChange}
-          />
+          {isBundleMode ? (
+            <BundleGalleryV2
+              components={bundleComponents}
+              title={title}
+              discountPct={discountPct}
+            />
+          ) : (
+            <ProductGalleryV2
+              images={images}
+              title={title}
+              discountPct={discountPct}
+              selectedIndex={selectedImageIndex}
+              onImageChange={handleImageChange}
+            />
+          )}
         </div>
 
         {/* ─── Panneau achat ─── */}
