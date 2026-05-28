@@ -35,6 +35,7 @@ export const GET_COLLECTION_BY_HANDLE = `
           id
           handle
           title
+          description
           tags
           vendor
           productType
@@ -64,6 +65,14 @@ export const GET_COLLECTION_BY_HANDLE = `
                 currencyCode
               }
             }
+          }
+          metafields(identifiers: [
+            { namespace: "custom", key: "composition" }
+          ]) {
+            namespace
+            key
+            value
+            type
           }
         }
       }
