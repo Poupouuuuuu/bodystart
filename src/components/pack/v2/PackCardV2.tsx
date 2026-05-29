@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowRight, Truck, Package } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import { getBundleComponentImages } from '@/lib/shopify/bundle'
+import BundleComposite from './BundleComposite'
 import type { ShopifyProduct, ShopifyMetafield } from '@/lib/shopify/types'
 
 interface PackCardV2Props {
@@ -84,62 +84,24 @@ export default function PackCardV2({ product }: PackCardV2Props) {
       className="group flex flex-col bg-white rounded-2xl border border-spruce/10 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_10px_36px_rgba(45,90,45,0.08)]"
     >
       {/* ─── Visuel ─── */}
-      {/* aspect-square + sizing PAR LARGEUR (pas hauteur) pour que les pots
-       * remplissent visuellement la carte au lieu de flotter dedans. La
-       * largeur de la stack est fixee a ~92%, chaque pot prend une part
-       * egale (flex-1) et garde son aspect ratio via object-contain. */}
-      <div
-        className="relative w-full aspect-square bg-cover bg-bottom bg-no-repeat overflow-hidden"
-        style={{ backgroundImage: "url('/Background.webp')" }}
-      >
-        {/* Pastille economies (mustard) */}
+      {/* Composite partagé : pots des composants empilés sur fond végétal
+       * (cf. BundleComposite, réutilisé par la vignette panier). */}
+      <div className="relative w-full aspect-square overflow-hidden">
+        {/* Pastille economies (mustard) — overlay au-dessus du composite */}
         {hasSavings && (
           <div className="absolute top-3 left-3 z-20 bg-mustard text-mustard-ink text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm">
             Économise {formatPrice({ amount: savingsAmount.toFixed(2), currencyCode: currency })}
           </div>
         )}
 
-        {hasComponents ? (
-          <div className="absolute inset-0 flex items-end justify-center pb-3 md:pb-4 px-3">
-            <div
-              className={`flex items-end justify-center w-full transition-transform duration-500 group-hover:scale-[1.03] ${
-                componentImages.length >= 4
-                  ? '-space-x-6 md:-space-x-8'
-                  : componentImages.length === 3
-                    ? '-space-x-4 md:-space-x-6'
-                    : '-space-x-2 md:-space-x-3'
-              }`}
-            >
-              {componentImages.slice(0, 5).map((img, i) => (
-                <Image
-                  key={`${img.url}-${i}`}
-                  src={img.url}
-                  alt={img.altText ?? img.productTitle}
-                  width={260}
-                  height={260}
-                  className="flex-1 w-0 min-w-0 h-auto object-contain drop-shadow-2xl"
-                  style={{ zIndex: 10 + i }}
-                />
-              ))}
-            </div>
-          </div>
-        ) : product.featuredImage ? (
-          // Fallback : bundle a quand meme une featuredImage uploadee
-          <div className="absolute inset-0 flex items-end justify-center pb-3 md:pb-4">
-            <Image
-              src={product.featuredImage.url}
-              alt={product.featuredImage.altText ?? product.title}
-              width={300}
-              height={300}
-              className="relative z-10 w-auto h-[85%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Package className="w-14 h-14 text-spruce/30" />
-          </div>
-        )}
-        <div className="absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-white to-transparent z-0" />
+        <BundleComposite
+          images={componentImages}
+          alt={product.title}
+          variant="card"
+          fallbackImage={product.featuredImage}
+          className="absolute inset-0"
+          sizes="(max-width: 768px) 50vw, 360px"
+        />
       </div>
 
       {/* ─── Corps ─── */}

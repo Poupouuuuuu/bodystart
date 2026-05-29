@@ -11,6 +11,7 @@ import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { getCartLineComponentImages } from '@/lib/shopify/bundle'
+import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
@@ -165,20 +166,15 @@ export default function CartDrawer() {
                         sizes="80px"
                       />
                     ) : componentImages.length > 0 ? (
-                      // Pack : pots des composants empilés (cohérent avec /packs)
-                      <div className="flex items-end justify-center w-full h-full px-1.5 pb-1.5 -space-x-2.5">
-                        {componentImages.slice(0, 3).map((img, i) => (
-                          <Image
-                            key={`${img.url}-${i}`}
-                            src={img.url}
-                            alt={img.altText ?? product.title}
-                            width={56}
-                            height={56}
-                            className="w-auto h-[72%] object-contain drop-shadow-sm"
-                            style={{ zIndex: 10 + i }}
-                          />
-                        ))}
-                      </div>
+                      // Pack : même composite que les cartes /packs (pots des
+                      // composants empilés sur fond végétal), réduit à la vignette.
+                      <BundleComposite
+                        images={componentImages}
+                        alt={product.title}
+                        variant="thumb"
+                        className="absolute inset-0"
+                        sizes="80px"
+                      />
                     ) : (
                       <Package className="w-8 h-8 text-[#1a2e23]/20" />
                     )}
