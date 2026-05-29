@@ -8,6 +8,7 @@ import {
   variantOptionValue,
   isBundleOptionAvailable,
   resolveBundleVariantOnChange,
+  getCartLineComponentImages,
 } from './bundle'
 import type { ShopifyProductVariant } from './types'
 
@@ -177,6 +178,40 @@ describe('dépendance entre options (poids ⇒ saveur)', () => {
     const selection = { [SAVEUR]: 'vanille', [POIDS]: '810g', 'L-Carnitine Pro Zero - Liquide (Saveur)': 'Tropical' }
     expect(isBundleOptionAvailable(complete, axes, selection, POIDS, '810g')).toBe(true)
     expect(isBundleOptionAvailable(complete, axes, selection, POIDS, '2kg')).toBe(true)
+  })
+})
+
+describe('getCartLineComponentImages (repli vignette panier)', () => {
+  it('renvoie image variante du composant, sinon featuredImage produit', () => {
+    const merch = {
+      components: {
+        nodes: [
+          {
+            productVariant: {
+              image: { url: 'https://x/sz.jpg', altText: 'Sub Zero', width: 100, height: 100 },
+              product: { featuredImage: { url: 'https://x/sz-prod.jpg', altText: null, width: 1, height: 1 } },
+            },
+          },
+          {
+            productVariant: {
+              image: null,
+              product: { featuredImage: { url: 'https://x/carni.jpg', altText: 'Carni', width: 100, height: 100 } },
+            },
+          },
+          {
+            productVariant: { image: null, product: { featuredImage: null } }, // pas d'image → filtré
+          },
+        ],
+      },
+    }
+    const imgs = getCartLineComponentImages(merch)
+    expect(imgs.map((i) => i.url)).toEqual(['https://x/sz.jpg', 'https://x/carni.jpg'])
+  })
+
+  it('renvoie [] si pas de composants (produit normal)', () => {
+    expect(getCartLineComponentImages({})).toEqual([])
+    expect(getCartLineComponentImages({ components: null })).toEqual([])
+    expect(getCartLineComponentImages({ components: { nodes: [] } })).toEqual([])
   })
 })
 

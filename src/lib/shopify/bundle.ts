@@ -128,6 +128,35 @@ export function getBundleComponentDetailsFromVariant(
   })
 }
 
+/**
+ * Images des composants pour une ligne de panier (bundle).
+ * Repli visuel quand le bundle n'a pas de featuredImage propre (volontaire :
+ * la galerie de la fiche empile les composants dynamiquement, on ne met pas
+ * d'image composite statique sur le produit bundle).
+ *
+ * Priorité par composant : image de la variante du composant > featuredImage
+ * du produit composant. On filtre ceux sans image pour ne pas créer de trous.
+ */
+export interface CartLineMerchandiseLike {
+  components?: {
+    nodes: {
+      productVariant: {
+        image: ShopifyImage | null
+        product: { featuredImage: ShopifyImage | null }
+      }
+    }[]
+  } | null
+}
+
+export function getCartLineComponentImages(
+  merchandise: CartLineMerchandiseLike
+): ShopifyImage[] {
+  const nodes = merchandise.components?.nodes ?? []
+  return nodes
+    .map((n) => n.productVariant?.image ?? n.productVariant?.product?.featuredImage ?? null)
+    .filter((x): x is ShopifyImage => !!x && !!x.url)
+}
+
 // ════════════════════════════════════════════════════════════════════
 // SÉLECTEURS DE VARIANTE DE BUNDLE — logique pure (testable)
 // ════════════════════════════════════════════════════════════════════

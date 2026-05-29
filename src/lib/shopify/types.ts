@@ -132,6 +132,20 @@ export interface CartItem {
       name: string
       value: string
     }[]
+    // Composants du bundle (présent uniquement si la merchandise est un
+    // bundle Shopify). Repli visuel pour la vignette panier quand le
+    // bundle n'a pas de featuredImage.
+    components?: {
+      nodes: {
+        productVariant: {
+          image: ShopifyImage | null
+          product: {
+            title: string
+            featuredImage: ShopifyImage | null
+          }
+        }
+      }[]
+    } | null
   }
   cost: {
     totalAmount: ShopifyMoney

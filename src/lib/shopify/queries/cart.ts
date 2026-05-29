@@ -30,6 +30,29 @@ const CART_FRAGMENT = `
                 height
               }
             }
+            # Composants du bundle (Shopify Bundles) : sert de repli visuel
+            # pour la vignette panier quand le bundle n'a pas de featuredImage.
+            components(first: 12) {
+              nodes {
+                productVariant {
+                  image {
+                    url
+                    altText
+                    width
+                    height
+                  }
+                  product {
+                    title
+                    featuredImage {
+                      url
+                      altText
+                      width
+                      height
+                    }
+                  }
+                }
+              }
+            }
           }
         }
         cost {

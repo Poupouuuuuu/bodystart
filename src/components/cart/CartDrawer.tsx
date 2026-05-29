@@ -10,6 +10,7 @@ import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, Check
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
+import { getCartLineComponentImages } from '@/lib/shopify/bundle'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
@@ -137,6 +138,9 @@ export default function CartDrawer() {
             {items.map((item) => {
               const product = item.merchandise.product
               const image = product.featuredImage
+              // Bundle sans featuredImage (volontaire) → repli sur les images
+              // des composants (empilées, max 3), sinon placeholder.
+              const componentImages = image ? [] : getCartLineComponentImages(item.merchandise)
 
               return (
                 <div
@@ -160,6 +164,21 @@ export default function CartDrawer() {
                         className="object-contain p-2"
                         sizes="80px"
                       />
+                    ) : componentImages.length > 0 ? (
+                      // Pack : pots des composants empilés (cohérent avec /packs)
+                      <div className="flex items-end justify-center w-full h-full px-1.5 pb-1.5 -space-x-2.5">
+                        {componentImages.slice(0, 3).map((img, i) => (
+                          <Image
+                            key={`${img.url}-${i}`}
+                            src={img.url}
+                            alt={img.altText ?? product.title}
+                            width={56}
+                            height={56}
+                            className="w-auto h-[72%] object-contain drop-shadow-sm"
+                            style={{ zIndex: 10 + i }}
+                          />
+                        ))}
+                      </div>
                     ) : (
                       <Package className="w-8 h-8 text-[#1a2e23]/20" />
                     )}
