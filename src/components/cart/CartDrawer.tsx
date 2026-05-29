@@ -168,11 +168,11 @@ export default function CartDrawer() {
                     ) : componentImages.length > 0 ? (
                       // Pack : même composite que les cartes /packs (pots des
                       // composants empilés sur fond végétal), réduit à la vignette.
+                      // Le composite remplit le slot (w-full h-full) via variant thumb.
                       <BundleComposite
                         images={componentImages}
                         alt={product.title}
                         variant="thumb"
-                        className="absolute inset-0"
                         sizes="80px"
                       />
                     ) : (
