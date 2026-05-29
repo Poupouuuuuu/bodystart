@@ -98,7 +98,7 @@ export const GET_PRODUCT_BY_HANDLE = `
           height
         }
       }
-      variants(first: 20) {
+      variants(first: 100) {
         nodes {
           id
           title

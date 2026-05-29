@@ -8,7 +8,7 @@ import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
 import BundleGalleryV2 from './BundleGalleryV2'
 import BundleSelectorsV2 from './BundleSelectorsV2'
-import { getBundleComponentDetailsFromVariant } from '@/lib/shopify/bundle'
+import { getBundleComponentDetailsFromVariant, pickInitialBundleVariant } from '@/lib/shopify/bundle'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
 
 interface BuyBoxV2Props {
@@ -61,7 +61,12 @@ export default function BuyBoxV2({
   isBundle = false,
 }: BuyBoxV2Props) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [selectedVariant, setSelectedVariant] = useState<ShopifyProductVariant>(variants[0])
+  // Pour un bundle, on démarre sur une variante COMPLÈTE (composants tous
+  // présents) : évite d'afficher un prix / une galerie issus d'une
+  // combinaison cassée (ex Sub Zero chocolate-muffin 810g qui n'existe pas).
+  const [selectedVariant, setSelectedVariant] = useState<ShopifyProductVariant>(() =>
+    isBundle ? pickInitialBundleVariant(variants) : variants[0]
+  )
   const [quantity, setQuantity] = useState(1)
   const [adding, setAdding] = useState(false)
   const [added, setAdded] = useState(false)

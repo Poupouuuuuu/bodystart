@@ -2,6 +2,13 @@
 
 import { ChevronDown } from 'lucide-react'
 import { useMemo } from 'react'
+import {
+  getCompleteBundleVariants,
+  buildBundleAxes,
+  variantOptionValue,
+  isBundleOptionAvailable,
+  resolveBundleVariantOnChange,
+} from '@/lib/shopify/bundle'
 import type { ShopifyProductVariant } from '@/lib/shopify/types'
 
 interface BundleSelectorsV2Props {
@@ -10,161 +17,123 @@ interface BundleSelectorsV2Props {
   onVariantChange: (variant: ShopifyProductVariant) => void
 }
 
-interface ComponentAxis {
-  productTitle: string
-  productHandle: string
-  /** Grammage / contenance lu sur le metafield custom.format du produit composant. */
-  format: string | null
-  /**
-   * Valeurs uniques de productVariant.title observees a cet indice de
-   * composant a travers tous les bundle variants. C'est la liste de choix
-   * pour ce composant.
-   */
-  options: string[]
+// Types d'option qui désignent un poids/contenance : on n'ajoute pas le
+// grammage en suffixe pour ces axes (il est déjà choisi explicitement).
+const WEIGHT_RE = /poids|poid|weight|taille|grammage|contenance/i
+const TITLE_OPTION = 'Title'
+
+/** Parse "Sub Zero Whey Isolate (Poids)" → { productTitle, optionType }. */
+function parseOptionName(name: string): { productTitle: string; optionType: string } | null {
+  const m = name.match(/^(.*) \(([^)]+)\)$/)
+  if (!m) return null
+  return { productTitle: m[1].trim(), optionType: m[2].trim() }
 }
 
-const DEFAULT_VARIANT_TITLE = 'Default Title'
-
 /**
- * Selecteurs de variante pour bundle Shopify (Shopify Bundles app).
- *
+ * Sélecteurs de variante pour bundle Shopify (Shopify Bundles app).
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Fiche pack.2
  *
- * Principe : un bundle Shopify Variant agrege les selections de chaque
- * composant. Pour un pack avec 3 composants A/B/C, chaque bundle variant
- * a `components.nodes = [{productVariant: A_choice}, {productVariant:
- * B_choice}, {productVariant: C_choice}]`. Le nombre total de bundle
- * variants = produit cartesien des choix par composant.
+ * Renderer mince : toute la logique (variantes complètes, axes, dépendance
+ * entre options, résolution de variante) vit dans lib/shopify/bundle.ts
+ * et est couverte par bundle.test.ts.
  *
- * On reconstruit donc, pour chaque INDICE de composant (0..N-1) :
- *   - le nom du produit (= label du selecteur)
- *   - le grammage (lu sur metafield custom.format du produit composant)
- *   - la liste des `productVariant.title` uniques observes a cet indice
- *
- * Rendu UI (decision Adam) :
- *   - 1 option seulement → "Nom — inclus" (texte gris, pas de selecteur)
- *   - 2+ options → TOUJOURS dropdown <select> DA V2 (border spruce/15,
- *     focus ring vert frais), meme avec 2-3 options. Coherence visuelle
- *     dans la fiche bundle ou des composants ont 10 saveurs et d'autres 3.
- *
- * Lorsqu'on change une option d'un composant, on cherche le bundle variant
- * qui satisfait la nouvelle combinaison complete et on remonte au parent.
- * Si la combinaison n'est pas disponible (selling availability), on prend
- * le bundle variant le plus proche (premier match partiel + disponible).
+ * Comportement clé :
+ * - Axes = options nommées du bundle ("{Produit} ({Type})"), pas l'ordre
+ *   des composants → robuste aux composants manquants.
+ * - Dépendance : une valeur grisée si aucune variante COMPLÈTE ne l'offre
+ *   avec les autres sélections en cours (ex : Sub Zero 810g ⇒ seules les
+ *   saveurs existant en 810g sont proposées).
+ * - Le changement remonte une variante complète au parent → le prix
+ *   affiché (lié à selectedVariant dans BuyBoxV2) se met à jour.
+ * - Tous les sélecteurs sont des <select> DA V2 (cohérence visuelle).
  */
 export default function BundleSelectorsV2({
   variants,
   selectedVariant,
   onVariantChange,
 }: BundleSelectorsV2Props) {
-  // Construire les axes a partir de variants[0].components.
-  const axes: ComponentAxis[] = useMemo(() => {
-    const v0 = variants[0]
-    const comps0 = v0?.components?.nodes ?? []
-    if (comps0.length === 0) return []
+  const completeVariants = useMemo(() => getCompleteBundleVariants(variants), [variants])
+  const axes = useMemo(() => buildBundleAxes(completeVariants), [completeVariants])
 
-    return comps0.map((c0, k) => {
-      const optionsSet = new Map<string, true>()
-      for (const v of variants) {
-        const compK = v.components?.nodes?.[k]
-        const title = compK?.productVariant?.title
-        if (title) optionsSet.set(title, true)
+  // Map produit → custom.format (grammage) pour suffixer les labels.
+  const formatByProduct = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const v of variants) {
+      for (const c of v.components?.nodes ?? []) {
+        const prod = c.productVariant?.product
+        if (!prod) continue
+        const mf = (prod.metafields ?? []).find((m) => m && m.key === 'format')
+        const val = mf?.value?.trim()
+        if (val && !map.has(prod.title)) map.set(prod.title, val)
       }
-      const format = (() => {
-        const metafields = c0.productVariant.product.metafields ?? []
-        const found = metafields.find((m) => m && m.key === 'format')
-        return found?.value?.trim() || null
-      })()
-      return {
-        productTitle: c0.productVariant.product.title,
-        productHandle: c0.productVariant.product.handle,
-        format,
-        options: Array.from(optionsSet.keys()),
-      }
-    })
+    }
+    return map
   }, [variants])
 
-  // Selection actuelle par axe (lue depuis selectedVariant.components)
-  const currentSelection: string[] = useMemo(() => {
-    const comps = selectedVariant.components?.nodes ?? []
-    return comps.map((c) => c.productVariant?.title ?? '')
+  // Produits ayant un axe de poids dédié → pas de suffixe grammage sur leurs
+  // autres axes (le poids est déjà un sélecteur).
+  const productsWithWeightAxis = useMemo(() => {
+    const s = new Set<string>()
+    for (const a of axes) {
+      const p = parseOptionName(a.name)
+      if (p && WEIGHT_RE.test(p.optionType)) s.add(p.productTitle)
+    }
+    return s
+  }, [axes])
+
+  const currentSelection = useMemo(() => {
+    const m: Record<string, string> = {}
+    for (const o of selectedVariant.selectedOptions ?? []) m[o.name] = o.value
+    return m
   }, [selectedVariant])
 
-  /**
-   * Quand l'utilisateur change un axe : on construit la nouvelle selection,
-   * on cherche le variant qui matche EXACTEMENT, ou un match partiel
-   * disponible si l'exacte n'existe pas / est en rupture.
-   */
-  const handleAxisChange = (axisIndex: number, newValue: string) => {
-    const nextSelection = [...currentSelection]
-    nextSelection[axisIndex] = newValue
-
-    // Match exact d'abord
-    let next = variants.find((v) => {
-      const comps = v.components?.nodes ?? []
-      return comps.every((c, k) => (c.productVariant?.title ?? '') === nextSelection[k])
-    })
-
-    if (!next) {
-      // Match partiel : impose l'axe modifie, accepte n'importe quoi sur les autres,
-      // privilegie disponible
-      const candidates = variants.filter((v) => {
-        const compK = v.components?.nodes?.[axisIndex]
-        return (compK?.productVariant?.title ?? '') === newValue
-      })
-      next = candidates.find((v) => v.availableForSale) ?? candidates[0]
-    }
-
+  const handleChange = (name: string, value: string) => {
+    const next = resolveBundleVariantOnChange(completeVariants, axes, currentSelection, name, value)
     if (next) onVariantChange(next)
   }
 
-  if (axes.length === 0) return null
+  // On masque l'axe "Title/Default Title" (bundle mono-variante) : pas de
+  // sélecteur réel à afficher.
+  const realAxes = axes.filter((a) => !(a.name === TITLE_OPTION && a.values.length === 1))
+  if (realAxes.length === 0) return null
 
   return (
     <div className="space-y-5 mb-2">
-      {axes.map((axis, k) => {
-        const isLocked = axis.options.length === 1
-        const lockedValue = axis.options[0]
-        const isDefaultOnly = isLocked && lockedValue === DEFAULT_VARIANT_TITLE
-
-        // Label : "ISO ZERO 100% WHEY — 1,5 kg" si format renseigne, sinon
-        // juste le nom. Pas de tiret orphelin si format vide.
-        const label = axis.format
-          ? `${axis.productTitle} — ${axis.format}`
-          : axis.productTitle
+      {realAxes.map((axis) => {
+        const parsed = parseOptionName(axis.name)
+        const productTitle = parsed?.productTitle
+        const format = productTitle ? formatByProduct.get(productTitle) : undefined
+        const showFormat = !!format && !!productTitle && !productsWithWeightAxis.has(productTitle)
+        const label = showFormat ? `${axis.name} — ${format}` : axis.name
+        const isLocked = axis.values.length === 1
 
         return (
-          <div key={`axis-${k}`}>
-            {/* Label = nom du produit composant + format eventuel */}
+          <div key={axis.name}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2.5">
               {label}
             </p>
 
             {isLocked ? (
-              // Composant a 1 seule option : ligne discrete "inclus(e)"
-              <p className="text-[13px] text-ink-mute">
-                {isDefaultOnly
-                  ? 'Inclus dans le pack'
-                  : `${lockedValue} · Inclus dans le pack`}
-              </p>
+              <p className="text-[13px] text-ink-mute">{axis.values[0]} · Inclus dans le pack</p>
             ) : (
-              // 2+ options : TOUJOURS dropdown <select> DA V2
               <div className="relative inline-block w-full sm:max-w-[360px]">
                 <select
-                  value={currentSelection[k] ?? ''}
-                  onChange={(e) => handleAxisChange(k, e.target.value)}
+                  value={currentSelection[axis.name] ?? ''}
+                  onChange={(e) => handleChange(axis.name, e.target.value)}
                   className="appearance-none w-full bg-white border border-spruce/15 rounded-full pl-4 pr-11 py-2.5 text-[13px] font-semibold text-spruce hover:border-spruce/30 transition-colors cursor-pointer focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30"
                 >
-                  {axis.options.map((opt) => {
-                    const isAvailable = variants.some(
-                      (v) =>
-                        (v.components?.nodes?.[k]?.productVariant?.title ?? '') === opt &&
-                        v.availableForSale
+                  {axis.values.map((val) => {
+                    const avail = isBundleOptionAvailable(
+                      completeVariants,
+                      axes,
+                      currentSelection,
+                      axis.name,
+                      val
                     )
                     return (
-                      <option key={opt} value={opt} disabled={!isAvailable}>
-                        {opt}
-                        {!isAvailable ? ' (épuisé)' : ''}
+                      <option key={val} value={val} disabled={!avail}>
+                        {val}
+                        {!avail ? ' (indisponible)' : ''}
                       </option>
                     )
                   })}

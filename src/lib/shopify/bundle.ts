@@ -127,3 +127,157 @@ export function getBundleComponentDetailsFromVariant(
     }
   })
 }
+
+// ════════════════════════════════════════════════════════════════════
+// SÉLECTEURS DE VARIANTE DE BUNDLE — logique pure (testable)
+// ════════════════════════════════════════════════════════════════════
+//
+// Modèle : l'app Shopify Bundles crée sur le bundle des OPTIONS NOMMÉES
+// "{Produit} ({Type})" (ex "Sub Zero Whey Isolate (Poids)"). Chaque
+// variante de bundle porte ces options dans selectedOptions. On pilote
+// les sélecteurs là-dessus — robuste, sans dépendre de l'ordre/présence
+// des composants.
+//
+// Piège réel (Pack Sèche) : certaines combinaisons d'options existent
+// comme variante de bundle MAIS avec un composant manquant (ex Sub Zero
+// chocolate-muffin en 810g n'existe pas → la variante de bundle existe,
+// availableForSale=true, mais SANS composant Sub Zero). Ces variantes
+// "incomplètes" ne doivent pas être proposées. On les détecte en
+// comparant l'ensemble des produits composants présents à l'ensemble
+// attendu (union sur toutes les variantes).
+
+export interface BundleAxis {
+  name: string
+  values: string[]
+}
+
+/** Ensemble des product ids composants attendus (union sur toutes variantes). */
+export function getExpectedComponentProductIds(variants: ShopifyProductVariant[]): string[] {
+  const ids = new Set<string>()
+  for (const v of variants) {
+    for (const c of v.components?.nodes ?? []) {
+      const id = c.productVariant?.product?.id
+      if (id) ids.add(id)
+    }
+  }
+  return Array.from(ids)
+}
+
+/** Une variante est "complète" si elle contient TOUS les produits composants attendus. */
+export function isVariantComplete(
+  variant: ShopifyProductVariant,
+  expectedIds: string[]
+): boolean {
+  if (expectedIds.length === 0) return true
+  const present = new Set(
+    (variant.components?.nodes ?? [])
+      .map((c) => c.productVariant?.product?.id)
+      .filter((x): x is string => !!x)
+  )
+  return expectedIds.every((id) => present.has(id))
+}
+
+/**
+ * Variantes de bundle réellement proposables : composants complets.
+ * Si le bundle n'a pas de composants (cas dégénéré), on renvoie tout
+ * pour ne jamais aboutir à un sélecteur vide.
+ */
+export function getCompleteBundleVariants(
+  variants: ShopifyProductVariant[]
+): ShopifyProductVariant[] {
+  const expected = getExpectedComponentProductIds(variants)
+  if (expected.length === 0) return variants
+  const complete = variants.filter((v) => isVariantComplete(v, expected))
+  return complete.length > 0 ? complete : variants
+}
+
+/** Variante initiale à afficher : 1re complète + en vente, sinon 1re complète, sinon variants[0]. */
+export function pickInitialBundleVariant(
+  variants: ShopifyProductVariant[]
+): ShopifyProductVariant {
+  const complete = getCompleteBundleVariants(variants)
+  return complete.find((v) => v.availableForSale) ?? complete[0] ?? variants[0]
+}
+
+/** Valeur d'une option nommée sur une variante. */
+export function variantOptionValue(v: ShopifyProductVariant, name: string): string {
+  return v.selectedOptions?.find((o) => o.name === name)?.value ?? ''
+}
+
+/**
+ * Axes des sélecteurs = options nommées du bundle, dans l'ordre d'apparition,
+ * avec leurs valeurs distinctes. Construit à partir des variantes complètes.
+ */
+export function buildBundleAxes(completeVariants: ShopifyProductVariant[]): BundleAxis[] {
+  const order: string[] = []
+  const valuesByName = new Map<string, string[]>()
+  for (const v of completeVariants) {
+    for (const o of v.selectedOptions ?? []) {
+      if (!valuesByName.has(o.name)) {
+        valuesByName.set(o.name, [])
+        order.push(o.name)
+      }
+      const arr = valuesByName.get(o.name)!
+      if (!arr.includes(o.value)) arr.push(o.value)
+    }
+  }
+  return order.map((name) => ({ name, values: valuesByName.get(name) ?? [] }))
+}
+
+/**
+ * Une valeur d'option est disponible si une variante complète existe avec
+ * cette valeur ET respectant toutes les AUTRES sélections en cours.
+ * → gère la dépendance entre options (810g ⇒ seules saveurs existant en 810g).
+ */
+export function isBundleOptionAvailable(
+  completeVariants: ShopifyProductVariant[],
+  axes: BundleAxis[],
+  currentSelection: Record<string, string>,
+  name: string,
+  value: string
+): boolean {
+  return completeVariants.some(
+    (v) =>
+      variantOptionValue(v, name) === value &&
+      axes.every(
+        (a) => a.name === name || variantOptionValue(v, a.name) === currentSelection[a.name]
+      )
+  )
+}
+
+/**
+ * Résout la variante de bundle à sélectionner après changement d'une option.
+ * Match exact d'abord ; sinon meilleure variante complète qui fixe l'option
+ * modifiée et conserve un max d'autres sélections (en préférant en-vente).
+ */
+export function resolveBundleVariantOnChange(
+  completeVariants: ShopifyProductVariant[],
+  axes: BundleAxis[],
+  currentSelection: Record<string, string>,
+  name: string,
+  value: string
+): ShopifyProductVariant | null {
+  const target = { ...currentSelection, [name]: value }
+  const exact = completeVariants.find((v) =>
+    axes.every((a) => variantOptionValue(v, a.name) === target[a.name])
+  )
+  if (exact) return exact
+
+  const candidates = completeVariants.filter((v) => variantOptionValue(v, name) === value)
+  if (candidates.length === 0) return null
+
+  return (
+    candidates
+      .map((v) => ({
+        v,
+        score: axes.reduce(
+          (s, a) =>
+            s +
+            (a.name !== name && variantOptionValue(v, a.name) === currentSelection[a.name] ? 1 : 0),
+          0
+        ),
+        avail: v.availableForSale ? 1 : 0,
+      }))
+      .sort((a, b) => b.score - a.score || b.avail - a.avail)[0]?.v ?? candidates[0]
+  )
+}
