@@ -1,7 +1,5 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
 import {
   getProductByHandle,
   getProductInventoryByLocation,
@@ -10,6 +8,7 @@ import {
 } from '@/lib/shopify'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { isBundle } from '@/lib/shopify/bundle'
+import BackButton from '@/components/product/v2/BackButton'
 import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
 import LeConseilBodyStartV2 from '@/components/product/v2/LeConseilBodyStartV2'
 import AQuoiCaSertV2 from '@/components/product/v2/AQuoiCaSertV2'
@@ -206,42 +205,12 @@ export default async function ProductPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      {/* ─── Fil d'ariane ─── */}
-      <nav
-        aria-label="Fil d'ariane"
-        className="bg-canvas border-b border-spruce/10"
-      >
+      {/* ─── Retour (remplace le fil d'ariane) ─── */}
+      <div className="bg-canvas border-b border-spruce/10">
         <div className="container py-4">
-          <ol className="flex items-center gap-1.5 text-[12px] text-ink-mute">
-            <li>
-              <Link href="/" className="hover:text-spruce transition-colors">
-                Accueil
-              </Link>
-            </li>
-            <ChevronRight className="w-3 h-3" />
-            <li>
-              <Link href="/products" className="hover:text-spruce transition-colors">
-                Produits
-              </Link>
-            </li>
-            {collectionName && (
-              <>
-                <ChevronRight className="w-3 h-3" />
-                <li>
-                  <Link
-                    href={`/products?cat=${collectionHandle}`}
-                    className="hover:text-spruce transition-colors"
-                  >
-                    {collectionName}
-                  </Link>
-                </li>
-              </>
-            )}
-            <ChevronRight className="w-3 h-3" />
-            <li className="text-spruce font-medium truncate">{product.title}</li>
-          </ol>
+          <BackButton fallbackHref={productIsBundle ? '/packs' : '/products'} />
         </div>
-      </nav>
+      </div>
 
       {/* ─── Buy box : galerie + panneau achat ─── */}
       <section className="bg-canvas">
