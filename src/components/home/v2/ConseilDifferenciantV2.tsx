@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Store, MessageCircle, ArrowRight } from 'lucide-react'
 
 /**
@@ -13,17 +14,16 @@ export default function ConseilDifferenciantV2() {
     <section className="bg-canvas">
       <div className="container py-14 md:py-18">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          {/* Visuel boutique (placeholder en attendant photo Adam) */}
+          {/* Visuel : intérieur de la boutique */}
           <div className="order-2 lg:order-1">
-            <div
-              className="aspect-[5/4] w-full rounded-2xl overflow-hidden border border-spruce/10 bg-white"
-              aria-label="Photo boutique Coignieres a venir"
-            >
-              <div className="w-full h-full bg-gradient-to-br from-sage via-canvas to-sage flex items-end p-8">
-                <div className="text-ink-mute/60 text-[11px] font-medium uppercase tracking-widest">
-                  Photo boutique à venir
-                </div>
-              </div>
+            <div className="relative aspect-[5/4] w-full rounded-2xl overflow-hidden border border-spruce/10 bg-white">
+              <Image
+                src="/assets/interieur.png"
+                alt="Intérieur de la boutique BodyStart Nutrition à Coignières"
+                fill
+                sizes="(max-width: 1024px) 100vw, 600px"
+                className="object-cover"
+              />
             </div>
           </div>
 

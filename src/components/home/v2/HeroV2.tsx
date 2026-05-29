@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 
 /**
@@ -57,19 +58,17 @@ export default function HeroV2() {
             </p>
           </div>
 
-          {/* ─── Colonne visuel (placeholder neutre en attendant photo) ─── */}
+          {/* ─── Colonne visuel : devanture de la boutique ─── */}
           <div className="relative">
-            <div
-              className="aspect-[4/5] w-full max-w-[520px] mx-auto rounded-[20px] overflow-hidden border border-spruce/10 bg-white"
-              aria-label="Photo lifestyle a venir : comptoir bois + produits + shaker"
-            >
-              {/* Placeholder neutre : gradient sage tres subtil + mention discrete. */}
-              {/* A remplacer par une vraie photo lifestyle (Adam) — voir DA §A.Imagerie. */}
-              <div className="w-full h-full bg-gradient-to-br from-sage to-canvas flex items-end justify-start p-8">
-                <div className="text-ink-mute/60 text-[11px] font-medium uppercase tracking-widest">
-                  Photo boutique à venir
-                </div>
-              </div>
+            <div className="relative aspect-[4/5] w-full max-w-[520px] mx-auto rounded-[20px] overflow-hidden border border-spruce/10 bg-white">
+              <Image
+                src="/assets/devanture.png"
+                alt="Devanture de la boutique BodyStart Nutrition à Coignières"
+                fill
+                sizes="(max-width: 1024px) 100vw, 520px"
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
         </div>

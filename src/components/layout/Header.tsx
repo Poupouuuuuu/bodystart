@@ -129,7 +129,7 @@ function HeaderInner(_props: HeaderProps) {
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
               <Image
-                src="/assets/logos/logo-nutrition.png"
+                src="/assets/logos/Logo_texte.png"
                 alt="BodyStart"
                 width={120}
                 height={40}
