@@ -23,6 +23,8 @@ interface BuyBoxV2Props {
   benefits?: string[]
   /** Format / grammage du produit (ex: "1,5 kg"). Source : metafield Shopify. */
   format?: string | null
+  /** Fournisseur Shopify (vendor) du produit, affiche en eyebrow. */
+  vendor?: string | null
   /**
    * Si true, on bascule en mode bundle : galerie gauche = BundleGalleryV2
    * (grille des composants sur fond vegetal, dynamique selon la variante
@@ -52,12 +54,12 @@ export default function BuyBoxV2({
   variants,
   title,
   discountPct,
-  collectionName,
   collectionHandle,
   activeStore,
   storeInventory,
   benefits = [],
   format = null,
+  vendor = null,
   isBundle = false,
 }: BuyBoxV2Props) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
@@ -170,6 +172,18 @@ export default function BuyBoxV2({
   const storeStock = activeStore ? storeInventory[activeStore.id] : undefined
   const showExactStock = storeStock !== undefined && storeStock > 0 && storeStock <= LOW_STOCK_THRESHOLD
 
+  // Eyebrow (sus-titre) : fournisseur du produit. "Packs" pour un bundle.
+  // Fallback "BodyStart Nutrition" si le vendor est vide ou generique.
+  const vendorClean = (vendor ?? '').trim()
+  const isGenericVendor =
+    vendorClean === '' || ['bodystart', 'bodystart nutrition'].includes(vendorClean.toLowerCase())
+  const eyebrowLabel = isBundle ? 'Packs' : isGenericVendor ? 'BodyStart Nutrition' : vendorClean
+  const eyebrowHref = isBundle
+    ? '/packs'
+    : collectionHandle
+      ? `/products?cat=${collectionHandle}`
+      : '/products'
+
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-start">
@@ -194,12 +208,12 @@ export default function BuyBoxV2({
 
         {/* ─── Panneau achat ─── */}
         <div>
-          {/* Categorie / marque */}
+          {/* Fournisseur (vendor) — "Packs" pour un bundle */}
           <Link
-            href={collectionHandle ? `/products?cat=${collectionHandle}` : '/products'}
+            href={eyebrowHref}
             className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3 inline-block hover:text-spruce transition-colors"
           >
-            {collectionName ?? 'BodyStart'}
+            {eyebrowLabel}
           </Link>
 
           {/* Titre */}

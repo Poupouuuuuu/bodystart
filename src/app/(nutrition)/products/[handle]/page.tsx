@@ -226,6 +226,7 @@ export default async function ProductPage({ params }: Props) {
             storeInventory={storeInventory}
             benefits={benefits}
             format={format}
+            vendor={product.vendor}
             isBundle={productIsBundle}
           />
         </div>
