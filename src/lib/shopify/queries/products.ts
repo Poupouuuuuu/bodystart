@@ -194,13 +194,85 @@ export const GET_PRODUCT_BY_HANDLE = `
   }
 `
 
+// Featured = 8 meilleures ventes, AVEC les composants de bundle (pour que
+// les cartes packs affichent les pots empiles sur la home et en cross-sell).
+// Requete dediee (pas le fragment ProductCard partage) : on n'ajoute PAS
+// les composants au fragment global, sinon la requete catalogue (first:250)
+// exploserait le cout Storefront. Ici first:8 → cout maitrise.
 export const GET_FEATURED_PRODUCTS = `
-  ${PRODUCT_CARD_FRAGMENT}
   query GetFeaturedProducts {
-    collection(handle: "selections") {
-      products(first: 8) {
-        nodes {
-          ...ProductCard
+    products(first: 8, sortKey: BEST_SELLING) {
+      nodes {
+        id
+        handle
+        title
+        tags
+        vendor
+        productType
+        featuredImage {
+          url
+          altText
+          width
+          height
+        }
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+          maxVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        collections(first: 5) {
+          nodes {
+            handle
+            title
+          }
+        }
+        variants(first: 1) {
+          nodes {
+            id
+            title
+            availableForSale
+            quantityAvailable
+            price {
+              amount
+              currencyCode
+            }
+            compareAtPrice {
+              amount
+              currencyCode
+            }
+            requiresComponents
+            components(first: 12) {
+              nodes {
+                quantity
+                productVariant {
+                  id
+                  title
+                  image {
+                    url
+                    altText
+                    width
+                    height
+                  }
+                  product {
+                    id
+                    handle
+                    title
+                    featuredImage {
+                      url
+                      altText
+                      width
+                      height
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

@@ -244,7 +244,10 @@ export default async function ProductPage({ params }: Props) {
       <AQuoiCaSertV2 />
 
       {/* ─── Valeurs nutritionnelles (metafield custom.valeurs_nutritionnelles) ─── */}
-      <NutritionTableV2 metafields={product.metafields} />
+      {/* Masquee pour les bundles : un pack n'a pas de valeurs nutritionnelles
+          propres (elles sont sur chaque composant) → la section "seront ajoutees
+          prochainement" n'a pas de sens sur un pack. */}
+      {!productIsBundle && <NutritionTableV2 metafields={product.metafields} />}
 
       {/* ─── Composition + Allergenes (metafields custom.composition + custom.allergenes) ─── */}
       <CompositionV2 metafields={product.metafields} />

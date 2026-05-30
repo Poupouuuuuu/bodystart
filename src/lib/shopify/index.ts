@@ -72,19 +72,16 @@ export async function getProductByHandle(handle: string) {
 }
 
 export async function getFeaturedProducts(): Promise<ShopifyProduct[]> {
+  // 8 meilleures ventes avec composants de bundle (cf. GET_FEATURED_PRODUCTS).
   try {
-    const data = await shopifyFetch<{
-      collection: { products: { nodes: ShopifyProduct[] } } | null
-    }>(GET_FEATURED_PRODUCTS)
-    if (data.collection) {
-      return data.collection.products.nodes
-    }
+    const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>(
+      GET_FEATURED_PRODUCTS
+    )
+    return data.products.nodes
   } catch {
-    // Pas de collection "featured"
+    // Sans cles API : section vide (graceful)
+    return []
   }
-  // Fallback: les 8 meilleurs produits
-  const result = await getProducts({ first: 8 })
-  return result.nodes
 }
 
 // ─── COLLECTIONS ─────────────────────────────────────────────

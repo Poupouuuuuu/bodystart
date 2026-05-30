@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { ArrowRight, Plus } from 'lucide-react'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { formatPrice } from '@/lib/utils'
+import { isBundle, getBundleComponentImages } from '@/lib/shopify/bundle'
+import BundleComposite from '@/components/pack/v2/BundleComposite'
 
 /**
  * "Les plus pris en boutique" — 4 best-sellers.
@@ -55,6 +57,8 @@ export default function BestSellersV2({ products }: BestSellersV2Props) {
             const image = product.featuredImage
             const isFirst = idx === 0
             const isSante = isSanteProduct(product)
+            const productIsBundle = isBundle(product)
+            const bundleImages = productIsBundle ? getBundleComponentImages(product) : []
 
             return (
               <Link
@@ -83,26 +87,39 @@ export default function BestSellersV2({ products }: BestSellersV2Props) {
                     )}
                   </div>
 
-                  {/* Image produit en bas-centre, ombre portee, hover scale */}
-                  <div className="absolute inset-0 flex items-end justify-center pb-4">
-                    {image ? (
-                      <Image
-                        src={image.url}
-                        alt={image.altText ?? product.title}
-                        width={220}
-                        height={220}
-                        sizes="(min-width: 1024px) 280px, 50vw"
-                        className="relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="relative z-10 w-16 h-16 bg-white/30 rounded-full flex items-center justify-center mb-6">
-                        <span className="font-display font-black text-xl text-white/60">BS</span>
+                  {bundleImages.length > 0 ? (
+                    // Pack : meme composite que /packs (pots empiles), au lieu du "BS"
+                    <BundleComposite
+                      images={bundleImages}
+                      alt={product.title}
+                      variant="card"
+                      fallbackImage={product.featuredImage}
+                      sizes="(min-width: 1024px) 280px, 50vw"
+                    />
+                  ) : (
+                    <>
+                      {/* Image produit en bas-centre, ombre portee, hover scale */}
+                      <div className="absolute inset-0 flex items-end justify-center pb-4">
+                        {image ? (
+                          <Image
+                            src={image.url}
+                            alt={image.altText ?? product.title}
+                            width={220}
+                            height={220}
+                            sizes="(min-width: 1024px) 280px, 50vw"
+                            className="relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="relative z-10 w-16 h-16 bg-white/30 rounded-full flex items-center justify-center mb-6">
+                            <span className="font-display font-black text-xl text-white/60">BS</span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Gradient fondu blanc en bas (raccord visuel avec la carte) */}
-                  <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent z-0" />
+                      {/* Gradient fondu blanc en bas (raccord visuel avec la carte) */}
+                      <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent z-0" />
+                    </>
+                  )}
                 </div>
 
                 {/* Infos produit */}
