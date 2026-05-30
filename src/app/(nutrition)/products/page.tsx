@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getProducts, getCollections, getInventoryForVariants } from '@/lib/shopify'
 import { BODY_START_STORES, type ShopifyCollection } from '@/lib/shopify/types'
+import { isPackProduct } from '@/lib/shopify/bundle'
 import ProductsPageClient from '@/components/product/ProductsPageClient'
 import { buildPageMetadata } from '@/lib/seo'
 
@@ -22,8 +23,13 @@ export default async function ProductsPage() {
       getProducts({ first: 250 }),
       getCollections(50),
     ])
-    products = result.nodes
-    collections = cols
+    // Exclut les packs (bundles) de "Tous les produits" : ils ont leur
+    // propre page /packs. Filtre par productType "Pack" OU tag "pack".
+    // (Scope local a cette page : la home et /packs gardent les packs.)
+    products = result.nodes.filter((p) => !isPackProduct(p))
+    // Retire aussi la collection "Packs" de la barre de categories pour ne
+    // pas laisser un filtre qui mene a une grille vide.
+    collections = cols.filter((c) => c.handle !== 'packs')
   } catch {
     // Fallback sans API
   }

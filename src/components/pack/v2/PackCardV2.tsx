@@ -99,7 +99,6 @@ export default function PackCardV2({ product }: PackCardV2Props) {
           alt={product.title}
           variant="card"
           fallbackImage={product.featuredImage}
-          className="absolute inset-0"
           sizes="(max-width: 768px) 50vw, 360px"
         />
       </div>

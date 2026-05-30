@@ -80,12 +80,13 @@ export default function BundleComposite({
 
   return (
     <div
-      className={`relative ${
-        // thumb : remplit explicitement le slot dimensionné du panier
-        // (h-24/w-20) pour ne jamais s'effondrer à 0×0. card : le parent
-        // <div relative aspect-square> + className="absolute inset-0" gère.
-        isThumb ? 'w-full h-full' : ''
-      } bg-cover bg-bottom bg-no-repeat overflow-hidden ${className}`}
+      // `relative` (codé en dur) sert à positionner les pots en absolute à
+      // l'intérieur. On NE met PAS `absolute inset-0` : en CSS Tailwind
+      // `.relative` est défini après `.absolute`, donc `relative` gagne et
+      // `inset-0` est ignoré → la racine s'effondre à height:0 (carte blanche).
+      // On remplit donc le parent dimensionné (aspect-square pour card,
+      // w-20/h-24 pour thumb) via `w-full h-full` dans les DEUX variantes.
+      className={`relative w-full h-full bg-cover bg-bottom bg-no-repeat overflow-hidden ${className}`}
       style={{ backgroundImage: "url('/Background.webp')" }}
     >
       {n > 0 ? (

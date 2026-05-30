@@ -68,6 +68,23 @@ export function isBundle(product: ShopifyProduct): boolean {
 }
 
 /**
+ * Vrai si le produit est un "pack" au sens catalogue : productType "Pack"
+ * (insensible a la casse) OU tag "pack". Utilise pour exclure les packs de
+ * la grille "Tous les produits".
+ *
+ * Plus large et moins couteux qu'isBundle (qui exige les composants) : ici
+ * on n'a souvent qu'un ProductCard fragment (productType + tags), pas les
+ * composants. Couvre donc les deux criteres de tag Adam.
+ */
+export function isPackProduct(product: {
+  productType?: string
+  tags?: string[]
+}): boolean {
+  if ((product.productType ?? '').trim().toLowerCase() === 'pack') return true
+  return (product.tags ?? []).some((t) => t.trim().toLowerCase() === 'pack')
+}
+
+/**
  * Liste des images des composants pour un bundle, ordre Shopify (= ordre
  * d'ajout dans l'app Bundles). On filtre les composants sans featuredImage
  * pour ne pas casser la grille avec des trous.
