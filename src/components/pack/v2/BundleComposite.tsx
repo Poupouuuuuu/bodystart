@@ -132,8 +132,12 @@ export default function BundleComposite({
         </div>
       )}
 
-      {/* Fondu blanc en bas (cohérent dans les deux contextes). */}
-      <div className="absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-white to-transparent z-0" />
+      {/* Fondu blanc en bas — variant card uniquement. En thumb (vignette
+          panier), à cette petite taille le dégradé lavait les pots ; on le
+          retire pour qu'ils ressortent nettement sur le fond végétal. */}
+      {!isThumb && (
+        <div className="absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-white to-transparent z-0" />
+      )}
     </div>
   )
 }
