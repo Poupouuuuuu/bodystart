@@ -18,6 +18,17 @@ import toast from 'react-hot-toast'
 
 type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte'
 
+// Styles de statut (sémantiques, conservés) — sentence case géré côté rendu.
+const STATUS_MAP: Record<string, { label: string; style: string }> = {
+  PAID: { label: 'Payé', style: 'bg-green-50 text-green-700 border-green-200' },
+  PENDING: { label: 'En attente', style: 'bg-amber-50 text-amber-700 border-amber-200' },
+  REFUNDED: { label: 'Remboursé', style: 'bg-gray-50 text-gray-600 border-gray-200' },
+  FULFILLED: { label: 'Expédié', style: 'bg-blue-50 text-blue-700 border-blue-200' },
+  UNFULFILLED: { label: 'Préparation', style: 'bg-amber-50 text-amber-700 border-amber-200' },
+}
+const getStatus = (s: string) => STATUS_MAP[s] ?? { label: s, style: 'bg-gray-50 text-gray-600 border-gray-200' }
+const STATUS_BADGE = 'text-[10px] font-semibold border px-2.5 py-1 rounded-full'
+
 // ═══════════════════════════════════════════════════════════
 // PANNEAU : Aperçu (dernières commandes)
 // ═══════════════════════════════════════════════════════════
@@ -27,26 +38,16 @@ function OverviewPanel({ customer, onViewOrders, onViewOrderDetail }: {
   onViewOrderDetail: (id: string) => void
 }) {
   const recentOrders = customer.orders?.nodes?.slice(0, 3) ?? []
-  const getStatus = (s: string) => {
-    const map: Record<string, { label: string; style: string }> = {
-      PAID: { label: 'Payé', style: 'bg-green-50 text-green-700 border-green-200' },
-      PENDING: { label: 'En attente', style: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-      REFUNDED: { label: 'Remboursé', style: 'bg-gray-50 text-gray-600 border-gray-200' },
-      FULFILLED: { label: 'Expédié', style: 'bg-blue-50 text-blue-700 border-blue-200' },
-      UNFULFILLED: { label: 'Préparation', style: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-    }
-    return map[s] ?? { label: s, style: 'bg-gray-50 text-gray-600 border-gray-200' }
-  }
 
   return (
-    <div className="rounded-[24px] overflow-hidden border bg-white border-[#1a2e23]/5 shadow-sm">
-      <div className="flex items-center justify-between px-8 py-6 border-b border-[#1a2e23]/5">
-        <h2 className="font-display font-black uppercase tracking-tighter text-xl flex items-center gap-2 leading-none text-[#1a2e23]">
-          <ShoppingBag className="w-5 h-5 text-[#89a890]" />
+    <div className="rounded-2xl overflow-hidden border bg-white border-spruce/10">
+      <div className="flex items-center justify-between px-8 py-6 border-b border-spruce/10">
+        <h2 className="font-display font-extrabold tracking-tight text-xl flex items-center gap-2 text-spruce">
+          <ShoppingBag className="w-5 h-5 text-spruce" />
           Dernières commandes
         </h2>
         {recentOrders.length > 0 && (
-          <button onClick={onViewOrders} className="text-[11px] font-bold uppercase tracking-widest text-[#89a890] hover:text-[#1a2e23] transition-colors">
+          <button onClick={onViewOrders} className="text-[12px] font-semibold text-ink-mute hover:text-spruce transition-colors">
             Voir tout →
           </button>
         )}
@@ -54,50 +55,50 @@ function OverviewPanel({ customer, onViewOrders, onViewOrderDetail }: {
 
       {recentOrders.length === 0 ? (
         <div className="py-20 text-center px-6">
-          <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6">
-            <ShoppingBag className="w-8 h-8 text-[#89a890]" />
+          <div className="w-20 h-20 rounded-full bg-sage flex items-center justify-center mx-auto mb-6">
+            <ShoppingBag className="w-8 h-8 text-spruce" />
           </div>
-          <p className="font-display font-black uppercase tracking-tight text-lg mb-2 text-[#1a2e23]">Aucune commande</p>
-          <p className="text-sm font-medium mb-8 text-[#4a5f4c]">Vous n'avez pas encore passé de commande.</p>
-          <Link href="/products" className="inline-flex text-[11px] font-bold uppercase tracking-widest px-8 py-4 rounded-full bg-[#1a2e23] text-white shadow-lg hover:bg-[#2e4f3c] transition-all hover:-translate-y-0.5">
-            DÉCOUVRIR NOS PRODUITS
+          <p className="font-display font-bold text-lg mb-2 text-spruce">Aucune commande</p>
+          <p className="text-sm font-medium mb-8 text-ink-mute">Tu n&apos;as pas encore passé de commande.</p>
+          <Link href="/products" className="inline-flex items-center gap-2 text-[14px] font-semibold px-7 py-3.5 rounded-full bg-fresh text-white hover:bg-fresh-deep transition-colors">
+            Découvrir nos produits
           </Link>
         </div>
       ) : (
-        <div className="divide-y divide-[#1a2e23]/5">
+        <div className="divide-y divide-spruce/10">
           {recentOrders.map((order) => {
             const financial = getStatus(order.financialStatus)
             const fulfillment = getStatus(order.fulfillmentStatus)
             return (
-              <div key={order.id} className="p-6 md:p-8 hover:bg-[#f4f6f1]/50 transition-colors">
+              <div key={order.id} className="p-6 md:p-8 hover:bg-canvas/60 transition-colors">
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
-                    <p className="font-display font-bold uppercase tracking-tight text-sm text-[#1a2e23]">
+                    <p className="font-display font-bold text-sm text-ink">
                       Commande #{order.orderNumber}
                     </p>
-                    <p className="text-[11px] font-medium text-[#89a890] mt-1">
+                    <p className="text-[12px] font-medium text-ink-mute mt-1">
                       {new Date(order.processedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
                   </div>
                   <div className="flex gap-2 flex-wrap justify-end">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider border px-2.5 py-1 rounded-full ${financial.style}`}>{financial.label}</span>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider border px-2.5 py-1 rounded-full ${fulfillment.style}`}>{fulfillment.label}</span>
+                    <span className={`${STATUS_BADGE} ${financial.style}`}>{financial.label}</span>
+                    <span className={`${STATUS_BADGE} ${fulfillment.style}`}>{fulfillment.label}</span>
                   </div>
                 </div>
                 <div className="flex gap-3 mb-6">
                   {order.lineItems.nodes.slice(0, 4).map((item, i) => (
-                    <div key={i} className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 border bg-[#f4f6f1] border-[#1a2e23]/5">
+                    <div key={i} className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border bg-canvas border-spruce/10">
                       {item.variant?.image ? (
                         <Image src={item.variant.image.url} alt={item.title} width={56} height={56} className="object-cover w-full h-full" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[#89a890] text-xs font-bold">BS</div>
+                        <div className="w-full h-full flex items-center justify-center text-ink-mute text-xs font-bold">BS</div>
                       )}
                     </div>
                   ))}
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="font-black text-xl text-[#1a2e23]">{formatPrice(order.currentTotalPrice)}</p>
-                  <button onClick={() => onViewOrderDetail(order.id)} className="text-[11px] font-bold uppercase tracking-widest px-5 py-2.5 rounded-full border border-[#1a2e23]/10 text-[#1a2e23] hover:bg-[#1a2e23]/5 transition-all">
+                  <p className="font-display font-extrabold text-xl text-spruce">{formatPrice(order.currentTotalPrice)}</p>
+                  <button onClick={() => onViewOrderDetail(order.id)} className="text-[13px] font-semibold px-5 py-2.5 rounded-full border border-spruce/20 text-spruce hover:bg-spruce/5 transition-all">
                     Détails →
                   </button>
                 </div>
@@ -118,26 +119,16 @@ function OrdersPanel({ customer, onViewOrderDetail }: {
   onViewOrderDetail: (id: string) => void
 }) {
   const orders = customer.orders?.nodes ?? []
-  const getStatus = (s: string) => {
-    const map: Record<string, { label: string; style: string }> = {
-      PAID: { label: 'Payé', style: 'bg-green-50 text-green-700 border-green-200' },
-      PENDING: { label: 'En attente', style: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-      REFUNDED: { label: 'Remboursé', style: 'bg-gray-50 text-gray-600 border-gray-200' },
-      FULFILLED: { label: 'Expédié', style: 'bg-blue-50 text-blue-700 border-blue-200' },
-      UNFULFILLED: { label: 'Préparation', style: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-    }
-    return map[s] ?? { label: s, style: 'bg-gray-50 text-gray-600 border-gray-200' }
-  }
 
   if (orders.length === 0) {
     return (
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 py-20 text-center shadow-sm">
-        <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6">
-          <ShoppingBag className="w-8 h-8 text-[#89a890]" />
+      <div className="bg-white rounded-2xl border border-spruce/10 py-20 text-center">
+        <div className="w-20 h-20 rounded-full bg-sage flex items-center justify-center mx-auto mb-6">
+          <ShoppingBag className="w-8 h-8 text-spruce" />
         </div>
-        <p className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-lg mb-2">Aucune commande</p>
-        <p className="text-[#4a5f4c] text-sm mb-8 font-medium">Vos commandes apparaîtront ici.</p>
-        <Link href="/products" className="inline-flex items-center gap-2 px-8 py-4 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg">
+        <p className="font-display font-bold text-spruce text-lg mb-2">Aucune commande</p>
+        <p className="text-ink-mute text-sm mb-8 font-medium">Tes commandes apparaîtront ici.</p>
+        <Link href="/products" className="inline-flex items-center gap-2 px-7 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors">
           Découvrir nos produits
         </Link>
       </div>
@@ -150,33 +141,33 @@ function OrdersPanel({ customer, onViewOrderDetail }: {
         const financial = getStatus(order.financialStatus)
         const fulfillment = getStatus(order.fulfillmentStatus)
         return (
-          <div key={order.id} className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-6 md:p-8 hover:shadow-md transition-all shadow-sm">
+          <div key={order.id} className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-8 transition-all">
             <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
               <div>
-                <p className="font-display font-bold uppercase tracking-tight text-[#1a2e23]">Commande #{order.orderNumber}</p>
-                <p className="text-[11px] font-medium text-[#89a890] mt-1">
+                <p className="font-display font-bold text-ink">Commande #{order.orderNumber}</p>
+                <p className="text-[12px] font-medium text-ink-mute mt-1">
                   {new Date(order.processedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
               <div className="flex gap-2 flex-wrap">
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${financial.style}`}>{financial.label}</span>
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${fulfillment.style}`}>{fulfillment.label}</span>
+                <span className={`${STATUS_BADGE} ${financial.style}`}>{financial.label}</span>
+                <span className={`${STATUS_BADGE} ${fulfillment.style}`}>{fulfillment.label}</span>
               </div>
             </div>
             <div className="flex items-center gap-2 mb-5">
               {order.lineItems.nodes.slice(0, 5).map((item, i) => (
-                <div key={i} className="w-14 h-14 rounded-2xl overflow-hidden bg-[#f4f6f1] border border-[#1a2e23]/5 flex-shrink-0">
+                <div key={i} className="w-14 h-14 rounded-xl overflow-hidden bg-canvas border border-spruce/10 flex-shrink-0">
                   {item.variant?.image ? (
                     <Image src={item.variant.image.url} alt={item.title} width={56} height={56} className="object-cover w-full h-full" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xs font-bold text-[#89a890]">BS</div>
+                    <div className="w-full h-full flex items-center justify-center text-xs font-bold text-ink-mute">BS</div>
                   )}
                 </div>
               ))}
             </div>
             <div className="flex items-center justify-between">
-              <p className="font-black text-xl text-[#1a2e23]">{formatPrice(order.currentTotalPrice)}</p>
-              <button onClick={() => onViewOrderDetail(order.id)} className="text-[11px] font-bold uppercase tracking-widest px-5 py-2.5 rounded-full border border-[#1a2e23]/10 text-[#1a2e23] hover:bg-[#1a2e23]/5 transition-all">
+              <p className="font-display font-extrabold text-xl text-spruce">{formatPrice(order.currentTotalPrice)}</p>
+              <button onClick={() => onViewOrderDetail(order.id)} className="text-[13px] font-semibold px-5 py-2.5 rounded-full border border-spruce/20 text-spruce hover:bg-spruce/5 transition-all">
                 Détails →
               </button>
             </div>
@@ -196,25 +187,15 @@ function OrderDetailPanel({ customer, orderId, onBack }: {
   onBack: () => void
 }) {
   const order = customer.orders?.nodes.find((o) => o.id === orderId)
-  const getStatus = (s: string) => {
-    const map: Record<string, { label: string; style: string }> = {
-      PAID: { label: 'Payé', style: 'bg-green-50 text-green-700 border-green-200' },
-      PENDING: { label: 'En attente', style: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-      REFUNDED: { label: 'Remboursé', style: 'bg-gray-50 text-gray-600 border-gray-200' },
-      FULFILLED: { label: 'Expédié', style: 'bg-blue-50 text-blue-700 border-blue-200' },
-      UNFULFILLED: { label: 'Préparation', style: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-    }
-    return map[s] ?? { label: s, style: 'bg-gray-50 text-gray-600 border-gray-200' }
-  }
 
   if (!order) {
     return (
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 py-20 text-center shadow-sm">
-        <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6">
-          <Package className="w-8 h-8 text-[#89a890]" />
+      <div className="bg-white rounded-2xl border border-spruce/10 py-20 text-center">
+        <div className="w-20 h-20 rounded-full bg-sage flex items-center justify-center mx-auto mb-6">
+          <Package className="w-8 h-8 text-spruce" />
         </div>
-        <p className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-lg mb-2">Commande introuvable</p>
-        <button onClick={onBack} className="mt-4 text-[11px] font-bold uppercase tracking-widest text-[#89a890] hover:text-[#1a2e23] transition-colors">
+        <p className="font-display font-bold text-spruce text-lg mb-2">Commande introuvable</p>
+        <button onClick={onBack} className="mt-4 text-[13px] font-semibold text-ink-mute hover:text-spruce transition-colors">
           ← Retour aux commandes
         </button>
       </div>
@@ -226,43 +207,43 @@ function OrderDetailPanel({ customer, orderId, onBack }: {
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="text-[11px] font-bold uppercase tracking-widest text-[#89a890] hover:text-[#1a2e23] transition-colors">
+      <button onClick={onBack} className="text-[13px] font-semibold text-ink-mute hover:text-spruce transition-colors">
         ← Retour aux commandes
       </button>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="font-display text-[28px] md:text-[35px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none">
+          <h2 className="font-display text-[28px] md:text-[34px] font-extrabold tracking-tight text-spruce leading-[1.1]">
             Commande #{order.orderNumber}
           </h2>
-          <p className="text-sm font-medium text-[#89a890] mt-2">
+          <p className="text-sm font-medium text-ink-mute mt-2">
             {new Date(order.processedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
         <div className="flex gap-2">
-          <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border ${financial.style}`}>{financial.label}</span>
-          <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border ${fulfillment.style}`}>{fulfillment.label}</span>
+          <span className={`${STATUS_BADGE} ${financial.style}`}>{financial.label}</span>
+          <span className={`${STATUS_BADGE} ${fulfillment.style}`}>{fulfillment.label}</span>
         </div>
       </div>
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 overflow-hidden shadow-sm">
-        <div className="px-6 md:px-8 py-5 border-b border-[#1a2e23]/5">
-          <h3 className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-sm">Articles ({order.lineItems.nodes.length})</h3>
+      <div className="bg-white rounded-2xl border border-spruce/10 overflow-hidden">
+        <div className="px-6 md:px-8 py-5 border-b border-spruce/10">
+          <h3 className="font-display font-bold text-spruce text-sm">Articles ({order.lineItems.nodes.length})</h3>
         </div>
-        <div className="divide-y divide-[#1a2e23]/5">
+        <div className="divide-y divide-spruce/10">
           {order.lineItems.nodes.map((item, i) => (
             <div key={i} className="px-6 md:px-8 py-5 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl overflow-hidden bg-[#f4f6f1] border border-[#1a2e23]/5 flex-shrink-0">
+              <div className="w-16 h-16 rounded-xl overflow-hidden bg-canvas border border-spruce/10 flex-shrink-0">
                 {item.variant?.image ? (
                   <Image src={item.variant.image.url} alt={item.title} width={64} height={64} className="object-cover w-full h-full" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center"><Package className="w-6 h-6 text-[#89a890]" /></div>
+                  <div className="w-full h-full flex items-center justify-center"><Package className="w-6 h-6 text-ink-mute" /></div>
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-display font-bold text-[#1a2e23] text-sm truncate">{item.title}</p>
-                <p className="text-[12px] text-[#89a890] font-medium mt-0.5">Quantité : {item.quantity}</p>
+                <p className="font-display font-bold text-ink text-sm truncate">{item.title}</p>
+                <p className="text-[12px] text-ink-mute font-medium mt-0.5">Quantité : {item.quantity}</p>
               </div>
               {item.variant?.price && (
-                <p className="font-black text-[#1a2e23] text-sm flex-shrink-0">
+                <p className="font-semibold text-spruce text-sm flex-shrink-0">
                   {formatPrice({ amount: (parseFloat(item.variant.price.amount) * item.quantity).toFixed(2), currencyCode: item.variant.price.currencyCode })}
                 </p>
               )}
@@ -270,10 +251,10 @@ function OrderDetailPanel({ customer, orderId, onBack }: {
           ))}
         </div>
       </div>
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-6 md:p-8 shadow-sm">
+      <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-8">
         <div className="flex items-center justify-between">
-          <span className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-sm">Total</span>
-          <span className="font-black text-2xl text-[#1a2e23]">{formatPrice(order.currentTotalPrice)}</span>
+          <span className="font-display font-bold text-ink text-sm">Total</span>
+          <span className="font-display font-extrabold text-2xl text-spruce">{formatPrice(order.currentTotalPrice)}</span>
         </div>
       </div>
     </div>
@@ -295,7 +276,8 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
   const [error, setError] = useState<string | null>(null)
 
   const addresses = customer.addresses?.nodes ?? []
-  const inputClass = "w-full px-4 py-3 rounded-2xl border border-[#1a2e23]/10 text-sm font-medium text-[#1a2e23] bg-[#f4f6f1] focus:outline-none focus:ring-2 focus:ring-[#1a2e23]/20"
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-spruce/20 text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
+  const labelClass = "block text-[12px] font-semibold text-ink mb-2"
 
   const openAdd = () => { setEditingId(null); setForm(EMPTY); setError(null); setShowForm(true) }
   const openEdit = (addr: typeof addresses[0]) => {
@@ -307,7 +289,7 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.address1 || !form.city || !form.zip) { setError('Veuillez remplir les champs obligatoires.'); return }
+    if (!form.address1 || !form.city || !form.zip) { setError('Remplis les champs obligatoires.'); return }
     setSubmitting(true); setError(null)
     const { errors } = editingId ? await editAddress(editingId, form) : await addAddress(form)
     setSubmitting(false)
@@ -317,53 +299,53 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-[28px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none">Mes adresses</h2>
+        <h2 className="font-display text-[28px] font-extrabold tracking-tight text-spruce leading-[1.1]">Mes adresses</h2>
         {!showForm && (
-          <button onClick={openAdd} className="inline-flex items-center gap-2 px-5 py-3 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg">
+          <button onClick={openAdd} className="inline-flex items-center gap-2 px-5 py-3 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors">
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         )}
       </div>
-      {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-2xl px-5 py-3">{error}</div>}
+      {error && <div className="bg-terracotta/10 border border-terracotta/20 text-terracotta text-sm font-medium rounded-xl px-5 py-3">{error}</div>}
 
       {showForm && (
-        <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-6 md:p-8 shadow-sm">
+        <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-8">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-lg">{editingId ? "Modifier l'adresse" : 'Nouvelle adresse'}</h3>
-            <button onClick={closeForm} className="w-8 h-8 rounded-full bg-[#1a2e23]/5 flex items-center justify-center hover:bg-[#1a2e23]/10 transition-colors"><X className="w-4 h-4 text-[#1a2e23]" /></button>
+            <h3 className="font-display font-bold text-spruce text-lg">{editingId ? "Modifier l'adresse" : 'Nouvelle adresse'}</h3>
+            <button onClick={closeForm} className="w-8 h-8 rounded-full bg-sage flex items-center justify-center hover:bg-spruce/10 transition-colors"><X className="w-4 h-4 text-spruce" /></button>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] mb-2">Prénom</label><input type="text" value={form.firstName ?? ''} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className={inputClass} /></div>
-              <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] mb-2">Nom</label><input type="text" value={form.lastName ?? ''} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className={inputClass} /></div>
+              <div><label className={labelClass}>Prénom</label><input type="text" value={form.firstName ?? ''} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className={inputClass} /></div>
+              <div><label className={labelClass}>Nom</label><input type="text" value={form.lastName ?? ''} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className={inputClass} /></div>
             </div>
-            <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] mb-2">Adresse *</label><input type="text" value={form.address1} onChange={(e) => setForm({ ...form, address1: e.target.value })} required className={inputClass} /></div>
-            <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] mb-2">Complément <span className="text-[#89a890] normal-case">(optionnel)</span></label><input type="text" value={form.address2 ?? ''} onChange={(e) => setForm({ ...form, address2: e.target.value })} className={inputClass} /></div>
+            <div><label className={labelClass}>Adresse *</label><input type="text" value={form.address1} onChange={(e) => setForm({ ...form, address1: e.target.value })} required className={inputClass} /></div>
+            <div><label className={labelClass}>Complément <span className="text-ink-mute font-medium">(optionnel)</span></label><input type="text" value={form.address2 ?? ''} onChange={(e) => setForm({ ...form, address2: e.target.value })} className={inputClass} /></div>
             <div className="grid grid-cols-3 gap-4">
-              <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] mb-2">CP *</label><input type="text" value={form.zip} onChange={(e) => setForm({ ...form, zip: e.target.value })} required className={inputClass} /></div>
-              <div className="col-span-2"><label className="block text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] mb-2">Ville *</label><input type="text" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} required className={inputClass} /></div>
+              <div><label className={labelClass}>CP *</label><input type="text" value={form.zip} onChange={(e) => setForm({ ...form, zip: e.target.value })} required className={inputClass} /></div>
+              <div className="col-span-2"><label className={labelClass}>Ville *</label><input type="text" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} required className={inputClass} /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] mb-2">Pays</label><input type="text" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} className={inputClass} /></div>
-              <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] mb-2">Téléphone</label><input type="tel" value={form.phone ?? ''} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} /></div>
+              <div><label className={labelClass}>Pays</label><input type="text" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} className={inputClass} /></div>
+              <div><label className={labelClass}>Téléphone</label><input type="tel" value={form.phone ?? ''} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} /></div>
             </div>
             <div className="flex gap-3 pt-2">
-              <button type="submit" disabled={submitting} className="flex-1 inline-flex items-center justify-center gap-2 py-4 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg disabled:opacity-50">
+              <button type="submit" disabled={submitting} className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors disabled:opacity-50">
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editingId ? 'Enregistrer' : "Ajouter l'adresse"}
               </button>
-              <button type="button" onClick={closeForm} className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c] rounded-full hover:bg-[#1a2e23]/5 transition-colors">Annuler</button>
+              <button type="button" onClick={closeForm} className="px-6 py-3.5 text-[14px] font-semibold text-ink-mute rounded-full hover:bg-spruce/5 transition-colors">Annuler</button>
             </div>
           </form>
         </div>
       )}
 
       {addresses.length === 0 && !showForm ? (
-        <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 py-16 text-center shadow-sm">
-          <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6"><MapPin className="w-8 h-8 text-[#89a890]" /></div>
-          <p className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-lg mb-2">Aucune adresse</p>
-          <p className="text-sm text-[#4a5f4c] mb-8 font-medium max-w-sm mx-auto">Ajoutez une adresse de livraison pour faciliter vos prochaines commandes.</p>
-          <button onClick={openAdd} className="inline-flex items-center gap-2 px-8 py-4 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg">
+        <div className="bg-white rounded-2xl border border-spruce/10 py-16 text-center">
+          <div className="w-20 h-20 rounded-full bg-sage flex items-center justify-center mx-auto mb-6"><MapPin className="w-8 h-8 text-spruce" /></div>
+          <p className="font-display font-bold text-spruce text-lg mb-2">Aucune adresse</p>
+          <p className="text-sm text-ink-mute mb-8 font-medium max-w-sm mx-auto">Ajoute une adresse de livraison pour faciliter tes prochaines commandes.</p>
+          <button onClick={openAdd} className="inline-flex items-center gap-2 px-7 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors">
             <Plus className="w-4 h-4" /> Ajouter une adresse
           </button>
         </div>
@@ -372,29 +354,29 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
           {addresses.map((addr) => {
             const isDefault = customer.defaultAddress?.id === addr.id
             return (
-              <div key={addr.id} className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-6 shadow-sm">
+              <div key={addr.id} className="bg-white rounded-2xl border border-spruce/10 p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 flex-1">
-                    <div className="w-10 h-10 rounded-2xl bg-[#1a2e23]/5 flex items-center justify-center flex-shrink-0"><MapPin className="w-5 h-5 text-[#1a2e23]" /></div>
+                    <div className="w-10 h-10 rounded-full bg-sage flex items-center justify-center flex-shrink-0"><MapPin className="w-5 h-5 text-spruce" /></div>
                     <div>
-                      {addr.name && <p className="font-display font-bold text-[#1a2e23] mb-1">{addr.name}</p>}
-                      <p className="text-[13px] text-[#4a5f4c] font-medium">{addr.address1}</p>
-                      {addr.address2 && <p className="text-[13px] text-[#4a5f4c] font-medium">{addr.address2}</p>}
-                      <p className="text-[13px] text-[#4a5f4c] font-medium">{addr.zip} {addr.city}</p>
-                      <p className="text-[13px] text-[#4a5f4c] font-medium">{addr.country}</p>
-                      {addr.phone && <p className="text-[13px] text-[#89a890] font-medium mt-1">{addr.phone}</p>}
-                      {isDefault && <span className="inline-flex items-center gap-1 mt-3 text-[10px] font-bold uppercase tracking-widest text-[#1a2e23] bg-[#1a2e23]/5 px-3 py-1 rounded-full"><Star className="w-3 h-3" /> Adresse par défaut</span>}
+                      {addr.name && <p className="font-display font-bold text-ink mb-1">{addr.name}</p>}
+                      <p className="text-[13px] text-ink-mute font-medium">{addr.address1}</p>
+                      {addr.address2 && <p className="text-[13px] text-ink-mute font-medium">{addr.address2}</p>}
+                      <p className="text-[13px] text-ink-mute font-medium">{addr.zip} {addr.city}</p>
+                      <p className="text-[13px] text-ink-mute font-medium">{addr.country}</p>
+                      {addr.phone && <p className="text-[13px] text-ink-mute font-medium mt-1">{addr.phone}</p>}
+                      {isDefault && <span className="inline-flex items-center gap-1 mt-3 text-[11px] font-semibold text-spruce bg-sage px-3 py-1 rounded-full"><Star className="w-3 h-3" /> Adresse par défaut</span>}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {!isDefault && (
-                      <button onClick={async () => { setSettingDefaultId(addr.id); await makeDefaultAddress(addr.id); setSettingDefaultId(null) }} disabled={settingDefaultId === addr.id} title="Définir par défaut" className="w-9 h-9 rounded-full bg-[#1a2e23]/5 flex items-center justify-center hover:bg-[#1a2e23]/10 transition-colors disabled:opacity-50">
-                        {settingDefaultId === addr.id ? <Loader2 className="w-4 h-4 text-[#1a2e23] animate-spin" /> : <Star className="w-4 h-4 text-[#89a890]" />}
+                      <button onClick={async () => { setSettingDefaultId(addr.id); await makeDefaultAddress(addr.id); setSettingDefaultId(null) }} disabled={settingDefaultId === addr.id} title="Définir par défaut" className="w-9 h-9 rounded-full bg-sage flex items-center justify-center hover:bg-spruce/10 transition-colors disabled:opacity-50">
+                        {settingDefaultId === addr.id ? <Loader2 className="w-4 h-4 text-spruce animate-spin" /> : <Star className="w-4 h-4 text-ink-mute" />}
                       </button>
                     )}
-                    <button onClick={() => openEdit(addr)} title="Modifier" className="w-9 h-9 rounded-full bg-[#1a2e23]/5 flex items-center justify-center hover:bg-[#1a2e23]/10 transition-colors"><Pencil className="w-4 h-4 text-[#1a2e23]" /></button>
-                    <button onClick={async () => { setDeletingId(addr.id); const { errors } = await removeAddress(addr.id); setDeletingId(null); if (errors.length > 0) setError(errors[0].message) }} disabled={deletingId === addr.id} title="Supprimer" className="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors disabled:opacity-50">
-                      {deletingId === addr.id ? <Loader2 className="w-4 h-4 text-red-500 animate-spin" /> : <Trash2 className="w-4 h-4 text-red-500" />}
+                    <button onClick={() => openEdit(addr)} title="Modifier" className="w-9 h-9 rounded-full bg-sage flex items-center justify-center hover:bg-spruce/10 transition-colors"><Pencil className="w-4 h-4 text-spruce" /></button>
+                    <button onClick={async () => { setDeletingId(addr.id); const { errors } = await removeAddress(addr.id); setDeletingId(null); if (errors.length > 0) setError(errors[0].message) }} disabled={deletingId === addr.id} title="Supprimer" className="w-9 h-9 rounded-full bg-terracotta/10 flex items-center justify-center hover:bg-terracotta/20 transition-colors disabled:opacity-50">
+                      {deletingId === addr.id ? <Loader2 className="w-4 h-4 text-terracotta animate-spin" /> : <Trash2 className="w-4 h-4 text-terracotta" />}
                     </button>
                   </div>
                 </div>
@@ -414,7 +396,8 @@ function ProfilePanel({ customer }: { customer: NonNullable<ReturnType<typeof us
   const { refreshCustomer } = useCustomer()
   const [form, setForm] = useState({ firstName: customer.firstName ?? '', lastName: customer.lastName ?? '', email: customer.email ?? '', phone: customer.phone ?? '' })
   const [saving, setSaving] = useState(false)
-  const inputClass = "w-full px-5 py-3.5 rounded-2xl border border-[#1a2e23]/10 text-sm font-medium text-[#1a2e23] bg-[#f4f6f1] focus:outline-none focus:ring-2 focus:ring-[#1a2e23]/10 focus:border-[#1a2e23]/30 placeholder:text-[#89a890] transition-all"
+  const inputClass = "w-full px-5 py-3.5 rounded-xl border border-spruce/20 text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
+  const labelClass = "block text-[12px] font-semibold text-ink mb-2"
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -429,26 +412,26 @@ function ProfilePanel({ customer }: { customer: NonNullable<ReturnType<typeof us
 
   return (
     <div className="space-y-5">
-      <h2 className="font-display text-[28px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none">Mon profil</h2>
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-8 md:p-10 shadow-sm">
+      <h2 className="font-display text-[28px] font-extrabold tracking-tight text-spruce leading-[1.1]">Mon profil</h2>
+      <div className="bg-white rounded-2xl border border-spruce/10 p-8 md:p-10">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#1a2e23] mb-2">Prénom</label><input type="text" className={inputClass} value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} /></div>
-            <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#1a2e23] mb-2">Nom</label><input type="text" className={inputClass} value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} /></div>
+            <div><label className={labelClass}>Prénom</label><input type="text" className={inputClass} value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} /></div>
+            <div><label className={labelClass}>Nom</label><input type="text" className={inputClass} value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} /></div>
           </div>
-          <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#1a2e23] mb-2">Email</label><input type="email" className={inputClass} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
-          <div><label className="block text-[11px] font-bold uppercase tracking-widest text-[#1a2e23] mb-2">Téléphone <span className="font-medium text-[#89a890]">(optionnel)</span></label><input type="tel" className={inputClass} placeholder="+33 6 00 00 00 00" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+          <div><label className={labelClass}>Email</label><input type="email" className={inputClass} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+          <div><label className={labelClass}>Téléphone <span className="font-medium text-ink-mute">(optionnel)</span></label><input type="tel" className={inputClass} placeholder="+33 6 00 00 00 00" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
           <div className="pt-2">
-            <button type="submit" disabled={saving} className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+            <button type="submit" disabled={saving} className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors disabled:opacity-60">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+              {saving ? 'Sauvegarde…' : 'Sauvegarder'}
             </button>
           </div>
         </form>
       </div>
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-8 md:p-10 shadow-sm">
-        <h3 className="font-display font-black uppercase tracking-tight text-[#1a2e23] mb-4 text-lg">Sécurité</h3>
-        <Link href="/forgot-password" className="inline-flex items-center gap-2 px-6 py-3 border border-[#1a2e23]/10 text-[#1a2e23] text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#1a2e23]/5 transition-all">
+      <div className="bg-white rounded-2xl border border-spruce/10 p-8 md:p-10">
+        <h3 className="font-display font-bold text-spruce mb-4 text-lg">Sécurité</h3>
+        <Link href="/forgot-password" className="inline-flex items-center gap-2 px-6 py-3 border border-spruce text-spruce text-[14px] font-semibold rounded-full hover:bg-spruce/5 transition-all">
           Changer mon mot de passe
         </Link>
       </div>
@@ -461,11 +444,11 @@ function ProfilePanel({ customer }: { customer: NonNullable<ReturnType<typeof us
 // ═══════════════════════════════════════════════════════════
 function ReviewsPanel() {
   return (
-    <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-12 text-center shadow-sm">
-      <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6"><Star className="w-8 h-8 text-[#1a2e23]" /></div>
-      <h2 className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-lg mb-2">Aucun avis pour le moment</h2>
-      <p className="text-sm text-[#4a5f4c] mb-8 max-w-sm mx-auto font-medium">Après avoir reçu une commande, vous pourrez noter et commenter les produits achetés.</p>
-      <Link href="/products" className="inline-flex items-center gap-2 px-8 py-4 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg">
+    <div className="bg-white rounded-2xl border border-spruce/10 p-12 text-center">
+      <div className="w-20 h-20 rounded-full bg-sage flex items-center justify-center mx-auto mb-6"><Star className="w-8 h-8 text-spruce" /></div>
+      <h2 className="font-display font-bold text-spruce text-lg mb-2">Aucun avis pour le moment</h2>
+      <p className="text-sm text-ink-mute mb-8 max-w-sm mx-auto font-medium">Après avoir reçu une commande, tu pourras noter et commenter les produits achetés.</p>
+      <Link href="/products" className="inline-flex items-center gap-2 px-7 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors">
         <Package className="w-4 h-4" /> Découvrir nos produits
       </Link>
     </div>
@@ -524,10 +507,10 @@ function AccountContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center bg-[#f4f6f1]">
+      <div className="min-h-[60vh] flex items-center justify-center bg-canvas">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-[#1a2e23] animate-spin" />
-          <p className="text-[11px] font-bold uppercase tracking-widest text-[#4a5f4c]">Chargement de votre espace...</p>
+          <Loader2 className="w-8 h-8 text-fresh animate-spin" />
+          <p className="text-[13px] font-medium text-ink-mute">Chargement de ton espace…</p>
         </div>
       </div>
     )
@@ -558,22 +541,22 @@ function AccountContent() {
   }
 
   return (
-    <div className="bg-[#f4f6f1] min-h-screen transition-colors">
-      {/* ─── Header compte ─── */}
-      <div className="bg-[#1a2e23]">
+    <div className="bg-canvas min-h-screen">
+      {/* ─── Bandeau profil (clair) ─── */}
+      <div className="bg-white border-b border-spruce/10">
         <div className="container py-8 md:py-10 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-full bg-white/10 border border-white/10 flex items-center justify-center font-black text-xl text-white flex-shrink-0">
+            <div className="w-14 h-14 rounded-full bg-sage flex items-center justify-center font-display font-extrabold text-xl text-spruce flex-shrink-0">
               {customer.firstName?.charAt(0)}{customer.lastName?.charAt(0)}
             </div>
             <div>
-              <h1 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-white leading-none">
+              <h1 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce leading-tight">
                 {customer.firstName} {customer.lastName}
               </h1>
-              <p className="text-white/40 text-[13px] font-medium mt-1">{customer.email}</p>
+              <p className="text-ink-mute text-[14px] font-medium mt-1">{customer.email}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="inline-flex items-center gap-2 px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest border rounded-full transition-all text-white/50 border-white/10 hover:border-white/30 hover:text-white">
+          <button onClick={handleLogout} className="inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-semibold border rounded-full transition-colors text-spruce border-spruce hover:bg-spruce/5">
             <LogOut className="w-4 h-4" /> Déconnexion
           </button>
         </div>
@@ -583,20 +566,20 @@ function AccountContent() {
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
           {/* ─── Colonne gauche : Nav ─── */}
           <div>
-            <nav className="rounded-[24px] overflow-hidden bg-white border border-[#1a2e23]/5 shadow-sm sticky top-24">
+            <nav className="rounded-2xl overflow-hidden bg-white border border-spruce/10 sticky top-24">
               {/* Profil en premier */}
               <button
                 onClick={() => setActiveTab('profile')}
                 className={cn(
-                  "flex items-center justify-between w-full px-5 py-4 transition-all border-b border-[#1a2e23]/5 group",
-                  activeTab === 'profile' ? 'bg-[#1a2e23] text-white' : 'hover:bg-[#f4f6f1]'
+                  "flex items-center justify-between w-full px-5 py-4 transition-colors border-b border-spruce/10 group",
+                  activeTab === 'profile' ? 'bg-sage' : 'hover:bg-canvas'
                 )}
               >
-                <span className={cn("flex items-center gap-3 text-[12px] font-bold uppercase tracking-widest", activeTab === 'profile' ? 'text-white' : 'text-[#1a2e23]')}>
-                  <User className={cn("w-4 h-4", activeTab === 'profile' ? 'text-white' : 'text-[#89a890]')} />
+                <span className={cn("flex items-center gap-3 text-[13px] font-semibold", activeTab === 'profile' ? 'text-spruce' : 'text-ink')}>
+                  <User className={cn("w-4 h-4", activeTab === 'profile' ? 'text-spruce' : 'text-ink-mute')} />
                   Mon profil
                 </span>
-                <ChevronRight className={cn("w-4 h-4 transition-transform group-hover:translate-x-1", activeTab === 'profile' ? 'text-white' : 'text-[#89a890]')} />
+                <ChevronRight className={cn("w-4 h-4 transition-transform group-hover:translate-x-1", activeTab === 'profile' ? 'text-spruce' : 'text-ink-mute')} />
               </button>
 
               {navItems.map(({ icon: Icon, label, tab, count }) => (
@@ -604,29 +587,29 @@ function AccountContent() {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={cn(
-                    "flex items-center justify-between w-full px-5 py-4 transition-all border-b last:border-0 group border-[#1a2e23]/5",
-                    activeTab === tab ? 'bg-[#1a2e23] text-white' : 'hover:bg-[#f4f6f1]'
+                    "flex items-center justify-between w-full px-5 py-4 transition-colors border-b last:border-0 group border-spruce/10",
+                    activeTab === tab ? 'bg-sage' : 'hover:bg-canvas'
                   )}
                 >
                   <span className={cn(
-                    "flex items-center gap-3 text-[12px] font-bold uppercase tracking-widest",
-                    activeTab === tab ? 'text-white' : 'text-[#1a2e23]'
+                    "flex items-center gap-3 text-[13px] font-semibold",
+                    activeTab === tab ? 'text-spruce' : 'text-ink'
                   )}>
-                    <Icon className={cn("w-4 h-4", activeTab === tab ? 'text-white' : 'text-[#89a890]')} />
+                    <Icon className={cn("w-4 h-4", activeTab === tab ? 'text-spruce' : 'text-ink-mute')} />
                     {label}
                   </span>
                   <div className="flex items-center gap-3">
                     {count !== undefined && count > 0 && (
                       <span className={cn(
                         "text-[10px] font-bold px-2.5 py-0.5 rounded-full",
-                        activeTab === tab ? 'bg-white/20 text-white' : 'bg-[#1a2e23]/5 text-[#1a2e23]'
+                        activeTab === tab ? 'bg-spruce/15 text-spruce' : 'bg-sage text-spruce'
                       )}>
                         {count}
                       </span>
                     )}
                     <ChevronRight className={cn(
                       "w-4 h-4 transition-transform group-hover:translate-x-1",
-                      activeTab === tab ? 'text-white' : 'text-[#89a890]'
+                      activeTab === tab ? 'text-spruce' : 'text-ink-mute'
                     )} />
                   </div>
                 </button>
@@ -646,7 +629,7 @@ function AccountContent() {
 
 export default function AccountPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#f4f6f1]"><div className="font-display font-black uppercase tracking-widest text-xl text-[#1a2e23] animate-pulse">CHARGEMENT...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-canvas"><div className="font-display font-semibold text-lg text-ink-mute animate-pulse">Chargement…</div></div>}>
       <AccountContent />
     </Suspense>
   )

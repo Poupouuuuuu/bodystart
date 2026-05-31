@@ -49,13 +49,13 @@ export function CagnotteCartWidget() {
   // Cas B : not_enrolled -> CTA activer
   if (state.kind === 'not_enrolled') {
     return (
-      <div className="bg-[#f4f6f1] border border-[#1a2e23]/5 rounded-xl p-4 mx-8 mb-4">
-        <p className="text-[12px] text-[#4a5f4c] font-medium mb-3">
+      <div className="bg-sage border border-spruce/10 rounded-xl p-4 mx-8 mb-4">
+        <p className="text-[12px] text-ink-mute font-medium mb-3">
           Active ton programme fidélité pour gagner sur tes prochaines commandes.
         </p>
         <Link
           href="/account?tab=cagnotte"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#1a2e23] text-white text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-fresh text-white text-[12px] font-semibold rounded-full hover:bg-fresh-deep transition-colors"
         >
           Activer
         </Link>
@@ -81,17 +81,17 @@ export function CagnotteCartWidget() {
       }
     }
     return (
-      <div className="bg-[#e8f0e3] border border-[#1a2e23]/10 rounded-xl p-4 mx-8 mb-4 flex items-center justify-between gap-3">
+      <div className="bg-sage border border-spruce/10 rounded-xl p-4 mx-8 mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          <Check className="w-4 h-4 text-[#1a2e23] flex-shrink-0" />
-          <p className="text-[12px] font-bold text-[#1a2e23] truncate">
+          <Check className="w-4 h-4 text-fresh flex-shrink-0" />
+          <p className="text-[13px] font-semibold text-spruce truncate">
             Cagnotte appliquée
           </p>
         </div>
         <button
           onClick={handleRemove}
           disabled={busy}
-          className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-[#4a5f4c] hover:text-[#1a2e23] disabled:opacity-50"
+          className="inline-flex items-center gap-1 text-[12px] font-semibold text-ink-mute hover:text-terracotta disabled:opacity-50 transition-colors"
         >
           {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}
           Retirer
@@ -103,10 +103,10 @@ export function CagnotteCartWidget() {
   // Cas C : enrolled, balance < 20 €
   if (balanceCents < MIN_BALANCE_CENTS) {
     return (
-      <div className="bg-[#f4f6f1] border border-[#1a2e23]/5 rounded-xl px-4 py-3 mx-8 mb-4 flex items-center gap-2">
-        <Wallet className="w-4 h-4 text-[#89a890] flex-shrink-0" />
-        <p className="text-[12px] font-medium text-[#4a5f4c]">
-          Cagnotte : <span className="font-bold text-[#1a2e23]">{formatEuros(balanceCents)}</span> · Utilisable dès 20 €
+      <div className="bg-sage border border-spruce/10 rounded-xl px-4 py-3 mx-8 mb-4 flex items-center gap-2">
+        <Wallet className="w-4 h-4 text-spruce flex-shrink-0" />
+        <p className="text-[12px] font-medium text-ink-mute">
+          Cagnotte : <span className="font-semibold text-spruce">{formatEuros(balanceCents)}</span> · Utilisable dès 20 €
         </p>
       </div>
     )
@@ -146,14 +146,14 @@ export function CagnotteCartWidget() {
   }
 
   return (
-    <div className="bg-white border border-[#1a2e23]/5 rounded-xl p-5 mx-8 mb-4 shadow-sm">
+    <div className="bg-white border border-spruce/10 rounded-xl p-5 mx-8 mb-4">
       <div className="flex items-center gap-2 mb-3">
-        <Wallet className="w-4 h-4 text-[#1a2e23]" />
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[#1a2e23]">Ta cagnotte</p>
+        <Wallet className="w-4 h-4 text-spruce" />
+        <p className="text-[12px] font-semibold text-spruce">Ta cagnotte</p>
       </div>
 
-      <p className="text-[13px] font-medium text-[#4a5f4c] mb-4">
-        Tu as <span className="font-bold text-[#1a2e23]">{formatEuros(balanceCents)}</span> disponibles
+      <p className="text-[13px] font-medium text-ink-mute mb-4">
+        Tu as <span className="font-semibold text-spruce">{formatEuros(balanceCents)}</span> disponibles
       </p>
 
       <input
@@ -163,25 +163,25 @@ export function CagnotteCartWidget() {
         step={100}
         value={redeemAmount}
         onChange={(e) => setRedeemAmount(Number(e.target.value))}
-        className="w-full mb-3 accent-[#1a2e23]"
+        className="w-full mb-3 accent-fresh"
       />
 
-      <p className="text-[12px] text-[#4a5f4c] font-medium mb-4">
+      <p className="text-[12px] text-ink-mute font-medium mb-4">
         {redeemAmount === 0
           ? 'Choisis le montant à utiliser'
-          : <>Tu utilises <span className="font-bold text-[#1a2e23]">{formatEuros(redeemAmount)}</span> sur cette commande</>}
+          : <>Tu utilises <span className="font-semibold text-spruce">{formatEuros(redeemAmount)}</span> sur cette commande</>}
       </p>
 
       <button
         onClick={handleApply}
         disabled={busy || redeemAmount === 0}
-        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all disabled:opacity-40"
+        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors disabled:opacity-40"
       >
         {busy && <Loader2 className="w-4 h-4 animate-spin" />}
         Appliquer {redeemAmount > 0 ? formatEuros(redeemAmount) : ''}
       </button>
 
-      <p className="text-[11px] text-[#89a890] font-medium mt-3 text-center">
+      <p className="text-[11px] text-ink-mute font-medium mt-3 text-center">
         Plafond 50 % du panier. Ne s&apos;utilise pas sur les frais de port.
       </p>
     </div>

@@ -18,15 +18,15 @@ export function ReferralPanel() {
 
   if (state.kind === 'loading') {
     return (
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 py-20 text-center shadow-sm">
-        <Loader2 className="w-8 h-8 text-[#1a2e23] animate-spin mx-auto" />
+      <div className="bg-white rounded-2xl border border-spruce/10 py-20 text-center">
+        <Loader2 className="w-8 h-8 text-fresh animate-spin mx-auto" />
       </div>
     )
   }
 
   if (state.kind === 'error') {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4 text-red-700 text-sm">
+      <div className="bg-terracotta/10 border border-terracotta/20 rounded-xl px-5 py-4 text-terracotta text-sm font-medium">
         Impossible de charger ton parrainage. Réessaye dans un instant.
       </div>
     )
@@ -34,8 +34,8 @@ export function ReferralPanel() {
 
   if (state.kind === 'logged_out') {
     return (
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-8 text-center shadow-sm">
-        <p className="text-[#4a5f4c] text-sm font-medium">
+      <div className="bg-white rounded-2xl border border-spruce/10 p-8 text-center">
+        <p className="text-ink-mute text-sm font-medium">
           Connecte-toi pour voir ton code parrain.
         </p>
       </div>
@@ -79,71 +79,61 @@ export function ReferralPanel() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="font-display text-[28px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none mb-2">
+        <h2 className="font-display text-[28px] font-extrabold tracking-tight text-spruce leading-[1.1] mb-2">
           Parrainage
         </h2>
-        <p className="text-[#4a5f4c] font-medium text-sm">
+        <p className="text-ink-mute font-medium text-sm">
           Partage ton code, gagne 5 % à vie sur les achats de tes potes pendant 12 mois.
         </p>
       </div>
 
-      {/* Carte code */}
-      <div className="bg-[#1a2e23] text-white rounded-[28px] p-8 md:p-10 relative overflow-hidden">
-        <div
-          className="absolute inset-0 z-0 opacity-10"
-          style={{
-            backgroundImage:
-              'linear-gradient(#4a5f4c 1px, transparent 1px), linear-gradient(90deg, #4a5f4c 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
-        />
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center border border-white/10">
-              <Gift className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="font-display font-black uppercase tracking-tight">Ton code parrain</p>
-              <p className="text-white/50 text-sm font-medium">Partage-le avec tes potes</p>
-            </div>
+      {/* Carte code (claire) */}
+      <div className="bg-white border border-spruce/10 rounded-2xl p-8 md:p-10">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center">
+            <Gift className="w-6 h-6 text-spruce" />
           </div>
-
-          <code className="block w-full bg-white/10 border border-white/10 rounded-2xl px-5 py-4 font-mono font-bold text-xl tracking-widest text-center mb-4">
-            {referralCode}
-          </code>
-
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={handleCopy}
-              className="flex items-center justify-center gap-2 px-3 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl transition-colors text-[11px] font-bold uppercase tracking-widest"
-            >
-              <Copy className="w-4 h-4" />
-              <span className="hidden sm:inline">Copier</span>
-            </button>
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-3 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl transition-colors text-[11px] font-bold uppercase tracking-widest"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">WhatsApp</span>
-            </a>
-            <button
-              onClick={handleShare}
-              className="flex items-center justify-center gap-2 px-3 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl transition-colors text-[11px] font-bold uppercase tracking-widest"
-            >
-              <Share2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Partager</span>
-            </button>
+          <div>
+            <p className="font-display font-bold text-spruce">Ton code parrain</p>
+            <p className="text-ink-mute text-sm font-medium">Partage-le avec tes potes</p>
           </div>
+        </div>
+
+        <code className="block w-full bg-sage border border-spruce/10 rounded-xl px-5 py-4 font-mono font-bold text-xl tracking-widest text-center text-spruce mb-4">
+          {referralCode}
+        </code>
+
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            onClick={handleCopy}
+            className="flex items-center justify-center gap-2 px-3 py-3 border border-spruce/20 text-spruce hover:bg-spruce/5 rounded-xl transition-colors text-[13px] font-semibold"
+          >
+            <Copy className="w-4 h-4" />
+            <span className="hidden sm:inline">Copier</span>
+          </button>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 px-3 py-3 border border-spruce/20 text-spruce hover:bg-spruce/5 rounded-xl transition-colors text-[13px] font-semibold"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">WhatsApp</span>
+          </a>
+          <button
+            onClick={handleShare}
+            className="flex items-center justify-center gap-2 px-3 py-3 border border-spruce/20 text-spruce hover:bg-spruce/5 rounded-xl transition-colors text-[13px] font-semibold"
+          >
+            <Share2 className="w-4 h-4" />
+            <span className="hidden sm:inline">Partager</span>
+          </button>
         </div>
       </div>
 
       {/* Comment ca marche */}
-      <div className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-8 shadow-sm">
-        <h3 className="font-display font-black uppercase tracking-tight text-[#1a2e23] mb-6 flex items-center gap-2 text-lg">
-          <Users className="w-5 h-5 text-[#89a890]" /> Comment ça marche
+      <div className="bg-white rounded-2xl border border-spruce/10 p-8">
+        <h3 className="font-display font-bold text-spruce mb-6 flex items-center gap-2 text-lg">
+          <Users className="w-5 h-5 text-spruce" /> Comment ça marche
         </h3>
         <div className="space-y-5">
           {[
@@ -152,12 +142,12 @@ export function ReferralPanel() {
             { step: '03', title: 'Tu gagnes 5 % pendant 1 an', desc: 'On te crédite 5 % du montant de chacune de ses commandes.' },
           ].map(({ step, title, desc }) => (
             <div key={step} className="flex gap-4">
-              <div className="w-10 h-10 bg-[#1a2e23] text-white rounded-full flex items-center justify-center font-display font-bold text-sm flex-shrink-0">
+              <div className="w-10 h-10 bg-sage text-spruce rounded-full flex items-center justify-center font-display font-bold text-sm flex-shrink-0">
                 {step}
               </div>
               <div className="pt-1.5">
-                <p className="font-display font-bold text-[#1a2e23] text-sm uppercase tracking-tight">{title}</p>
-                <p className="text-[#4a5f4c] text-sm font-medium">{desc}</p>
+                <p className="font-display font-bold text-ink text-sm">{title}</p>
+                <p className="text-ink-mute text-sm font-medium">{desc}</p>
               </div>
             </div>
           ))}
@@ -165,13 +155,13 @@ export function ReferralPanel() {
       </div>
 
       {/* Lien cagnotte */}
-      <div className="bg-[#1a2e23]/5 rounded-[20px] p-6 flex items-center justify-between gap-4">
-        <p className="text-[#1a2e23] font-display font-bold text-sm uppercase tracking-tight">
+      <div className="bg-sage rounded-2xl p-6 flex items-center justify-between gap-4">
+        <p className="text-spruce font-display font-bold text-sm">
           Voir ce que tu as déjà gagné
         </p>
         <Link
           href="/account?tab=cagnotte"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a2e23] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#2e4f3c] transition-all"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-fresh text-white text-[13px] font-semibold rounded-full hover:bg-fresh-deep transition-colors"
         >
           <Wallet className="w-4 h-4" /> Ma cagnotte
         </Link>

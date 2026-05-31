@@ -2,6 +2,7 @@
 
 // STANDBY 2026-05-23 : coaching masque (cf. middleware redirect 301).
 // Le toggle ?theme=coaching a ete retire le 2026-05-25 : auth mono-theme nutrition.
+// Re-theme DA claire V2 (2026-05-31) : visuel + copy/tutoiement, logique auth intacte.
 
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
@@ -29,7 +30,7 @@ function LoginContent() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(form.email)) {
-      setError('Veuillez entrer une adresse email valide.')
+      setError('Entre une adresse email valide.')
       return
     }
     if (form.password.length < 5) {
@@ -49,7 +50,7 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-160px)] flex items-center justify-center py-16 px-4 bg-[#f4f6f1] text-[#1a2e23]">
+    <div className="min-h-[calc(100vh-160px)] flex items-center justify-center py-16 px-4 bg-canvas text-ink">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
@@ -62,27 +63,27 @@ function LoginContent() {
               className="h-10 w-auto"
             />
           </Link>
-          <h1 className="font-display text-[35px] md:text-[42px] font-black uppercase tracking-tighter mb-3 leading-none text-[#1a2e23]">
+          <h1 className="font-display text-[34px] md:text-[42px] font-extrabold tracking-tight mb-3 leading-[1.05] text-spruce">
             Bon retour !
           </h1>
-          <p className="font-medium text-sm text-[#4a5f4c]">
-            Connectez-vous à votre espace client
+          <p className="font-medium text-[15px] text-ink-mute">
+            Connecte-toi à ton espace client
           </p>
         </div>
 
         {/* Card */}
-        <div className="rounded-[28px] p-8 md:p-10 border bg-white border-[#1a2e23]/5 shadow-sm">
+        <div className="rounded-2xl p-8 md:p-10 border bg-white border-spruce/10">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Erreur */}
             {error && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-600 font-bold">
+              <div className="p-4 bg-terracotta/10 border border-terracotta/20 rounded-xl text-[13px] text-terracotta font-medium">
                 {error}
               </div>
             )}
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-widest mb-2 text-[#1a2e23]">
+              <label htmlFor="email" className="block text-[12px] font-semibold mb-2 text-ink">
                 Adresse email
               </label>
               <input
@@ -90,8 +91,8 @@ function LoginContent() {
                 type="email"
                 required
                 autoComplete="email"
-                className="w-full px-5 py-3.5 rounded-2xl border text-sm font-medium transition-all focus:outline-none focus:ring-2 bg-[#f4f6f1] border-[#1a2e23]/10 text-[#1a2e23] focus:ring-[#1a2e23]/10 focus:border-[#1a2e23]/30 placeholder:text-[#89a890]"
-                placeholder="vous@exemple.fr"
+                className="w-full px-5 py-3.5 rounded-xl border text-[14px] font-medium transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
+                placeholder="ton@email.fr"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
@@ -100,10 +101,10 @@ function LoginContent() {
             {/* Mot de passe */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-[11px] font-bold uppercase tracking-widest text-[#1a2e23]">
+                <label htmlFor="password" className="block text-[12px] font-semibold text-ink">
                   Mot de passe
                 </label>
-                <Link href="/forgot-password" className="text-[11px] font-bold uppercase tracking-widest hover:underline underline-offset-4 transition-colors text-[#89a890] hover:text-[#1a2e23]">
+                <Link href="/forgot-password" className="text-[12px] font-medium hover:underline underline-offset-4 transition-colors text-ink-mute hover:text-spruce">
                   Oublié ?
                 </Link>
               </div>
@@ -113,7 +114,7 @@ function LoginContent() {
                   type={showPwd ? 'text' : 'password'}
                   required
                   autoComplete="current-password"
-                  className="w-full px-5 py-3.5 rounded-2xl border text-sm font-medium pr-12 transition-all focus:outline-none focus:ring-2 bg-[#f4f6f1] border-[#1a2e23]/10 text-[#1a2e23] focus:ring-[#1a2e23]/10 focus:border-[#1a2e23]/30 placeholder:text-[#89a890]"
+                  className="w-full px-5 py-3.5 rounded-xl border text-[14px] font-medium pr-12 transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
                   placeholder="••••••••"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -121,7 +122,7 @@ function LoginContent() {
                 <button
                   type="button"
                   onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors text-[#89a890] hover:text-[#1a2e23]"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors text-ink-mute hover:text-spruce"
                   aria-label={showPwd ? 'Masquer' : 'Afficher'}
                 >
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -133,7 +134,7 @@ function LoginContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center py-4 text-[11px] font-bold uppercase tracking-widest mt-4 rounded-full transition-all hover:-translate-y-0.5 bg-[#1a2e23] text-white hover:bg-[#2e4f3c] shadow-lg hover:shadow-xl"
+              className="w-full flex items-center justify-center py-3.5 text-[14px] font-semibold mt-4 rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep disabled:opacity-60"
             >
               {loading ? (
                 <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -143,15 +144,15 @@ function LoginContent() {
               ) : (
                 <LogIn className="w-4 h-4 mr-2" />
               )}
-              {loading ? 'CONNEXION...' : 'SE CONNECTER'}
+              {loading ? 'Connexion…' : 'Se connecter'}
             </button>
           </form>
         </div>
 
         {/* Lien inscription */}
-        <p className="text-center text-sm font-medium mt-8 text-[#4a5f4c]">
+        <p className="text-center text-[14px] font-medium mt-8 text-ink-mute">
           Pas encore de compte ?{' '}
-          <Link href="/register" className="font-bold uppercase tracking-wide hover:underline underline-offset-4 transition-colors text-[#1a2e23] hover:text-[#4a5f4c]">
+          <Link href="/register" className="font-semibold hover:underline underline-offset-4 transition-colors text-spruce hover:text-fresh-deep">
             Créer un compte
           </Link>
         </p>
@@ -162,7 +163,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#f4f6f1]"><div className="font-display font-black uppercase tracking-widest text-xl text-[#1a2e23] animate-pulse">CHARGEMENT...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-canvas"><div className="font-display font-semibold text-lg text-ink-mute animate-pulse">Chargement…</div></div>}>
       <LoginContent />
     </Suspense>
   )

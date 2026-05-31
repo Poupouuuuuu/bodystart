@@ -2,6 +2,7 @@
 
 // STANDBY 2026-05-23 : coaching masque (cf. middleware redirect 301).
 // Le toggle ?theme=coaching a ete retire le 2026-05-25 : auth mono-theme nutrition.
+// Re-theme DA claire V2 (2026-05-31) : visuel + copy/tutoiement, logique auth intacte.
 
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
@@ -35,7 +36,7 @@ function RegisterContent() {
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(form.email)) {
-      validationErrors.push('Veuillez entrer une adresse email valide.')
+      validationErrors.push('Entre une adresse email valide.')
     }
     if (form.password.length < 5) {
       validationErrors.push('Le mot de passe doit contenir au moins 5 caractères.')
@@ -68,12 +69,12 @@ function RegisterContent() {
     setLoading(false)
   }
 
-  const inputBase = "w-full px-5 py-3.5 rounded-2xl border text-sm font-medium transition-all focus:outline-none focus:ring-2 bg-[#f4f6f1] border-[#1a2e23]/10 text-[#1a2e23] focus:ring-[#1a2e23]/10 focus:border-[#1a2e23]/30 placeholder:text-[#89a890]"
+  const inputBase = "w-full px-5 py-3.5 rounded-xl border text-[14px] font-medium transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
 
-  const labelBase = "block text-[11px] font-bold uppercase tracking-widest mb-2 text-[#1a2e23]"
+  const labelBase = "block text-[12px] font-semibold mb-2 text-ink"
 
   return (
-    <div className="min-h-[calc(100vh-160px)] flex items-center justify-center py-16 px-4 bg-[#f4f6f1] text-[#1a2e23]">
+    <div className="min-h-[calc(100vh-160px)] flex items-center justify-center py-16 px-4 bg-canvas text-ink">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
@@ -86,20 +87,20 @@ function RegisterContent() {
               className="h-10 w-auto"
             />
           </Link>
-          <h1 className="font-display text-[35px] md:text-[42px] font-black uppercase tracking-tighter mb-3 leading-none text-[#1a2e23]">
-            Créer un compte
+          <h1 className="font-display text-[34px] md:text-[42px] font-extrabold tracking-tight mb-3 leading-[1.05] text-spruce">
+            Crée ton compte
           </h1>
-          <p className="font-medium text-sm text-[#4a5f4c]">
-            Rejoignez la communauté BodyStart
+          <p className="font-medium text-[15px] text-ink-mute">
+            Rejoins la communauté BodyStart
           </p>
         </div>
 
-        <div className="rounded-[28px] p-8 md:p-10 border bg-white border-[#1a2e23]/5 shadow-sm">
+        <div className="rounded-2xl p-8 md:p-10 border bg-white border-spruce/10">
           <form onSubmit={handleSubmit} className="space-y-5">
             {errors.length > 0 && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-2xl space-y-1">
+              <div className="p-4 bg-terracotta/10 border border-terracotta/20 rounded-xl space-y-1">
                 {errors.map((err, i) => (
-                  <p key={i} className="text-xs font-bold text-red-600">{err}</p>
+                  <p key={i} className="text-[13px] font-medium text-terracotta">{err}</p>
                 ))}
               </div>
             )}
@@ -141,7 +142,7 @@ function RegisterContent() {
                 required
                 autoComplete="email"
                 className={inputBase}
-                placeholder="vous@exemple.fr"
+                placeholder="ton@email.fr"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
@@ -151,7 +152,7 @@ function RegisterContent() {
             <div>
               <label htmlFor="password" className={labelBase}>
                 Mot de passe
-                <span className="font-medium ml-2 text-[#89a890]">(min. 5 caractères)</span>
+                <span className="font-medium ml-2 text-ink-mute">(min. 5 caractères)</span>
               </label>
               <div className="relative">
                 <input
@@ -168,7 +169,7 @@ function RegisterContent() {
                 <button
                   type="button"
                   onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors text-[#89a890] hover:text-[#1a2e23]"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors text-ink-mute hover:text-spruce"
                 >
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -178,10 +179,10 @@ function RegisterContent() {
             {/* Newsletter */}
             <label className="flex items-start gap-3 cursor-pointer group mt-2">
               <div className={cn(
-                "w-5 h-5 rounded-lg border flex items-center justify-center mt-0.5 flex-shrink-0 transition-all",
+                "w-5 h-5 rounded-md border flex items-center justify-center mt-0.5 flex-shrink-0 transition-all",
                 form.acceptsMarketing
-                  ? 'bg-[#1a2e23] border-[#1a2e23]'
-                  : 'border-[#1a2e23]/20 bg-[#f4f6f1] group-hover:border-[#1a2e23]/40'
+                  ? 'bg-fresh border-fresh'
+                  : 'border-spruce/25 bg-white group-hover:border-spruce/40'
               )}>
                 {form.acceptsMarketing && <Check className="w-3.5 h-3.5 text-white" />}
               </div>
@@ -191,7 +192,7 @@ function RegisterContent() {
                 checked={form.acceptsMarketing}
                 onChange={(e) => setForm({ ...form, acceptsMarketing: e.target.checked })}
               />
-              <span className="text-[12px] font-medium leading-snug text-[#4a5f4c]">
+              <span className="text-[12px] font-medium leading-snug text-ink-mute">
                 Je souhaite recevoir les offres exclusives et l&apos;actualité BodyStart
               </span>
             </label>
@@ -199,7 +200,7 @@ function RegisterContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center py-4 text-[11px] font-bold uppercase tracking-widest mt-6 rounded-full transition-all hover:-translate-y-0.5 bg-[#1a2e23] text-white hover:bg-[#2e4f3c] shadow-lg hover:shadow-xl"
+              className="w-full flex items-center justify-center py-3.5 text-[14px] font-semibold mt-6 rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep disabled:opacity-60"
             >
               {loading ? (
                 <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
@@ -209,14 +210,14 @@ function RegisterContent() {
               ) : (
                 <UserPlus className="w-4 h-4 mr-2" />
               )}
-              {loading ? 'CRÉATION...' : 'CRÉER MON COMPTE'}
+              {loading ? 'Création…' : 'Créer un compte'}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-sm font-medium mt-8 text-[#4a5f4c]">
+        <p className="text-center text-[14px] font-medium mt-8 text-ink-mute">
           Déjà un compte ?{' '}
-          <Link href="/login" className="font-bold uppercase tracking-wide hover:underline underline-offset-4 transition-colors text-[#1a2e23] hover:text-[#4a5f4c]">
+          <Link href="/login" className="font-semibold hover:underline underline-offset-4 transition-colors text-spruce hover:text-fresh-deep">
             Se connecter
           </Link>
         </p>
@@ -227,7 +228,7 @@ function RegisterContent() {
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#f4f6f1]"><div className="font-display font-black uppercase tracking-widest text-xl text-[#1a2e23] animate-pulse">CHARGEMENT...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-canvas"><div className="font-display font-semibold text-lg text-ink-mute animate-pulse">Chargement…</div></div>}>
       <RegisterContent />
     </Suspense>
   )
