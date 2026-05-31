@@ -89,27 +89,29 @@ const STORE_JSONLD = {
   ],
 }
 
-// ─── Placeholder photo (réserve le ratio → pas de CLS) ────────────
-function PhotoPlaceholder({
+// ─── Photos boutique (réutilise les vraies photos de la home) ─────
+// Ratio réservé via le conteneur → pas de CLS. next/image fill + cover.
+const PHOTO_DEVANTURE = '/assets/devanture.png'
+const PHOTO_INTERIEUR = '/assets/interieur.png'
+const ALT_DEVANTURE = 'Devanture de la boutique BodyStart Nutrition à Coignières'
+const ALT_INTERIEUR = 'Intérieur de la boutique BodyStart Nutrition à Coignières'
+
+function StorePhoto({
+  src,
+  alt,
   className = '',
-  label = 'Photo à venir',
+  sizes = '100vw',
+  priority = false,
 }: {
+  src: string
+  alt: string
   className?: string
-  label?: string
+  sizes?: string
+  priority?: boolean
 }) {
   return (
-    <div
-      className={`relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-spruce/10 bg-[#F4EEE2] overflow-hidden ${className}`}
-      aria-hidden="true"
-    >
-      <Image
-        src="/assets/logos/Logo_texte.png"
-        alt=""
-        width={150}
-        height={45}
-        className="h-7 md:h-8 w-auto opacity-40"
-      />
-      <span className="text-[12px] text-ink-mute">{label}</span>
+    <div className={`relative overflow-hidden rounded-2xl border border-spruce/10 bg-sage/30 ${className}`}>
+      <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className="object-cover" />
     </div>
   )
 }
@@ -155,7 +157,7 @@ export default function StoresPage() {
             </div>
 
             <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] font-medium text-ink">
-              {['Ouvert 7j/7', 'Click & Collect gratuit', 'Conseil offert'].map((p) => (
+              {['Ouvert 7j/7', 'Click & Collect gratuit', 'Conseil offert', 'Grand parking devant la boutique'].map((p) => (
                 <li key={p} className="inline-flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-fresh" />
                   {p}
@@ -164,10 +166,13 @@ export default function StoresPage() {
             </ul>
           </div>
 
-          {/* Grande photo boutique */}
-          <PhotoPlaceholder
+          {/* Grande photo boutique — devanture */}
+          <StorePhoto
+            src={PHOTO_DEVANTURE}
+            alt={ALT_DEVANTURE}
             className="mt-10 aspect-[16/9] w-full"
-            label="Photo de la boutique à venir"
+            sizes="(max-width: 1024px) 100vw, 1152px"
+            priority
           />
         </div>
       </section>
@@ -183,11 +188,20 @@ export default function StoresPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
-            {/* Galerie : 1 grande + 2 petites */}
-            <div className="grid grid-cols-2 gap-4">
-              <PhotoPlaceholder className="col-span-2 aspect-[4/3] w-full" />
-              <PhotoPlaceholder className="aspect-square w-full" />
-              <PhotoPlaceholder className="aspect-square w-full" />
+            {/* Galerie : intérieur + devanture */}
+            <div className="space-y-4">
+              <StorePhoto
+                src={PHOTO_INTERIEUR}
+                alt={ALT_INTERIEUR}
+                className="aspect-[4/3] w-full"
+                sizes="(max-width: 1024px) 100vw, 560px"
+              />
+              <StorePhoto
+                src={PHOTO_DEVANTURE}
+                alt={ALT_DEVANTURE}
+                className="aspect-[16/10] w-full"
+                sizes="(max-width: 1024px) 100vw, 560px"
+              />
             </div>
 
             {/* Carte infos */}
@@ -273,8 +287,8 @@ export default function StoresPage() {
               },
               {
                 icon: Zap,
-                title: 'Retrait en quelques minutes',
-                desc: 'Commande en ligne, on prépare, tu passes récupérer. Gratuit, sans attente.',
+                title: 'Retrait immédiat',
+                desc: 'Commande en ligne, récupère en boutique immédiatement. Gratuit, sans attente.',
               },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-7">
@@ -310,7 +324,7 @@ export default function StoresPage() {
                 {
                   step: '02',
                   title: 'On prépare',
-                  desc: 'Tu reçois un email dès que ta commande t’attend en boutique.',
+                  desc: 'On prépare ta commande tout de suite — tu reçois un email dès qu’elle t’attend en boutique.',
                 },
                 {
                   step: '03',
@@ -349,7 +363,12 @@ export default function StoresPage() {
               </p>
             </div>
             <div className="order-1 lg:order-2">
-              <PhotoPlaceholder className="aspect-[4/3] w-full" label="Photo de l’équipe à venir" />
+              <StorePhoto
+                src={PHOTO_INTERIEUR}
+                alt={ALT_INTERIEUR}
+                className="aspect-[4/3] w-full"
+                sizes="(max-width: 1024px) 100vw, 560px"
+              />
             </div>
           </div>
         </div>
@@ -395,7 +414,7 @@ export default function StoresPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-5">
-            <p className="text-[14px] text-ink-mute">À 2 min de la N10 · Parking devant la boutique</p>
+            <p className="text-[14px] text-ink-mute">À 2 min de la N10 · Grand parking devant la boutique</p>
             <a href={MAPS_DIRECTIONS} target="_blank" rel="noopener noreferrer" className={BTN_PRIMARY}>
               <Navigation className="w-4 h-4" />
               Voir l&apos;itinéraire
@@ -445,7 +464,7 @@ export default function StoresPage() {
                 },
                 {
                   q: 'Où se garer ?',
-                  a: 'Un parking est disponible devant la boutique.',
+                  a: 'Un grand parking est disponible devant la boutique.',
                 },
                 {
                   q: 'Quels moyens de paiement acceptez-vous ?',
