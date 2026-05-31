@@ -16,8 +16,16 @@ export default function ProductDescriptionV2({
   descriptionHtml,
   description,
 }: ProductDescriptionV2Props) {
-  const content = descriptionHtml || (description ? `<p>${description}</p>` : null)
-  if (!content) return null
+  const raw = descriptionHtml || (description ? `<p>${description}</p>` : null)
+  if (!raw) return null
+
+  // Certaines descriptions Shopify sont collees avec un espace insecable
+  // (&nbsp; / U+00A0) entre CHAQUE mot (artefact d'outils "markdown anime").
+  // L'insecable empeche tout retour a la ligne -> la ligne fait ~2000px et
+  // deborde horizontalement sur mobile. On normalise en espaces classiques
+  // pour que le texte s'enroule. Defense complementaire CSS : break-words
+  // + images responsive (au cas ou le contenu colle un long token ou une img).
+  const content = raw.replace(/&nbsp;/gi, ' ').replace(/ /g, ' ')
 
   return (
     <section className="bg-canvas">
@@ -33,7 +41,7 @@ export default function ProductDescriptionV2({
           </div>
 
           <div
-            className="prose-v2 text-[16px] text-ink leading-[1.7] [&>p]:mb-5 [&>p:last-child]:mb-0 [&>h3]:font-display [&>h3]:text-[20px] [&>h3]:font-bold [&>h3]:text-spruce [&>h3]:mt-7 [&>h3]:mb-3 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-5 [&>ul>li]:mb-1.5 [&>a]:text-spruce [&>a]:underline [&>a]:underline-offset-2 [&>strong]:text-ink [&>strong]:font-semibold"
+            className="prose-v2 break-words text-[16px] text-ink leading-[1.7] [&>p]:mb-5 [&>p:last-child]:mb-0 [&>h3]:font-display [&>h3]:text-[20px] [&>h3]:font-bold [&>h3]:text-spruce [&>h3]:mt-7 [&>h3]:mb-3 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-5 [&>ul>li]:mb-1.5 [&>a]:text-spruce [&>a]:underline [&>a]:underline-offset-2 [&>strong]:text-ink [&>strong]:font-semibold [&_img]:max-w-full [&_img]:h-auto"
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </div>
