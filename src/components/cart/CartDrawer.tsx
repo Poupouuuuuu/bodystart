@@ -68,7 +68,7 @@ export default function CartDrawer() {
         )}
         role="dialog"
         aria-modal="true"
-        aria-label="Votre panier"
+        aria-label="Ton panier"
       >
         {/* ─── Header ─── */}
         <div className="flex items-center justify-between px-8 py-7">
@@ -92,7 +92,7 @@ export default function CartDrawer() {
                 <div className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-[#1a2e23] flex-shrink-0" />
                   <p className="text-[12px] font-bold text-[#1a2e23]">
-                    Votre livraison est offerte !
+                    Ta livraison est offerte !
                   </p>
                 </div>
               ) : (
@@ -121,9 +121,9 @@ export default function CartDrawer() {
         {isEmpty ? (
           /* Panier vide */
           <div className="flex-1 flex flex-col items-center justify-center px-8 text-center text-[#1a2e23]">
-            <p className="font-bold text-lg mb-2">Votre panier est vide</p>
+            <p className="font-bold text-lg mb-2">Ton panier est vide</p>
             <p className="text-[#4a5f4c] font-medium mb-8 max-w-[250px] text-sm">
-              Ajoutez des produits pour voir votre résumé de commande.
+              Ajoute des produits pour voir ton résumé de commande.
             </p>
             <Link
               href="/products"

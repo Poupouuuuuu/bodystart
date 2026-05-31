@@ -33,9 +33,9 @@ export default function NewsletterSection() {
       }
 
       setSent(true)
-      toast.success('Inscription confirmée ! Votre code -10% arrive dans votre boîte mail.', { duration: 5000 })
+      toast.success('Inscription confirmée ! Ton code -10% arrive dans ta boîte mail.', { duration: 5000 })
     } catch {
-      toast.error('Erreur réseau. Veuillez réessayer.')
+      toast.error('Erreur réseau. Réessaie.')
     } finally {
       setLoading(false)
     }
@@ -47,18 +47,18 @@ export default function NewsletterSection() {
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-brand-500 text-sm font-bold uppercase mb-2">Newsletter</p>
           <h2 className="font-display text-3xl md:text-4xl font-black uppercase text-gray-900 mb-4">
-            Rejoignez la communauté
+            Rejoins la communauté
           </h2>
           <p className="text-gray-500 text-lg mb-8 max-w-lg mx-auto">
-            Conseils nutrition, offres exclusives et nouveautés. Recevez -10% sur votre première commande.
+            Conseils nutrition, offres exclusives et nouveautés. Reçois -10% sur ta première commande.
           </p>
 
           {sent ? (
             <div className="bg-white rounded-2xl border border-cream-300 p-8 shadow-sm">
               <CheckCircle2 className="w-12 h-12 text-brand-500 mx-auto mb-4" />
-              <p className="font-bold text-gray-900 text-lg mb-1">Vous êtes inscrit !</p>
+              <p className="font-bold text-gray-900 text-lg mb-1">Tu es inscrit !</p>
               <p className="text-gray-500 text-sm">
-                Votre code -10% arrive dans votre boîte mail.
+                Ton code -10% arrive dans ta boîte mail.
               </p>
             </div>
           ) : (
@@ -67,7 +67,7 @@ export default function NewsletterSection() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="votre@email.fr"
+                placeholder="ton@email.fr"
                 required
                 disabled={loading}
                 className="flex-1 px-5 py-4 rounded-full border border-cream-300 bg-white text-gray-900 placeholder:text-gray-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition disabled:opacity-50"

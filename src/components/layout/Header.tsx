@@ -326,7 +326,7 @@ function HeaderInner(_props: HeaderProps) {
                         Aucun produit trouvé
                       </p>
                       <p className="text-xs text-gray-500">
-                        Essayez avec un autre mot-clé
+                        Essaie avec un autre mot-clé
                       </p>
                     </div>
                   )
