@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Cookie, X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useCart } from '@/hooks/useCart'
 
 const CONSENT_KEY = 'body-start-cookie-consent'
 
@@ -27,6 +28,11 @@ export default function CookieBanner() {
   const [visible, setVisible] = useState(false)
   const [showCustomize, setShowCustomize] = useState(false)
   const [preferences, setPreferences] = useState<CookiePreferences>(DEFAULT_PREFERENCES)
+  // Le panier (CartDrawer) est en z-50 ; cette barre en z-[60] la recouvrait.
+  // Sur mobile, en 1re visite, ça masquait le bouton de paiement du panier.
+  // On masque donc la bannière tant que le drawer panier est ouvert ; elle
+  // réapparaît à la fermeture si le consentement n'a pas encore été donné.
+  const { isOpen: cartOpen } = useCart()
 
   useEffect(() => {
     const stored = localStorage.getItem(CONSENT_KEY)
@@ -50,7 +56,7 @@ export default function CookieBanner() {
     saveConsent({ ...preferences, necessary: true })
   }
 
-  if (!visible) return null
+  if (!visible || cartOpen) return null
 
   return (
     <div
