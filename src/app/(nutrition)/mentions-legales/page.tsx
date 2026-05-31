@@ -43,22 +43,34 @@ export default function MentionsLegalesPage() {
             </div>
             <div className="bg-[#f4f6f1] rounded-2xl p-6 md:p-8 text-base text-[#4a5f4c] font-medium space-y-3">
               <p>
-                <strong className="font-black text-[#1a2e23]">Raison sociale :</strong> BodyStart [Forme juridique à compléter]
+                <strong className="font-black text-[#1a2e23]">Raison sociale :</strong> BODYFIT INDUSTRIE — SASU au capital de 500 €
               </p>
               <p>
-                <strong className="font-black text-[#1a2e23]">SIRET :</strong> À compléter
+                <strong className="font-black text-[#1a2e23]">SIREN :</strong> 909 197 469
               </p>
               <p>
-                <strong className="font-black text-[#1a2e23]">Siège social :</strong> Adresse Boutique A, Ville A
+                <strong className="font-black text-[#1a2e23]">SIRET (siège) :</strong> 909 197 469 00010
               </p>
               <p>
-                <strong className="font-black text-[#1a2e23]">Email :</strong> contact@bodystart.fr
+                <strong className="font-black text-[#1a2e23]">RCS :</strong> Versailles
               </p>
               <p>
-                <strong className="font-black text-[#1a2e23]">Téléphone :</strong> +33 X XX XX XX XX
+                <strong className="font-black text-[#1a2e23]">TVA intracommunautaire :</strong> FR46909197469
               </p>
               <p>
-                <strong className="font-black text-[#1a2e23]">Directeur de publication :</strong> [Nom du gérant]
+                <strong className="font-black text-[#1a2e23]">Siège social :</strong> 8 Rue du Pont des Landes, 78310 Coignières
+              </p>
+              <p>
+                <strong className="font-black text-[#1a2e23]">Email :</strong>{' '}
+                <a href="mailto:bodystartnutrition@gmail.com" className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors">
+                  bodystartnutrition@gmail.com
+                </a>
+              </p>
+              <p>
+                <strong className="font-black text-[#1a2e23]">Téléphone :</strong> 07 61 84 75 80
+              </p>
+              <p>
+                <strong className="font-black text-[#1a2e23]">Directeur de la publication :</strong> Adam Le Charlès
               </p>
             </div>
           </section>
@@ -90,7 +102,7 @@ export default function MentionsLegalesPage() {
               Propriété intellectuelle
             </h2>
             <p className="text-[#4a5f4c] font-medium text-base leading-relaxed">
-              L&apos;ensemble du contenu de ce site (textes, images, logos, icônes) est la propriété exclusive de BodyStart et est protégé par les lois françaises et internationales relatives à la propriété intellectuelle. Toute reproduction, distribution ou utilisation sans autorisation préalable est strictement interdite.
+              L&apos;ensemble du contenu de ce site (textes, images, logos, icônes) est la propriété exclusive de BODYFIT INDUSTRIE et est protégé par les lois françaises et internationales relatives à la propriété intellectuelle. Toute reproduction, distribution ou utilisation sans autorisation préalable est strictement interdite.
             </p>
           </section>
 
@@ -99,7 +111,7 @@ export default function MentionsLegalesPage() {
               Limitation de responsabilité
             </h2>
             <p className="text-[#4a5f4c] font-medium text-base leading-relaxed">
-              BodyStart s&apos;efforce d&apos;assurer l&apos;exactitude des informations diffusées sur ce site. Cependant, BodyStart ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition. En conséquence, BodyStart décline toute responsabilité pour toute imprécision, inexactitude ou omission portant sur des informations disponibles sur ce site.
+              BODYFIT INDUSTRIE s&apos;efforce d&apos;assurer l&apos;exactitude des informations diffusées sur ce site. Cependant, BODYFIT INDUSTRIE ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition. En conséquence, BODYFIT INDUSTRIE décline toute responsabilité pour toute imprécision, inexactitude ou omission portant sur des informations disponibles sur ce site.
             </p>
           </section>
 

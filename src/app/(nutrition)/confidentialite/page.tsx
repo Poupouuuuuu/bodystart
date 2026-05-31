@@ -47,12 +47,12 @@ export default function ConfidentialitePage() {
               Responsable du traitement
             </h2>
             <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
-              BodyStart, dont le siège social est à Adresse Boutique A, est responsable du traitement de vos données personnelles. Contact :{' '}
+              BODYFIT INDUSTRIE (marque BodyStart Nutrition), SASU dont le siège social est situé 8 Rue du Pont des Landes, 78310 Coignières, est responsable du traitement de vos données personnelles. Contact :{' '}
               <a
-                href="mailto:contact@bodystart.fr"
+                href="mailto:bodystartnutrition@gmail.com"
                 className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
               >
-                contact@bodystart.fr
+                bodystartnutrition@gmail.com
               </a>
             </p>
           </section>
@@ -90,7 +90,7 @@ export default function ConfidentialitePage() {
               Conservation des données
             </h2>
             <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
-              Vos données sont conservées pendant 3 ans à compter de votre dernière interaction avec BodyStart, ou pendant la durée légalement requise.
+              Vos données sont conservées pendant 3 ans à compter de votre dernière interaction avec BODYFIT INDUSTRIE, ou pendant la durée légalement requise.
             </p>
           </section>
 
@@ -119,11 +119,37 @@ export default function ConfidentialitePage() {
             <p className="mt-6 text-[#4a5f4c] font-medium">
               Pour exercer ces droits, contactez-nous :{' '}
               <a
-                href="mailto:contact@bodystart.fr"
+                href="mailto:bodystartnutrition@gmail.com"
                 className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
               >
-                contact@bodystart.fr
+                bodystartnutrition@gmail.com
               </a>
+            </p>
+            <p className="mt-4 text-[#4a5f4c] font-medium leading-relaxed">
+              Vous disposez également du droit d&apos;introduire une réclamation auprès de la CNIL :{' '}
+              <a
+                href="https://www.cnil.fr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
+              >
+                www.cnil.fr
+              </a>
+              .
+            </p>
+          </section>
+
+          <section className="bg-white rounded-[20px] p-8">
+            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+              Sous-traitants et transferts
+            </h2>
+            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+              Pour fournir nos services, nous faisons appel à des sous-traitants : Shopify
+              (hébergement de la boutique et traitement des commandes), nos prestataires de
+              paiement (Shopify Payments) et de livraison (Colissimo, Mondial Relay). Certaines
+              de ces données peuvent être transférées en dehors de l&apos;Union européenne ;
+              dans ce cas, ces transferts sont encadrés par des garanties appropriées (clauses
+              contractuelles types de la Commission européenne ou mécanismes équivalents).
             </p>
           </section>
 

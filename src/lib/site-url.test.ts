@@ -15,8 +15,8 @@ describe('site-url', () => {
     })
 
     it('strip le trailing slash', () => {
-      process.env.NEXT_PUBLIC_SITE_URL = 'https://bodystart.fr/'
-      expect(getSiteUrl()).toBe('https://bodystart.fr')
+      process.env.NEXT_PUBLIC_SITE_URL = 'https://bodystart-nutrition.fr/'
+      expect(getSiteUrl()).toBe('https://bodystart-nutrition.fr')
     })
 
     it('retourne chaine vide si variable absente', () => {
@@ -32,8 +32,8 @@ describe('site-url', () => {
 
   describe('getSiteDomain', () => {
     it('strip le protocole https', () => {
-      process.env.NEXT_PUBLIC_SITE_URL = 'https://bodystart.fr'
-      expect(getSiteDomain()).toBe('bodystart.fr')
+      process.env.NEXT_PUBLIC_SITE_URL = 'https://bodystart-nutrition.fr'
+      expect(getSiteDomain()).toBe('bodystart-nutrition.fr')
     })
 
     it('strip le protocole http', () => {

@@ -12,23 +12,23 @@ export const metadata: Metadata = buildPageMetadata({
 const sections = [
   {
     title: '1. Objet',
-    content: `Les présentes Conditions Générales de Vente (CGV) régissent les ventes effectuées sur le site bodystart.fr par la société BodyStart, ci-après dénommée "le Vendeur". Toute commande implique l'acceptation sans réserve des présentes CGV.`,
+    content: `Les présentes Conditions Générales de Vente (CGV) régissent les ventes effectuées sur le site bodystart-nutrition.fr par la société BODYFIT INDUSTRIE (SASU au capital de 500 €, RCS Versailles 909 197 469, TVA FR46909197469), dont le siège est situé 8 Rue du Pont des Landes, 78310 Coignières, ci-après dénommée "le Vendeur". Toute commande implique l'acceptation sans réserve des présentes CGV.`,
   },
   {
     title: '2. Produits',
-    content: `Les produits proposés à la vente sont des compléments alimentaires. Les photographies et descriptions des produits sont données à titre indicatif. BodyStart se réserve le droit de modifier la composition des produits sous réserve de maintenir leur qualité équivalente. Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain.`,
+    content: `Les produits proposés à la vente sont des compléments alimentaires. Les photographies et descriptions des produits sont données à titre indicatif. BODYFIT INDUSTRIE se réserve le droit de modifier la composition des produits sous réserve de maintenir leur qualité équivalente. Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain.`,
   },
   {
     title: '3. Prix',
-    content: `Les prix sont indiqués en euros TTC (toutes taxes comprises). BodyStart se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au prix en vigueur au moment de la validation de la commande. Les frais de livraison sont indiqués lors du processus de commande.`,
+    content: `Les prix sont indiqués en euros TTC (toutes taxes comprises). BODYFIT INDUSTRIE se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au prix en vigueur au moment de la validation de la commande. Les frais de livraison sont indiqués lors du processus de commande.`,
   },
   {
     title: '4. Commandes',
-    content: `La commande est définitive après validation du paiement. BodyStart se réserve le droit d'annuler toute commande pour des raisons légitimes (rupture de stock, adresse de livraison erronée, litige antérieur...). Vous recevrez un email de confirmation dès validation de votre commande.`,
+    content: `La commande est définitive après validation du paiement. BODYFIT INDUSTRIE se réserve le droit d'annuler toute commande pour des raisons légitimes (rupture de stock, adresse de livraison erronée, litige antérieur...). Vous recevrez un email de confirmation dès validation de votre commande.`,
   },
   {
     title: '5. Paiement',
-    content: `Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express) via notre prestataire Shopify Payments, sécurisé par protocole SSL. BodyStart ne conserve aucune donnée bancaire.`,
+    content: `Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express) via notre prestataire Shopify Payments, sécurisé par protocole SSL. BODYFIT INDUSTRIE ne conserve aucune donnée bancaire.`,
   },
   {
     title: '6. Livraison',
@@ -40,15 +40,19 @@ const sections = [
   },
   {
     title: '8. Garanties',
-    content: `BodyStart garantit la conformité des produits aux descriptions figurant sur le site. En cas de produit défectueux ou non conforme, vous disposez de 2 ans à compter de la livraison pour invoquer la garantie légale de conformité.`,
+    content: `BODYFIT INDUSTRIE garantit la conformité des produits aux descriptions figurant sur le site. En cas de produit défectueux ou non conforme, vous disposez de 2 ans à compter de la livraison pour invoquer la garantie légale de conformité.`,
   },
   {
     title: '9. Données personnelles',
-    content: `Les informations collectées lors de votre commande sont nécessaires au traitement de celle-ci et sont transmises aux prestataires chargés de l'exécution de la commande. Conformément à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification et de suppression de vos données en nous contactant à : contact@bodystart.fr`,
+    content: `Les informations collectées lors de votre commande sont nécessaires au traitement de celle-ci et sont transmises aux prestataires chargés de l'exécution de la commande. Conformément à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification et de suppression de vos données en nous contactant à : bodystartnutrition@gmail.com`,
   },
   {
     title: '10. Litiges',
-    content: `En cas de litige, vous pouvez contacter notre service client à contact@bodystart.fr. À défaut de résolution amiable, vous pouvez saisir la plateforme européenne de règlement en ligne des litiges : ec.europa.eu/consumers/odr. Le droit français est applicable.`,
+    content: `En cas de litige, vous pouvez contacter notre service client à bodystartnutrition@gmail.com. À défaut de résolution amiable, vous pouvez saisir la plateforme européenne de règlement en ligne des litiges : ec.europa.eu/consumers/odr. Le droit français est applicable.`,
+  },
+  {
+    title: '11. Médiateur de la consommation',
+    content: `Conformément à l'article L612-1 du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable du litige. Médiateur compétent : [À COMPLÉTER : nom du médiateur + adresse postale + site web].`,
   },
 ]
 

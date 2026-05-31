@@ -37,7 +37,7 @@ const FAQ_ITEMS = [
     category: 'Retours & Remboursements',
     questions: [
       { q: 'Quel est le délai pour retourner un produit ?', a: 'Vous disposez de 14 jours à compter de la réception pour exercer votre droit de rétractation.' },
-      { q: 'Comment initier un retour ?', a: 'Contactez-nous par email à contact@bodystart.fr avec votre numéro de commande. Nous vous enverrons les instructions de retour.' },
+      { q: 'Comment initier un retour ?', a: 'Contactez-nous par email à bodystartnutrition@gmail.com avec votre numéro de commande. Nous vous enverrons les instructions de retour.' },
       { q: 'Quand serai-je remboursé(e) ?', a: 'Le remboursement est effectué sous 14 jours après réception et vérification du retour, sur le moyen de paiement initial.' },
     ],
   },
@@ -76,7 +76,7 @@ export default function FAQPage() {
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" /> Retour à l&apos;accueil
         </Link>
         <h1 className="font-display text-[40px] md:text-[60px] font-black uppercase tracking-tighter text-[#1a2e23] mb-4 leading-none">Questions fréquentes</h1>
-        <p className="text-[#4a5f4c] font-medium mb-12 text-base">Vous ne trouvez pas la réponse ? <a href="mailto:contact@bodystart.fr" className="text-[#1a2e23] font-bold hover:underline underline-offset-4">Contactez-nous</a></p>
+        <p className="text-[#4a5f4c] font-medium mb-12 text-base">Vous ne trouvez pas la réponse ? <a href="mailto:bodystartnutrition@gmail.com" className="text-[#1a2e23] font-bold hover:underline underline-offset-4">Contactez-nous</a></p>
 
         <div className="space-y-14">
           {FAQ_ITEMS.map(({ category, questions }) => (

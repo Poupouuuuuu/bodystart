@@ -102,10 +102,10 @@ export default function CookiesPage() {
           <p className="text-[#4a5f4c] font-medium">
             Pour en savoir plus ou exercer vos droits :{' '}
             <a
-              href="mailto:contact@bodystart.fr"
+              href="mailto:bodystartnutrition@gmail.com"
               className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
             >
-              contact@bodystart.fr
+              bodystartnutrition@gmail.com
             </a>
           </p>
         </div>

@@ -5,7 +5,7 @@
  *
  * Exemples valeurs possibles :
  *   - "https://bodystart.vercel.app" (preview)
- *   - "https://bodystart.fr" (prod future)
+ *   - "https://bodystart-nutrition.fr" (prod future)
  *   - "" (dev local sans config, on degrade proprement)
  */
 

@@ -127,7 +127,7 @@ export default function LivraisonPage() {
             </div>
             <div className="flex items-start gap-4 relative z-10">
               <div className="w-6 h-6 rounded-full bg-[#1a2e23] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">3</div>
-              <p>Pour initier un retour, contactez-nous à <a href="mailto:contact@bodystart.fr" className="text-[11px] font-bold uppercase tracking-widest text-[#1a2e23] hover:underline underline-offset-4 ml-1">contact@bodystart.fr</a> avec votre numéro de commande.</p>
+              <p>Pour initier un retour, contactez-nous à <a href="mailto:bodystartnutrition@gmail.com" className="text-[11px] font-bold uppercase tracking-widest text-[#1a2e23] hover:underline underline-offset-4 ml-1">bodystartnutrition@gmail.com</a> avec votre numéro de commande.</p>
             </div>
             <div className="flex items-start gap-4 relative z-10">
               <div className="w-6 h-6 rounded-full bg-[#1a2e23] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">4</div>
@@ -142,8 +142,8 @@ export default function LivraisonPage() {
           <p className="text-[#4a5f4c] font-medium">
             Notre équipe est disponible du lundi au samedi.
             <br />
-            <a href="mailto:contact@bodystart.fr" className="inline-block mt-4 text-[12px] font-bold uppercase tracking-widest text-white bg-[#1a2e23] px-6 py-3 rounded-full hover:bg-[#2e4f3c] transition-colors">
-              contact@bodystart.fr
+            <a href="mailto:bodystartnutrition@gmail.com" className="inline-block mt-4 text-[12px] font-bold uppercase tracking-widest text-white bg-[#1a2e23] px-6 py-3 rounded-full hover:bg-[#2e4f3c] transition-colors">
+              bodystartnutrition@gmail.com
             </a>
           </p>
         </section>
