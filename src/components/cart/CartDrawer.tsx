@@ -2,7 +2,9 @@
 
 // STANDBY 2026-05-23 : coaching masque (cf. middleware redirect 301).
 // Le toggle isCoaching a ete retire de CartDrawer en 2026-05-25 : tout le panier
-// est desormais nutrition-only (titre "Mon Panier", CTA "ACHETER MAINTENANT").
+// est desormais nutrition-only (titre "Mon panier").
+// Re-theme DA claire V2 (2026-05-31) : surfaces creme/blanc, vert frais en
+// accent, sentence case. Aucune logique panier/checkout touchee.
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -54,7 +56,7 @@ export default function CartDrawer() {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-[#1a2e23]/30 backdrop-blur-sm z-40 animate-fade-in"
+          className="fixed inset-0 bg-ink/40 backdrop-blur-sm z-40 animate-fade-in"
           onClick={closeCart}
           aria-hidden="true"
         />
@@ -63,7 +65,7 @@ export default function CartDrawer() {
       {/* Drawer */}
       <div
         className={cn(
-          'fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#eef3eb] z-50 flex flex-col shadow-[-10px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-in-out',
+          'fixed top-0 right-0 h-full w-full sm:w-[480px] bg-canvas z-50 flex flex-col shadow-[-10px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
         role="dialog"
@@ -72,12 +74,12 @@ export default function CartDrawer() {
       >
         {/* ─── Header ─── */}
         <div className="flex items-center justify-between px-8 py-7">
-          <h2 className="text-[18px] font-black uppercase text-[#1a2e23]">
-            Mon Panier
+          <h2 className="font-display text-[20px] font-extrabold tracking-tight text-spruce">
+            Mon panier
           </h2>
           <button
             onClick={closeCart}
-            className="p-2 -mr-2 rounded-full text-[#4a5f4c] hover:text-[#1a2e23] hover:bg-black/5 transition-colors"
+            className="p-2 -mr-2 rounded-full text-ink-mute hover:text-spruce hover:bg-spruce/5 transition-colors"
             aria-label="Fermer le panier"
           >
             <X className="w-5 h-5" />
@@ -87,18 +89,18 @@ export default function CartDrawer() {
         {/* ─── Barre livraison gratuite ─── */}
         {!isEmpty && !isClickAndCollect && (
           <div className="px-8 pb-5">
-            <div className="bg-white/60 border border-[#1a2e23]/5 rounded-xl p-4 shadow-sm">
+            <div className="bg-white border border-spruce/10 rounded-xl p-4">
               {hasFreeShipping ? (
                 <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-[#1a2e23] flex-shrink-0" />
-                  <p className="text-[12px] font-bold text-[#1a2e23]">
+                  <CheckCircle2 className="w-4 h-4 text-fresh flex-shrink-0" />
+                  <p className="text-[12px] font-semibold text-spruce">
                     Ta livraison est offerte !
                   </p>
                 </div>
               ) : (
-                <p className="text-[12px] font-medium text-[#4a5f4c] mb-2.5">
+                <p className="text-[12px] font-medium text-ink-mute mb-2.5">
                   Plus que{' '}
-                  <span className="font-black text-[#1a2e23]">
+                  <span className="font-bold text-spruce">
                     {formatPrice({
                       amount: remainingForFreeShipping.toFixed(2),
                       currencyCode: cart?.cost?.subtotalAmount?.currencyCode ?? 'EUR',
@@ -107,9 +109,9 @@ export default function CartDrawer() {
                   pour la livraison offerte
                 </p>
               )}
-              <div className="relative h-1.5 bg-[#1a2e23]/10 rounded-full overflow-hidden">
+              <div className="relative h-1.5 bg-spruce/10 rounded-full overflow-hidden">
                 <div
-                  className="absolute inset-y-0 left-0 bg-[#1a2e23] rounded-full transition-all duration-500 ease-out"
+                  className="absolute inset-y-0 left-0 bg-fresh rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${freeShippingProgress}%` }}
                 />
               </div>
@@ -120,17 +122,18 @@ export default function CartDrawer() {
         {/* ─── Contenu ─── */}
         {isEmpty ? (
           /* Panier vide */
-          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center text-[#1a2e23]">
-            <p className="font-bold text-lg mb-2">Ton panier est vide</p>
-            <p className="text-[#4a5f4c] font-medium mb-8 max-w-[250px] text-sm">
+          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center text-ink">
+            <p className="font-display font-bold text-lg text-spruce mb-2">Ton panier est vide</p>
+            <p className="text-ink-mute font-medium mb-8 max-w-[250px] text-sm">
               Ajoute des produits pour voir ton résumé de commande.
             </p>
             <Link
               href="/products"
               onClick={closeCart}
-              className="py-4 h-14 w-full text-[13px] font-bold tracking-widest rounded-full inline-flex justify-center items-center transition-all bg-[#1a2e23] text-white hover:bg-[#2c4c39]"
+              className="h-14 w-full text-[14px] font-semibold rounded-full inline-flex justify-center items-center gap-2 transition-colors bg-fresh text-white hover:bg-fresh-deep"
             >
-              ACHETER MAINTENANT
+              Acheter maintenant
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         ) : (
@@ -147,7 +150,7 @@ export default function CartDrawer() {
                 <div
                   key={item.id}
                   className={cn(
-                    'flex gap-5 pb-6 border-b border-[#1a2e23]/10 last:border-0',
+                    'flex gap-5 pb-6 border-b border-spruce/10 last:border-0',
                     isLoading && 'opacity-60 pointer-events-none'
                   )}
                 >
@@ -155,7 +158,7 @@ export default function CartDrawer() {
                   <Link
                     href={`/products/${product.handle}`}
                     onClick={closeCart}
-                    className="relative w-20 h-24 flex-shrink-0 bg-white rounded-lg shadow-sm overflow-hidden flex items-center justify-center border border-[#1a2e23]/5"
+                    className="relative w-20 h-24 flex-shrink-0 bg-white rounded-lg overflow-hidden flex items-center justify-center border border-spruce/10"
                   >
                     {image ? (
                       <Image
@@ -176,7 +179,7 @@ export default function CartDrawer() {
                         sizes="80px"
                       />
                     ) : (
-                      <Package className="w-8 h-8 text-[#1a2e23]/20" />
+                      <Package className="w-8 h-8 text-spruce/25" />
                     )}
                   </Link>
 
@@ -185,45 +188,45 @@ export default function CartDrawer() {
                     <div className="flex justify-between items-start gap-4">
                       <div>
                         <Link href={`/products/${product.handle}`} onClick={closeCart}>
-                          <p className="font-bold text-[#1a2e23] uppercase text-[13px] leading-tight line-clamp-2">
+                          <p className="font-display font-bold text-ink text-[14px] leading-tight line-clamp-2">
                             {product.title}
                           </p>
                         </Link>
                         {item.merchandise.title !== 'Default Title' && (
-                          <p className="text-[11px] font-medium text-[#4a5f4c] mt-0.5">
+                          <p className="text-[12px] font-medium text-ink-mute mt-0.5">
                             {item.merchandise.title}
                           </p>
                         )}
-                        
+
                         {/* Remove link */}
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="text-[11px] font-medium text-[#4a5f4c]/60 underline underline-offset-2 hover:text-red-500 mt-1 transition-colors"
+                          className="text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-terracotta mt-1 transition-colors"
                         >
                           Retirer
                         </button>
                       </div>
-                      <span className="font-bold text-[#1a2e23] text-sm whitespace-nowrap">
+                      <span className="font-semibold text-spruce text-sm whitespace-nowrap">
                         {formatPrice(item.cost.totalAmount)}
                       </span>
                     </div>
 
                     <div className="mt-auto pt-4">
                       {/* Quantité pill */}
-                      <div className="inline-flex items-center bg-white/60 border border-[#1a2e23]/10 rounded-full px-1 py-1">
+                      <div className="inline-flex items-center bg-white border border-spruce/15 rounded-full px-1 py-1">
                         <button
                           onClick={() => updateItem(item.id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
-                          className="w-6 h-6 flex items-center justify-center rounded-full text-[#4a5f4c] hover:bg-white disabled:opacity-30 transition-all"
+                          className="w-6 h-6 flex items-center justify-center rounded-full text-ink-mute hover:bg-spruce/5 disabled:opacity-30 transition-all"
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="w-6 text-center text-[12px] font-bold text-[#1a2e23]">
+                        <span className="w-6 text-center text-[12px] font-bold text-ink">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateItem(item.id, item.quantity + 1)}
-                          className="w-6 h-6 flex items-center justify-center rounded-full text-[#4a5f4c] hover:bg-white transition-all"
+                          className="w-6 h-6 flex items-center justify-center rounded-full text-ink-mute hover:bg-spruce/5 transition-all"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
@@ -241,18 +244,18 @@ export default function CartDrawer() {
 
         {/* ─── Footer récap + checkout ─── */}
         {!isEmpty && cart && (
-          <div className="px-8 pb-8 pt-5 border-t border-[#1a2e23]/10 bg-[#eef3eb] shadow-[0_-8px_20px_-12px_rgba(26,46,35,0.1)]">
+          <div className="px-8 pb-8 pt-5 border-t border-spruce/10 bg-canvas shadow-[0_-8px_20px_-12px_rgba(0,0,0,0.08)]">
 
             {/* ─── Toggle Livraison / Click & Collect ─── */}
             {activeStore && (
-              <div className="flex bg-white/70 p-1 rounded-xl mb-5 shadow-sm border border-[#1a2e23]/5">
+              <div className="flex bg-white p-1 rounded-xl mb-5 border border-spruce/10">
                 <button
                   onClick={() => isClickAndCollect && toggleClickAndCollect()}
                   className={cn(
-                    'flex-1 flex items-center justify-center gap-2 py-2.5 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-colors',
+                    'flex-1 flex items-center justify-center gap-2 py-2.5 text-[13px] font-semibold rounded-lg transition-colors',
                     !isClickAndCollect
-                      ? 'bg-white shadow-sm text-[#1a2e23]'
-                      : 'text-[#4a5f4c] hover:text-[#1a2e23]'
+                      ? 'bg-sage text-spruce'
+                      : 'text-ink-mute hover:text-spruce'
                   )}
                 >
                   <Truck className="w-3.5 h-3.5" />
@@ -261,10 +264,10 @@ export default function CartDrawer() {
                 <button
                   onClick={() => !isClickAndCollect && toggleClickAndCollect()}
                   className={cn(
-                    'flex-1 flex items-center justify-center gap-2 py-2.5 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-colors',
+                    'flex-1 flex items-center justify-center gap-2 py-2.5 text-[13px] font-semibold rounded-lg transition-colors',
                     isClickAndCollect
-                      ? 'bg-white shadow-sm text-[#1a2e23]'
-                      : 'text-[#4a5f4c] hover:text-[#1a2e23]'
+                      ? 'bg-sage text-spruce'
+                      : 'text-ink-mute hover:text-spruce'
                   )}
                 >
                   <Store className="w-3.5 h-3.5" />
@@ -274,26 +277,26 @@ export default function CartDrawer() {
             )}
 
             {/* Récap prix */}
-            <div className="space-y-3 mb-6 bg-white/40 p-4 rounded-xl border border-[#1a2e23]/5">
-              <div className="flex justify-between text-[13px] text-[#4a5f4c] font-medium">
+            <div className="space-y-3 mb-6 bg-white p-4 rounded-xl border border-spruce/10">
+              <div className="flex justify-between text-[13px] text-ink-mute font-medium">
                 <span>Sous-total</span>
-                <span className="font-bold text-[#1a2e23]">{formatPrice(cart.cost.subtotalAmount)}</span>
+                <span className="font-semibold text-ink">{formatPrice(cart.cost.subtotalAmount)}</span>
               </div>
-              <div className="flex justify-between text-[13px] text-[#4a5f4c] font-medium">
+              <div className="flex justify-between text-[13px] text-ink-mute font-medium">
                 <span>Livraison</span>
-                <span className="font-bold text-[#1a2e23]">
+                <span className="font-semibold text-ink">
                   {isClickAndCollect ? 'Gratuit' : 'Calculée à l\'étape suivante'}
                 </span>
               </div>
               {cart.cost.totalTaxAmount && (
-                <div className="flex justify-between text-[13px] text-[#4a5f4c] font-medium">
+                <div className="flex justify-between text-[13px] text-ink-mute font-medium">
                   <span>Dont TVA</span>
-                  <span className="font-bold text-[#1a2e23]">{formatPrice(cart.cost.totalTaxAmount)}</span>
+                  <span className="font-semibold text-ink">{formatPrice(cart.cost.totalTaxAmount)}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center pt-3 border-t border-[#1a2e23]/10 mt-1">
-                <span className="text-[14px] font-black uppercase text-[#1a2e23]">Total</span>
-                <span className="font-black text-2xl text-[#1a2e23]">
+              <div className="flex justify-between items-center pt-3 border-t border-spruce/10 mt-1">
+                <span className="text-[14px] font-bold text-ink">Total</span>
+                <span className="font-display font-extrabold text-2xl text-spruce">
                   {formatPrice(cart.cost.totalAmount)}
                 </span>
               </div>
@@ -303,9 +306,9 @@ export default function CartDrawer() {
             <div className="flex flex-col gap-3">
               <a
                 href={cart.checkoutUrl}
-                className="w-full h-14 flex items-center justify-center text-[14px] font-bold uppercase tracking-widest rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 bg-[#1a2e23] text-white hover:bg-[#2e4f3c]"
+                className="w-full h-14 flex items-center justify-center text-[14px] font-semibold rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep"
               >
-                {isClickAndCollect ? 'VALIDER LE RETRAIT' : 'PAIEMENT SÉCURISÉ'}
+                {isClickAndCollect ? 'Valider le retrait' : 'Paiement sécurisé'}
               </a>
             </div>
           </div>
