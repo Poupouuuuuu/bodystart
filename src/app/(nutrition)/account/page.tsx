@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -466,6 +466,7 @@ function isUrlTab(value: string | null | undefined): value is Tab {
 
 function AccountContent() {
   const router = useRouter()
+  const pathname = usePathname()
   const { customer, isLoading, isLoggedIn, logout } = useCustomer()
   const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<Tab>(() => {
@@ -491,9 +492,17 @@ function AccountContent() {
     }
   }, [searchParams])
 
+  // Garde d'auth cote client = source de verite unique (le token nutrition vit
+  // en localStorage, lu par useCustomer -> isLoggedIn). On NE redirige QUE quand
+  // l'auth est determinee (!isLoading) ET negative -> pas de rebond avant
+  // hydratation. router.replace (pas push) pour ne pas polluer l'historique,
+  // et ?redirect pour revenir ici apres connexion. Le middleware ne gate plus
+  // /account cote serveur : meme comportement en nav soft qu'en hard-load.
   useEffect(() => {
-    if (!isLoading && !isLoggedIn) router.push('/login')
-  }, [isLoading, isLoggedIn, router])
+    if (!isLoading && !isLoggedIn) {
+      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`)
+    }
+  }, [isLoading, isLoggedIn, router, pathname])
 
   async function handleLogout() {
     await logout()

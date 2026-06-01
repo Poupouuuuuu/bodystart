@@ -4,13 +4,22 @@
 // 2026-05-25 : redirect 301 /account/coaching/* vers /account (onglet
 // coaching retire de la nav, on rend les sous-pages inatteignables visuellement
 // sans toucher au code parke STANDBY)
+// 2026-06-02 : SUPPRESSION du gate serveur /account (cookie body-start-customer-token).
+// Root cause d'un bug de navigation : la verite d'auth nutrition vit cote client
+// (token localStorage, lu par CustomerContext -> isLoggedIn). Le cookie n'etait
+// qu'une copie ; quand il desync (absent/expire alors que le localStorage est
+// present), le middleware renvoyait un 307 vers /login sur CHAQUE requete /account,
+// y compris les requetes RSC de navigation soft. Resultat : la redirection
+// post-login (router.push('/account')) et le clic sur le lien profil du header
+// etaient rebondis cote serveur avant meme que la garde client ne s'execute,
+// alors qu'un hard-load passait quand le cookie etait la. On laisse desormais la
+// garde cote client (src/app/(nutrition)/account/page.tsx) faire foi : meme
+// comportement en nav soft et en hard-load. /account reste 100% client-rendered
+// (aucune donnee sensible en SSR : tout passe par le token cote client).
 import { NextRequest, NextResponse } from 'next/server'
 
-const NUTRITION_PROTECTED_PATHS = ['/account']
 const STAFF_PROTECTED_PATHS = ['/staff']
-const NUTRITION_LOGIN_PATH = '/login'
 const STAFF_LOGIN_PATH = '/staff/login'
-const NUTRITION_TOKEN_COOKIE = 'body-start-customer-token'
 const SUPABASE_AUTH_COOKIE_PREFIX = 'sb-' // les cookies @supabase/ssr commencent par sb-{projectRef}-
 
 // Routes mises en standby : redirect permanent vers /products
@@ -75,20 +84,9 @@ export function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
-  // ─── Protection /account/* via cookie Shopify (existant) ───
-  const isNutritionProtected = NUTRITION_PROTECTED_PATHS.some(
-    (path) => pathname === path || pathname.startsWith(path + '/')
-  )
-  if (!isNutritionProtected) return NextResponse.next()
-
-  const token = req.cookies.get(NUTRITION_TOKEN_COOKIE)?.value
-  if (!token) {
-    const loginUrl = req.nextUrl.clone()
-    loginUrl.pathname = NUTRITION_LOGIN_PATH
-    loginUrl.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(loginUrl)
-  }
-
+  // ─── /account : PAS de gate serveur (cf. note d'en-tete) ───
+  // La garde d'auth nutrition est cote client. Le middleware ne matche /account
+  // que pour la redirection /account/coaching/* ci-dessus.
   return NextResponse.next()
 }
 
