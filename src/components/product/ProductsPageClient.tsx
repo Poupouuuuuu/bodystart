@@ -21,7 +21,7 @@ import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 const GOALS: { key: string; label: string; image: string | null; linkedCategories: string[] }[] = [
   { key: 'all', label: 'Tout voir', image: null, linkedCategories: [] },
   { key: 'muscle', label: 'Muscle', image: '/Logomuscle.png', linkedCategories: ['proteines', 'creatine', 'acides-amines'] },
-  { key: 'energie', label: 'Énergie', image: '/Logoenergy.png', linkedCategories: ['boosters', 'snacks'] },
+  { key: 'energie', label: 'Énergie', image: '/Logoenergy.png', linkedCategories: ['boosters', 'pre-workout'] },
   { key: 'recuperation', label: 'Récupération', image: '/Logo-recuperation.png', linkedCategories: ['acides-amines', 'sante'] },
   { key: 'sante', label: 'Santé', image: '/Logo-sante-vitalite.png', linkedCategories: ['sante', 'bruleurs'] },
 ]
@@ -36,51 +36,66 @@ const SORT_OPTIONS = [
 ]
 
 // ─── Catégories ───
-const CATEGORIES = [
-  { key: 'proteines', label: 'Protéines', collectionHandle: 'proteines', subcategories: [
-    { tag: 'whey', label: 'Whey classique' },
-    { tag: 'isolate', label: 'Isolate' },
-    { tag: 'gainer', label: 'Gainer' },
-    { tag: 'caseine', label: 'Caséine' },
+// Filtre niveau 1 = champ natif Shopify `productType` (rempli partout).
+// Sous-filtres = `tags` réels (lowercase, sans accent au catalogue).
+// Le matching normalise des deux côtés (casse + diacritiques), donc les
+// libellés d'affichage peuvent garder accents/pluriels sans casser le match.
+type SubCategory = { key: string; label: string; tags: string[] }
+type Category = { key: string; label: string; productTypes: string[]; subcategories: SubCategory[] }
+
+const CATEGORIES: Category[] = [
+  { key: 'proteines', label: 'Protéines', productTypes: ['Protéines'], subcategories: [
+    { key: 'whey', label: 'Whey', tags: ['whey'] },
+    { key: 'isolate', label: 'Isolate', tags: ['isolate'] },
+    { key: 'gainer', label: 'Gainer', tags: ['gainer'] },
+    { key: 'caseine', label: 'Caséine', tags: ['caseine'] },
   ]},
-  { key: 'creatine', label: 'Créatine', collectionHandle: 'creatine', subcategories: [
-    { tag: 'monohydrate', label: 'Monohydrate' },
+  { key: 'creatine', label: 'Créatine', productTypes: ['Créatine'], subcategories: [
+    { key: 'monohydrate', label: 'Monohydrate', tags: ['monohydrate'] },
   ]},
-  { key: 'acides-amines', label: 'Acides aminés', collectionHandle: 'acides-amines', subcategories: [
-    { tag: 'bcaa', label: 'BCAA' },
-    { tag: 'eaa', label: 'EAA' },
-    { tag: 'glutamine', label: 'Glutamine' },
-    { tag: 'citrulline', label: 'Citrulline' },
+  { key: 'pre-workout', label: 'Pré-workout', productTypes: ['Pré-workout'], subcategories: [] },
+  { key: 'acides-amines', label: 'Acides aminés', productTypes: ['Acides aminés'], subcategories: [
+    { key: 'bcaa', label: 'BCAA', tags: ['bcaa'] },
+    { key: 'eaa', label: 'EAA', tags: ['eaa'] },
+    { key: 'glutamine', label: 'Glutamine', tags: ['glutamine'] },
+    { key: 'citrulline', label: 'Citrulline', tags: ['citrulline'] },
+    { key: 'beta-alanine', label: 'Bêta-alanine', tags: ['beta-alanine'] },
   ]},
-  { key: 'sante', label: 'Santé & bien-être', collectionHandle: 'sante-bien-etre', subcategories: [
-    { tag: 'omega', label: 'Oméga' },
-    { tag: 'vitamine', label: 'Vitamines' },
-    { tag: 'collagene', label: 'Collagènes' },
-    { tag: 'magnesium', label: 'Magnésium' },
-    { tag: 'mineraux', label: 'Minéraux' },
-    { tag: 'electrolytes', label: 'Électrolytes' },
-    { tag: 'multivitamine', label: 'Multivitamines' },
+  { key: 'bruleurs', label: 'Brûleurs de graisse', productTypes: ['Brûleur'], subcategories: [
+    { key: 'carnitine', label: 'Carnitine', tags: ['carnitine'] },
+    { key: 'cla', label: 'CLA', tags: ['cla'] },
+    { key: 'thermo-draineur', label: 'Thermo / Draineur', tags: ['thermo', 'draineur'] },
   ]},
-  { key: 'boosters', label: 'Boosters', collectionHandle: 'boosters', subcategories: [
-    { tag: 'pre-workout', label: 'Pré-workout' },
-    { tag: 'pump', label: 'Pump' },
-    { tag: 'testo', label: 'Testo booster' },
+  { key: 'boosters', label: 'Boosters', productTypes: ['Boosters'], subcategories: [
+    { key: 'pump', label: 'Pump', tags: ['pump'] },
+    { key: 'testo', label: 'Testo', tags: ['testo'] },
   ]},
-  { key: 'bruleurs', label: 'Brûleurs de graisse', collectionHandle: 'bruleurs-de-graisse', subcategories: [
-    { tag: 'carnitine', label: 'Carnitine' },
-    { tag: 'cla', label: 'CLA' },
-    { tag: 'thermo', label: 'Thermo / Draineur' },
-  ]},
-  { key: 'snacks', label: 'Snacks & barres', collectionHandle: 'snacks-barres', subcategories: [
-    { tag: 'barre', label: 'Barres' },
-    { tag: 'boisson', label: 'Boissons' },
-  ]},
-  { key: 'accessoires', label: 'Accessoires', collectionHandle: 'accessoires', subcategories: [
-    { tag: 'shaker', label: 'Shakers' },
-    { tag: 'sangle', label: 'Sangles' },
-    { tag: 'ceinture', label: 'Ceintures' },
+  { key: 'sante', label: 'Santé & bien-être', productTypes: ['Santé'], subcategories: [
+    { key: 'omega', label: 'Oméga', tags: ['omega'] },
+    { key: 'vitamine', label: 'Vitamines', tags: ['vitamine'] },
+    { key: 'multivitamine', label: 'Multivitamines', tags: ['multivitamine'] },
+    { key: 'collagene', label: 'Collagène', tags: ['collagene'] },
+    { key: 'magnesium', label: 'Magnésium', tags: ['magnesium'] },
+    { key: 'zinc', label: 'Zinc', tags: ['zinc'] },
+    { key: 'mineraux', label: 'Minéraux', tags: ['mineraux'] },
+    { key: 'electrolytes', label: 'Électrolytes', tags: ['electrolytes'] },
   ]},
 ]
+
+// Normalisation casse + diacritiques (accents) → matching robuste.
+function normalize(s: string): string {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim()
+}
+
+function productMatchesCategory(p: ShopifyProduct, cat: Category): boolean {
+  const pt = normalize(p.productType ?? '')
+  return cat.productTypes.some((t) => normalize(t) === pt)
+}
+
+function productMatchesTags(p: ShopifyProduct, tags: string[]): boolean {
+  const productTags = (p.tags ?? []).map(normalize)
+  return tags.some((tag) => productTags.includes(normalize(tag)))
+}
 
 // Tags Shopify qui qualifient un produit comme "sante" (badge sage)
 const SANTE_TAGS = new Set(['sante', 'santé', 'omega', 'omega-3', 'magnesium', 'vitamine', 'collagene', 'collagene-marin', 'immunite'])
@@ -203,21 +218,18 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
     if (activeGoal !== 'all') {
       const goal = GOALS.find((g) => g.key === activeGoal)
       if (goal && goal.linkedCategories.length > 0) {
-        const linkedHandles = goal.linkedCategories
-          .map((catKey) => CATEGORIES.find((c) => c.key === catKey)?.collectionHandle)
-          .filter(Boolean) as string[]
-        result = result.filter((p) =>
-          p.collections?.nodes?.some((c) => linkedHandles.includes(c.handle))
-        )
+        const linkedCats = goal.linkedCategories
+          .map((catKey) => CATEGORIES.find((c) => c.key === catKey))
+          .filter(Boolean) as Category[]
+        result = result.filter((p) => linkedCats.some((c) => productMatchesCategory(p, c)))
       }
     }
 
     if (currentCategory) {
-      result = result.filter((p) =>
-        p.collections?.nodes?.some((c) => c.handle === currentCategory.collectionHandle)
-      )
+      result = result.filter((p) => productMatchesCategory(p, currentCategory))
       if (activeTag) {
-        result = result.filter((p) => p.tags.some((t) => t.toLowerCase() === activeTag))
+        const sub = currentCategory.subcategories.find((s) => s.key === activeTag)
+        if (sub) result = result.filter((p) => productMatchesTags(p, sub.tags))
       }
     }
 
@@ -252,22 +264,38 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
     return result
   }, [products, activeGoal, currentCategory, activeTag, sortKey, priceRange, searchQuery])
 
-  const visibleCategories = useMemo(() => {
-    if (activeGoal === 'all') return CATEGORIES
-    const goal = GOALS.find((g) => g.key === activeGoal)
-    if (!goal || goal.linkedCategories.length === 0) return CATEGORIES
-    return CATEGORIES.filter((cat) => goal.linkedCategories.includes(cat.key))
-  }, [activeGoal])
-
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     for (const cat of CATEGORIES) {
-      counts[cat.key] = products.filter((p) =>
-        p.collections?.nodes?.some((c) => c.handle === cat.collectionHandle)
-      ).length
+      counts[cat.key] = products.filter((p) => productMatchesCategory(p, cat)).length
     }
     return counts
   }, [products])
+
+  // Compte par sous-filtre (catégorie + tag) → masque les sous-filtres vides.
+  const subCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const cat of CATEGORIES) {
+      for (const sub of cat.subcategories) {
+        counts[`${cat.key}:${sub.key}`] = products.filter(
+          (p) => productMatchesCategory(p, cat) && productMatchesTags(p, sub.tags)
+        ).length
+      }
+    }
+    return counts
+  }, [products])
+
+  // N'affiche que les catégories ayant au moins un produit (cf. #4 du brief).
+  const visibleCategories = useMemo(() => {
+    let cats = CATEGORIES.filter((cat) => (categoryCounts[cat.key] ?? 0) > 0)
+    if (activeGoal !== 'all') {
+      const goal = GOALS.find((g) => g.key === activeGoal)
+      if (goal && goal.linkedCategories.length > 0) {
+        cats = cats.filter((cat) => goal.linkedCategories.includes(cat.key))
+      }
+    }
+    return cats
+  }, [activeGoal, categoryCounts])
 
   return (
     <div className="bg-canvas min-h-screen">
@@ -451,6 +479,9 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
               {visibleCategories.map((cat) => {
                 const isActive = activeCategory === cat.key
                 const count = categoryCounts[cat.key] ?? 0
+                const visibleSubs = cat.subcategories.filter(
+                  (s) => (subCounts[`${cat.key}:${s.key}`] ?? 0) > 0
+                )
                 return (
                   <div key={cat.key}>
                     <button
@@ -476,7 +507,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                             {count}
                           </span>
                         )}
-                        {cat.subcategories.length > 0 && (
+                        {visibleSubs.length > 0 && (
                           <ChevronDown
                             className={cn(
                               'w-3.5 h-3.5 transition-transform',
@@ -488,7 +519,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                       </div>
                     </button>
 
-                    {cat.subcategories.length > 0 && (
+                    {visibleSubs.length > 0 && (
                       <div
                         className={cn(
                           'overflow-hidden transition-all',
@@ -498,13 +529,13 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                         )}
                       >
                         <div className="space-y-0.5 pl-3 ml-3 border-l border-spruce/10">
-                          {cat.subcategories.map((sub) => (
+                          {visibleSubs.map((sub) => (
                             <button
-                              key={sub.tag}
-                              onClick={() => selectTag(cat.key, sub.tag)}
+                              key={sub.key}
+                              onClick={() => selectTag(cat.key, sub.key)}
                               className={cn(
                                 'flex items-center w-full text-left text-[13px] py-1.5 px-3 rounded-lg transition-colors',
-                                isActive && activeTag === sub.tag
+                                isActive && activeTag === sub.key
                                   ? 'bg-sage text-spruce font-semibold'
                                   : 'text-ink-mute hover:text-spruce hover:bg-spruce/5'
                               )}
@@ -573,7 +604,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                     onClick={() => setActiveTag(null)}
                     className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
-                    {currentCategory.subcategories.find((s) => s.tag === activeTag)?.label ?? activeTag}
+                    {currentCategory.subcategories.find((s) => s.key === activeTag)?.label ?? activeTag}
                     <X className="w-3 h-3" />
                   </button>
                 )}
