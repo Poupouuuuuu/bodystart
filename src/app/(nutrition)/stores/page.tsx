@@ -5,9 +5,6 @@ import {
   Mail,
   Clock,
   Navigation,
-  ShieldCheck,
-  Truck,
-  Store,
   ChevronDown,
 } from 'lucide-react'
 import { BODY_START_STORES } from '@/lib/shopify/types'
@@ -233,29 +230,7 @@ export default function StoresPage() {
         </div>
       </section>
 
-      {/* ─── 4. Trust bar ─── */}
-      <section className="pb-4">
-        <div className="container">
-          <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            {[
-              { icon: ShieldCheck, label: 'Paiement sécurisé' },
-              { icon: Truck, label: 'Livraison offerte dès 85 €' },
-              { icon: Store, label: 'Click & Collect gratuit' },
-              { icon: Clock, label: 'On répond 7j/7' },
-            ].map(({ icon: Icon, label }) => (
-              <li
-                key={label}
-                className="flex items-center gap-3 bg-white rounded-2xl border border-spruce/10 px-4 py-4"
-              >
-                <Icon className="w-5 h-5 text-spruce flex-shrink-0" />
-                <span className="text-[13px] font-medium text-ink leading-snug">{label}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* ─── 5. FAQ locale ─── */}
+      {/* ─── 4. FAQ locale ─── */}
       <section className="py-16 md:py-24">
         <div className="container">
           <div className="max-w-3xl mx-auto">
