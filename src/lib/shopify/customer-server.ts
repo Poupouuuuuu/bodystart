@@ -1,5 +1,5 @@
 import { shopifyFetch } from './client'
-import { GET_CUSTOMER } from './queries/customer'
+import { GET_CUSTOMER, CUSTOMER_UPDATE } from './queries/customer'
 import type { Customer } from './customer'
 
 /**
@@ -15,5 +15,21 @@ export async function getCustomer(accessToken: string): Promise<Customer | null>
     return data.customer
   } catch {
     return null
+  }
+}
+
+/**
+ * Met à jour le téléphone du profil Shopify côté serveur (best-effort).
+ * Utilisé pour synchroniser profil ← cagnotte/parrainage à l'enrôlement.
+ * `phoneE164` doit déjà être en E.164 (+33…). Ne throw jamais.
+ */
+export async function updateCustomerPhoneServer(accessToken: string, phoneE164: string): Promise<void> {
+  try {
+    await shopifyFetch(CUSTOMER_UPDATE, {
+      customerAccessToken: accessToken,
+      customer: { phone: phoneE164 },
+    })
+  } catch (err) {
+    console.warn('[updateCustomerPhoneServer] non-blocking failure:', err)
   }
 }

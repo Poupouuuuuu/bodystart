@@ -1,4 +1,5 @@
 import { shopifyFetch } from './client'
+import { normalizeToE164 } from '@/lib/loyalty/phone'
 import {
   CUSTOMER_CREATE,
   CUSTOMER_ACCESS_TOKEN_CREATE,
@@ -171,12 +172,32 @@ export async function updateCustomer(
     acceptsMarketing?: boolean
   }
 ): Promise<{ success: boolean; errors: CustomerError[] }> {
+  // Le téléphone est OPTIONNEL : Shopify rejette une string vide
+  // ("phone can't be blank") → on l'omet si vide. S'il est présent, on le
+  // normalise en E.164 (Shopify accepte "+33761847580", pas "+33 7 61...").
+  const input: typeof customer = { ...customer }
+  if ('phone' in input) {
+    const raw = (input.phone ?? '').trim()
+    if (!raw) {
+      delete input.phone
+    } else {
+      const e164 = normalizeToE164(raw)
+      if (!e164) {
+        return {
+          success: false,
+          errors: [{ code: 'INVALID', field: ['phone'], message: 'Numéro de téléphone invalide.' }],
+        }
+      }
+      input.phone = e164
+    }
+  }
+
   const data = await shopifyFetch<{
     customerUpdate: {
       customer: { id: string } | null
       customerUserErrors: CustomerError[]
     }
-  }>(CUSTOMER_UPDATE, { customerAccessToken: accessToken, customer })
+  }>(CUSTOMER_UPDATE, { customerAccessToken: accessToken, customer: input })
 
   const errors = data.customerUpdate.customerUserErrors
   return { success: errors.length === 0, errors }

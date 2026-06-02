@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? ''
+// Cf. note dans /api/contact : domaine de test Resend par défaut, override
+// via RESEND_FROM au go-live (après vérification d'un vrai domaine dans Resend).
+const FROM = process.env.RESEND_FROM ?? 'BodyStart Nutrition <onboarding@resend.dev>'
 
 function escapeHtml(str: string): string {
   return str
@@ -49,7 +52,7 @@ export async function POST(req: NextRequest) {
     // Email de bienvenue
     const safeEmail = escapeHtml(email)
     await resend.emails.send({
-      from: 'BodyStart Nutrition <onboarding@resend.dev>',
+      from: FROM,
       to: email,
       subject: 'Bienvenue dans la communauté BodyStart ! Votre code -10%',
       html: `

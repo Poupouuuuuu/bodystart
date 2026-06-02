@@ -8,11 +8,15 @@
  * Reponse 200 : { ok, customer: { id, referralCode, loyaltyBalanceCents } }
  */
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { resolveLoyaltyForSession } from '@/lib/loyalty/session'
 import { normalizeToE164 } from '@/lib/loyalty/phone'
 import { upsertLoyaltyCustomer } from '@/lib/loyalty/upsert-customer'
+import { updateCustomerPhoneServer } from '@/lib/shopify/customer-server'
+
+const SHOPIFY_TOKEN_COOKIE = 'body-start-customer-token'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -87,6 +91,11 @@ export async function POST(req: NextRequest) {
       shopifyCustomerId: session.shopify.id,
       source: 'online',
     })
+
+    // Sync profil Shopify ← cagnotte : on écrit le numéro saisi à l'enrôlement
+    // dans le profil client, pour qu'il n'y ait QU'UN seul numéro (best-effort).
+    const token = cookies().get(SHOPIFY_TOKEN_COOKIE)?.value
+    if (token) await updateCustomerPhoneServer(token, e164)
 
     return NextResponse.json({
       ok: true,

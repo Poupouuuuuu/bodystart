@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
 const TO = process.env.CONTACT_EMAIL_TO ?? 'bodystartnutrition@gmail.com'
+// Expéditeur Resend. Par défaut le domaine de TEST Resend (onboarding@resend.dev),
+// qui ne délivre qu'à l'adresse propriétaire du compte Resend. Au go-live :
+// vérifier un vrai domaine dans Resend puis définir RESEND_FROM (ex:
+// "BodyStart Nutrition <contact@ton-domaine.fr>") — aucun changement de code requis.
+const FROM = process.env.RESEND_FROM ?? 'BodyStart Nutrition <onboarding@resend.dev>'
 
 // ─── Rate limiter : 5 requêtes / 10 min par IP (optionnel si Upstash non configuré) ───
 let ratelimit: { limit: (key: string) => Promise<{ success: boolean; remaining: number }> } | null = null
@@ -68,7 +73,7 @@ export async function POST(req: NextRequest) {
     const objectifLabel = objectifLabels[objectif] ?? escapeHtml(objectif)
 
     await resend.emails.send({
-      from: 'BodyStart Nutrition <onboarding@resend.dev>',
+      from: FROM,
       to: TO,
       replyTo: email,
       subject: `🏋️ Nouvelle demande de conseil de ${safeName}`,
@@ -127,7 +132,7 @@ export async function POST(req: NextRequest) {
 
     // Email de confirmation au client
     await resend.emails.send({
-      from: 'BodyStart Nutrition <onboarding@resend.dev>',
+      from: FROM,
       to: email,
       subject: 'Votre demande de conseil a bien été reçue (BodyStart)',
       html: `

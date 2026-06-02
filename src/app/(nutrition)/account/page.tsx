@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { CagnottePanel } from '@/components/account/CagnottePanel'
 import { ReferralPanel } from '@/components/account/ReferralPanel'
+import PhoneField from '@/components/ui/PhoneField'
 import { useCustomer } from '@/context/CustomerContext'
 import { updateCustomer, getStoredToken } from '@/lib/shopify/customer'
 import type { AddressInput } from '@/lib/shopify/customer'
@@ -279,7 +280,8 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
   const inputClass = "w-full px-4 py-3 rounded-xl border border-spruce/20 text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
   const labelClass = "block text-[12px] font-semibold text-ink mb-2"
 
-  const openAdd = () => { setEditingId(null); setForm(EMPTY); setError(null); setShowForm(true) }
+  // Pré-remplit prénom/nom depuis le profil pour éviter la double saisie.
+  const openAdd = () => { setEditingId(null); setForm({ ...EMPTY, firstName: customer.firstName ?? '', lastName: customer.lastName ?? '' }); setError(null); setShowForm(true) }
   const openEdit = (addr: typeof addresses[0]) => {
     setEditingId(addr.id)
     setForm({ firstName: addr.name?.split(' ')[0] ?? '', lastName: addr.name?.split(' ').slice(1).join(' ') ?? '', address1: addr.address1, address2: addr.address2 ?? '', city: addr.city, zip: addr.zip, country: addr.country, phone: addr.phone ?? '', company: '' })
@@ -395,18 +397,38 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
 function ProfilePanel({ customer }: { customer: NonNullable<ReturnType<typeof useCustomer>['customer']> }) {
   const { refreshCustomer } = useCustomer()
   const [form, setForm] = useState({ firstName: customer.firstName ?? '', lastName: customer.lastName ?? '', email: customer.email ?? '', phone: customer.phone ?? '' })
+  const [phoneValid, setPhoneValid] = useState(true)
   const [saving, setSaving] = useState(false)
   const inputClass = "w-full px-5 py-3.5 rounded-xl border border-spruce/20 text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
   const labelClass = "block text-[12px] font-semibold text-ink mb-2"
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!phoneValid) { toast.error('Numéro de téléphone invalide.'); return }
     const token = getStoredToken()
     if (!token) return
     setSaving(true)
+    // form.phone est déjà en E.164 (ou '') grâce à PhoneField ; updateCustomer
+    // l'omet s'il est vide (téléphone optionnel) → plus de "phone can't be blank".
     const { success, errors } = await updateCustomer(token, form)
-    if (success) { await refreshCustomer(); toast.success('Profil mis à jour !') }
-    else toast.error(errors[0]?.message ?? 'Erreur lors de la mise à jour')
+    if (success) {
+      await refreshCustomer()
+      toast.success('Profil mis à jour !')
+      // Synchronise le numéro côté cagnotte (UN seul numéro par client).
+      try {
+        const res = await fetch('/api/loyalty/me/phone', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ phone: form.phone }),
+        })
+        if (res.status === 409) toast.error('Ce numéro est déjà associé à une autre cagnotte.')
+      } catch {
+        // non bloquant
+      }
+    } else {
+      toast.error(errors[0]?.message ?? 'Erreur lors de la mise à jour')
+    }
     setSaving(false)
   }
 
@@ -420,7 +442,7 @@ function ProfilePanel({ customer }: { customer: NonNullable<ReturnType<typeof us
             <div><label className={labelClass}>Nom</label><input type="text" className={inputClass} value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} /></div>
           </div>
           <div><label className={labelClass}>Email</label><input type="email" className={inputClass} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
-          <div><label className={labelClass}>Téléphone <span className="font-medium text-ink-mute">(optionnel)</span></label><input type="tel" className={inputClass} placeholder="+33 6 00 00 00 00" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+          <div><label className={labelClass}>Téléphone <span className="font-medium text-ink-mute">(optionnel)</span></label><PhoneField value={form.phone} onChange={(e164, valid) => { setForm((f) => ({ ...f, phone: e164 })); setPhoneValid(valid) }} inputClassName={inputClass} /></div>
           <div className="pt-2">
             <button type="submit" disabled={saving} className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors disabled:opacity-60">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}

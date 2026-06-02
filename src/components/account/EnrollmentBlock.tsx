@@ -3,18 +3,28 @@
 import { useState } from 'react'
 import { Loader2, Phone } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PhoneField from '@/components/ui/PhoneField'
+import { useCustomer } from '@/context/CustomerContext'
 
 interface EnrollmentBlockProps {
   onEnrolled: () => void
 }
 
 export function EnrollmentBlock({ onEnrolled }: EnrollmentBlockProps) {
-  const [phone, setPhone] = useState('')
+  const { customer } = useCustomer()
+  // Réutilise le numéro déjà présent dans le profil (UN seul numéro / client).
+  const profilePhone = customer?.phone ?? ''
+  const [phone, setPhone] = useState(profilePhone)
+  const [phoneValid, setPhoneValid] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!phone || !phoneValid) {
+      setError('Entre un numéro de téléphone valide.')
+      return
+    }
     setError(null)
     setLoading(true)
     try {
@@ -65,14 +75,15 @@ export function EnrollmentBlock({ onEnrolled }: EnrollmentBlockProps) {
           <label className="block text-[12px] font-semibold text-ink mb-2">
             Téléphone
           </label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="+33 6 12 34 56 78"
-            required
-            className="w-full px-5 py-3.5 rounded-xl border border-spruce/20 text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
+          <PhoneField
+            value={profilePhone}
+            onChange={(e164, valid) => { setPhone(e164); setPhoneValid(valid) }}
           />
+          {profilePhone && (
+            <p className="text-[12px] text-ink-mute mt-2">
+              Numéro repris de ton profil — modifie-le si besoin.
+            </p>
+          )}
         </div>
 
         {error && (
@@ -83,7 +94,7 @@ export function EnrollmentBlock({ onEnrolled }: EnrollmentBlockProps) {
 
         <button
           type="submit"
-          disabled={loading || phone.trim().length < 5}
+          disabled={loading || !phone || !phoneValid}
           className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors disabled:opacity-50"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
