@@ -2,10 +2,12 @@
 
 // STANDBY 2026-05-23 : coaching masque (cf. middleware redirect 301).
 // Le toggle ?theme=coaching a ete retire le 2026-05-25 : auth mono-theme nutrition.
+// Re-theme DA claire V2 (2026-06-03, go-live) : visuel + copy/tutoiement,
+// logique customerRecover intacte.
 
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
-import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { recoverCustomerPassword } from '@/lib/shopify/customer'
 import Image from 'next/image'
 
@@ -23,14 +25,15 @@ function ForgotPasswordContent() {
       await recoverCustomerPassword(email)
       setSent(true)
     } catch {
-      setError('Une erreur est survenue. Veuillez réessayer.')
+      setError('Une erreur est survenue. Réessaie.')
     }
     setLoading(false)
   }
 
   return (
-    <div className="min-h-[calc(100vh-160px)] flex items-center justify-center py-16 px-4 bg-[#f4f6f1] text-[#1a2e23]">
+    <div className="min-h-[calc(100vh-160px)] flex items-center justify-center py-16 px-4 bg-canvas text-ink">
       <div className="w-full max-w-md">
+        {/* Logo */}
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <Image
@@ -41,66 +44,68 @@ function ForgotPasswordContent() {
               className="h-10 w-auto"
             />
           </Link>
-          <h1 className="font-display text-[35px] md:text-[42px] font-black uppercase tracking-tighter mb-3 leading-none text-[#1a2e23]">
+          <h1 className="font-display text-[34px] md:text-[42px] font-extrabold tracking-tight mb-3 leading-[1.05] text-spruce">
             Mot de passe oublié
           </h1>
-          <p className="font-medium text-sm text-[#4a5f4c]">
-            Entrez votre email pour recevoir un lien de réinitialisation
+          <p className="font-medium text-[15px] text-ink-mute">
+            Entre ton email pour recevoir un lien de réinitialisation
           </p>
         </div>
 
-        <div className="rounded-[28px] p-8 md:p-10 border bg-white border-[#1a2e23]/5 shadow-sm">
+        {/* Card */}
+        <div className="rounded-2xl p-8 md:p-10 border bg-white border-spruce/10">
           {sent ? (
             <div className="text-center py-4">
-              <div className="w-20 h-20 rounded-full bg-[#1a2e23]/5 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-10 h-10 text-[#1a2e23]" />
+              <div className="w-20 h-20 rounded-full bg-sage flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="w-10 h-10 text-spruce" />
               </div>
-              <h2 className="font-display font-black text-2xl uppercase tracking-tighter mb-3 text-[#1a2e23]">Email envoyé !</h2>
-              <p className="font-medium text-sm mb-8 text-[#4a5f4c]">
-                Si un compte existe pour <strong className="text-[#1a2e23]">{email}</strong>, vous recevrez un email dans quelques minutes.
+              <h2 className="font-display font-extrabold text-2xl tracking-tight mb-3 text-spruce">Email envoyé !</h2>
+              <p className="font-medium text-[14px] mb-8 text-ink-mute">
+                Si un compte existe pour <strong className="text-spruce">{email}</strong>, tu recevras un email dans quelques minutes.
               </p>
               <Link
                 href="/login"
-                className="w-full flex items-center justify-center py-4 text-[11px] font-bold uppercase tracking-widest rounded-full transition-all hover:-translate-y-0.5 bg-[#1a2e23] text-white hover:bg-[#2e4f3c] shadow-lg"
+                className="w-full flex items-center justify-center py-3.5 text-[14px] font-semibold rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep"
               >
-                RETOUR À LA CONNEXION
+                Retour à la connexion
               </Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-600 font-bold">
+                <div className="p-4 bg-terracotta/10 border border-terracotta/20 rounded-xl text-[13px] text-terracotta font-medium">
                   {error}
                 </div>
               )}
               <div>
-                <label htmlFor="email" className="block text-[11px] font-bold uppercase tracking-widest mb-2 text-[#1a2e23]">Email</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#89a890]" />
-                  <input
-                    id="email"
-                    type="email"
-                    required
-                    className="w-full pl-12 pr-5 py-3.5 rounded-2xl border text-sm font-medium transition-all focus:outline-none focus:ring-2 bg-[#f4f6f1] border-[#1a2e23]/10 text-[#1a2e23] focus:ring-[#1a2e23]/10 focus:border-[#1a2e23]/30 placeholder:text-[#89a890]"
-                    placeholder="vous@exemple.fr"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
+                <label htmlFor="email" className="block text-[12px] font-semibold mb-2 text-ink">
+                  Adresse email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  className="w-full px-5 py-3.5 rounded-xl border text-[14px] font-medium transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
+                  placeholder="ton@email.fr"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center py-4 text-[11px] font-bold uppercase tracking-widest mt-6 rounded-full transition-all hover:-translate-y-0.5 bg-[#1a2e23] text-white hover:bg-[#2e4f3c] shadow-lg hover:shadow-xl"
+                className="w-full flex items-center justify-center py-3.5 text-[14px] font-semibold mt-2 rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep disabled:opacity-60"
               >
-                {loading ? 'ENVOI...' : 'ENVOYER LE LIEN'}
+                {loading ? 'Envoi…' : 'Envoyer le lien'}
               </button>
             </form>
           )}
         </div>
 
+        {/* Lien retour */}
         <div className="text-center mt-8">
-          <Link href="/login" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors group text-[#89a890] hover:text-[#1a2e23]">
+          <Link href="/login" className="inline-flex items-center gap-2 text-[14px] font-medium transition-colors group text-ink-mute hover:text-spruce">
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             Retour à la connexion
           </Link>
@@ -112,7 +117,7 @@ function ForgotPasswordContent() {
 
 export default function ForgotPasswordPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#f4f6f1]"><div className="font-display font-black uppercase tracking-widest text-xl text-[#1a2e23] animate-pulse">CHARGEMENT...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-canvas"><div className="font-display font-semibold text-lg text-ink-mute animate-pulse">Chargement…</div></div>}>
       <ForgotPasswordContent />
     </Suspense>
   )
