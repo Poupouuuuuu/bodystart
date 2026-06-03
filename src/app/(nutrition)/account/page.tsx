@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -269,31 +269,89 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
   const { addAddress, editAddress, removeAddress, makeDefaultAddress } = useCustomer()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  type AddressSuggestion = { label: string; name: string; postcode: string; city: string }
   const EMPTY: AddressInput = { firstName: '', lastName: '', address1: '', address2: '', city: '', zip: '', country: 'France', phone: '', company: '' }
   const [form, setForm] = useState<AddressInput>(EMPTY)
   const [submitting, setSubmitting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  // Destinataire alternatif (cadeau/travail) : masqué par défaut → le destinataire
+  // est le client (nom/prénom du profil renseignés silencieusement).
+  const [otherRecipient, setOtherRecipient] = useState(false)
+  // Autocomplétion adresse via l'API Adresse (gouv) — gratuite, sans clé.
+  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])
+  const [showSug, setShowSug] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   const addresses = customer.addresses?.nodes ?? []
   const inputClass = "w-full px-4 py-3 rounded-xl border border-spruce/20 text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
   const labelClass = "block text-[12px] font-semibold text-ink mb-2"
+  const profileFullName = `${customer.firstName ?? ''} ${customer.lastName ?? ''}`.trim()
 
-  // Pré-remplit prénom/nom depuis le profil pour éviter la double saisie.
-  const openAdd = () => { setEditingId(null); setForm({ ...EMPTY, firstName: customer.firstName ?? '', lastName: customer.lastName ?? '' }); setError(null); setShowForm(true) }
-  const openEdit = (addr: typeof addresses[0]) => {
-    setEditingId(addr.id)
-    setForm({ firstName: addr.name?.split(' ')[0] ?? '', lastName: addr.name?.split(' ').slice(1).join(' ') ?? '', address1: addr.address1, address2: addr.address2 ?? '', city: addr.city, zip: addr.zip, country: addr.country, phone: addr.phone ?? '', company: '' })
+  const resetAutocomplete = () => { setSuggestions([]); setShowSug(false) }
+
+  // Pré-remplit prénom/nom + téléphone depuis le profil (silencieux).
+  const openAdd = () => {
+    setEditingId(null)
+    setForm({ ...EMPTY, firstName: customer.firstName ?? '', lastName: customer.lastName ?? '', phone: customer.phone ?? '' })
+    setOtherRecipient(false)
+    resetAutocomplete()
     setError(null); setShowForm(true)
   }
-  const closeForm = () => { setShowForm(false); setEditingId(null); setError(null) }
+  const openEdit = (addr: typeof addresses[0]) => {
+    setEditingId(addr.id)
+    setForm({ firstName: addr.name?.split(' ')[0] ?? '', lastName: addr.name?.split(' ').slice(1).join(' ') ?? '', address1: addr.address1, address2: addr.address2 ?? '', city: addr.city, zip: addr.zip, country: addr.country, phone: addr.phone ?? customer.phone ?? '', company: '' })
+    // Déplie le bloc destinataire si l'adresse porte un nom ≠ du profil.
+    const addrName = (addr.name ?? '').trim()
+    setOtherRecipient(addrName !== '' && addrName !== profileFullName)
+    resetAutocomplete()
+    setError(null); setShowForm(true)
+  }
+  const closeForm = () => { setShowForm(false); setEditingId(null); setOtherRecipient(false); resetAutocomplete(); setError(null) }
+
+  // ─── Autocomplétion API Adresse (debounce 300 ms, min 3 caractères) ───
+  const fetchSuggestions = async (q: string) => {
+    abortRef.current?.abort()
+    const ctrl = new AbortController()
+    abortRef.current = ctrl
+    try {
+      const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(q)}&limit=5`, { signal: ctrl.signal })
+      if (!res.ok) return
+      const data = (await res.json()) as { features?: { properties: AddressSuggestion }[] }
+      const items = (data.features ?? []).map((f) => ({
+        label: f.properties.label,
+        name: f.properties.name,
+        postcode: f.properties.postcode,
+        city: f.properties.city,
+      }))
+      setSuggestions(items)
+      setShowSug(items.length > 0)
+    } catch {
+      // abort / réseau : on ignore, la saisie manuelle reste possible
+    }
+  }
+  const onAddressChange = (v: string) => {
+    setForm((f) => ({ ...f, address1: v }))
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    const q = v.trim()
+    if (q.length < 3) { resetAutocomplete(); return }
+    debounceRef.current = setTimeout(() => fetchSuggestions(q), 300)
+  }
+  const selectSuggestion = (s: AddressSuggestion) => {
+    setForm((f) => ({ ...f, address1: s.name, zip: s.postcode, city: s.city }))
+    resetAutocomplete()
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.address1 || !form.city || !form.zip) { setError('Remplis les champs obligatoires.'); return }
     setSubmitting(true); setError(null)
-    const { errors } = editingId ? await editAddress(editingId, form) : await addAddress(form)
+    // Téléphone non saisi ici : repris du profil si dispo, sinon omis.
+    const payload: AddressInput = { ...form }
+    if (!payload.phone || !payload.phone.trim()) delete payload.phone
+    const { errors } = editingId ? await editAddress(editingId, payload) : await addAddress(payload)
     setSubmitting(false)
     if (errors.length > 0) setError(errors[0].message); else closeForm()
   }
@@ -317,20 +375,67 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
             <button onClick={closeForm} className="w-8 h-8 rounded-full bg-sage flex items-center justify-center hover:bg-spruce/10 transition-colors"><X className="w-4 h-4 text-spruce" /></button>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div><label className={labelClass}>Prénom</label><input type="text" value={form.firstName ?? ''} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className={inputClass} /></div>
-              <div><label className={labelClass}>Nom</label><input type="text" value={form.lastName ?? ''} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className={inputClass} /></div>
+            {/* Adresse avec autocomplétion (API Adresse gouv) */}
+            <div>
+              <label className={labelClass}>Adresse *</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={form.address1}
+                  onChange={(e) => onAddressChange(e.target.value)}
+                  onFocus={() => { if (suggestions.length > 0) setShowSug(true) }}
+                  onBlur={() => setTimeout(() => setShowSug(false), 150)}
+                  required
+                  autoComplete="off"
+                  placeholder="Commence à taper ton adresse…"
+                  className={inputClass}
+                />
+                {showSug && suggestions.length > 0 && (
+                  <ul className="absolute z-20 left-0 right-0 top-full mt-1 bg-white border border-spruce/15 rounded-xl shadow-lg overflow-hidden max-h-64 overflow-y-auto">
+                    {suggestions.map((s, i) => (
+                      <li key={i}>
+                        <button
+                          type="button"
+                          onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s) }}
+                          className="w-full text-left px-4 py-2.5 text-[13px] text-ink hover:bg-sage transition-colors flex items-start gap-2"
+                        >
+                          <MapPin className="w-4 h-4 text-spruce flex-shrink-0 mt-0.5" />
+                          <span>{s.label}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
-            <div><label className={labelClass}>Adresse *</label><input type="text" value={form.address1} onChange={(e) => setForm({ ...form, address1: e.target.value })} required className={inputClass} /></div>
+
             <div><label className={labelClass}>Complément <span className="text-ink-mute font-medium">(optionnel)</span></label><input type="text" value={form.address2 ?? ''} onChange={(e) => setForm({ ...form, address2: e.target.value })} className={inputClass} /></div>
+
             <div className="grid grid-cols-3 gap-4">
               <div><label className={labelClass}>CP *</label><input type="text" value={form.zip} onChange={(e) => setForm({ ...form, zip: e.target.value })} required className={inputClass} /></div>
               <div className="col-span-2"><label className={labelClass}>Ville *</label><input type="text" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} required className={inputClass} /></div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div><label className={labelClass}>Pays</label><input type="text" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} className={inputClass} /></div>
-              <div><label className={labelClass}>Téléphone</label><input type="tel" value={form.phone ?? ''} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} /></div>
-            </div>
+
+            {/* Destinataire alternatif (cadeau/travail) — masqué par défaut */}
+            {!otherRecipient ? (
+              <button type="button" onClick={() => setOtherRecipient(true)} className="text-[13px] font-medium text-spruce hover:text-fresh-deep underline underline-offset-4">
+                Livrer à un autre destinataire ?
+              </button>
+            ) : (
+              <div className="space-y-3 rounded-xl bg-canvas border border-spruce/10 p-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-[12px] font-semibold text-ink">Destinataire</p>
+                  <button type="button" onClick={() => { setOtherRecipient(false); setForm((f) => ({ ...f, firstName: customer.firstName ?? '', lastName: customer.lastName ?? '' })) }} className="text-[12px] text-ink-mute hover:text-spruce transition-colors">
+                    Utiliser mon nom
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div><label className={labelClass}>Prénom</label><input type="text" value={form.firstName ?? ''} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className={inputClass} /></div>
+                  <div><label className={labelClass}>Nom</label><input type="text" value={form.lastName ?? ''} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className={inputClass} /></div>
+                </div>
+              </div>
+            )}
+
             <div className="flex gap-3 pt-2">
               <button type="submit" disabled={submitting} className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors disabled:opacity-50">
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
