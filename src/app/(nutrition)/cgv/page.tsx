@@ -12,23 +12,23 @@ export const metadata: Metadata = buildPageMetadata({
 const sections = [
   {
     title: '1. Objet',
-    content: `Les présentes Conditions Générales de Vente (CGV) régissent les ventes effectuées sur le site bodystart-nutrition.fr par la société BODYFIT INDUSTRIE (SASU au capital de 500 €, RCS Versailles 909 197 469, TVA FR46909197469), dont le siège est situé 8 Rue du Pont des Landes, 78310 Coignières, ci-après dénommée "le Vendeur". Toute commande implique l'acceptation sans réserve des présentes CGV.`,
+    content: `Les présentes Conditions Générales de Vente (CGV) régissent les ventes effectuées sur le site bodystart-nutrition.fr par la société BODYSTART NUTRITION (SASU au capital de 500 €, RCS Versailles 909 197 469, TVA FR46909197469), dont le siège est situé 8 Rue du Pont des Landes, 78310 Coignières, ci-après dénommée "le Vendeur". Toute commande implique l'acceptation sans réserve des présentes CGV.`,
   },
   {
     title: '2. Produits',
-    content: `Les produits proposés à la vente sont des compléments alimentaires. Les photographies et descriptions des produits sont données à titre indicatif. BODYFIT INDUSTRIE se réserve le droit de modifier la composition des produits sous réserve de maintenir leur qualité équivalente. Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain.`,
+    content: `Les produits proposés à la vente sont des compléments alimentaires. Les photographies et descriptions des produits sont données à titre indicatif. BODYSTART NUTRITION se réserve le droit de modifier la composition des produits sous réserve de maintenir leur qualité équivalente. Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain.`,
   },
   {
     title: '3. Prix',
-    content: `Les prix sont indiqués en euros TTC (toutes taxes comprises). BODYFIT INDUSTRIE se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au prix en vigueur au moment de la validation de la commande. Les frais de livraison sont indiqués lors du processus de commande.`,
+    content: `Les prix sont indiqués en euros TTC (toutes taxes comprises). BODYSTART NUTRITION se réserve le droit de modifier ses prix à tout moment. Les produits sont facturés au prix en vigueur au moment de la validation de la commande. Les frais de livraison sont indiqués lors du processus de commande.`,
   },
   {
     title: '4. Commandes',
-    content: `La commande est définitive après validation du paiement. BODYFIT INDUSTRIE se réserve le droit d'annuler toute commande pour des raisons légitimes (rupture de stock, adresse de livraison erronée, litige antérieur...). Vous recevrez un email de confirmation dès validation de votre commande.`,
+    content: `La commande est définitive après validation du paiement. BODYSTART NUTRITION se réserve le droit d'annuler toute commande pour des raisons légitimes (rupture de stock, adresse de livraison erronée, litige antérieur...). Vous recevrez un email de confirmation dès validation de votre commande.`,
   },
   {
     title: '5. Paiement',
-    content: `Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express) via notre prestataire Shopify Payments, sécurisé par protocole SSL. BODYFIT INDUSTRIE ne conserve aucune donnée bancaire.`,
+    content: `Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express) via notre prestataire Shopify Payments, sécurisé par protocole SSL. BODYSTART NUTRITION ne conserve aucune donnée bancaire.`,
   },
   {
     title: '6. Livraison',
@@ -40,7 +40,7 @@ const sections = [
   },
   {
     title: '8. Garanties',
-    content: `BODYFIT INDUSTRIE garantit la conformité des produits aux descriptions figurant sur le site. En cas de produit défectueux ou non conforme, vous disposez de 2 ans à compter de la livraison pour invoquer la garantie légale de conformité.`,
+    content: `BODYSTART NUTRITION garantit la conformité des produits aux descriptions figurant sur le site. En cas de produit défectueux ou non conforme, vous disposez de 2 ans à compter de la livraison pour invoquer la garantie légale de conformité.`,
   },
   {
     title: '9. Données personnelles',

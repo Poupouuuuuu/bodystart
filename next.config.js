@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      // Section + routes /objectifs supprimées : 301 permanent vers le catalogue
+      // pour ne pas casser les URLs indexées (étaient au sitemap).
+      { source: '/objectifs', destination: '/products', permanent: true },
+      { source: '/objectifs/:path*', destination: '/products', permanent: true },
+    ]
+  },
   images: {
     remotePatterns: [
       {

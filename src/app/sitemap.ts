@@ -24,14 +24,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/cookies`, priority: 0.3, changeFrequency: 'yearly' },
   ]
 
-  // Routes objectifs (statique — la liste évolue rarement)
-  const objectifs = ['prise-de-muscle', 'perte-de-poids', 'energie', 'recuperation', 'immunite']
-  const objectifRoutes: MetadataRoute.Sitemap = objectifs.map((slug) => ({
-    url: `${BASE_URL}/objectifs/${slug}`,
-    priority: 0.7,
-    changeFrequency: 'monthly',
-  }))
-
   // Routes produits — fetch dynamique
   let productRoutes: MetadataRoute.Sitemap = []
   try {
@@ -45,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Shopify indisponible
   }
 
-  return [...staticRoutes, ...objectifRoutes, ...productRoutes].map((route) => ({
+  return [...staticRoutes, ...productRoutes].map((route) => ({
     ...route,
     lastModified: now,
   }))

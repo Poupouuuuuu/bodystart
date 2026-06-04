@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import HeroV2 from '@/components/home/v2/HeroV2'
 import BrandValuesV2 from '@/components/home/v2/BrandValuesV2'
 import BestSellersV2 from '@/components/home/v2/BestSellersV2'
-import ShopByObjectiveV2 from '@/components/home/v2/ShopByObjectiveV2'
 import ConseilDifferenciantV2 from '@/components/home/v2/ConseilDifferenciantV2'
 import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
@@ -26,6 +25,11 @@ export const metadata: Metadata = {
     absolute: 'BodyStart Nutrition — Compléments alimentaires & nutrition sportive à Coignières (78)',
   },
 }
+
+// ISR : la home (best-sellers Shopify + leurs images) se régénère chaque heure.
+// Sans ça, le rendu statique fige les produits/images au moment du build →
+// placeholder "BS" sur les produits ajoutés/imagés après le dernier déploiement.
+export const revalidate = 3600
 
 // Sections async isolees → streaming via Suspense pour ne pas bloquer le Hero (LCP)
 async function BestSellersAsync() {
@@ -57,10 +61,7 @@ export default function HomePage() {
         <BestSellersAsync />
       </Suspense>
 
-      {/* 4. Trouve ton objectif */}
-      <ShopByObjectiveV2 />
-
-      {/* 5. Le conseil qu'aucun site n'a (differenciateur) */}
+      {/* 4. Le conseil qu'aucun site n'a (differenciateur) */}
       <ConseilDifferenciantV2 />
 
       {/* 6. Bande parrainage (exploite loyalty L4) */}

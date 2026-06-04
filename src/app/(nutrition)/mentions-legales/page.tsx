@@ -43,7 +43,7 @@ export default function MentionsLegalesPage() {
             </div>
             <div className="bg-[#f4f6f1] rounded-2xl p-6 md:p-8 text-base text-[#4a5f4c] font-medium space-y-3">
               <p>
-                <strong className="font-black text-[#1a2e23]">Raison sociale :</strong> BODYFIT INDUSTRIE — SASU au capital de 500 €
+                <strong className="font-black text-[#1a2e23]">Raison sociale :</strong> BODYSTART NUTRITION — SASU au capital de 500 €
               </p>
               <p>
                 <strong className="font-black text-[#1a2e23]">SIREN :</strong> 909 197 469
@@ -102,7 +102,7 @@ export default function MentionsLegalesPage() {
               Propriété intellectuelle
             </h2>
             <p className="text-[#4a5f4c] font-medium text-base leading-relaxed">
-              L&apos;ensemble du contenu de ce site (textes, images, logos, icônes) est la propriété exclusive de BODYFIT INDUSTRIE et est protégé par les lois françaises et internationales relatives à la propriété intellectuelle. Toute reproduction, distribution ou utilisation sans autorisation préalable est strictement interdite.
+              L&apos;ensemble du contenu de ce site (textes, images, logos, icônes) est la propriété exclusive de BODYSTART NUTRITION et est protégé par les lois françaises et internationales relatives à la propriété intellectuelle. Toute reproduction, distribution ou utilisation sans autorisation préalable est strictement interdite.
             </p>
           </section>
 
@@ -111,7 +111,7 @@ export default function MentionsLegalesPage() {
               Limitation de responsabilité
             </h2>
             <p className="text-[#4a5f4c] font-medium text-base leading-relaxed">
-              BODYFIT INDUSTRIE s&apos;efforce d&apos;assurer l&apos;exactitude des informations diffusées sur ce site. Cependant, BODYFIT INDUSTRIE ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition. En conséquence, BODYFIT INDUSTRIE décline toute responsabilité pour toute imprécision, inexactitude ou omission portant sur des informations disponibles sur ce site.
+              BODYSTART NUTRITION s&apos;efforce d&apos;assurer l&apos;exactitude des informations diffusées sur ce site. Cependant, BODYSTART NUTRITION ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition. En conséquence, BODYSTART NUTRITION décline toute responsabilité pour toute imprécision, inexactitude ou omission portant sur des informations disponibles sur ce site.
             </p>
           </section>
 

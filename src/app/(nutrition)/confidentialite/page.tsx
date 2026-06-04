@@ -47,7 +47,7 @@ export default function ConfidentialitePage() {
               Responsable du traitement
             </h2>
             <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
-              BODYFIT INDUSTRIE (marque BodyStart Nutrition), SASU dont le siège social est situé 8 Rue du Pont des Landes, 78310 Coignières, est responsable du traitement de vos données personnelles. Contact :{' '}
+              BODYSTART NUTRITION (SASU) dont le siège social est situé 8 Rue du Pont des Landes, 78310 Coignières, est responsable du traitement de vos données personnelles. Contact :{' '}
               <a
                 href="mailto:bodystartnutrition@gmail.com"
                 className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
@@ -90,7 +90,7 @@ export default function ConfidentialitePage() {
               Conservation des données
             </h2>
             <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
-              Vos données sont conservées pendant 3 ans à compter de votre dernière interaction avec BODYFIT INDUSTRIE, ou pendant la durée légalement requise.
+              Vos données sont conservées pendant 3 ans à compter de votre dernière interaction avec BODYSTART NUTRITION, ou pendant la durée légalement requise.
             </p>
           </section>
 
