@@ -83,6 +83,9 @@ const CATEGORIES: Category[] = [
     { key: 'mineraux', label: 'Minéraux', tags: ['mineraux'] },
     { key: 'electrolytes', label: 'Électrolytes', tags: ['electrolytes'] },
   ]},
+  { key: 'snacks', label: 'Snacks', productTypes: ['Snacks'], subcategories: [
+    { key: 'barre', label: 'Barres', tags: ['barre'] },
+  ]},
 ]
 
 // Normalisation casse + diacritiques (accents) → matching robuste.
