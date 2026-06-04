@@ -22,13 +22,14 @@ export const metadata: Metadata = buildPageMetadata({
 // createdAt desc est conserve (Array.prototype.sort est stable).
 const CATEGORY_ORDER: Record<string, number> = {
   'Protéines': 1,
-  'Créatine': 2,
-  'Pré-workout': 3,
-  'Acides aminés': 4,
-  'Brûleur': 5,
-  'Boosters': 6,
-  'Santé': 7,
-  'Pack': 8,
+  'Glucides': 2,
+  'Créatine': 3,
+  'Pré-workout': 4,
+  'Acides aminés': 5,
+  'Brûleur': 6,
+  'Boosters': 7,
+  'Santé': 8,
+  'Pack': 9,
 }
 const categoryRank = (p: ShopifyProduct): number => CATEGORY_ORDER[p.productType ?? ''] ?? 99
 

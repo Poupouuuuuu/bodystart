@@ -50,6 +50,9 @@ const CATEGORIES: Category[] = [
     { key: 'gainer', label: 'Gainer', tags: ['gainer'] },
     { key: 'caseine', label: 'Caséine', tags: ['caseine'] },
   ]},
+  { key: 'glucides', label: 'Glucides', productTypes: ['Glucides'], subcategories: [
+    { key: 'riz', label: 'Riz', tags: ['riz'] },
+  ]},
   { key: 'creatine', label: 'Créatine', productTypes: ['Créatine'], subcategories: [
     { key: 'monohydrate', label: 'Monohydrate', tags: ['monohydrate'] },
   ]},
