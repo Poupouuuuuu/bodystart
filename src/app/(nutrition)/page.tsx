@@ -13,12 +13,19 @@ import { buildPageMetadata } from '@/lib/seo'
 // REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
 // Ordre des sections : §B.Home.1-8 (avis retire, cf. site-rewrite-copy-v1.md §3.6)
 
-export const metadata: Metadata = buildPageMetadata({
-  path: '/',
-  title: 'Accueil',
-  description:
-    "BodyStart, compléments sport et santé à Coignières (78). Conseil d'humain, produits propres et bien dosés, Click & Collect gratuit.",
-})
+export const metadata: Metadata = {
+  ...buildPageMetadata({
+    path: '/',
+    title: 'BodyStart Nutrition — Compléments alimentaires & nutrition sportive à Coignières (78)',
+    description:
+      "BodyStart, compléments sport et santé à Coignières (78). Conseil d'humain, produits propres et bien dosés, Click & Collect gratuit.",
+  }),
+  // <title> exact demandé : bypass du template '%s | BodyStart Nutrition'
+  // (le og:title / twitter:title gardent ce même libellé via buildPageMetadata).
+  title: {
+    absolute: 'BodyStart Nutrition — Compléments alimentaires & nutrition sportive à Coignières (78)',
+  },
+}
 
 // Sections async isolees → streaming via Suspense pour ne pas bloquer le Hero (LCP)
 async function BestSellersAsync() {

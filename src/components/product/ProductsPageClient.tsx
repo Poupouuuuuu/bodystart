@@ -304,25 +304,11 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
   }, [activeGoal, categoryCounts])
 
   return (
-    <div className="bg-canvas min-h-screen">
-      {/* ─── Hero ─── */}
-      {/* Pills objectifs retirees 2026-05-26 : le "shop by objectif" vit
-          sur la home (ShopByObjectiveV2), pas besoin de le dupliquer ici.
-          La logique activeGoal/setActiveGoal/handleGoalClick reste en place
-          pour supporter les deep-links ?obj=... venant de la home, et le
-          chip filtre actif "Muscle/Energie/..." apparait normalement si
-          un visiteur arrive avec ce param. */}
-      <div className="pt-10 pb-4 md:pt-12 md:pb-6">
-        <div className="container">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
-            Catalogue
-          </p>
-          <h1 className="font-display text-[34px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight">
-            Nos produits
-          </h1>
-        </div>
-      </div>
-
+    <div>
+      {/* Hero (eyebrow + H1 « Tous les produits ») rendu côté serveur dans
+          products/page.tsx → H1 présent dans le HTML SSR (cette vue passe en
+          client-rendering via useSearchParams). La logique activeGoal/objectifs
+          reste active pour les deep-links ?obj=... venant de la home. */}
       <div className="container pb-10">
         {/* ─── Barre de contrôle ─── */}
         <div className="flex items-center justify-between mb-6 gap-4">

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { getProducts, getCollections, getInventoryForVariants } from '@/lib/shopify'
 import { BODY_START_STORES, type ShopifyCollection, type ShopifyProduct } from '@/lib/shopify/types'
 import { isPackProduct } from '@/lib/shopify/bundle'
@@ -79,10 +80,28 @@ export default async function ProductsPage() {
   }
 
   return (
-    <ProductsPageClient
-      products={products}
-      collections={collections}
-      stockByProductId={stockByProductId}
-    />
+    <div className="bg-canvas min-h-screen">
+      {/* H1 rendu côté serveur (SSR) : la grille ci-dessous est client-rendered
+          (useSearchParams), donc le H1 doit vivre ici pour être dans le HTML. */}
+      <section className="pt-10 pb-4 md:pt-12 md:pb-6">
+        <div className="container">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+            Catalogue
+          </p>
+          <h1 className="font-display text-[34px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight">
+            Tous les produits
+          </h1>
+        </div>
+      </section>
+      {/* Suspense : isole useSearchParams (ProductsPageClient) pour que le H1
+          ci-dessus soit rendu côté serveur (sinon toute la route bascule en CSR). */}
+      <Suspense fallback={<div className="container pb-10" />}>
+        <ProductsPageClient
+          products={products}
+          collections={collections}
+          stockByProductId={stockByProductId}
+        />
+      </Suspense>
+    </div>
   )
 }

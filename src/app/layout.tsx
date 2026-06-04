@@ -31,7 +31,7 @@ const SITE_URL = getSiteUrl() || 'https://bodystart.vercel.app'
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    template: '%s | BodyStart',
+    template: '%s | BodyStart Nutrition',
     default: 'BodyStart, compléments sport et santé à Coignières (78)',
   },
   description:

@@ -20,12 +20,13 @@ import CrossSellV2 from '@/components/product/v2/CrossSellV2'
 import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
 import { buildPageMetadata } from '@/lib/seo'
 
-// Force fresh render a chaque visite : stock boutique doit etre a jour.
-// Sans ca, le rendu peut etre mis en cache (Next.js 14 SSR cache automatique
-// sur les routes statiques apparentes). Le check 'Click & Collect 50 unites'
-// d'Adam doit afficher correctement '"En stock"' immediatement apres activation.
-export const dynamic = 'force-dynamic'
+// Données fraîches à chaque visite (stock C&C à jour) SANS `dynamic =
+// 'force-dynamic'` : avec force-dynamic, notFound() renvoyait un HTTP 200
+// (quirk Next 14 sur les routes dynamiques streamées). revalidate=0 +
+// fetchCache 'force-no-store' garde le rendu par requête et les fetches Shopify
+// non-cachés (stock à jour), tout en laissant notFound() émettre un vrai 404.
 export const revalidate = 0
+export const fetchCache = 'force-no-store'
 
 interface Props {
   params: { handle: string }

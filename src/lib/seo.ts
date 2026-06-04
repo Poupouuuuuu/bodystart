@@ -24,12 +24,19 @@ export interface PageMetadataInput {
   noIndex?: boolean
 }
 
+// Visuel de marque par defaut pour og:image / twitter image quand la page
+// n'en fournit pas. Necessaire car Next.js ecrase l'openGraph parent (pas de
+// merge profond) des qu'une page definit son propre openGraph.
+const DEFAULT_OG_IMAGE = '/assets/logos/logo-nutrition.png'
+
 export function buildPageMetadata(input: PageMetadataInput): Metadata {
   const { path, title, description, ogImage, ogType = 'website', noIndex = false } = input
 
   if (!path.startsWith('/')) {
     throw new Error(`buildPageMetadata: path must start with '/', got '${path}'`)
   }
+
+  const resolvedOgImage = ogImage ?? DEFAULT_OG_IMAGE
 
   const metadata: Metadata = {
     ...(title ? { title } : {}),
@@ -42,9 +49,7 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
       ...(description ? { description } : {}),
       url: path,
       type: ogType,
-      ...(ogImage
-        ? { images: [{ url: ogImage, width: 1200, height: 630 }] }
-        : {}),
+      images: [{ url: resolvedOgImage, width: 1200, height: 630 }],
     },
     ...(title || description
       ? {
@@ -52,7 +57,7 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
             card: 'summary_large_image',
             ...(title ? { title } : {}),
             ...(description ? { description } : {}),
-            ...(ogImage ? { images: [ogImage] } : {}),
+            images: [resolvedOgImage],
           },
         }
       : {}),
