@@ -43,6 +43,29 @@ const FAQ_ITEMS = [
   },
 ]
 
+// JSON-LD FAQPage — 6 questions principales, reprises MOT POUR MOT des Q/R
+// affichées (cf. skill bodystart-seo-geo / references/schema-markup.md : tout ce
+// qui est dans le schema doit être visible sur la page). On les référence
+// directement depuis FAQ_ITEMS → identité garantie avec l'affichage.
+const SCHEMA_FAQ = [
+  FAQ_ITEMS[0].questions[0], // Délais de livraison
+  FAQ_ITEMS[0].questions[1], // Livraison gratuite
+  FAQ_ITEMS[0].questions[3], // Click & Collect
+  FAQ_ITEMS[2].questions[1], // Modes de paiement
+  FAQ_ITEMS[3].questions[0], // Délai de retour
+  FAQ_ITEMS[1].questions[2], // Contrôle antidopage
+]
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: SCHEMA_FAQ.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+}
+
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
   return (
@@ -71,6 +94,10 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 export default function FAQPage() {
   return (
     <div className="bg-[#f4f6f1] min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="container py-16 md:py-20 max-w-4xl">
         <Link href="/" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#89a890] hover:text-[#1a2e23] mb-10 transition-colors group">
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" /> Retour à l&apos;accueil
