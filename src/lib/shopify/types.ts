@@ -78,6 +78,11 @@ export interface ShopifyProduct {
     nodes: { handle: string; title: string }[]
   }
   metafields?: ShopifyMetafield[]
+  // Champs SEO dédiés Shopify (Storefront API). Nullables si non remplis.
+  seo?: {
+    title: string | null
+    description: string | null
+  }
 }
 
 export interface ShopifyMetafield {

@@ -50,12 +50,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const product = await getProductByHandle(params.handle)
     if (!product) return { title: 'Produit introuvable' }
 
-    const description = product.description?.slice(0, 160) ?? ''
+    // Champs SEO dédiés Shopify (product.seo) prioritaires, sinon fallback.
+    // Les seo.title Shopify sont rédigés SANS suffixe : le template global
+    // « %s | BodyStart Nutrition » s'applique ensuite via buildPageMetadata.
+    const title = product.seo?.title?.trim() || product.title
+    const description = product.seo?.description?.trim() || product.description?.slice(0, 160) || ''
     const image = product.featuredImage?.url
 
     return buildPageMetadata({
       path: `/products/${product.handle}`,
-      title: product.title,
+      title,
       description,
       ogImage: image,
       // Next.js 14.2 Metadata supporte 'website' | 'article' uniquement (pas 'product').

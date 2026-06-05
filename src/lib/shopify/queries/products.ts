@@ -84,6 +84,10 @@ export const GET_PRODUCT_BY_HANDLE = `
       tags
       vendor
       productType
+      seo {
+        title
+        description
+      }
       featuredImage {
         url
         altText
