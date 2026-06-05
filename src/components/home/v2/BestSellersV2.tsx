@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Plus } from 'lucide-react'
 import type { ShopifyProduct } from '@/lib/shopify/types'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, cn } from '@/lib/utils'
 import { isBundle, getBundleComponentImages } from '@/lib/shopify/bundle'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 
@@ -55,6 +55,7 @@ export default function BestSellersV2({ products }: BestSellersV2Props) {
           {items.map((product, idx) => {
             const variant = product.variants.nodes[0]
             const image = product.featuredImage
+            const soldOut = product.availableForSale === false
             const isFirst = idx === 0
             const isSante = isSanteProduct(product)
             const productIsBundle = isBundle(product)
@@ -73,17 +74,25 @@ export default function BestSellersV2({ products }: BestSellersV2Props) {
                   className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden"
                   style={{ backgroundImage: "url('/Background.webp')" }}
                 >
-                  {/* Badges au-dessus du fond vegetal */}
-                  <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5">
-                    {isFirst && (
-                      <span className="inline-flex items-center bg-mustard text-mustard-ink text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
-                        Best-seller
+                  {/* Badges au-dessus du fond vegetal. Si épuisé : « Épuisé » seul. */}
+                  <div className="absolute top-3 left-3 z-30 flex flex-col gap-1.5">
+                    {soldOut ? (
+                      <span className="inline-flex items-center bg-ink text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                        Épuisé
                       </span>
-                    )}
-                    {isSante && (
-                      <span className="inline-flex items-center bg-sage text-spruce text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
-                        Santé
-                      </span>
+                    ) : (
+                      <>
+                        {isFirst && (
+                          <span className="inline-flex items-center bg-mustard text-mustard-ink text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+                            Best-seller
+                          </span>
+                        )}
+                        {isSante && (
+                          <span className="inline-flex items-center bg-sage text-spruce text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+                            Santé
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
 
@@ -95,6 +104,7 @@ export default function BestSellersV2({ products }: BestSellersV2Props) {
                       variant="card"
                       fallbackImage={product.featuredImage}
                       sizes="(min-width: 1024px) 280px, 50vw"
+                      className={cn(soldOut && 'opacity-60')}
                     />
                   ) : (
                     <>
@@ -107,7 +117,7 @@ export default function BestSellersV2({ products }: BestSellersV2Props) {
                             width={220}
                             height={220}
                             sizes="(min-width: 1024px) 280px, 50vw"
-                            className="relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-110"
+                            className={cn("relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-110", soldOut && "opacity-60")}
                           />
                         ) : (
                           <div className="relative z-10 w-16 h-16 bg-white/30 rounded-full flex items-center justify-center mb-6">

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Truck } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, cn } from '@/lib/utils'
 import { isBundle, getBundleComponentImages } from '@/lib/shopify/bundle'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import type { ShopifyProduct } from '@/lib/shopify/types'
@@ -68,6 +68,7 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
           {items.map((product) => {
             const variant = product.variants.nodes[0]
+            const soldOut = product.availableForSale === false
             const productIsBundle = isBundle(product)
             const componentImages = productIsBundle ? getBundleComponentImages(product) : []
             const hasComponents = componentImages.length > 0
@@ -82,6 +83,11 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                   className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden"
                   style={{ backgroundImage: "url('/Background.webp')" }}
                 >
+                  {soldOut && (
+                    <span className="absolute top-3 left-3 z-30 inline-flex items-center bg-ink text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                      Épuisé
+                    </span>
+                  )}
                   {hasComponents ? (
                     // Bundle : meme composite que /packs et la vignette panier
                     <BundleComposite
@@ -90,6 +96,7 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                       variant="card"
                       fallbackImage={product.featuredImage}
                       sizes="(min-width: 1024px) 25vw, 50vw"
+                      className={cn(soldOut && 'opacity-60')}
                     />
                   ) : (
                     <>
@@ -100,7 +107,7 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                             alt={product.featuredImage.altText ?? product.title}
                             width={200}
                             height={200}
-                            className="relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
+                            className={cn("relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-110", soldOut && "opacity-60")}
                           />
                         ) : (
                           <div className="relative z-10 w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-8">

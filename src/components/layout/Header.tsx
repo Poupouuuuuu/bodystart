@@ -21,6 +21,7 @@ type SearchResult = {
   image: string | null
   price: string
   currency: string
+  availableForSale?: boolean
 }
 
 type NavCategory = { label: string; href: string; children?: { label: string; href: string }[] }
@@ -278,13 +279,18 @@ function HeaderInner(_props: HeaderProps) {
                           className="group relative flex flex-col rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 bg-white border-cream-200 hover:border-brand-500/40 hover:shadow-lg"
                         >
                           <div className="relative aspect-square overflow-hidden bg-cream-100">
+                            {result.availableForSale === false && (
+                              <span className="absolute top-2 left-2 z-10 inline-flex items-center bg-[#2A2A2A] text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                                Épuisé
+                              </span>
+                            )}
                             {result.image ? (
                               <Image
                                 src={result.image}
                                 alt={result.title}
                                 fill
                                 sizes="(min-width: 768px) 200px, 50vw"
-                                className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+                                className={cn("object-contain p-3 transition-transform duration-300 group-hover:scale-105", result.availableForSale === false && "opacity-60")}
                               />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center">

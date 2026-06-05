@@ -16,6 +16,8 @@ interface ProductCardProps {
 export default function ProductCard({ product, className }: ProductCardProps) {
   const variant = product.variants.nodes[0]
   const isAvailable = variant?.availableForSale ?? false
+  // Épuisé = toutes les variantes indisponibles (agrégat Storefront).
+  const soldOut = product.availableForSale === false
   const discount = variant ? getDiscountPercentage(variant.price, variant.compareAtPrice) : null
   const { addItem } = useCart()
   const [adding, setAdding] = useState(false)
@@ -45,7 +47,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
             src={product.featuredImage.url}
             alt={product.featuredImage.altText ?? product.title}
             fill
-            className="object-contain transition-transform duration-500 ease-out p-4 group-hover/image:scale-[1.04]"
+            className={cn("object-contain transition-transform duration-500 ease-out p-4 group-hover/image:scale-[1.04]", soldOut && "opacity-60")}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
         ) : (
@@ -73,9 +75,9 @@ export default function ProductCard({ product, className }: ProductCardProps) {
               -{discount}%
             </span>
           )}
-          {!isAvailable && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-gray-900 text-white">
-              Rupture
+          {soldOut && (
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#2A2A2A] text-white">
+              Épuisé
             </span>
           )}
         </div>
@@ -112,10 +114,10 @@ export default function ProductCard({ product, className }: ProductCardProps) {
         {/* Bouton Ajouter */}
         <button
           onClick={handleAddToCart}
-          disabled={!isAvailable || adding}
+          disabled={soldOut || !isAvailable || adding}
           className={cn(
             'w-full flex items-center justify-center gap-2 py-3 text-sm font-bold rounded-full transition-all duration-200',
-            isAvailable && !adding
+            !soldOut && isAvailable && !adding
               ? 'bg-brand-500 text-white hover:bg-brand-600 shadow-md hover:shadow-lg'
               : 'bg-cream-200 text-gray-400 cursor-not-allowed'
           )}
@@ -128,7 +130,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
           ) : (
             <ShoppingCart className="w-4 h-4" />
           )}
-          {adding ? 'Ajout...' : isAvailable ? 'Ajouter au panier' : 'Indisponible'}
+          {adding ? 'Ajout...' : soldOut || !isAvailable ? 'Épuisé' : 'Ajouter au panier'}
         </button>
       </div>
     </div>

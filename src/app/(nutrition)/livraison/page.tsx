@@ -142,7 +142,7 @@ export default function LivraisonPage() {
           <p className="text-[#4a5f4c] font-medium">
             Notre équipe est disponible du lundi au samedi.
             <br />
-            <a href="mailto:bodystartnutrition@gmail.com" className="inline-block mt-4 text-[12px] font-bold uppercase tracking-widest text-white bg-[#1a2e23] px-6 py-3 rounded-full hover:bg-[#2e4f3c] transition-colors">
+            <a href="mailto:bodystartnutrition@gmail.com" className="inline-block mt-4 text-[12px] font-bold text-white bg-[#1a2e23] px-6 py-3 rounded-full hover:bg-[#2e4f3c] transition-colors max-w-full break-all">
               bodystartnutrition@gmail.com
             </a>
           </p>

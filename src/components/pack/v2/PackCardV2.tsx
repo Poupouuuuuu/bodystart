@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Truck, Package } from 'lucide-react'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, cn } from '@/lib/utils'
 import { getBundleComponentImages } from '@/lib/shopify/bundle'
 import BundleComposite from './BundleComposite'
 import type { ShopifyProduct, ShopifyMetafield } from '@/lib/shopify/types'
@@ -56,6 +56,7 @@ function extractShortBenefit(description?: string): string | null {
 
 export default function PackCardV2({ product }: PackCardV2Props) {
   const variant = product.variants.nodes[0]
+  const soldOut = product.availableForSale === false
   const priceAmount = variant ? parseFloat(variant.price.amount) : 0
   const compareAmount = variant?.compareAtPrice
     ? parseFloat(variant.compareAtPrice.amount)
@@ -87,8 +88,12 @@ export default function PackCardV2({ product }: PackCardV2Props) {
       {/* Composite partagé : pots des composants empilés sur fond végétal
        * (cf. BundleComposite, réutilisé par la vignette panier). */}
       <div className="relative w-full aspect-square overflow-hidden">
-        {/* Pastille economies (mustard) — overlay au-dessus du composite */}
-        {hasSavings && (
+        {/* Si épuisé : badge « Épuisé » (anthracite) ; sinon pastille économies. */}
+        {soldOut ? (
+          <span className="absolute top-3 left-3 z-30 inline-flex items-center bg-ink text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
+            Épuisé
+          </span>
+        ) : hasSavings && (
           <div className="absolute top-3 left-3 z-20 bg-mustard text-mustard-ink text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm">
             Économise {formatPrice({ amount: savingsAmount.toFixed(2), currencyCode: currency })}
           </div>
@@ -100,6 +105,7 @@ export default function PackCardV2({ product }: PackCardV2Props) {
           variant="card"
           fallbackImage={product.featuredImage}
           sizes="(max-width: 768px) 50vw, 360px"
+          className={cn(soldOut && 'opacity-60')}
         />
       </div>
 

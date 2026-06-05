@@ -713,6 +713,7 @@ interface ProductCardShopProps {
 
 function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
   const variant = product.variants.nodes[0]
+  const soldOut = product.availableForSale === false
   const { addItem } = useCart()
   const [adding, setAdding] = useState(false)
 
@@ -772,7 +773,7 @@ function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
               alt={product.featuredImage.altText ?? product.title}
               width={200}
               height={200}
-              className="relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+              className={cn("relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105", soldOut && "opacity-60")}
             />
           ) : (
             <div className="relative z-10 w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-8">
@@ -784,27 +785,35 @@ function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
         {/* Gradient fondu blanc en bas (raccord avec la carte) */}
         <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent z-0" />
 
-        {/* Badges discrets - palette DA */}
-        <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5 items-start">
-          {discountPct && (
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-terracotta text-white">
-              -{discountPct}%
+        {/* Badges discrets - palette DA. Si épuisé : on n'affiche que « Épuisé ». */}
+        <div className="absolute top-3 left-3 z-30 flex flex-col gap-1.5 items-start">
+          {soldOut ? (
+            <span className="inline-flex items-center bg-ink text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
+              Épuisé
             </span>
-          )}
-          {isBest && (
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-mustard text-mustard-ink">
-              Best-seller
-            </span>
-          )}
-          {isSante && (
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-sage text-spruce">
-              Santé
-            </span>
-          )}
-          {showLowStock && (
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-terracotta text-white">
-              Plus que {stockAtStore} en stock
-            </span>
+          ) : (
+            <>
+              {discountPct && (
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-terracotta text-white">
+                  -{discountPct}%
+                </span>
+              )}
+              {isBest && (
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-mustard text-mustard-ink">
+                  Best-seller
+                </span>
+              )}
+              {isSante && (
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-sage text-spruce">
+                  Santé
+                </span>
+              )}
+              {showLowStock && (
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-terracotta text-white">
+                  Plus que {stockAtStore} en stock
+                </span>
+              )}
+            </>
           )}
         </div>
       </Link>

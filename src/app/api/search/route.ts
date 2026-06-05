@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
       image: p.featuredImage?.url ?? null,
       price: p.priceRange.minVariantPrice.amount,
       currency: p.priceRange.minVariantPrice.currencyCode,
+      availableForSale: p.availableForSale ?? true,
     }))
 
     return NextResponse.json(

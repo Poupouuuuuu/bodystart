@@ -25,8 +25,8 @@ export default function ConfidentialitePage() {
             <div className="w-12 h-12 rounded-full bg-[#89a890]/10 flex items-center justify-center flex-shrink-0">
               <Shield className="w-6 h-6 text-[#4a5f4c]" />
             </div>
-            <div>
-              <h1 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight text-[#1a2e23] leading-none">
+            <div className="min-w-0">
+              <h1 className="font-display text-xl sm:text-3xl md:text-4xl font-black uppercase tracking-tight text-[#1a2e23] leading-tight break-words">
                 Politique de confidentialité
               </h1>
             </div>

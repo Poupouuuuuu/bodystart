@@ -172,6 +172,11 @@ export default function BuyBoxV2({
   const storeStock = activeStore ? storeInventory[activeStore.id] : undefined
   const showExactStock = storeStock !== undefined && storeStock > 0 && storeStock <= LOW_STOCK_THRESHOLD
 
+  // Disponibilité en ligne de la variante sélectionnée (achat e-commerce).
+  const selectedUnavailable = !selectedVariant?.availableForSale
+  // Une autre variante (saveur/format) est-elle dispo ? → on invite à la choisir.
+  const hasOtherAvailableVariant = variants.some((v) => v.availableForSale)
+
   // Eyebrow (sus-titre) : fournisseur du produit. "Packs" pour un bundle.
   // Fallback "BodyStart Nutrition" si le vendor est vide ou generique.
   const vendorClean = (vendor ?? '').trim()
@@ -335,8 +340,22 @@ export default function BuyBoxV2({
             </>
           )}
 
+          {/* Bandeau épuisé (au-dessus du bouton d'achat) */}
+          {selectedUnavailable && (
+            <div className="mt-7 rounded-2xl border border-spruce/15 bg-sage/50 px-5 py-4">
+              <p className="text-[14px] font-semibold text-spruce">
+                Ce produit est momentanément épuisé, il revient bientôt.
+              </p>
+              {hasOtherAvailableVariant && (
+                <p className="text-[13px] text-ink-mute mt-1">
+                  Une autre option est disponible — choisis-la ci-dessus.
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Quantite + Ajouter au panier */}
-          <div className="flex items-stretch gap-3 mt-7">
+          <div className={cn('flex items-stretch gap-3', selectedUnavailable ? 'mt-4' : 'mt-7')}>
             <div className="inline-flex items-center border border-spruce/20 rounded-full overflow-hidden h-[56px] bg-white">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -393,7 +412,7 @@ export default function BuyBoxV2({
                   Ajouter au panier
                 </>
               ) : (
-                'Rupture de stock'
+                'Épuisé'
               )}
             </button>
           </div>
@@ -471,7 +490,7 @@ export default function BuyBoxV2({
                 : 'bg-ink-mute/40 cursor-not-allowed'
             )}
           >
-            {adding ? 'Ajout…' : added ? 'Ajouté ✓' : 'Ajouter au panier'}
+            {adding ? 'Ajout…' : added ? 'Ajouté ✓' : selectedUnavailable ? 'Épuisé' : 'Ajouter au panier'}
           </button>
         </div>
       </div>

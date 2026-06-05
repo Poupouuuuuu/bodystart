@@ -63,6 +63,9 @@ export interface ShopifyProduct {
   tags: string[]
   vendor: string
   productType: string
+  // Agrégat Storefront : true si AU MOINS une variante est disponible.
+  // false = toutes les variantes épuisées → badge « Épuisé » sur les cartes.
+  availableForSale?: boolean
   featuredImage: ShopifyImage | null
   images?: {
     nodes: ShopifyImage[]

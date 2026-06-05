@@ -6,6 +6,7 @@ export const PRODUCT_CARD_FRAGMENT = `
     tags
     vendor
     productType
+    availableForSale
     featuredImage {
       url
       altText
@@ -213,6 +214,7 @@ export const GET_FEATURED_PRODUCTS = `
         tags
         vendor
         productType
+        availableForSale
         featuredImage {
           url
           altText
