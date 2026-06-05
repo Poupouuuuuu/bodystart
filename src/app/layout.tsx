@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Montserrat } from 'next/font/google'
 import dynamic from 'next/dynamic'
 import '@/styles/globals.css'
@@ -85,6 +85,12 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+}
+
+// Next 14 : themeColor vit dans l'export viewport (plus dans metadata).
+// Vert BodyStart (--fresh) pour la barre d'adresse mobile / PWA.
+export const viewport: Viewport = {
+  themeColor: '#3B7A3F',
 }
 
 export default function RootLayout({
