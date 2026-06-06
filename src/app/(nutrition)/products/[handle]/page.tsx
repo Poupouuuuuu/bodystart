@@ -153,6 +153,49 @@ export default async function ProductPage({ params }: Props) {
   const benefits = extractBenefits(product.tags ?? [])
   const format = extractFormat(product.metafields)
 
+  // Détails de livraison (alignés sur /livraison) — résout l'avertissement
+  // Search Console « shippingDetails manquant (dans offers) ». 2 modes France.
+  // Le seuil « livraison offerte dès 85 € » n'est pas modélisable en schema.org
+  // (palier conditionnel) → on le déclarera dans Google Merchant Center.
+  const shippingDetails = [
+    {
+      // Mondial Relay (point relais)
+      '@type': 'OfferShippingDetails',
+      shippingRate: { '@type': 'MonetaryAmount', value: 4.9, currency: 'EUR' },
+      shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'FR' },
+      deliveryTime: {
+        '@type': 'ShippingDeliveryTime',
+        handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' },
+        transitTime: { '@type': 'QuantitativeValue', minValue: 2, maxValue: 3, unitCode: 'DAY' },
+      },
+    },
+    {
+      // Colissimo à domicile
+      '@type': 'OfferShippingDetails',
+      shippingRate: { '@type': 'MonetaryAmount', value: 6.9, currency: 'EUR' },
+      shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'FR' },
+      deliveryTime: {
+        '@type': 'ShippingDeliveryTime',
+        handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' },
+        transitTime: { '@type': 'QuantitativeValue', minValue: 2, maxValue: 4, unitCode: 'DAY' },
+      },
+    },
+  ]
+
+  // Politique de retour — résout l'avertissement « hasMerchantReturnPolicy
+  // manquant (dans offers) ». CGV §7 : droit de rétractation 14 j, retour par
+  // voie postale. Frais de retour à la charge du client : c'est le défaut légal
+  // (art. L221-23 Code conso) et aucune clause « retour gratuit » n'existe en CGV
+  // → ReturnFeesCustomerResponsibility.
+  const merchantReturnPolicy = {
+    '@type': 'MerchantReturnPolicy',
+    applicableCountry: 'FR',
+    returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+    merchantReturnDays: 14,
+    returnMethod: 'https://schema.org/ReturnByMail',
+    returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
+  }
+
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -169,6 +212,8 @@ export default async function ProductPage({ params }: Props) {
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       seller: { '@type': 'Organization', name: 'BodyStart Nutrition' },
+      shippingDetails,
+      hasMerchantReturnPolicy: merchantReturnPolicy,
     },
   }
 
