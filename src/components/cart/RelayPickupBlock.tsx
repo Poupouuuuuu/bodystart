@@ -70,26 +70,30 @@ export default function RelayPickupBlock() {
           </div>
         </div>
       ) : (
-        /* Bloc incitatif discret */
-        <button
-          onClick={() => setOpen(true)}
-          className="w-full bg-white border border-spruce/10 rounded-xl p-4 flex items-center gap-3 text-left hover:border-fresh/40 transition-colors"
-        >
-          <span className="text-xl flex-shrink-0" aria-hidden="true">
-            📦
-          </span>
-          <span className="flex-1 min-w-0">
-            <span className="block text-[13px] font-semibold text-spruce leading-tight">
-              Tu veux être livré en point relais ?
+        /* Bloc incitatif discret — texte empilé + bouton pleine largeur
+           (jamais comprimé, même à 360 px ; tap target 44 px) */
+        <div className="w-full bg-white border border-spruce/10 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <span className="text-xl flex-shrink-0 leading-none mt-0.5" aria-hidden="true">
+              📦
             </span>
-            <span className="block text-[12px] font-medium text-ink-mute">
-              Choisis ton relais maintenant
-            </span>
-          </span>
-          <span className="text-[12px] font-semibold text-fresh whitespace-nowrap">
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-spruce leading-snug">
+                Tu veux être livré en point relais ?
+              </p>
+              <p className="text-[12px] font-medium text-ink-mute mt-0.5">
+                Choisis ton relais maintenant
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setOpen(true)}
+            className="mt-3 w-full h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-fresh/10 text-fresh text-[13px] font-semibold hover:bg-fresh/15 transition-colors"
+          >
+            <MapPin className="w-4 h-4" />
             Choisir mon relais
-          </span>
-        </button>
+          </button>
+        </div>
       )}
 
       {open && (

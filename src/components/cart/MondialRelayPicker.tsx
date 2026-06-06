@@ -193,8 +193,10 @@ export default function MondialRelayPicker({ postCode, onClose, onSelected, onUn
           </button>
         </div>
 
-        {/* Corps : le widget injecte recherche + liste + carte ici */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 min-h-[55vh]">
+        {/* Corps : le widget injecte recherche + liste + carte ici.
+            Padding réduit sur mobile pour laisser la carte/liste pleine
+            largeur ; overflow-x-hidden coupe tout résidu sous-pixel du widget. */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-6 py-5 min-h-[55vh]">
           {status === 'loading' && (
             <div className="h-full min-h-[40vh] flex flex-col items-center justify-center text-ink-mute gap-3">
               <Loader2 className="w-6 h-6 animate-spin text-fresh" />
