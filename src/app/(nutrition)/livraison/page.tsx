@@ -60,7 +60,7 @@ export default function LivraisonPage() {
           <div className="flex flex-wrap justify-center gap-10 mt-14 bg-white/5 border border-white/10 rounded-[32px] p-8 max-w-3xl mx-auto backdrop-blur-md">
             {[
               { icon: '🚚', label: 'Colissimo', sub: '2-4 jours' },
-              { icon: '📦', label: 'Mondial Relay', sub: '3-5 jours' },
+              { icon: '📦', label: 'Mondial Relay', sub: '2-3 jours' },
               { icon: '🏪', label: 'Click & Collect', sub: 'Sous 2h' },
             ].map(({ icon, label, sub }) => (
               <div key={label} className="text-center px-4">
