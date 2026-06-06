@@ -1,8 +1,9 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes } from '@/lib/shopify'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react'
+import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, addCartDeliveryAddresses, removeCartDeliveryAddresses } from '@/lib/shopify'
 import type { ShopifyCart } from '@/lib/shopify/types'
+import { RELAY_ATTRIBUTE_KEY, formatRelayAttributeValue, parseRelayAttributeValue, buildRelayDeliveryAddress, type ParcelShop } from '@/lib/mondialRelay'
 import toast from 'react-hot-toast'
 
 interface CartContextType {
@@ -18,6 +19,10 @@ interface CartContextType {
   setCartAttributes: (attributes: { key: string; value: string }[]) => Promise<void>
   applyDiscountCode: (code: string) => Promise<void>
   removeDiscountCode: (code: string) => Promise<void>
+  // Mondial Relay (point relais)
+  relayPickup: { id: string; name: string; cpVille: string } | null
+  selectRelayPickup: (shop: ParcelShop) => Promise<void>
+  clearRelayPickup: () => Promise<void>
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -149,11 +154,82 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cart])
 
+  // ─── Mondial Relay : point relais ──────────────────────────
+  // Relais courant dérivé de l'attribut "Point Relais" du cart (re-hydraté
+  // après reload sans état React).
+  const relayPickup = useMemo(() => {
+    const attr = cart?.attributes?.find((a) => a.key === RELAY_ATTRIBUTE_KEY)
+    return parseRelayAttributeValue(attr?.value)
+  }, [cart])
+
+  // Attributs hors "Point Relais" (en préservant leurs valeurs non nulles),
+  // pour merger sans écraser le Click & Collect ni d'autres attributs.
+  const attributesWithoutRelay = useCallback(
+    (): { key: string; value: string }[] =>
+      (cart?.attributes ?? [])
+        .filter((a) => a.key !== RELAY_ATTRIBUTE_KEY && a.value != null)
+        .map((a) => ({ key: a.key, value: a.value as string })),
+    [cart]
+  )
+
+  const selectRelayPickup = useCallback(async (shop: ParcelShop) => {
+    if (!cart) return
+    setIsLoading(true)
+    try {
+      // 1) Attribut "Point Relais" — MERGE (source de vérité pour l'étiquette).
+      const merged = [
+        ...attributesWithoutRelay(),
+        { key: RELAY_ATTRIBUTE_KEY, value: formatRelayAttributeValue(shop) },
+      ]
+      let updated = await updateCartAttributes(cart.id, merged)
+      // 2) Adresse de livraison du relais (pré-remplissage checkout) — best-effort.
+      //    Si le script/API échoue, l'attribut suffit : on n'interrompt rien.
+      try {
+        const existing = (updated.delivery?.addresses ?? []).map((a) => a.id)
+        if (existing.length) updated = await removeCartDeliveryAddresses(cart.id, existing)
+        updated = await addCartDeliveryAddresses(cart.id, [
+          {
+            address: { deliveryAddress: buildRelayDeliveryAddress(shop) },
+            selected: true,
+            validationStrategy: 'COUNTRY_CODE_ONLY',
+          },
+        ])
+      } catch {
+        /* non bloquant : l'attribut "Point Relais" reste posé */
+      }
+      setCart(updated)
+    } catch {
+      toast.error('Impossible d\'enregistrer le point relais')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [cart, attributesWithoutRelay])
+
+  const clearRelayPickup = useCallback(async () => {
+    if (!cart) return
+    setIsLoading(true)
+    try {
+      let updated = await updateCartAttributes(cart.id, attributesWithoutRelay())
+      try {
+        const existing = (updated.delivery?.addresses ?? []).map((a) => a.id)
+        if (existing.length) updated = await removeCartDeliveryAddresses(cart.id, existing)
+      } catch {
+        /* non bloquant */
+      }
+      setCart(updated)
+    } catch {
+      /* silencieux : le retrait du relais ne doit jamais bloquer le panier */
+    } finally {
+      setIsLoading(false)
+    }
+  }, [cart, attributesWithoutRelay])
+
   return (
     <CartContext.Provider value={{
       cart, isLoading, isOpen, totalQuantity,
       openCart, closeCart, addItem, updateItem, removeItem, setCartAttributes,
       applyDiscountCode, removeDiscountCode,
+      relayPickup, selectRelayPickup, clearRelayPickup,
     }}>
       {children}
     </CartContext.Provider>

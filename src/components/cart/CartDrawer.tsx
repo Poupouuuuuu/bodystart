@@ -15,12 +15,13 @@ import { BODY_START_STORES } from '@/lib/shopify/types'
 import { getCartLineComponentImages } from '@/lib/shopify/bundle'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
+import RelayPickupBlock from './RelayPickupBlock'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
 const FREE_SHIPPING_THRESHOLD = 85
 
 export default function CartDrawer() {
-  const { cart, isOpen, isLoading, closeCart, updateItem, removeItem, setCartAttributes } = useCart()
+  const { cart, isOpen, isLoading, closeCart, updateItem, removeItem, setCartAttributes, relayPickup, clearRelayPickup } = useCart()
 
   const [isClickAndCollect, setIsClickAndCollect] = useState(false)
 
@@ -35,6 +36,12 @@ export default function CartDrawer() {
   async function toggleClickAndCollect() {
     const newValue = !isClickAndCollect
     setIsClickAndCollect(newValue)
+
+    // Passage en retrait : un point relais éventuel n'a plus de sens
+    // (attribut + adresse de livraison retirés du cart).
+    if (newValue && relayPickup) {
+      await clearRelayPickup()
+    }
 
     if (activeStore) {
       await setCartAttributes(
@@ -301,6 +308,9 @@ export default function CartDrawer() {
                 </span>
               </div>
             </div>
+
+            {/* Point relais Mondial Relay (livraison uniquement, non bloquant) */}
+            {!isClickAndCollect && <RelayPickupBlock />}
 
             {/* Bouton checkout */}
             <div className="flex flex-col gap-3">

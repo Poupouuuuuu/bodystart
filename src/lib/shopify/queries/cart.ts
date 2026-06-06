@@ -81,6 +81,20 @@ const CART_FRAGMENT = `
       code
       applicable
     }
+    # Attributs personnalisés du cart (dont "Point Relais" Mondial Relay).
+    attributes {
+      key
+      value
+    }
+    # Adresses de livraison posées sur le cart (pré-remplissage checkout).
+    # Sert à connaître les IDs existants pour les remplacer si le client
+    # change de relais (évite l'accumulation d'adresses).
+    delivery {
+      addresses {
+        id
+        selected
+      }
+    }
   }
 `
 
@@ -143,6 +157,43 @@ export const UPDATE_CART_ATTRIBUTES = `
     cartAttributesUpdate(cartId: $cartId, attributes: $attributes) {
       cart {
         ...CartFragment
+      }
+    }
+  }
+`
+
+// ─── Mondial Relay : adresse de livraison du relais sur le cart ───
+// cartBuyerIdentityUpdate.deliveryAddressPreferences N'EXISTE PAS sur la
+// Storefront API 2024-04 (ni 2023-10 → 2025-04 sur ce store). Le mécanisme
+// disponible est le jeu de mutations dédiées cartDeliveryAddresses* (présent
+// dès 2024-04). On ADD une adresse "selected" ; on REMOVE les précédentes
+// quand le client change de relais. validationStrategy COUNTRY_CODE_ONLY :
+// une adresse de point relais ne valide pas toujours en strict.
+export const ADD_CART_DELIVERY_ADDRESSES = `
+  ${CART_FRAGMENT}
+  mutation AddCartDeliveryAddresses($cartId: ID!, $addresses: [CartSelectableAddressInput!]!) {
+    cartDeliveryAddressesAdd(cartId: $cartId, addresses: $addresses) {
+      cart {
+        ...CartFragment
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`
+
+export const REMOVE_CART_DELIVERY_ADDRESSES = `
+  ${CART_FRAGMENT}
+  mutation RemoveCartDeliveryAddresses($cartId: ID!, $addressIds: [ID!]!) {
+    cartDeliveryAddressesRemove(cartId: $cartId, addressIds: $addressIds) {
+      cart {
+        ...CartFragment
+      }
+      userErrors {
+        field
+        message
       }
     }
   }
