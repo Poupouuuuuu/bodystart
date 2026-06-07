@@ -19,6 +19,7 @@ import ReviewsV2 from '@/components/product/v2/ReviewsV2'
 import CrossSellV2 from '@/components/product/v2/CrossSellV2'
 import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
 import { buildPageMetadata } from '@/lib/seo'
+import TrackViewItem from '@/components/analytics/TrackViewItem'
 
 // Données fraîches à chaque visite (stock C&C à jour) SANS `dynamic =
 // 'force-dynamic'` : avec force-dynamic, notFound() renvoyait un HTTP 200
@@ -253,6 +254,14 @@ export default async function ProductPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
+      {/* GA4 view_item (no-op sans consentement mesure d'audience) */}
+      <TrackViewItem
+        itemId={product.handle}
+        itemName={product.title}
+        price={mainVariant ? parseFloat(mainVariant.price.amount) : undefined}
+        brand={product.vendor}
       />
 
       {/* ─── Retour (remplace le fil d'ariane) ─── */}

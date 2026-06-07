@@ -6,6 +6,7 @@ import { CartProvider } from '@/context/CartContext'
 import { CustomerProvider } from '@/context/CustomerContext'
 import { Toaster } from 'react-hot-toast'
 import { getSiteUrl } from '@/lib/site-url'
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
 
 // Lazy : invisible au load (montre seulement si pas de consent en localStorage)
 const CookieBanner = dynamic(() => import('@/components/ui/CookieBanner'), { ssr: false })
@@ -108,6 +109,7 @@ export default function RootLayout({
         <CustomerProvider>
           <CartProvider>
             {children}
+            <GoogleAnalytics />
             <CookieBanner />
             <Toaster
               position="top-right"

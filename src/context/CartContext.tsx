@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo, t
 import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, addCartDeliveryAddresses, removeCartDeliveryAddresses } from '@/lib/shopify'
 import type { ShopifyCart } from '@/lib/shopify/types'
 import { RELAY_ATTRIBUTE_KEY, formatRelayAttributeValue, parseRelayAttributeValue, buildRelayDeliveryAddress, type ParcelShop } from '@/lib/mondialRelay'
+import { gaAddToCart } from '@/lib/analytics'
 import toast from 'react-hot-toast'
 
 interface CartContextType {
@@ -71,6 +72,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       }
       setCart(updatedCart)
+      // GA4 add_to_cart (no-op sans consentement mesure d'audience).
+      // Détails dérivés de la ligne ajoutée ; n'interrompt jamais l'ajout panier.
+      try {
+        const line = updatedCart.lines.nodes.find((l) => l.merchandise.id === merchandiseId)
+        if (line) {
+          const variant = line.merchandise.title
+          gaAddToCart({
+            item_id: line.merchandise.product.handle,
+            item_name: line.merchandise.product.title,
+            price: parseFloat(line.merchandise.price.amount),
+            quantity,
+            item_variant: variant && variant !== 'Default Title' ? variant : undefined,
+          })
+        }
+      } catch {
+        /* tracking best-effort */
+      }
       setIsOpen(true)
       toast.success('Produit ajouté au panier !')
     } catch {

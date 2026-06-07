@@ -155,6 +155,45 @@ export default function ConfidentialitePage() {
 
           <section className="bg-white rounded-[20px] p-8">
             <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+              Mesure d&apos;audience (Google Analytics 4)
+            </h2>
+            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+              Avec votre consentement, nous utilisons Google Analytics 4 (fourni par Google
+              Ireland Limited) pour mesurer l&apos;audience du site : pages consultées, parcours de
+              navigation et événements e-commerce (vues de produits, ajouts au panier). Cela nous
+              aide à améliorer le site et nos fiches produit.
+            </p>
+            <ul className="mt-4 space-y-3 list-none">
+              {[
+                "Finalité : mesure d'audience et amélioration du site, à l'exclusion de toute publicité ciblée.",
+                "Base légale : votre consentement (article 6.1.a du RGPD), recueilli via le bandeau cookies. Aucun script de mesure n'est chargé tant que vous n'avez pas accepté — aucun cookie ni aucune requête vers Google avant ce choix.",
+                "Données traitées : un identifiant de mesure pseudonyme, les pages vues et les événements, l'adresse IP étant tronquée par Google.",
+                'Conservation : les données de mesure d’audience sont conservées 14 mois maximum.',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3 text-[#4a5f4c] font-medium">
+                  <ChevronRight className="w-4 h-4 text-[#7cb98b] mt-1 flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-[#4a5f4c] font-medium leading-relaxed">
+              Vous pouvez retirer votre consentement à tout moment via le bandeau cookies, ou
+              installer le{' '}
+              <a
+                href="https://tools.google.com/dlpage/gaoptout"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
+              >
+                module de désactivation de Google Analytics
+              </a>
+              . Ces données pouvant être transférées hors de l&apos;Union européenne, le transfert
+              est encadré par des garanties appropriées (clauses contractuelles types).
+            </p>
+          </section>
+
+          <section className="bg-white rounded-[20px] p-8">
+            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
               Cookies
             </h2>
             <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">

@@ -16,6 +16,7 @@ import { getCartLineComponentImages } from '@/lib/shopify/bundle'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
+import { gaBeginCheckout } from '@/lib/analytics'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
 const FREE_SHIPPING_THRESHOLD = 85
@@ -316,6 +317,27 @@ export default function CartDrawer() {
             <div className="flex flex-col gap-3">
               <a
                 href={cart.checkoutUrl}
+                onClick={() => {
+                  // GA4 begin_checkout avant redirection vers le checkout Shopify
+                  // (no-op sans consentement ; n'empêche jamais la navigation).
+                  try {
+                    gaBeginCheckout(
+                      cart.lines.nodes.map((l) => ({
+                        item_id: l.merchandise.product.handle,
+                        item_name: l.merchandise.product.title,
+                        price: parseFloat(l.merchandise.price.amount),
+                        quantity: l.quantity,
+                        item_variant:
+                          l.merchandise.title && l.merchandise.title !== 'Default Title'
+                            ? l.merchandise.title
+                            : undefined,
+                      })),
+                      parseFloat(cart.cost.subtotalAmount.amount)
+                    )
+                  } catch {
+                    /* tracking best-effort */
+                  }
+                }}
                 className="w-full h-14 flex items-center justify-center text-[14px] font-semibold rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep"
               >
                 {isClickAndCollect ? 'Valider le retrait' : 'Paiement sécurisé'}

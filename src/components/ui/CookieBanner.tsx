@@ -4,14 +4,7 @@ import { useState, useEffect } from 'react'
 import { Cookie, X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
-
-const CONSENT_KEY = 'body-start-cookie-consent'
-
-interface CookiePreferences {
-  necessary: boolean
-  analytics: boolean
-  marketing: boolean
-}
+import { CONSENT_KEY, writeConsent, type CookiePreferences } from '@/lib/consent'
 
 const DEFAULT_PREFERENCES: CookiePreferences = {
   necessary: true,
@@ -40,7 +33,9 @@ export default function CookieBanner() {
   }, [])
 
   function saveConsent(prefs: CookiePreferences) {
-    localStorage.setItem(CONSENT_KEY, JSON.stringify(prefs))
+    // writeConsent persiste + diffuse l'événement consenti → GA réagit en direct
+    // (chargement à l'acceptation, consent update→denied au refus).
+    writeConsent(prefs)
     setVisible(false)
   }
 
