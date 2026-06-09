@@ -10,6 +10,8 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
 
 // Lazy : invisible au load (montre seulement si pas de consent en localStorage)
 const CookieBanner = dynamic(() => import('@/components/ui/CookieBanner'), { ssr: false })
+// Lazy : la popup s'arme côté client (timer/exit-intent), rien au SSR
+const NewsletterPopup = dynamic(() => import('@/components/marketing/NewsletterPopup'), { ssr: false })
 
 const inter = Inter({
   subsets: ['latin'],
@@ -111,6 +113,7 @@ export default function RootLayout({
             {children}
             <GoogleAnalytics />
             <CookieBanner />
+            <NewsletterPopup />
             <Toaster
               position="top-right"
               toastOptions={{
