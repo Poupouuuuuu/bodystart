@@ -28,6 +28,7 @@ export type LoyaltyMeState =
         createdAt: string
       }>
       totals: { earnedCents: number; spentCents: number }
+      referral: { filleulsCount: number; earnedNetCents: number }
     }
 
 interface UseLoyaltyMeReturn {
@@ -65,6 +66,7 @@ export function useLoyaltyMe(): UseLoyaltyMeReturn {
             customer: json.customer,
             recentTransactions: json.recentTransactions,
             totals: json.totals,
+            referral: json.referral ?? { filleulsCount: 0, earnedNetCents: 0 },
           })
         } else {
           setState({ kind: 'error', error: 'unknown_state' })

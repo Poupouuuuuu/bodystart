@@ -6,9 +6,9 @@ import { buildPageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/parrainage',
-  title: 'Parrainage BodyStart : 5 € pour ton pote, 5 % pour toi',
+  title: 'Parrainage BodyStart : 10 € pour ton pote, 5 % à vie pour toi',
   description:
-    'Partage ton code parrain BodyStart. Ton pote a 5 € sur sa première commande, tu gagnes 5 % de ses achats pendant 12 mois. Aucune carte, aucune appli.',
+    'Partage ton code parrain BodyStart. Ton pote a 10 € dès 60 € sur sa première commande, tu gagnes 5 % de tous ses achats en cagnotte, à vie. Aucune carte, aucune appli.',
 })
 
 const STEPS = [
@@ -20,14 +20,14 @@ const STEPS = [
   },
   {
     step: '02',
-    title: 'Ton pote économise 5 €',
-    desc: 'Il rentre ton code au panier sur sa première commande, à partir de 40 € d\'achat. Direct, sans condition cachée.',
+    title: 'Ton pote économise 10 €',
+    desc: 'Il rentre ton code au panier sur sa première commande, dès 60 € d\'achat. Non cumulable avec un autre code.',
     icon: ShoppingBag,
   },
   {
     step: '03',
-    title: 'Tu gagnes 5 % pendant 1 an',
-    desc: 'À chaque fois qu\'il commande, on te crédite 5 % du montant payé. Ta cagnotte grossit toute seule, utilisable dès 20 €.',
+    title: 'Tu gagnes 5 % à vie',
+    desc: 'À chaque fois qu\'il commande, on te crédite 5 % du montant payé — sans limite de durée. Ta cagnotte grossit toute seule, utilisable dès 20 €.',
     icon: Gift,
   },
 ]
@@ -39,7 +39,7 @@ const FAQ = [
   },
   {
     q: 'Quand mon pote peut utiliser le code ?',
-    a: 'Sur sa première commande, à partir de 40 € d\'achat (hors frais de port). Une fois par filleul.',
+    a: 'Sur sa première commande, dès 60 € d\'achat (hors frais de port). Une fois par filleul, non cumulable avec un autre code.',
   },
   {
     q: 'Comment j\'utilise ma cagnotte ?',
@@ -51,7 +51,7 @@ const FAQ = [
   },
   {
     q: 'Mes 5 % s\'arrêtent quand ?',
-    a: '12 mois après la première commande de ton pote. Après, il reste ton ami mais plus ton filleul. La cagnotte déjà gagnée, elle, reste à toi.',
+    a: 'Jamais : c\'est à vie. Tant que ton pote commande, on te crédite 5 % de chacun de ses achats, sans limite de durée. La cagnotte gagnée reste à toi pour toujours.',
   },
   {
     q: 'Et ma cagnotte expire ?',
@@ -77,9 +77,9 @@ export default function ParrainagePage() {
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-medium leading-relaxed max-w-2xl mb-8">
               Le programme parrainage BodyStart, c&apos;est simple. Tu partages ton
-              code, ton pote a 5 € sur sa première commande, et tu touches 5 %
-              de ses achats pendant 12 mois. Aucune carte physique, aucune
-              appli, ton compte BodyStart suffit.
+              code, ton pote a 10 € sur sa première commande dès 60 € d&apos;achat,
+              et tu touches 5 % de tous ses achats, à vie. Aucune carte physique,
+              aucune appli, ton compte BodyStart suffit.
             </p>
             <div className="flex flex-wrap gap-3">
               {isLoggedIn ? (

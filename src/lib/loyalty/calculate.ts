@@ -15,17 +15,23 @@
 // Constantes metier (verrouillees, cf. spec V2 §0)
 // ============================================================
 
-/** 5% des achats du filleul → cagnotte du parrain. */
+/** 5% des achats du filleul → cagnotte du parrain (À VIE, sur chaque commande). */
 export const REFERRAL_COMMISSION_RATE = 0.05
 
-/** Fenetre pendant laquelle le parrain touche 5% : 12 mois apres le 1er achat du filleul. */
+/**
+ * @deprecated Le parrainage est désormais À VIE : la commission parrain n'a plus
+ * de fenêtre d'expiration (cf. migration 00008 + finalize_order_loyalty).
+ * Conservé pour compat (helpers calcReferralCommissionUntil / isWithinReferralWindow
+ * non utilisés par le runtime money). first_purchase_at reste posé ; la commission
+ * est créditée tant que le lien referrals est 'active'.
+ */
 export const REFERRAL_WINDOW_MONTHS = 12
 
-/** -5€ sur la 1ere commande du filleul (≥ 40€). */
-export const FILLEUL_DISCOUNT_CENTS = 500
+/** -10€ sur la 1ere commande du filleul (≥ 60€). Pas cumulable avec BIENVENUE10. */
+export const FILLEUL_DISCOUNT_CENTS = 1000
 
-/** Montant minimum d'une 1ere commande pour declencher le code parrain : 40€. */
-export const FILLEUL_MIN_ORDER_CENTS = 4000
+/** Montant minimum d'une 1ere commande pour debloquer le -10€ filleul : 60€. */
+export const FILLEUL_MIN_ORDER_CENTS = 6000
 
 /** Solde minimum pour pouvoir utiliser sa cagnotte : 20€. */
 export const REDEEM_MIN_BALANCE_CENTS = 2000

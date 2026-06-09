@@ -33,7 +33,7 @@ export async function GET() {
   const admin = getLoyaltyAdminClient()
   const customerId = session.customer.id
 
-  const [txQuery, totalsQuery] = await Promise.all([
+  const [txQuery, totalsQuery, filleulsQuery] = await Promise.all([
     admin
       .from('loyalty_transactions')
       .select(`
@@ -47,6 +47,11 @@ export async function GET() {
       .from('loyalty_transactions')
       .select('type, amount_cents')
       .eq('customer_id', customerId),
+    // Filleuls : clients ayant utilisé MON code parrain.
+    admin
+      .from('loyalty_customers')
+      .select('id', { count: 'exact', head: true })
+      .eq('referred_by_code', session.customer.referralCode),
   ])
 
   if (txQuery.error || totalsQuery.error) {
@@ -91,6 +96,16 @@ export async function GET() {
     .filter((t) => t.type === 'spend')
     .reduce((s, t) => s + t.amount_cents, 0)
 
+  // Parrainage : gains nets (commissions − révocations) + nombre de filleuls.
+  const referralCommissionCents = (totalsQuery.data ?? [])
+    .filter((t) => t.type === 'referral_commission')
+    .reduce((s, t) => s + t.amount_cents, 0)
+  const referralRevokeCents = (totalsQuery.data ?? [])
+    .filter((t) => t.type === 'referral_revoke')
+    .reduce((s, t) => s + t.amount_cents, 0)
+  const referralEarnedNetCents = Math.max(0, referralCommissionCents - referralRevokeCents)
+  const filleulsCount = filleulsQuery.count ?? 0
+
   return NextResponse.json({
     state: 'enrolled',
     customer: {
@@ -103,5 +118,6 @@ export async function GET() {
     },
     recentTransactions,
     totals: { earnedCents, spentCents },
+    referral: { filleulsCount, earnedNetCents: referralEarnedNetCents },
   })
 }

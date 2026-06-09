@@ -51,12 +51,12 @@ interface DeleteResponse {
 }
 
 /**
- * Cree un code Shopify pour le parrainage (-5 € sur 1ere commande filleul ≥ 40 €).
+ * Cree un code Shopify pour le parrainage (-10 € sur 1ere commande filleul ≥ 60 €).
  *
  * Specs cle :
  *   - Code = referralCode (BS-XXXXX) du parrain.
- *   - Montant fixe -5 €.
- *   - Prerequisite : subtotal ≥ 40 € (la commande doit faire au moins ce montant).
+ *   - Montant fixe -10 €.
+ *   - Prerequisite : subtotal ≥ 60 € (la commande doit faire au moins ce montant).
  *   - Pas d'endsAt : le code reste valide tant que le parrain a un compte.
  *   - appliesOncePerCustomer = true : Shopify empeche la reutilisation par
  *     le meme compte client connecte (defense partielle vs guest fraud).
@@ -82,17 +82,19 @@ export async function createReferralDiscountCode(opts: {
       customerGets: {
         value: {
           discountAmount: {
-            amount: 5.0, // 5 euros
+            amount: 10.0, // 10 euros (parrainage à vie)
             appliesOnEachItem: false,
           },
         },
         items: { all: true },
       },
       minimumRequirement: {
-        subtotal: { greaterThanOrEqualToSubtotal: 40.0 },
+        subtotal: { greaterThanOrEqualToSubtotal: 60.0 },
       },
+      // 1 fois par filleul (1re commande) ; usable par plusieurs filleuls.
       appliesOncePerCustomer: true,
       usageLimit: null,
+      // Aucune combinaison → NON cumulable avec BIENVENUE10 ni autre code.
       combinesWith: {
         orderDiscounts: false,
         productDiscounts: false,

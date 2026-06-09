@@ -248,23 +248,24 @@ describe('isFilleulDiscountEligible', () => {
     expect(isFilleulDiscountEligible(100000, true)).toBe(false)
   })
 
-  it('retourne false si la commande est sous le minimum (40€)', () => {
+  it('retourne false si la commande est sous le minimum (60€)', () => {
     expect(isFilleulDiscountEligible(0, false)).toBe(false)
-    expect(isFilleulDiscountEligible(3999, false)).toBe(false)
+    expect(isFilleulDiscountEligible(5999, false)).toBe(false)
+    expect(isFilleulDiscountEligible(4000, false)).toBe(false) // 40€ ne suffit plus
   })
 
-  it('retourne true si 1ere commande + montant ≥ 40€', () => {
-    expect(isFilleulDiscountEligible(4000, false)).toBe(true)
+  it('retourne true si 1ere commande + montant ≥ 60€', () => {
+    expect(isFilleulDiscountEligible(6000, false)).toBe(true)
     expect(isFilleulDiscountEligible(10000, false)).toBe(true)
   })
 
   it('retourne false pour des entrees non entieres', () => {
-    expect(isFilleulDiscountEligible(4000.5, false)).toBe(false)
+    expect(isFilleulDiscountEligible(6000.5, false)).toBe(false)
     expect(isFilleulDiscountEligible(NaN, false)).toBe(false)
   })
 
   it('respecte le seuil configure', () => {
-    expect(FILLEUL_MIN_ORDER_CENTS).toBe(4000)
+    expect(FILLEUL_MIN_ORDER_CENTS).toBe(6000)
   })
 })
 

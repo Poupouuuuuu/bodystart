@@ -13,6 +13,7 @@ import { z } from 'zod'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { resolveLoyaltyForSession } from '@/lib/loyalty/session'
 import { normalizeToE164 } from '@/lib/loyalty/phone'
+import { isValidReferralCode } from '@/lib/loyalty/calculate'
 import { upsertLoyaltyCustomer } from '@/lib/loyalty/upsert-customer'
 import { updateCustomerPhoneServer } from '@/lib/shopify/customer-server'
 
@@ -41,6 +42,8 @@ if (
 
 const BodySchema = z.object({
   phone: z.string().min(5).max(32),
+  // Code parrain capturé (cookie bs_referral). Optionnel ; validé ci-dessous.
+  referredByCode: z.string().trim().max(20).optional().nullable(),
 })
 
 export async function POST(req: NextRequest) {
@@ -83,12 +86,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Code parrain : on ne lie que si le format est valide (anti-injection).
+    // L'auto-parrainage est impossible ici (le client n'a pas encore de code).
+    const referredByCode =
+      parsed.referredByCode && isValidReferralCode(parsed.referredByCode)
+        ? parsed.referredByCode
+        : null
+
     const admin = getLoyaltyAdminClient()
     const result = await upsertLoyaltyCustomer(admin, {
       phone: e164,
       firstName: session.shopify.firstName,
       email: session.shopify.email,
       shopifyCustomerId: session.shopify.id,
+      referredByCode,
       source: 'online',
     })
 

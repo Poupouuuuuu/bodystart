@@ -10,7 +10,8 @@ import toast from 'react-hot-toast'
 function buildWhatsAppText(referralCode: string): string {
   const domain = getSiteDomain() || 'notre site'
   const url = getSiteUrl()
-  return `Salut ! Je commande mes compléments sur ${domain}. T'as 5 € de remise sur ta première commande avec mon code ${referralCode} (à partir de 40 € d'achat).${url ? ' Lien direct : ' + url : ''}`
+  const link = url ? `${url}/?parrain=${referralCode}` : ''
+  return `Salut ! Je commande mes compléments sur ${domain}. T'as 10 € de remise sur ta première commande dès 60 € d'achat avec mon code ${referralCode}.${link ? ' Lien direct : ' + link : ''}`
 }
 
 export function ReferralPanel() {
@@ -83,8 +84,26 @@ export function ReferralPanel() {
           Parrainage
         </h2>
         <p className="text-ink-mute font-medium text-sm">
-          Partage ton code, gagne 5 % à vie sur les achats de tes potes pendant 12 mois.
+          Ton pote a 10 € sur sa 1ʳᵉ commande dès 60 € ; toi, tu gagnes 5 % de tous ses achats en cagnotte, à vie.
         </p>
+      </div>
+
+      {/* Compteurs */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-white border border-spruce/10 rounded-2xl p-5">
+          <p className="text-[28px] font-display font-extrabold text-spruce leading-none">
+            {state.referral.filleulsCount}
+          </p>
+          <p className="text-[12px] text-ink-mute font-medium mt-1.5">
+            filleul{state.referral.filleulsCount > 1 ? 's' : ''} parrainé{state.referral.filleulsCount > 1 ? 's' : ''}
+          </p>
+        </div>
+        <div className="bg-white border border-spruce/10 rounded-2xl p-5">
+          <p className="text-[28px] font-display font-extrabold text-fresh leading-none">
+            {(state.referral.earnedNetCents / 100).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} €
+          </p>
+          <p className="text-[12px] text-ink-mute font-medium mt-1.5">gagnés grâce au parrainage</p>
+        </div>
       </div>
 
       {/* Carte code (claire) */}
@@ -137,9 +156,9 @@ export function ReferralPanel() {
         </h3>
         <div className="space-y-5">
           {[
-            { step: '01', title: 'Tu partages ton code à un pote', desc: 'Par DM, WhatsApp, SMS, comme tu veux.' },
-            { step: '02', title: 'Il le rentre au panier', desc: 'Sur sa 1ʳᵉ commande, à partir de 40 € d\'achat. Il a 5 € de remise.' },
-            { step: '03', title: 'Tu gagnes 5 % pendant 1 an', desc: 'On te crédite 5 % du montant de chacune de ses commandes.' },
+            { step: '01', title: 'Tu partages ton code (ou ton lien)', desc: 'Par DM, WhatsApp, SMS, comme tu veux.' },
+            { step: '02', title: 'Ton pote a 10 € de remise', desc: 'Sur sa 1ʳᵉ commande, dès 60 € d\'achat. Non cumulable avec d\'autres codes.' },
+            { step: '03', title: 'Tu gagnes 5 % à vie', desc: 'On te crédite 5 % du montant de chacune de ses commandes, sans limite de durée.' },
           ].map(({ step, title, desc }) => (
             <div key={step} className="flex gap-4">
               <div className="w-10 h-10 bg-sage text-spruce rounded-full flex items-center justify-center font-display font-bold text-sm flex-shrink-0">

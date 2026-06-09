@@ -5,6 +5,7 @@ import { Loader2, Phone } from 'lucide-react'
 import toast from 'react-hot-toast'
 import PhoneField from '@/components/ui/PhoneField'
 import { useCustomer } from '@/context/CustomerContext'
+import { readReferralCookie } from '@/components/marketing/ReferralCapture'
 
 interface EnrollmentBlockProps {
   onEnrolled: () => void
@@ -32,7 +33,8 @@ export function EnrollmentBlock({ onEnrolled }: EnrollmentBlockProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ phone }),
+        // referredByCode : code parrain capturé via ?parrain (cookie 60j) → crée le lien
+        body: JSON.stringify({ phone, referredByCode: readReferralCookie() }),
       })
       const json = await res.json()
       if (!res.ok) {
