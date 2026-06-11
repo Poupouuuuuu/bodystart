@@ -5,7 +5,7 @@
 // est desormais nutrition-only (titre "Mon panier").
 // Re-theme DA claire V2 (2026-05-31) : surfaces creme/blanc, vert frais en
 // accent, sentence case. Aucune logique panier/checkout touchee.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, CheckCircle2 } from 'lucide-react'
@@ -13,18 +13,29 @@ import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { getCartLineComponentImages } from '@/lib/shopify/bundle'
+import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
 import { gaBeginCheckout } from '@/lib/analytics'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
-const FREE_SHIPPING_THRESHOLD = 85
+const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100
 
 export default function CartDrawer() {
   const { cart, isOpen, isLoading, closeCart, updateItem, removeItem, setCartAttributes, relayPickup, clearRelayPickup } = useCart()
 
   const [isClickAndCollect, setIsClickAndCollect] = useState(false)
+
+  // Réhydratation après reload : le mode retrait vit dans les attributs du
+  // cart Shopify (persisté), pas dans ce state local. Sans cette sync, l'UI
+  // réaffiche « Livraison » alors que le checkout partirait en retrait.
+  const cartClickAndCollect = cart?.attributes?.some(
+    (a) => a.key === '__click_and_collect' && a.value === 'true'
+  ) ?? false
+  useEffect(() => {
+    setIsClickAndCollect(cartClickAndCollect)
+  }, [cartClickAndCollect])
 
   const items = cart?.lines?.nodes ?? []
   const isEmpty = items.length === 0

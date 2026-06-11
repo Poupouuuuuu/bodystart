@@ -15,6 +15,7 @@ import { resolveLoyaltyForSession } from '@/lib/loyalty/session'
 import { normalizeToE164 } from '@/lib/loyalty/phone'
 import { isValidReferralCode } from '@/lib/loyalty/calculate'
 import { upsertLoyaltyCustomer } from '@/lib/loyalty/upsert-customer'
+import { ensureReferralCodeShopify } from '@/lib/loyalty/referral-shopify'
 import { updateCustomerPhoneServer } from '@/lib/shopify/customer-server'
 
 const SHOPIFY_TOKEN_COOKIE = 'body-start-customer-token'
@@ -102,6 +103,13 @@ export async function POST(req: NextRequest) {
       referredByCode,
       source: 'online',
     })
+
+    // Le code BS-XXXXX retourné doit être UTILISABLE au checkout : on crée le
+    // code de réduction Shopify correspondant (best-effort, idempotent — un
+    // client déjà inscrit en boutique garde son code existant). Sans cet appel,
+    // le filleul qui tape le code d'un parrain inscrit en ligne aurait un
+    // « code invalide » au checkout.
+    await ensureReferralCodeShopify(admin, result.id, result.referralCode, result.email)
 
     // Sync profil Shopify ← cagnotte : on écrit le numéro saisi à l'enrôlement
     // dans le profil client, pour qu'il n'y ait QU'UN seul numéro (best-effort).

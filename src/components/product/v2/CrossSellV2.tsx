@@ -8,13 +8,14 @@ import { formatPrice, cn } from '@/lib/utils'
 import { isBundle, getBundleComponentImages } from '@/lib/shopify/bundle'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import type { ShopifyProduct } from '@/lib/shopify/types'
+import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
 
 interface CrossSellV2Props {
   products: ShopifyProduct[]
   currentHandle: string
 }
 
-const FRANCO_THRESHOLD_CENTS = 8500 // 85 €
+const FRANCO_THRESHOLD_CENTS = FREE_SHIPPING_THRESHOLD_CENTS
 
 /**
  * Cross-sell "Pour completer" + nudge franco (panier moyen +).

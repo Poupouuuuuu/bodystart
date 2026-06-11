@@ -1,5 +1,15 @@
 # Spec technique V2 — Fidélité & parrainage BodyStart (Shopify + Supabase)
 
+> ⚠️ **RÈGLES D'ARGENT MISES À JOUR le 2026-06-10/11** (décision Adam) — les valeurs
+> ci-dessous font foi, le reste de la spec a été corrigé en conséquence :
+> - Filleul : **−10 €** sur sa 1ʳᵉ commande (minimum **60 €**), non cumulable (BIENVENUE10 inclus).
+> - Parrain : **5 % du TTC payé par le filleul, À VIE** (la fenêtre de 12 mois est SUPPRIMÉE ;
+>   `referral_commission_until` est ignoré/null — cf. migration 00008).
+> - Remboursement TOTAL d'une commande filleul → commission révoquée (`revoke_referral_reward`,
+>   webhook orders/refunded). Les remboursements PARTIELS sont volontairement ignorés en v1.
+> - Idempotence finalize : dès que `order_ref` est fourni, tous canaux (migration 00009).
+
+
 > **Remplace** `loyalty-system-spec.md` (bannie : bâtie sur une stack Drizzle/SQLite inexistante). Ce doc V2 est la **seule source de vérité technique**.
 > **Audience** : Claude Code (repo `Bodystart_protocole`) + Adam.
 > **Stack réelle** : Next.js App Router + TypeScript · e-commerce compléments sur **Shopify** (Storefront API, commandes côté Shopify) · **Supabase** (Postgres + Auth) · Tailwind custom (pas de shadcn). Les ventes **boutique ne passent PAS par Shopify** (caisse séparée).
@@ -11,8 +21,8 @@
 **Mécanique** (décision Adam 2026-05-22, inchangée) :
 - Identité client = **numéro de téléphone** (E.164). Le téléphone est la carte, pas de carte physique.
 - **Pas de cash-back sur ses propres achats.** Un client ne gagne rien sur ce qu'il achète pour lui.
-- **Parrainage = seule source de cagnotte** : quand un filleul achète, le **parrain gagne 5 % du montant payé par le filleul**, en ligne ET en boutique, pendant **12 mois** à compter du 1ᵉʳ achat du filleul.
-- **Filleul** : **−5 €** sur sa 1ʳᵉ commande (≥ 40 €). Pas de bonus flat pour le parrain (sa récompense = les 5 % récurrents).
+- **Parrainage = seule source de cagnotte** : quand un filleul achète, le **parrain gagne 5 % du montant payé par le filleul**, en ligne ET en boutique, **à vie** (sans limite de durée).
+- **Filleul** : **−10 €** sur sa 1ʳᵉ commande (≥ 60 €), non cumulable avec un autre code. Pas de bonus flat pour le parrain (sa récompense = les 5 % à vie).
 - **Cagnotte** utilisable par le parrain sur ses propres achats : **min 20 € de solde** pour pouvoir l'utiliser, **plafond 50 % du panier** par commande.
 - **Pas d'expiration** de la cagnotte.
 
@@ -104,7 +114,7 @@ create table loyalty_customers (
   referred_by_code text,                      -- code du parrain à l'inscription
   has_first_purchase boolean not null default false,
   first_purchase_at timestamptz,
-  referral_commission_until timestamptz,      -- first_purchase_at + 12 mois
+  referral_commission_until timestamptz,      -- OBSOLÈTE (à vie depuis 00008) : laissé null
   email_opt_in boolean not null default false,
   source text not null default 'online' check (source in ('in_store','online','import_legacy')),
   created_at timestamptz not null default now(),
@@ -161,8 +171,8 @@ Pas de type `earn` : on ne crédite jamais un achat perso. Le crédit vient uniq
 ```typescript
 const REFERRAL_COMMISSION_RATE = 0.05;   // 5% → cagnotte du parrain
 const REFERRAL_WINDOW_MONTHS = 12;
-const FILLEUL_DISCOUNT_CENTS = 500;      // -5€ 1ère commande filleul
-const FILLEUL_MIN_ORDER_CENTS = 4000;    // 40€
+const FILLEUL_DISCOUNT_CENTS = 1000;     // -10€ 1ère commande filleul
+const FILLEUL_MIN_ORDER_CENTS = 6000;    // 60€
 const REDEEM_MIN_BALANCE_CENTS = 2000;   // 20€ minimum de solde pour utiliser
 const REDEEM_CART_CAP_RATIO = 0.5;       // max 50% du panier
 
@@ -213,9 +223,9 @@ Dans **une seule transaction** :
 2. Si `spentLoyaltyCents > 0` : vérifier `balance >= spentLoyaltyCents`, écrire transaction `spend`, décrémenter le solde.
 3. **Pas d'auto-cashback** sur l'achat perso.
 4. Si **1ᵉʳ achat** de l'acheteur (`has_first_purchase = false`) :
-   - Si `referred_by_code` présent ET commande ≥ 40 € : le **−5 € filleul** a déjà été appliqué au checkout (remise, pas cagnotte).
-   - Fixer `first_purchase_at = now`, `referral_commission_until = now + 12 mois`, `has_first_purchase = true`.
-5. **Commission parrain** : si l'acheteur a un `referred_by_code` ET `now <= referral_commission_until` du filleul :
+   - Si `referred_by_code` présent ET commande ≥ 60 € : le **−10 € filleul** a déjà été appliqué au checkout (remise, pas cagnotte).
+   - Fixer `first_purchase_at = now`, `referral_commission_until = null` (à vie), `has_first_purchase = true`.
+5. **Commission parrain** : si l'acheteur a un `referred_by_code` (à vie, aucune fenêtre temporelle) :
    - Trouver le parrain via `referred_by_code`.
    - Créditer le parrain de `calcReferrerCommissionCents(paidItemsCents)`.
    - Écrire transaction `referral_commission` côté parrain (`related_customer_id` = filleul).
@@ -237,7 +247,7 @@ Shopify ne connaît pas la cagnotte Supabase. **Méthode retenue : A** (codes de
 
 **Méthode B — Store Credit natif Shopify (Plus uniquement)** : ❌ **écartée** (audit 2026-05-23 : dev store, pas de Plus, plan cible Basic).
 
-**Code parrain / −5 € filleul en ligne** : pré-créer (via Admin API, à l'inscription du parrain) un **code de réduction Shopify = le `referral_code`** (montant fixe −5 €, minimum 40 €). Quand le filleul l'applique au checkout, Shopify fait la remise et le webhook lit le code → on rattache le filleul au parrain. Les règles "1ʳᵉ commande / une fois par filleul" sont **réconciliées dans Supabase** (pas la peine que Shopify les garantisse).
+**Code parrain / −10 € filleul en ligne** : pré-créer (via Admin API, à l'inscription du parrain — caisse ET en ligne, cf. ensureReferralCodeShopify) un **code de réduction Shopify = le `referral_code`** (montant fixe −10 €, minimum 60 €, non cumulable). Quand le filleul l'applique au checkout, Shopify fait la remise et le webhook lit le code → on rattache le filleul au parrain. Les règles "1ʳᵉ commande / une fois par filleul" sont **réconciliées dans Supabase** (pas la peine que Shopify les garantisse).
 
 ---
 
@@ -261,13 +271,13 @@ Validation runtime des inputs avec **Zod**. Téléphone validé en E.164 via **l
 
 ### 7.1 `/mon-compte` (user connecté)
 - Header : prénom + **solde cagnotte en gros**.
-- Bloc parrainage : `referral_code` en évidence (vert mousse), boutons Copier / Partager WhatsApp / DM. Phrase d'incentive **sans tiret cadratin** : "Ton pote a 5 € sur sa première commande, et tu touches 5 % de ses achats pendant 1 an."
+- Bloc parrainage : `referral_code` en évidence (vert mousse), boutons Copier / Partager WhatsApp / DM. Phrase d'incentive **sans tiret cadratin** : "Ton pote a 10 € sur sa première commande, et tu touches 5 % de ses achats, à vie."
 - Historique transactions (date, type, montant, solde après), filtrable.
 - Lien vers commandes si rattachables.
 - **Lien compte ↔ loyalty_customer** : à la 1ʳᵉ visite, matcher par email ou demander le téléphone (vérif légère). Cf. Phase 0 pt 4.
 
 ### 7.2 `/parrainage` (page publique, SEO local)
-- Explique le programme : 1. tu partages ton code · 2. ton pote a 5 € sur sa 1ʳᵉ commande (dès 40 €) · 3. tu touches 5 % de ses achats pendant 12 mois.
+- Explique le programme : 1. tu partages ton code · 2. ton pote a 10 € sur sa 1ʳᵉ commande (dès 60 €) · 3. tu touches 5 % de ses achats, à vie.
 - FAQ (nombre de parrainages illimité ? cumul avec autres remises ? etc.).
 - CTA connexion / création de compte. **Aucun tiret cadratin dans le copy.**
 
@@ -307,7 +317,7 @@ Validation runtime des inputs avec **Zod**. Téléphone validé en E.164 via **l
 ## 10. Tests (min 80 % sur `lib/loyalty/`)
 
 - `calculate.test.ts` : commission, plafond redemption, min solde, edge cases.
-- `referral.test.ts` : génération code, unicité, fenêtre 12 mois.
+- `referral.test.ts` : génération code, unicité (la fenêtre 12 mois n'existe plus).
 - `finalize.integration.test.ts` : happy path + anti double-spend + idempotence webhook (même order_id rejoué) + 1ʳᵉ commande filleul (set des dates) + commission parrain hors fenêtre (ne crédite pas).
 
 ---
@@ -319,7 +329,7 @@ Validation runtime des inputs avec **Zod**. Téléphone validé en E.164 via **l
 | L0 | **Audit Phase 0** (réponses aux 6 points) | 0,5 j |
 | L1 | Migration Supabase + RLS + fonctions pures + tests unitaires | 1,5 j |
 | L2 | `finalize_order_loyalty` (Postgres) + webhook Shopify (HMAC) + route caisse + upsert customer | 2 j |
-| L3 | Redemption en ligne (méthode A : codes Admin API, reserve/confirm + expiration) + code parrain −5 € | 2 j |
+| L3 | Redemption en ligne (méthode A : codes Admin API, reserve/confirm + expiration) + code parrain −10 € | 2 j |
 | L4 | Page Mon compte + page Parrainage + widget checkout | 1,5 j |
 | L5 | `/staff/caisse` + auth staff + tests E2E | 1,5 j |
 | L6 | Emails Resend (welcome, commission créditée) + import legacy CSV | 1 j |

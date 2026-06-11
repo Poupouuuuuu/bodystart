@@ -4,12 +4,13 @@ import { formatPrice, cn } from '@/lib/utils'
 import { getBundleComponentImages } from '@/lib/shopify/bundle'
 import BundleComposite from './BundleComposite'
 import type { ShopifyProduct, ShopifyMetafield } from '@/lib/shopify/types'
+import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
 
 interface PackCardV2Props {
   product: ShopifyProduct
 }
 
-const FRANCO_THRESHOLD = 85 // euros
+const FRANCO_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100 // euros
 
 /**
  * Carte pack V2 — page /packs.

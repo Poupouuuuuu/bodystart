@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Check, Delete, LogOut, Loader2, X, Tag } from 'lucide-react'
 import { getLoyaltyBrowserClient } from '@/lib/loyalty/supabase-browser'
@@ -40,6 +40,20 @@ export function CaisseClient({ staff }: { staff: StaffProp }) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successData, setSuccessData] = useState<{ paid: number; commission: number; referrerCredited: boolean } | null>(null)
 
+  // Idempotence caisse : un orderRef STABLE par vente (pas par clic). Un
+  // double-clic ou un retry réseau renvoie le même ref → la fonction SQL
+  // (loyalty_processed_orders) ignore le doublon au lieu de créditer 2 fois.
+  // Régénéré quand on repart sur une nouvelle vente (resetAll / retour client).
+  const saleOrderRefRef = useRef<string | null>(null)
+  const inFlightRef = useRef(false)
+  function getSaleOrderRef(customerId: string): string {
+    if (!saleOrderRefRef.current) {
+      const rand = Math.random().toString(36).slice(2, 10)
+      saleOrderRefRef.current = `caisse-${Date.now()}-${rand}-${customerId.slice(0, 8)}`
+    }
+    return saleOrderRefRef.current
+  }
+
   // Create customer form
   const [createFirstName, setCreateFirstName] = useState('')
   const [createReferralCode, setCreateReferralCode] = useState('')
@@ -68,6 +82,7 @@ export function CaisseClient({ staff }: { staff: StaffProp }) {
   }, [step])
 
   const resetAll = useCallback(() => {
+    saleOrderRefRef.current = null
     setStep('phone')
     setPhoneInput('')
     setCustomer(null)
@@ -179,6 +194,10 @@ export function CaisseClient({ staff }: { staff: StaffProp }) {
 
   async function handleValidate() {
     if (!customer) return
+    // Garde synchrone anti double-clic : setLoading est asynchrone (re-render),
+    // deux clics rapprochés passeraient tous les deux sans ce ref.
+    if (inFlightRef.current) return
+    inFlightRef.current = true
     setErrorMsg(null)
     setLoading(true)
     try {
@@ -197,7 +216,7 @@ export function CaisseClient({ staff }: { staff: StaffProp }) {
         return
       }
 
-      const orderRef = `caisse-${Date.now()}-${customer.id.slice(0, 8)}`
+      const orderRef = getSaleOrderRef(customer.id)
       const res = await fetch('/api/loyalty/finalize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -223,10 +242,13 @@ export function CaisseClient({ staff }: { staff: StaffProp }) {
         commission: result.commissionToReferrerCents ?? 0,
         referrerCredited: (result.commissionToReferrerCents ?? 0) > 0,
       })
+      // Vente enregistrée : le prochain encaissement aura son propre ref.
+      saleOrderRefRef.current = null
       setStep('success')
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Erreur réseau')
     } finally {
+      inFlightRef.current = false
       setLoading(false)
     }
   }

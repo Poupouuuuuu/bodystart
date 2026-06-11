@@ -10,6 +10,7 @@ import {
   Store,
   Headphones,
 } from 'lucide-react'
+import { FREE_SHIPPING_THRESHOLD_CENTS, MONDIAL_RELAY, formatShippingPrice } from '@/lib/shipping'
 
 // Footer — copy spec §3.9 et §3.10
 //
@@ -54,8 +55,8 @@ const TRUST_BADGES = [
   },
   {
     icon: Truck,
-    label: 'Livraison offerte dès 85€',
-    sub: 'Sinon dès 4,90€ (relais)',
+    label: `Livraison offerte dès ${FREE_SHIPPING_THRESHOLD_CENTS / 100}€`,
+    sub: `Sinon dès ${formatShippingPrice(MONDIAL_RELAY.priceCents)} (relais)`,
   },
   {
     icon: Store,

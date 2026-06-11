@@ -1,4 +1,10 @@
 /**
+ * NOTE TOPIC (2026-06-11) : « orders/refunded » n'est PAS un topic Shopify.
+ * Ce endpoint est abonné au topic ORDERS_UPDATED (webhook créé via Admin API
+ * sous l'app du site) : le payload est la commande complète ; on n'agit que
+ * si financial_status === 'refunded' (remboursement TOTAL), et
+ * revoke_referral_reward est idempotent → le bruit d'orders/updated est sans effet.
+ *
  * POST /api/loyalty/shopify-webhook-refund
  *
  * Webhook Shopify orders/refunded → révocation de la commission parrain.

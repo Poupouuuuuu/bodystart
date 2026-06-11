@@ -56,12 +56,12 @@ export default function ProductCard({ product, className }: ProductCardProps) {
           </div>
         )}
 
-        {/* Hover Text Overlay (from Mockup 3/4) */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-center p-4">
+        {/* Hover overlay : invitation neutre — surtout pas de claims nutritionnels
+            en dur (l'ancien « 25g PROTEIN / PLANT-BASED » était faux pour la
+            quasi-totalité du catalogue). */}
+        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-center p-4">
           <p className="text-white font-display font-medium text-lg leading-tight mb-2 drop-shadow-md">
-            25g PROTEIN<br/>
-            PLANT-BASED<br/>
-            FAST ABSORPTION
+            Voir le produit
           </p>
           <svg className="w-5 h-5 text-white mt-2 animate-bounce drop-shadow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

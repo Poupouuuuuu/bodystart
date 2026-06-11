@@ -4,13 +4,21 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  COLISSIMO,
+  MONDIAL_RELAY,
+  FREE_SHIPPING_THRESHOLD_CENTS,
+  formatShippingPrice,
+} from '@/lib/shipping'
+
+const FRANCO = `${FREE_SHIPPING_THRESHOLD_CENTS / 100}€`
 
 const FAQ_ITEMS = [
   {
     category: 'Commandes & Livraison',
     questions: [
-      { q: 'Quels sont les délais de livraison ?', a: 'Colissimo : 2 à 4 jours ouvrés. Mondial Relay : 3 à 5 jours ouvrés. Click & Collect : disponible sous 2h en boutique.' },
-      { q: 'La livraison est-elle gratuite ?', a: 'La livraison est gratuite à partir de 85€ d\'achat. En dessous, les frais sont de 5,90€ en Colissimo et 3,90€ en Mondial Relay.' },
+      { q: 'Quels sont les délais de livraison ?', a: `Mondial Relay (point relais) : ${MONDIAL_RELAY.delayLabel}. Colissimo (domicile) : ${COLISSIMO.delayLabel}. Click & Collect : prêt sous 2h en boutique.` },
+      { q: 'La livraison est-elle gratuite ?', a: `La livraison est gratuite à partir de ${FRANCO} d'achat. En dessous, les frais sont de ${formatShippingPrice(MONDIAL_RELAY.priceCents)} en Mondial Relay (point relais) et ${formatShippingPrice(COLISSIMO.priceCents)} en Colissimo (domicile).` },
       { q: 'Comment suivre ma commande ?', a: 'Vous recevrez un email avec votre numéro de suivi dès l\'expédition de votre colis. Vous pouvez aussi consulter votre espace client.' },
       { q: 'Comment fonctionne le Click & Collect ?', a: 'Choisissez le Click & Collect au checkout. Votre commande est prête sous 2h. Présentez votre email de confirmation en boutique pour retirer vos produits.' },
     ],

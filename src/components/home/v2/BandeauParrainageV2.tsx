@@ -23,11 +23,11 @@ export default function BandeauParrainageV2() {
                   Programme parrainage
                 </p>
                 <h2 className="font-display text-[24px] md:text-[32px] font-extrabold text-spruce leading-tight tracking-tight mb-2">
-                  Ton pote a 5 €, tu gagnes 5 % pendant 1 an.
+                  Ton pote a 10 €, tu gagnes 5 % à vie.
                 </h2>
                 <p className="text-ink-mute text-[15px] leading-relaxed max-w-[600px]">
-                  Tu partages ton code, ton pote a 5 € sur sa première commande dès 40 €,
-                  et on te crédite 5 % de ses achats pendant 12 mois. Aucune carte, aucune appli.
+                  Tu partages ton code, ton pote a 10 € sur sa première commande dès 60 €,
+                  et on te crédite 5 % de tous ses achats, à vie. Aucune carte, aucune appli.
                 </p>
               </div>
             </div>

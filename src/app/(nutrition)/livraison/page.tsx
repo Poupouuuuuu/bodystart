@@ -1,37 +1,45 @@
 import type { Metadata } from 'next'
 import { Truck, Store, Package, RotateCcw } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
+import {
+  CLICK_AND_COLLECT,
+  COLISSIMO,
+  MONDIAL_RELAY,
+  FREE_SHIPPING_THRESHOLD_CENTS,
+  formatShippingPrice,
+} from '@/lib/shipping'
+
+const FRANCO = `${FREE_SHIPPING_THRESHOLD_CENTS / 100}€`
+const MR_PRICE = formatShippingPrice(MONDIAL_RELAY.priceCents)
+const COLIS_PRICE = formatShippingPrice(COLISSIMO.priceCents)
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/livraison',
   title: 'Livraison & Retours',
-  description: 'Click & Collect gratuit, Mondial Relay 4,90€, Colissimo 6,90€. Livraison offerte dès 85€.',
+  description: `Click & Collect gratuit, Mondial Relay ${MR_PRICE}, Colissimo ${COLIS_PRICE}. Livraison offerte dès ${FRANCO}.`,
 })
 
-// Tarifs livraison — decision Adam 2026-05-23 :
-//  - Click & Collect : gratuit, souvent pret en quelques minutes
-//  - Mondial Relay (point relais) : 48-72h, offerte des 85EUR, sinon 4,90EUR
-//  - Colissimo (domicile)         : 48-72h, offerte des 85EUR, sinon 6,90EUR
+// Tarifs et délais : source unique src/lib/shipping.ts (alignée sur les rates Shopify).
 const shippingMethods = [
   {
     Icon: Store,
-    name: 'Click & Collect',
-    delay: 'Souvent prêt en quelques minutes',
+    name: CLICK_AND_COLLECT.label,
+    delay: `${CLICK_AND_COLLECT.delayLabel} — souvent en quelques minutes`,
     price: 'Gratuit',
     details: "Retire ta commande en boutique à Coignières. On te prévient dès que c'est prêt.",
   },
   {
     Icon: Package,
-    name: 'Mondial Relay',
-    delay: '48 à 72h',
-    price: 'Offerte dès 85€ · sinon 4,90€',
+    name: MONDIAL_RELAY.label,
+    delay: MONDIAL_RELAY.delayLabel,
+    price: `Offerte dès ${FRANCO} · sinon ${MR_PRICE}`,
     details: 'Retrait dans le point relais de ton choix. Pratique et économique.',
   },
   {
     Icon: Truck,
-    name: 'Colissimo à domicile',
-    delay: '48 à 72h',
-    price: 'Offerte dès 85€ · sinon 6,90€',
+    name: COLISSIMO.label,
+    delay: COLISSIMO.delayLabel,
+    price: `Offerte dès ${FRANCO} · sinon ${COLIS_PRICE}`,
     details: 'Livraison à domicile avec suivi. Un numéro de suivi est envoyé par email.',
   },
 ]
@@ -59,8 +67,8 @@ export default function LivraisonPage() {
           
           <div className="flex flex-wrap justify-center gap-10 mt-14 bg-white/5 border border-white/10 rounded-[32px] p-8 max-w-3xl mx-auto backdrop-blur-md">
             {[
-              { icon: '🚚', label: 'Colissimo', sub: '2-4 jours' },
-              { icon: '📦', label: 'Mondial Relay', sub: '2-3 jours' },
+              { icon: '🚚', label: 'Colissimo', sub: `${COLISSIMO.transitDays![0]}-${COLISSIMO.transitDays![1]} jours` },
+              { icon: '📦', label: 'Mondial Relay', sub: `${MONDIAL_RELAY.transitDays![0]}-${MONDIAL_RELAY.transitDays![1]} jours` },
               { icon: '🏪', label: 'Click & Collect', sub: 'Sous 2h' },
             ].map(({ icon, label, sub }) => (
               <div key={label} className="text-center px-4">

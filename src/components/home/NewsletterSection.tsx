@@ -14,18 +14,15 @@ export default function NewsletterSection() {
 
     setLoading(true)
     try {
-      const res = await fetch('/api/newsletter', {
+      // Système unifié : abonnement via Shopify (/api/subscribe, comme la
+      // popup). Un email déjà inscrit renvoie success/exists → succès aussi.
+      const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       })
 
       const data = await res.json()
-
-      if (res.status === 409) {
-        toast.error('Cet email est déjà inscrit à la newsletter.')
-        return
-      }
 
       if (!res.ok) {
         toast.error(data.error ?? 'Une erreur est survenue.')

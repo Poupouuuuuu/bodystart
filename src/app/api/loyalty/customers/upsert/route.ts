@@ -20,7 +20,7 @@ import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { normalizeToE164 } from '@/lib/loyalty/phone'
 import { isValidReferralCode } from '@/lib/loyalty/calculate'
 import { upsertLoyaltyCustomer } from '@/lib/loyalty/upsert-customer'
-import { createReferralDiscountCode } from '@/lib/shopify/loyalty-discounts'
+import { ensureReferralCodeShopify } from '@/lib/loyalty/referral-shopify'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -55,53 +55,6 @@ const BodySchema = z.object({
   emailOptIn: z.boolean().optional(),
   source: z.enum(['in_store', 'online', 'import_legacy']).optional(),
 })
-
-/**
- * Best-effort : cree le code Shopify et persiste l'ID dans loyalty_customers.
- * Si echec, on persiste l'erreur pour pouvoir reparer plus tard.
- * Ne throw jamais — l'inscription doit reussir meme si Shopify est down.
- */
-async function tryCreateReferralCodeShopify(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
-  customerId: string,
-  referralCode: string,
-  email: string | null
-): Promise<void> {
-  const attemptAt = new Date().toISOString()
-  try {
-    const shopifyId = await createReferralDiscountCode({
-      referralCode,
-      parrainEmail: email,
-    })
-    await supabase
-      .from('loyalty_customers')
-      .update({
-        shopify_referral_discount_id: shopifyId,
-        shopify_referral_discount_last_error: null,
-        shopify_referral_discount_last_attempt_at: attemptAt,
-      })
-      .eq('id', customerId)
-    console.log(`[upsert customer] code parrain Shopify cree : ${referralCode} → ${shopifyId}`)
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'unknown error'
-    console.error(
-      `[upsert customer] ECHEC creation code parrain Shopify pour customer=${customerId} code=${referralCode} : ${errorMessage}. A reparer via la view loyalty_customers_with_failed_referral_code.`
-    )
-    // Persister l'erreur pour audit + retry futur
-    await supabase
-      .from('loyalty_customers')
-      .update({
-        shopify_referral_discount_last_error: errorMessage.slice(0, 1000),
-        shopify_referral_discount_last_attempt_at: attemptAt,
-      })
-      .eq('id', customerId)
-      .then(() => {})
-      .catch((dbErr: unknown) => {
-        console.error('[upsert customer] failed to persist error:', dbErr)
-      })
-  }
-}
 
 export async function POST(req: NextRequest) {
   // ─── Rate limiting (skip si Upstash non configure) ───
@@ -165,7 +118,7 @@ export async function POST(req: NextRequest) {
     // ATTENDRE la fin pour que les tests soient deterministes ;
     // en production l'overhead reste < 1s.
     if (result.isNew) {
-      await tryCreateReferralCodeShopify(supabase, result.id, result.referralCode, result.email)
+      await ensureReferralCodeShopify(supabase, result.id, result.referralCode, result.email)
     }
 
     return NextResponse.json({

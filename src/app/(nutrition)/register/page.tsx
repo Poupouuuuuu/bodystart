@@ -52,10 +52,11 @@ function RegisterContent() {
     if (apiErrors.length > 0) {
       setErrors(apiErrors.map((err) => err.message))
     } else {
-      // Ajout à l'audience newsletter si acceptsMarketing
+      // Abonnement marketing si coché — système unifié : consentement enregistré
+      // dans Shopify (même pipeline que la popup), plus d'audience Resend.
       if (form.acceptsMarketing) {
         try {
-          await fetch('/api/newsletter', {
+          await fetch('/api/subscribe', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: form.email }),
