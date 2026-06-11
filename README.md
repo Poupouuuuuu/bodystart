@@ -88,11 +88,12 @@ Clic droit sur le dossier body-start → "Ouvrir dans le terminal"
 npm install
 ```
 
-**3. Vérifier le fichier .env.local**
-Le fichier est déjà configuré avec tes credentials Shopify :
+**3. Configurer le fichier .env.local**
+Copier `.env.example` en `.env.local` et remplir les valeurs (jamais de secret
+dans ce README ni dans git) :
 ```
-NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN=bodystart-dev-store.myshopify.com
-NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN=b0576e0de6b3b42ceb2f9891fc69a36b
+NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN=<ton-store>.myshopify.com
+NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN=<token Storefront API>
 ```
 
 **4. Lancer le serveur de développement**
