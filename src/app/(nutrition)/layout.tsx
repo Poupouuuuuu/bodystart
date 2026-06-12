@@ -27,6 +27,21 @@ const organizationJsonLd = {
   sameAs: [],
 }
 
+// Sitelinks searchbox + identite du site pour Google et les moteurs generatifs.
+const webSiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  url: SITE_URL,
+  name: 'BodyStart Nutrition',
+  inLanguage: 'fr-FR',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/search?q={search_term_string}` },
+    'query-input': 'required name=search_term_string',
+  },
+}
+
 const localBusinessJsonLd = [
   {
     '@context': 'https://schema.org',
@@ -66,6 +81,10 @@ export default async function NutritionLayout({ children }: { children: React.Re
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
       />
       <script
         type="application/ld+json"

@@ -20,6 +20,7 @@ import CrossSellV2 from '@/components/product/v2/CrossSellV2'
 import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
 import { buildPageMetadata } from '@/lib/seo'
 import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
+import { getProductRating, buildAggregateRating } from '@/lib/reviews'
 import TrackViewItem from '@/components/analytics/TrackViewItem'
 
 // Données fraîches à chaque visite (stock C&C à jour) SANS `dynamic =
@@ -184,6 +185,10 @@ export default async function ProductPage({ params }: Props) {
     returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
   }
 
+  // Avis-ready : n'émet aggregateRating QUE si une vraie source d'avis existe
+  // (aucune aujourd'hui → rien n'est émis ; cf. src/lib/reviews.ts).
+  const rating = await getProductRating(product.handle)
+
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -203,6 +208,7 @@ export default async function ProductPage({ params }: Props) {
       shippingDetails,
       hasMerchantReturnPolicy: merchantReturnPolicy,
     },
+    ...buildAggregateRating(rating),
   }
 
   const breadcrumbJsonLd = {

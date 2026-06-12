@@ -2,7 +2,7 @@
 
 > Boutique de compléments alimentaires à Coignières (78) et site e-commerce livrant partout en France. Protéines, créatine, acides aminés, pré-workout, brûleurs, santé : des marques sélectionnées, du conseil d'humain en magasin et le Click & Collect gratuit.
 
-BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Rue du Pont des Landes, 78310 Coignières (anciennement BodyFit), doublée d'un site e-commerce sur bodystart-nutrition.fr. On vend des compléments alimentaires multi-marques (Eric Favre, Nutrimuscle, MuscleTech, Warrior, Dedicated, French Nutrition…) : protéines (whey, isolate, gainer, caséine), créatine, glucides, acides aminés (BCAA, EAA, glutamine), pré-workout, boosters, brûleurs et produits santé (oméga 3, vitamines, magnésium, collagène). Conseil gratuit en boutique, retrait Click & Collect, livraison en France. Ouvert 7j/7, 11h–19h.
+BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Rue du Pont des Landes, 78310 Coignières (anciennement BodyFit), doublée d'un site e-commerce sur bodystart-nutrition.fr. On vend des compléments alimentaires multi-marques (Eric Favre, Nutrimuscle, MuscleTech, Warrior, Dedicated, French Nutrition…) : protéines (whey, isolate, gainer, caséine), créatine, glucides, acides aminés (BCAA, EAA, glutamine), pré-workout, boosters, brûleurs et produits santé (oméga 3, vitamines, magnésium, collagène). Conseil gratuit en boutique, retrait Click & Collect, livraison en France (Mondial Relay 4,90 €, Colissimo 6,90 €, offerte dès 85 €). Ouvert 7j/7, 11h–19h.
 
 ## Pages clés
 
@@ -10,21 +10,51 @@ BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Ru
 - [Tous les produits](https://bodystart-nutrition.fr/products): catalogue complet, filtrable par catégorie, marque et objectif.
 - [Packs & économies](https://bodystart-nutrition.fr/packs): packs de compléments à prix groupé (prise de masse, sèche, découverte…).
 - [La boutique — Coignières (78)](https://bodystart-nutrition.fr/stores): adresse, horaires, itinéraire et Click & Collect du magasin de Coignières.
+- [Compléments alimentaires à Coignières](https://bodystart-nutrition.fr/complements-alimentaires-coignieres): où acheter whey, créatine et vitamines près de Coignières, Maurepas, Élancourt et Plaisir.
 - [Conseil gratuit](https://bodystart-nutrition.fr/conseil): demande de conseil personnalisé selon ton objectif, par l'équipe en boutique.
+- [À propos](https://bodystart-nutrition.fr/about): qui est BodyStart (reprise de BodyFit Coignières), nos engagements et notre métier de conseil.
 - [FAQ](https://bodystart-nutrition.fr/faq): réponses aux questions fréquentes (commande, Click & Collect, paiement, produits).
-- [Livraison](https://bodystart-nutrition.fr/livraison): modes et délais de livraison, Click & Collect gratuit, livraison offerte dès 85 €.
+- [Livraison](https://bodystart-nutrition.fr/livraison): Mondial Relay 4,90 € (2-3 j), Colissimo 6,90 € (2-4 j), Click & Collect gratuit, offerte dès 85 €.
 
 ## Catégories de produits
 
-- [Protéines](https://bodystart-nutrition.fr/products?cat=proteines): whey, isolate, gainer, caséine.
-- [Glucides](https://bodystart-nutrition.fr/products?cat=glucides): sources de glucides pour la prise de masse et l'énergie.
-- [Créatine](https://bodystart-nutrition.fr/products?cat=creatine): créatine monohydrate et micronisée.
-- [Pré-workout](https://bodystart-nutrition.fr/products?cat=pre-workout): énergie, focus et congestion à l'entraînement.
-- [Acides aminés](https://bodystart-nutrition.fr/products?cat=acides-amines): BCAA, EAA, glutamine, citrulline.
-- [Brûleurs](https://bodystart-nutrition.fr/products?cat=bruleurs): carnitine, CLA, thermogéniques, draineurs.
-- [Boosters](https://bodystart-nutrition.fr/products?cat=boosters): pump et testo boosters.
-- [Santé & bien-être](https://bodystart-nutrition.fr/products?cat=sante): oméga 3, vitamines, magnésium, collagène, électrolytes.
-- [Snacks](https://bodystart-nutrition.fr/products?cat=snacks): barres protéinées et en-cas.
+- [Protéines](https://bodystart-nutrition.fr/categories/proteines): whey, isolate, caséine et gainers — comment choisir selon ton objectif et ton budget.
+- [Créatine](https://bodystart-nutrition.fr/categories/creatine): créatine monohydrate micronisée, 3-5 g/jour, le complément le plus étudié.
+- [Pré-workout](https://bodystart-nutrition.fr/categories/pre-workout): énergie et focus avec caféine, ou pump sans stimulant pour les séances du soir.
+- [Acides aminés](https://bodystart-nutrition.fr/categories/acides-amines): EAA, BCAA, glutamine, citrulline et bêta-alanine.
+- [Brûleurs](https://bodystart-nutrition.fr/categories/bruleurs): L-carnitine, CLA et formules minceur, en accompagnement d'une sèche structurée.
+- [Boosters](https://bodystart-nutrition.fr/categories/boosters): bois bandé et formules vitalité à base de plantes.
+- [Glucides](https://bodystart-nutrition.fr/categories/glucides): crème de riz, crème d'avoine, Vitargo et boissons d'effort.
+- [Santé & bien-être](https://bodystart-nutrition.fr/categories/sante): vitamine D, magnésium, ZMA, oméga 3, collagène, spiruline.
+
+## Guides nutrition (blog)
+
+- [Tous les guides](https://bodystart-nutrition.fr/blog): conseils chiffrés et comparatifs honnêtes, signés par l'équipe de la boutique.
+- [Créatine : avant ou après la séance ?](https://bodystart-nutrition.fr/blog/creatine-avant-ou-apres-seance): le timing importe peu — 3-5 g chaque jour, saturation des stocks.
+- [Whey ou isolate : quelle différence ?](https://bodystart-nutrition.fr/blog/whey-ou-isolate-quelle-difference): filtration, % de protéines, lactose, prix — laquelle choisir selon ton profil.
+- [Combien de protéines par jour ?](https://bodystart-nutrition.fr/blog/combien-de-proteines-par-jour): 1,6 à 2,2 g/kg/jour pour la prise de muscle, avec exemples concrets.
+- [EAA ou BCAA : lequel prendre ?](https://bodystart-nutrition.fr/blog/eaa-ou-bcaa-lequel-prendre): 9 essentiels vs 3 branchés — ce que dit la recherche récente.
+- [Quelle whey choisir quand on débute ?](https://bodystart-nutrition.fr/blog/quelle-whey-choisir-debutant): les critères dans l'ordre, et les erreurs de débutant à éviter.
+- [Pré-workout : avec ou sans caféine ?](https://bodystart-nutrition.fr/blog/pre-workout-avec-ou-sans-cafeine): stim vs pump, sommeil, dosages EFSA.
+- [Prise de masse : compléments et organisation](https://bodystart-nutrition.fr/blog/prise-de-masse-complements-et-organisation): la méthode étape par étape, surplus calorique d'abord.
+- [Compléments : par quoi commencer en musculation ?](https://bodystart-nutrition.fr/blog/complements-debutant-musculation): le duo whey + créatine, et ce qui peut attendre.
+
+## Produits phares
+
+- [Whey Native Protimuscle — Nutrimuscle](https://bodystart-nutrition.fr/products/whey-native-protimuscle): la whey rapport qualité-prix à 19,95 €.
+- [Sub Zero Whey Isolate — Corgenic](https://bodystart-nutrition.fr/products/sub-zero-whey-isolate): isolate digestion facile, 39,90 €.
+- [Iso Zero 100 % Whey — Eric Favre](https://bodystart-nutrition.fr/products/iso-zero-100-whey): l'isolate best-seller de la boutique.
+- [Créatine 100 % Monohydrate Micronisée — French Nutrition](https://bodystart-nutrition.fr/products/creatine-100-monohydrate-micronisee): la référence à 29,90 €.
+- [One Raw Creatine — Zoomad](https://bodystart-nutrition.fr/products/one-raw-creatine): monohydrate brute, 29,90 €.
+- [Vapor X5 — MuscleTech](https://bodystart-nutrition.fr/products/vapor-x5-pre-workout): pré-workout complet avec caféine, 34,90 €.
+- [Pump Nitric Oxide Booster — Warrior](https://bodystart-nutrition.fr/products/pump-nitric-oxide-booster): pump sans stimulant pour les séances du soir, 44,90 €.
+- [HIT EAA — DY Nutrition](https://bodystart-nutrition.fr/products/hit-eaa): les 9 acides aminés essentiels, 24,90 €.
+- [Mutant Mass](https://bodystart-nutrition.fr/products/mutant-mass): le gainer prise de masse, 38,90 €.
+- [Crème de Riz — Nutrimuscle](https://bodystart-nutrition.fr/products/creme-de-riz-bio): glucides digestes pour la prise de masse, 25,95 €.
+- [Vitamine D3 + K2 — Evolite](https://bodystart-nutrition.fr/products/vitamin-d3-k2): le réflexe hiver, 17,90 €.
+- [Magnésium Bisglycinate — French Nutrition](https://bodystart-nutrition.fr/products/magnesium-bisglycinate-vitamine-b6-taurine): forme bien assimilée + B6 et taurine, 27,90 €.
+- [L-Carnitine Pro Zero — Eric Favre](https://bodystart-nutrition.fr/products/l-carnitine-pro-zero-liquide): le classique de sèche au format liquide, 22,90 €.
+- [Crunch Bar — Warrior](https://bodystart-nutrition.fr/products/crunch-bar-barre-proteinee): la barre protéinée à 2,90 €.
 
 ## Infos pratiques
 

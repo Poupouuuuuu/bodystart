@@ -28,14 +28,18 @@ const FOOTER_LINKS = {
   boutique: [
     { label: 'Tous les produits', href: '/products' },
     { label: 'Packs & Économies', href: '/packs' },
-    { label: 'Santé & bien-être', href: '/products?cat=sante' },
-    { label: 'Protéines', href: '/products?cat=proteines' },
-    { label: 'Créatine', href: '/products?cat=creatine' },
-    { label: 'Boosters', href: '/products?cat=boosters' },
+    // Pages catégories SEO (liens entrants sitewide — cf. src/lib/categories.ts)
+    { label: 'Protéines', href: '/categories/proteines' },
+    { label: 'Créatine', href: '/categories/creatine' },
+    { label: 'Pré-workout', href: '/categories/pre-workout' },
+    { label: 'Acides aminés', href: '/categories/acides-amines' },
+    { label: 'Santé & bien-être', href: '/categories/sante' },
+    { label: 'Brûleurs', href: '/categories/bruleurs' },
   ],
   compte: [
     { label: 'Mon Compte', href: '/account' },
     { label: 'Mes Commandes', href: '/account' },
+    { label: 'Guides nutrition', href: '/blog' },
     { label: 'Livraison & Retours', href: '/livraison' },
     { label: 'FAQ', href: '/faq' },
   ],
@@ -182,6 +186,11 @@ export default function Footer() {
                   <a href="tel:+33761847580" className="hover:text-brand-500 transition-colors">
                     07 61 84 75 80
                   </a>
+                </li>
+                <li className="text-sm">
+                  <Link href="/complements-alimentaires-coignieres" className="text-gray-600 hover:text-brand-500 transition-colors">
+                    Compléments alimentaires à Coignières
+                  </Link>
                 </li>
                 <li className="flex items-center gap-3 text-sm text-gray-600">
                   <Clock className="w-4 h-4 text-brand-500 flex-shrink-0" />
