@@ -28,9 +28,67 @@ import {
   type ReferralCodeLookup,
   type RedemptionLookup,
 } from '@/lib/loyalty/interpret-discount-codes'
+import { creditAmbassadorCommission, computeAmbassadorEligibleCents, EXCLUDED_AMBASSADOR_PRODUCT_TAGS } from '@/lib/loyalty/ambassador'
+import {
+  parseAmbassadorOrderLines,
+  isFirstPaidOrderForEmail,
+  resolveExcludedProductIds,
+} from '@/lib/loyalty/ambassador-order'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+
+/**
+ * Bloc ambassadeur — INDÉPENDANT du parrainage (l'acheteur d'un influenceur
+ * n'est pas forcément membre loyalty : aucune dépendance au téléphone). Crédite
+ * 10 % à l'ambassadeur dont le code Shopify a été utilisé. Idempotent côté SQL
+ * (UNIQUE shopify_order_id). Best-effort : ne fait jamais échouer le webhook.
+ */
+async function processAmbassadorCommission(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  payload: any,
+  parsed: { shopifyOrderId: string; email: string | null; discountCodes: string[]; paidItemsCents: number }
+): Promise<unknown> {
+  if (parsed.discountCodes.length === 0) return { ambassador: 'no_codes' }
+
+  // Le(s) code(s) de la commande correspondent-ils à un ambassadeur actif ?
+  const { data: ambassadors } = await supabase
+    .from('ambassadors')
+    .select('shopify_discount_code')
+    .eq('active', true)
+  const activeByLower = new Map<string, string>(
+    (ambassadors ?? []).map((a: { shopify_discount_code: string }) => [
+      a.shopify_discount_code.toLowerCase(),
+      a.shopify_discount_code,
+    ])
+  )
+  const matchedCode = parsed.discountCodes.find((c) => activeByLower.has(c.toLowerCase()))
+  if (!matchedCode) return { ambassador: 'no_match' }
+
+  // Assiette éligible : fast path = sous-total complet (aucune exclusion au
+  // lancement). Si des tags sont exclus → calcul ligne par ligne.
+  let eligibleCents = parsed.paidItemsCents
+  if (EXCLUDED_AMBASSADOR_PRODUCT_TAGS.length > 0) {
+    const lines = parseAmbassadorOrderLines(payload)
+    const excludedIds = await resolveExcludedProductIds(
+      lines.map((l) => l.productId).filter((id): id is string => !!id),
+      EXCLUDED_AMBASSADOR_PRODUCT_TAGS
+    )
+    eligibleCents = computeAmbassadorEligibleCents(lines, excludedIds)
+  }
+
+  const isNewCustomer = await isFirstPaidOrderForEmail(parsed.email, parsed.shopifyOrderId)
+
+  return creditAmbassadorCommission(supabase, {
+    shopifyOrderId: parsed.shopifyOrderId,
+    discountCode: matchedCode,
+    eligibleSubtotalCents: eligibleCents,
+    isNewCustomer,
+    buyerEmail: parsed.email,
+  })
+}
 
 export async function POST(req: Request) {
   const rawBody = await req.text()
@@ -62,6 +120,17 @@ export async function POST(req: Request) {
 
   const supabase = getLoyaltyAdminClient()
 
+  // ─── Bloc ambassadeur (AVANT tout skip : indépendant du parrainage/phone) ───
+  let ambassadorResult: unknown = { ambassador: 'skipped' }
+  try {
+    ambassadorResult = await processAmbassadorCommission(supabase, JSON.parse(rawBody), parsed)
+  } catch (err) {
+    // Best-effort : on logge mais on ne casse pas le webhook (le parrainage doit
+    // continuer, et Shopify ne doit pas rejouer indéfiniment pour ça).
+    console.error('[loyalty webhook] ambassador processing error:', err)
+    ambassadorResult = { ambassador: 'error', detail: err instanceof Error ? err.message : 'unknown' }
+  }
+
   if (!parsed.phoneE164) {
     await supabase
       .from('loyalty_processed_orders')
@@ -70,6 +139,7 @@ export async function POST(req: Request) {
       ok: true,
       skip_reason: 'no_phone_on_order',
       shopify_order_id: parsed.shopifyOrderId,
+      ambassador: ambassadorResult,
     })
   }
 
@@ -94,6 +164,7 @@ export async function POST(req: Request) {
       skip_reason: 'customer_not_found',
       shopify_order_id: parsed.shopifyOrderId,
       phone: parsed.phoneE164,
+      ambassador: ambassadorResult,
     })
   }
 
@@ -174,7 +245,7 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ ok: true, result, diagnostics: interpreted.diagnostics })
+    return NextResponse.json({ ok: true, result, diagnostics: interpreted.diagnostics, ambassador: ambassadorResult })
   } catch (err) {
     console.error('[loyalty webhook] finalize error:', err)
     return NextResponse.json(

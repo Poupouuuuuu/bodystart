@@ -6,10 +6,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   User, Package, MapPin, LogOut, ChevronRight, ShoppingBag, Star,
-  Gift, Plus, Pencil, Trash2, X, Loader2, Save, Wallet
+  Gift, Plus, Pencil, Trash2, X, Loader2, Save, Wallet, BadgeCheck
 } from 'lucide-react'
 import { CagnottePanel } from '@/components/account/CagnottePanel'
 import { ReferralPanel } from '@/components/account/ReferralPanel'
+import { AmbassadorPanel } from '@/components/account/AmbassadorPanel'
+import { useAmbassador } from '@/hooks/useAmbassador'
 import PhoneField from '@/components/ui/PhoneField'
 import { useCustomer } from '@/context/CustomerContext'
 import { updateCustomer, getStoredToken } from '@/lib/shopify/customer'
@@ -17,7 +19,7 @@ import type { AddressInput } from '@/lib/shopify/customer'
 import { formatPrice, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
-type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte'
+type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte' | 'ambassador'
 
 // Styles de statut (sémantiques, conservés) — sentence case géré côté rendu.
 const STATUS_MAP: Record<string, { label: string; style: string }> = {
@@ -586,7 +588,7 @@ function ReviewsPanel() {
 // PAGE PRINCIPALE
 // ═══════════════════════════════════════════════════════════
 // Tabs adressables via ?tab=... (exclut 'order-detail' qui est un sub-state interne)
-const URL_TABS: readonly Tab[] = ['overview','orders','addresses','profile','reviews','referral','cagnotte'] as const
+const URL_TABS: readonly Tab[] = ['overview','orders','addresses','profile','reviews','referral','cagnotte','ambassador'] as const
 function isUrlTab(value: string | null | undefined): value is Tab {
   return !!value && (URL_TABS as readonly string[]).includes(value)
 }
@@ -595,6 +597,7 @@ function AccountContent() {
   const router = useRouter()
   const pathname = usePathname()
   const { customer, isLoading, isLoggedIn, logout } = useCustomer()
+  const ambassadorState = useAmbassador()
   const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const t = searchParams.get('tab')
@@ -659,6 +662,10 @@ function AccountContent() {
     { icon: MapPin, label: 'Mes adresses', tab: 'addresses' },
     { icon: Wallet, label: 'Ma cagnotte', tab: 'cagnotte' },
     { icon: Gift, label: 'Parrainage', tab: 'referral' },
+    // Onglet ambassadeur : visible uniquement si l'email correspond a un ambassadeur
+    ...(ambassadorState.kind === 'ambassador'
+      ? [{ icon: BadgeCheck, label: 'Espace ambassadeur', tab: 'ambassador' as Tab }]
+      : []),
     { icon: Star, label: 'Mes avis', tab: 'reviews' },
   ]
 
@@ -672,6 +679,7 @@ function AccountContent() {
       case 'reviews': return <ReviewsPanel />
       case 'referral': return <ReferralPanel />
       case 'cagnotte': return <CagnottePanel />
+      case 'ambassador': return <AmbassadorPanel />
       default: return null
     }
   }
