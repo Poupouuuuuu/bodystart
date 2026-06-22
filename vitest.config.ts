@@ -7,6 +7,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // Runtime JSX automatique (comme Next) → pas besoin d'importer React dans les .tsx
+  esbuild: { jsx: 'automatic' },
   test: {
     environment: 'node',
     globals: false,

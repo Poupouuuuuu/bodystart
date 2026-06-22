@@ -28,7 +28,12 @@ import {
   type ReferralCodeLookup,
   type RedemptionLookup,
 } from '@/lib/loyalty/interpret-discount-codes'
-import { creditAmbassadorCommission, computeAmbassadorEligibleCents, EXCLUDED_AMBASSADOR_PRODUCT_TAGS } from '@/lib/loyalty/ambassador'
+import {
+  creditAmbassadorCommission,
+  computeAmbassadorEligibleCents,
+  isAmbassadorSelfPurchase,
+  EXCLUDED_AMBASSADOR_PRODUCT_TAGS,
+} from '@/lib/loyalty/ambassador'
 import {
   parseAmbassadorOrderLines,
   isFirstPaidOrderForEmail,
@@ -56,16 +61,25 @@ async function processAmbassadorCommission(
   // Le(s) code(s) de la commande correspondent-ils à un ambassadeur actif ?
   const { data: ambassadors } = await supabase
     .from('ambassadors')
-    .select('shopify_discount_code')
+    .select('shopify_discount_code, email')
     .eq('active', true)
-  const activeByLower = new Map<string, string>(
-    (ambassadors ?? []).map((a: { shopify_discount_code: string }) => [
+  const activeByLower = new Map<string, { code: string; email: string }>(
+    (ambassadors ?? []).map((a: { shopify_discount_code: string; email: string }) => [
       a.shopify_discount_code.toLowerCase(),
-      a.shopify_discount_code,
+      { code: a.shopify_discount_code, email: a.email },
     ])
   )
-  const matchedCode = parsed.discountCodes.find((c) => activeByLower.has(c.toLowerCase()))
-  if (!matchedCode) return { ambassador: 'no_match' }
+  const matched = parsed.discountCodes
+    .map((c) => activeByLower.get(c.toLowerCase()))
+    .find((m): m is { code: string; email: string } => !!m)
+  if (!matched) return { ambassador: 'no_match' }
+  const matchedCode = matched.code
+
+  // Anti auto-commission : l'acheteur EST l'ambassadeur (même email) → on saute
+  // (le SQL bloque aussi, mais ici on évite l'appel Admin API is_new_customer).
+  if (isAmbassadorSelfPurchase(parsed.email, matched.email)) {
+    return { ambassador: 'self_purchase' }
+  }
 
   // Assiette éligible : fast path = sous-total complet (aucune exclusion au
   // lancement). Si des tags sont exclus → calcul ligne par ligne.

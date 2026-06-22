@@ -3,6 +3,7 @@ import {
   calcAmbassadorCommissionCents,
   computeAmbassadorEligibleCents,
   isAmbassadorCagnotteExpired,
+  isAmbassadorSelfPurchase,
   usableAmbassadorBalanceCents,
   AMBASSADOR_RATE_DEFAULT,
   AMBASSADOR_REDEEM_MIN_BALANCE_CENTS,
@@ -49,6 +50,24 @@ describe('expiration 12 mois inactivité', () => {
   })
   it('> 12 mois sans activité → expiré', () => {
     expect(isAmbassadorCagnotteExpired('2025-05-01T00:00:00Z', now)).toBe(true)
+  })
+})
+
+describe('isAmbassadorSelfPurchase (anti auto-commission)', () => {
+  it('même email (casse/espaces ignorés) → true', () => {
+    expect(isAmbassadorSelfPurchase('Julie@Email.com', 'julie@email.com')).toBe(true)
+    expect(isAmbassadorSelfPurchase('  julie@email.com ', 'julie@email.com')).toBe(true)
+  })
+  it('emails différents → false', () => {
+    expect(isAmbassadorSelfPurchase('client@email.com', 'julie@email.com')).toBe(false)
+  })
+  it('email acheteur manquant → false (on ne bloque pas à l’aveugle)', () => {
+    expect(isAmbassadorSelfPurchase(null, 'julie@email.com')).toBe(false)
+    expect(isAmbassadorSelfPurchase(undefined, 'julie@email.com')).toBe(false)
+    expect(isAmbassadorSelfPurchase('', 'julie@email.com')).toBe(false)
+  })
+  it('email ambassadeur manquant → false', () => {
+    expect(isAmbassadorSelfPurchase('julie@email.com', null)).toBe(false)
   })
 })
 

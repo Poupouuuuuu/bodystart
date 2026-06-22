@@ -65,6 +65,20 @@ export function computeAmbassadorEligibleCents(
   }, 0)
 }
 
+/**
+ * L'acheteur EST-il l'ambassadeur lui-même ? (anti auto-commission)
+ * Comparaison email insensible à la casse + espaces. `false` si l'un manque.
+ * NB : un email différent contourne — limite inhérente, documentée (00011) ;
+ * le blocage autoritaire reste côté SQL.
+ */
+export function isAmbassadorSelfPurchase(
+  buyerEmail: string | null | undefined,
+  ambassadorEmail: string | null | undefined
+): boolean {
+  if (!buyerEmail || !ambassadorEmail) return false
+  return buyerEmail.trim().toLowerCase() === ambassadorEmail.trim().toLowerCase()
+}
+
 /** La cagnotte est-elle expirée (≥ 12 mois sans activité) ? */
 export function isAmbassadorCagnotteExpired(
   lastActivityAt: string | Date,
