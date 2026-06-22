@@ -8,8 +8,9 @@
 --   A. Happy path : 1er achat filleul → commission parrain 5%
 --   B. Anti double-spend : depense > solde → exception
 --   C. Idempotence : meme order_ref online → no-op
---   D. Commission hors fenetre 12 mois → 0
---   E. Commission cumulee dans fenetre → cumul correct
+--   D. Parrainage A VIE : aucune fenetre — commission versee meme longtemps
+--      apres (le modele 12 mois a ete supprime par 00008_referral_lifetime)
+--   E. Commission cumulee (achats multiples) → cumul correct
 --   F. Auto-parrainage : referred_by_code = code du customer → ignore
 --   G. Spend valide : decrement solde + transaction inscrite
 -- ============================================================
@@ -58,10 +59,11 @@ select isnt(
   'A4 : first_purchase_at est defini'
 );
 
-select isnt(
-  (select referral_commission_until from public.loyalty_customers where id = '22222222-2222-2222-2222-222222222222'),
-  null,
-  'A5 : referral_commission_until est defini'
+-- A VIE : finalize remet referral_commission_until a NULL (00008, ligne 171)
+-- car la commission n'expire plus. On verifie donc explicitement le NULL.
+select ok(
+  (select referral_commission_until from public.loyalty_customers where id = '22222222-2222-2222-2222-222222222222') is null,
+  'A5 : referral_commission_until NULL — parrainage a vie, aucune fenetre'
 );
 
 select is(
@@ -187,35 +189,36 @@ select is(
 );
 
 -- ============================================================
--- D. COMMISSION HORS FENETRE : on force referral_commission_until passe
+-- D. PARRAINAGE A VIE : aucune fenetre d'expiration (00008).
+--    On force volontairement les anciens champs de fenetre dans le passe
+--    (first_purchase_at il y a 13 mois, referral_commission_until expire).
+--    Le modele a vie les IGNORE : la commission est toujours versee.
 -- ============================================================
 update public.loyalty_customers
 set first_purchase_at = now() - interval '13 months',
     referral_commission_until = now() - interval '1 month'
 where id = '22222222-2222-2222-2222-222222222222';
 
--- D0. Appel hors fenetre : doit s'executer sans erreur (pas de throw)
--- La verification "pas de credit" se fait dans D1/D2 ci-dessous
 select lives_ok(
   $$ select public.finalize_order_loyalty(
        '22222222-2222-2222-2222-222222222222'::uuid,
        'TEST-D-ORDER1',
        10000, 0, null, 'online', null
      ) $$,
-  'D0 : finalize hors fenetre 12 mois ne throw pas'
+  'D0 : finalize (parrainage a vie) ne throw pas'
 );
 
 select is(
   (select loyalty_balance_cents from public.loyalty_customers where id = '11111111-1111-1111-1111-111111111111'),
-  1500,
-  'D1 : parrain non credite (toujours 1500, pas 2000) hors fenetre'
+  2000,
+  'D1 : commission a vie — parrain credite meme tres longtemps apres (1500 + 500 = 2000)'
 );
 
 select is(
   (select count(*)::int from public.loyalty_transactions
    where type = 'referral_commission' and customer_id = '11111111-1111-1111-1111-111111111111'),
-  2,
-  'D2 : toujours 2 transactions commission (pas de 3eme)'
+  3,
+  'D2 : 3e transaction commission creee (aucune fenetre 12 mois)'
 );
 
 -- ============================================================

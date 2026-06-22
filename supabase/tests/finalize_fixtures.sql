@@ -201,7 +201,9 @@ begin
 end $$;
 
 -- ============================================================
--- D. COMMISSION HORS FENETRE : on force first_purchase_at il y a 13 mois
+-- D. PARRAINAGE A VIE : aucune fenetre (00008_referral_lifetime).
+--    On force volontairement les anciens champs de fenetre dans le passe ;
+--    le modele a vie les ignore et verse quand meme la commission 5%.
 -- ============================================================
 do $$
 declare
@@ -209,7 +211,7 @@ declare
   v_parrain_balance_before integer;
   v_parrain_balance_after integer;
 begin
-  -- Forcer la fenetre du filleul a etre expiree (13 mois en arriere)
+  -- Forcer les anciens champs de fenetre dans le passe (sans effet : a vie)
   update public.loyalty_customers
   set first_purchase_at = now() - interval '13 months',
       referral_commission_until = now() - interval '1 month'
@@ -229,21 +231,21 @@ begin
     p_staff_user_id        := null
   );
 
-  if (v_result->>'commission_to_referrer_cents')::integer <> 0 then
-    raise exception 'ASSERTION FAILED D1 : commission devrait etre 0 hors fenetre (got %)', v_result->>'commission_to_referrer_cents';
+  if (v_result->>'commission_to_referrer_cents')::integer <> 500 then
+    raise exception 'ASSERTION FAILED D1 : commission a vie devrait etre 500 (got %)', v_result->>'commission_to_referrer_cents';
   end if;
-  if v_result->>'referrer_id' is not null and v_result->>'referrer_id' <> '' then
-    raise exception 'ASSERTION FAILED D2 : referrer_id devrait etre null hors fenetre (got %)', v_result->>'referrer_id';
+  if v_result->>'referrer_id' <> '11111111-1111-1111-1111-111111111111' then
+    raise exception 'ASSERTION FAILED D2 : referrer_id devrait rester le parrain a vie (got %)', v_result->>'referrer_id';
   end if;
 
   select loyalty_balance_cents into v_parrain_balance_after
   from public.loyalty_customers
   where id = '11111111-1111-1111-1111-111111111111';
-  if v_parrain_balance_after <> v_parrain_balance_before then
-    raise exception 'ASSERTION FAILED D3 : parrain credite alors qu''hors fenetre (% -> %)', v_parrain_balance_before, v_parrain_balance_after;
+  if v_parrain_balance_after <> v_parrain_balance_before + 500 then
+    raise exception 'ASSERTION FAILED D3 : parrain devrait etre credite a vie (% -> % attendu %)', v_parrain_balance_before, v_parrain_balance_after, v_parrain_balance_before + 500;
   end if;
 
-  raise notice '✅ D — Hors fenetre OK : commission = 0, parrain non credite';
+  raise notice 'D — A vie OK : commission 500 versee meme "hors ancienne fenetre", parrain credite';
 end $$;
 
 -- ============================================================
