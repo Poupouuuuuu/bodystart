@@ -37,6 +37,25 @@ export default function CartDrawer() {
     setIsClickAndCollect(cartClickAndCollect)
   }, [cartClickAndCollect])
 
+  // Verrou scroll quand le panier est ouvert : sinon la molette scrolle
+  // l'arrière-plan. On verrouille <html> ET <body> car l'élément scrollable du
+  // document est <html> (documentElement) en mode standards — body seul ne
+  // suffit pas. Restauré à la fermeture/démontage. (overscroll-contain sur la
+  // zone scrollable empêche en plus le scroll-chaining.)
+  useEffect(() => {
+    if (!isOpen) return
+    const html = document.documentElement
+    const body = document.body
+    const prevHtml = html.style.overflow
+    const prevBody = body.style.overflow
+    html.style.overflow = 'hidden'
+    body.style.overflow = 'hidden'
+    return () => {
+      html.style.overflow = prevHtml
+      body.style.overflow = prevBody
+    }
+  }, [isOpen])
+
   const items = cart?.lines?.nodes ?? []
   const isEmpty = items.length === 0
 
@@ -87,12 +106,15 @@ export default function CartDrawer() {
           'fixed top-0 right-0 h-full w-full sm:w-[480px] bg-canvas z-50 flex flex-col shadow-[-10px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
+        // h-full = repli universel ; 100dvh (inline) corrige la hauteur sur
+        // mobile (barre d'URL dynamique) là où c'est supporté.
+        style={{ height: '100dvh' }}
         role="dialog"
         aria-modal="true"
         aria-label="Ton panier"
       >
-        {/* ─── Header ─── */}
-        <div className="flex items-center justify-between px-8 py-7">
+        {/* ─── Header (toujours visible) ─── */}
+        <div className="flex-shrink-0 flex items-center justify-between px-8 py-6">
           <h2 className="font-display text-[20px] font-extrabold tracking-tight text-spruce">
             Mon panier
           </h2>
@@ -105,43 +127,10 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        {/* ─── Barre livraison gratuite ─── */}
-        {!isEmpty && !isClickAndCollect && (
-          <div className="px-8 pb-5">
-            <div className="bg-white border border-spruce/10 rounded-xl p-4">
-              {hasFreeShipping ? (
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-fresh flex-shrink-0" />
-                  <p className="text-[12px] font-semibold text-spruce">
-                    Ta livraison est offerte !
-                  </p>
-                </div>
-              ) : (
-                <p className="text-[12px] font-medium text-ink-mute mb-2.5">
-                  Plus que{' '}
-                  <span className="font-bold text-spruce">
-                    {formatPrice({
-                      amount: remainingForFreeShipping.toFixed(2),
-                      currencyCode: cart?.cost?.subtotalAmount?.currencyCode ?? 'EUR',
-                    })}
-                  </span>{' '}
-                  pour la livraison offerte
-                </p>
-              )}
-              <div className="relative h-1.5 bg-spruce/10 rounded-full overflow-hidden">
-                <div
-                  className="absolute inset-y-0 left-0 bg-fresh rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${freeShippingProgress}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* ─── Contenu ─── */}
         {isEmpty ? (
           /* Panier vide */
-          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center text-ink">
+          <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 text-center text-ink">
             <p className="font-display font-bold text-lg text-spruce mb-2">Ton panier est vide</p>
             <p className="text-ink-mute font-medium mb-8 max-w-[250px] text-sm">
               Ajoute des produits pour voir ton résumé de commande.
@@ -156,8 +145,44 @@ export default function CartDrawer() {
             </Link>
           </div>
         ) : (
-          /* Liste des produits */
-          <div className="flex-1 overflow-y-auto px-8 pt-2 pb-8 space-y-6">
+          <>
+            {/* ─── Zone scrollable (flex-1 min-h-0) : barre livraison + articles + cagnotte ─── */}
+            <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+              {/* Barre livraison gratuite */}
+              {!isClickAndCollect && (
+                <div className="px-8 pb-5">
+                  <div className="bg-white border border-spruce/10 rounded-xl p-4">
+                    {hasFreeShipping ? (
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-fresh flex-shrink-0" />
+                        <p className="text-[12px] font-semibold text-spruce">
+                          Ta livraison est offerte !
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-[12px] font-medium text-ink-mute mb-2.5">
+                        Plus que{' '}
+                        <span className="font-bold text-spruce">
+                          {formatPrice({
+                            amount: remainingForFreeShipping.toFixed(2),
+                            currencyCode: cart?.cost?.subtotalAmount?.currencyCode ?? 'EUR',
+                          })}
+                        </span>{' '}
+                        pour la livraison offerte
+                      </p>
+                    )}
+                    <div className="relative h-1.5 bg-spruce/10 rounded-full overflow-hidden">
+                      <div
+                        className="absolute inset-y-0 left-0 bg-fresh rounded-full transition-all duration-500 ease-out"
+                        style={{ width: `${freeShippingProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Liste des produits */}
+              <div className="px-8 pt-2 pb-8 space-y-6">
             {items.map((item) => {
               const product = item.merchandise.product
               const image = product.featuredImage
@@ -255,15 +280,15 @@ export default function CartDrawer() {
                 </div>
               )
             })}
-          </div>
-        )}
+              </div>
 
-        {/* ─── Widget Cagnotte (loyalty) ─── */}
-        {!isEmpty && <CagnotteCartWidget />}
+              {/* ─── Widget Cagnotte (loyalty) — dans la zone scrollable ─── */}
+              <CagnotteCartWidget />
+            </div>
 
-        {/* ─── Footer récap + checkout ─── */}
-        {!isEmpty && cart && (
-          <div className="px-8 pb-8 pt-5 border-t border-spruce/10 bg-canvas shadow-[0_-8px_20px_-12px_rgba(0,0,0,0.08)]">
+            {/* ─── Footer récap + checkout (flex-shrink-0, toujours visible) ─── */}
+            {cart && (
+              <div className="flex-shrink-0 px-8 pb-6 pt-5 border-t border-spruce/10 bg-canvas shadow-[0_-8px_20px_-12px_rgba(0,0,0,0.08)]">
 
             {/* ─── Toggle Livraison / Click & Collect ─── */}
             {activeStore && (
@@ -354,7 +379,9 @@ export default function CartDrawer() {
                 {isClickAndCollect ? 'Valider le retrait' : 'Paiement sécurisé'}
               </a>
             </div>
-          </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </>
