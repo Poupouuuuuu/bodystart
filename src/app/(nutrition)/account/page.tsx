@@ -6,12 +6,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   User, Package, MapPin, LogOut, ChevronRight, ShoppingBag, Star,
-  Gift, Plus, Pencil, Trash2, X, Loader2, Save, Wallet, BadgeCheck
+  Gift, Plus, Pencil, Trash2, X, Loader2, Save, Wallet, BadgeCheck, ShieldCheck
 } from 'lucide-react'
 import { CagnottePanel } from '@/components/account/CagnottePanel'
 import { ReferralPanel } from '@/components/account/ReferralPanel'
 import { AmbassadorPanel } from '@/components/account/AmbassadorPanel'
+import { AdminAmbassadorsPanel } from '@/components/account/AdminAmbassadorsPanel'
 import { useAmbassador } from '@/hooks/useAmbassador'
+import { useIsAdmin } from '@/hooks/useIsAdmin'
 import PhoneField from '@/components/ui/PhoneField'
 import { useCustomer } from '@/context/CustomerContext'
 import { updateCustomer, getStoredToken } from '@/lib/shopify/customer'
@@ -19,7 +21,7 @@ import type { AddressInput } from '@/lib/shopify/customer'
 import { formatPrice, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
-type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte' | 'ambassador'
+type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte' | 'ambassador' | 'admin'
 
 // Styles de statut (sémantiques, conservés) — sentence case géré côté rendu.
 const STATUS_MAP: Record<string, { label: string; style: string }> = {
@@ -588,7 +590,7 @@ function ReviewsPanel() {
 // PAGE PRINCIPALE
 // ═══════════════════════════════════════════════════════════
 // Tabs adressables via ?tab=... (exclut 'order-detail' qui est un sub-state interne)
-const URL_TABS: readonly Tab[] = ['overview','orders','addresses','profile','reviews','referral','cagnotte','ambassador'] as const
+const URL_TABS: readonly Tab[] = ['overview','orders','addresses','profile','reviews','referral','cagnotte','ambassador','admin'] as const
 function isUrlTab(value: string | null | undefined): value is Tab {
   return !!value && (URL_TABS as readonly string[]).includes(value)
 }
@@ -598,6 +600,7 @@ function AccountContent() {
   const pathname = usePathname()
   const { customer, isLoading, isLoggedIn, logout } = useCustomer()
   const ambassadorState = useAmbassador()
+  const adminState = useIsAdmin()
   const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const t = searchParams.get('tab')
@@ -667,6 +670,10 @@ function AccountContent() {
       ? [{ icon: BadgeCheck, label: 'Espace ambassadeur', tab: 'ambassador' as Tab }]
       : []),
     { icon: Star, label: 'Mes avis', tab: 'reviews' },
+    // Onglet admin : visible uniquement si l'email connecté est admin (gate serveur).
+    ...(adminState.isAdmin
+      ? [{ icon: ShieldCheck, label: 'Gérer les ambassadeurs', tab: 'admin' as Tab }]
+      : []),
   ]
 
   const renderPanel = () => {
@@ -680,6 +687,7 @@ function AccountContent() {
       case 'referral': return <ReferralPanel />
       case 'cagnotte': return <CagnottePanel />
       case 'ambassador': return <AmbassadorPanel />
+      case 'admin': return <AdminAmbassadorsPanel />
       default: return null
     }
   }

@@ -115,6 +115,55 @@ export async function createReferralDiscountCode(opts: {
 }
 
 /**
+ * Cree le code de réduction Shopify d'un AMBASSADEUR (-10% à vie sur la commande).
+ *
+ * Recette EXACTE validée (cf. test E2EAMBA10) :
+ *   - code manuel (saisi au checkout), -10% sur TOUS les articles,
+ *   - NON combinable (order/product/shipping = false),
+ *   - SANS minimum d'achat, SANS limite d'usage, appliesOncePerCustomer = false,
+ *   - pas d'endsAt → actif tant que l'ambassadeur l'est.
+ *
+ * Renvoie un résultat discriminé (pas d'exception) pour que l'appelant gère
+ * proprement le cas « code déjà pris » (retry avec suffixe).
+ */
+export async function createAmbassadorDiscountCode(opts: {
+  code: string
+  ambassadorEmail?: string | null
+}): Promise<{ ok: true; shopifyDiscountNodeId: string } | { ok: false; codeTaken: boolean; message: string }> {
+  const data = await shopifyAdminFetch<CreateBasicResponse>(CREATE_BASIC_DISCOUNT, {
+    input: {
+      title: `Ambassadeur ${opts.code}${opts.ambassadorEmail ? ` (${opts.ambassadorEmail})` : ''}`,
+      code: opts.code,
+      startsAt: new Date().toISOString(),
+      customerSelection: { all: true },
+      customerGets: {
+        value: { percentage: 0.1 },
+        items: { all: true },
+      },
+      appliesOncePerCustomer: false,
+      usageLimit: null,
+      combinesWith: {
+        orderDiscounts: false,
+        productDiscounts: false,
+        shippingDiscounts: false,
+      },
+    },
+  })
+  const result = data.discountCodeBasicCreate
+  if (result.userErrors.length > 0) {
+    const message = result.userErrors.map((e) => `${e.field?.join('.') ?? ''}: ${e.message}`).join(' | ')
+    const codeTaken = result.userErrors.some(
+      (e) => /taken|exists|déjà|already/i.test(e.message) || e.code === 'TAKEN'
+    )
+    return { ok: false, codeTaken, message }
+  }
+  if (!result.codeDiscountNode?.id) {
+    return { ok: false, codeTaken: false, message: 'Pas de codeDiscountNode retourné' }
+  }
+  return { ok: true, shopifyDiscountNodeId: result.codeDiscountNode.id }
+}
+
+/**
  * Cree un code Shopify pour une redemption cagnotte (montant fixe, usage unique).
  *
  * Specs cle :
@@ -274,15 +323,19 @@ export async function createAmbassadorRedemptionDiscountCode(opts: {
  * Note : un code expire (endsAt passe) ne fonctionne plus cote checkout, donc
  * pas urgent de le supprimer. Cette fonction sert au cleanup manuel mensuel.
  */
-export async function deleteDiscountCode(shopifyDiscountNodeId: string): Promise<void> {
-  if (!shopifyDiscountNodeId) return
+export async function deleteDiscountCode(shopifyDiscountNodeId: string): Promise<boolean> {
+  if (!shopifyDiscountNodeId) return true
   const data = await shopifyAdminFetch<DeleteResponse>(DELETE_DISCOUNT, {
     id: shopifyDiscountNodeId,
   })
   const result = data.discountCodeDelete
   if (result.userErrors.length > 0) {
     const messages = result.userErrors.map((e) => `${e.field?.join('.') ?? ''}: ${e.message}`).join(' | ')
-    // On ne throw pas pour ne pas casser un batch de cleanup — on log et continue
+    // On ne throw pas (pour ne pas casser un batch de cleanup) MAIS on renvoie
+    // false : le caller doit savoir que la suppression a échoué (ex. compensation
+    // d'un code orphelin → ne pas prétendre que le nettoyage a réussi).
     console.warn('[deleteDiscountCode] userErrors:', messages, 'id:', shopifyDiscountNodeId)
+    return false
   }
+  return true
 }
