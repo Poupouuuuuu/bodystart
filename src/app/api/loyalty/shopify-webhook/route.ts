@@ -63,14 +63,17 @@ async function processAmbassadorCommission(
     .from('ambassadors')
     .select('shopify_discount_code, email')
     .eq('active', true)
+  // Normalisation trim + casse des DEUX côtés : le code commande (déjà trim par
+  // parseShopifyOrder) et le code stocké côté ambassadeur (défense contre un
+  // espace parasite saisi à la main dans Supabase). cf. SQL: lower(btrim(...)).
   const activeByLower = new Map<string, { code: string; email: string }>(
     (ambassadors ?? []).map((a: { shopify_discount_code: string; email: string }) => [
-      a.shopify_discount_code.toLowerCase(),
+      a.shopify_discount_code.trim().toLowerCase(),
       { code: a.shopify_discount_code, email: a.email },
     ])
   )
   const matched = parsed.discountCodes
-    .map((c) => activeByLower.get(c.toLowerCase()))
+    .map((c) => activeByLower.get(c.trim().toLowerCase()))
     .find((m): m is { code: string; email: string } => !!m)
   if (!matched) return { ambassador: 'no_match' }
   const matchedCode = matched.code
