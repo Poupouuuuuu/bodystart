@@ -105,6 +105,8 @@ async function processAmbassadorCommission(
     eligibleSubtotalCents: eligibleCents,
     isNewCustomer,
     buyerEmail: parsed.email,
+    // Nom de commande (#1001) pour le reporting admin (capté tel quel du payload).
+    shopifyOrderName: typeof payload?.name === 'string' ? payload.name : null,
   })
 }
 

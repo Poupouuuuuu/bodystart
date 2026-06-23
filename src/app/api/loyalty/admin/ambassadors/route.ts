@@ -63,9 +63,30 @@ export async function GET() {
 
 const CreateSchema = z.object({
   name: z.string().trim().min(1).max(120),
-  email: z.string().trim().email().max(180),
+  // Email facultatif : requis en mode normal (vient du sélecteur client),
+  // absent en mode « suivi » (email marqueur auto-généré).
+  email: z.string().trim().email().max(180).optional(),
   code: z.string().trim().max(40).optional(),
+  trackingOnly: z.boolean().optional(),
 })
+
+function ambassadorDto(row: {
+  id: string; name: string; email: string; shopify_discount_code: string
+  rate: number | string; balance_cents: number; active: boolean; created_at: string
+}) {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    code: row.shopify_discount_code,
+    ratePct: Math.round(Number(row.rate) * 100),
+    balanceCents: row.balance_cents,
+    active: row.active,
+    createdAt: row.created_at,
+    ordersCount: 0,
+    revenueCents: 0,
+  }
+}
 
 export async function POST(req: Request) {
   const gate = await requireAdmin()
@@ -82,8 +103,41 @@ export async function POST(req: Request) {
   }
 
   const supabase = getLoyaltyAdminClient()
-  const email = body.email.toLowerCase()
   const name = body.name
+
+  // ─── Mode SUIVI : code EXISTANT à 0 % (ex. BODYSTART15). On ne crée PAS le
+  //     code Shopify (il existe). Email marqueur (aucun compte client ne s'y
+  //     connecte → aucun dashboard ambassadeur ne s'affiche jamais, en plus du
+  //     garde rate>0 côté dashboard). Crédite 0 mais TRACKE les commandes. ───
+  if (body.trackingOnly === true) {
+    const tcode = normalizeAmbassadorCode(body.code ?? '')
+    if (!tcode) return NextResponse.json({ error: 'invalid_code' }, { status: 400 })
+    const markerEmail = `tracking+${tcode.toLowerCase()}@bodystart.fr`
+
+    const { data: allCodesT } = await supabase.from('ambassadors').select('shopify_discount_code')
+    const takenT = new Set((allCodesT ?? []).map((c) => normalizeAmbassadorCode(c.shopify_discount_code)))
+    if (takenT.has(tcode)) return NextResponse.json({ error: 'code_exists' }, { status: 409 })
+
+    const { data: insT, error: insTErr } = await supabase
+      .from('ambassadors')
+      .insert({ name, email: markerEmail, shopify_discount_code: tcode, rate: 0, active: true })
+      .select('id, name, email, shopify_discount_code, rate, balance_cents, active, created_at')
+      .single()
+    if (insTErr || !insT) {
+      const isConflict = insTErr?.code === '23505'
+      return NextResponse.json(
+        { error: isConflict ? 'conflict' : 'insert_failed', detail: insTErr?.message ?? 'insert returned no row' },
+        { status: isConflict ? 409 : 500 }
+      )
+    }
+    return NextResponse.json({ ok: true, ambassador: ambassadorDto(insT) })
+  }
+
+  // ─── Mode NORMAL : email REQUIS (vient du sélecteur de compte client). ───
+  if (!body.email) {
+    return NextResponse.json({ error: 'invalid_body', detail: 'email requis (sélectionne un client)' }, { status: 400 })
+  }
+  const email = body.email.toLowerCase()
 
   // Garde-fou : email déjà ambassadeur ?
   const { data: existingEmail } = await supabase
@@ -173,19 +227,5 @@ export async function POST(req: Request) {
     )
   }
 
-  return NextResponse.json({
-    ok: true,
-    ambassador: {
-      id: inserted.id,
-      name: inserted.name,
-      email: inserted.email,
-      code: inserted.shopify_discount_code,
-      ratePct: Math.round(Number(inserted.rate) * 100),
-      balanceCents: inserted.balance_cents,
-      active: inserted.active,
-      createdAt: inserted.created_at,
-      ordersCount: 0,
-      revenueCents: 0,
-    },
-  })
+  return NextResponse.json({ ok: true, ambassador: ambassadorDto(inserted) })
 }

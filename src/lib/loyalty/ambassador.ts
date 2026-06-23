@@ -122,6 +122,7 @@ export async function creditAmbassadorCommission(
     eligibleSubtotalCents: number
     isNewCustomer: boolean
     buyerEmail: string | null
+    shopifyOrderName?: string | null
   }
 ): Promise<CreditAmbassadorResult> {
   const { data, error } = await supabase.rpc('credit_ambassador_commission', {
@@ -130,6 +131,7 @@ export async function creditAmbassadorCommission(
     p_eligible_subtotal_cents: args.eligibleSubtotalCents,
     p_is_new_customer: args.isNewCustomer,
     p_buyer_email: args.buyerEmail,
+    p_shopify_order_name: args.shopifyOrderName ?? null,
   })
   if (error) throw new Error(`[creditAmbassadorCommission] RPC error: ${error.message}`)
   const row = (data ?? {}) as Record<string, unknown>

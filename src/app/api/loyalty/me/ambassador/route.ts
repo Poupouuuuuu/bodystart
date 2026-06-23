@@ -42,7 +42,9 @@ export async function GET() {
   if (error) {
     return NextResponse.json({ error: 'fetch_failed', detail: error.message }, { status: 500 })
   }
-  if (!amb) {
+  // Garde défensif : une entrée de SUIVI (rate 0, ex. BODYSTART15) ne doit JAMAIS
+  // afficher d'espace ambassadeur, même si son email coïncidait avec une session.
+  if (!amb || Number(amb.rate) <= 0) {
     return NextResponse.json({ isAmbassador: false })
   }
 
