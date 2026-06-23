@@ -21,7 +21,8 @@
 import { NextResponse } from 'next/server'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { verifyShopifyHmac } from '@/lib/loyalty/verify-hmac'
-import { parseShopifyOrder } from '@/lib/loyalty/parse-shopify-order'
+import { parseShopifyOrder, moneyStringToCents } from '@/lib/loyalty/parse-shopify-order'
+import { spendAmbassadorCagnotte } from '@/lib/loyalty/ambassador-redemption'
 import { finalizeOrderLoyalty } from '@/lib/loyalty/finalize'
 import {
   interpretDiscountCodes,
@@ -107,6 +108,40 @@ async function processAmbassadorCommission(
   })
 }
 
+/**
+ * Bloc DÉPENSE cagnotte ambassadeur — INDÉPENDANT (l'ambassadeur qui dépense
+ * n'est pas forcément membre loyalty/téléphone). Si un code de la commande
+ * correspond à une réservation AMB- → débit du montant RÉELLEMENT appliqué
+ * (lu sur discount_codes[].amount), plafonné au réservé puis au solde. Idempotent
+ * côté SQL (claim par code unique). Best-effort : ne casse jamais le webhook.
+ */
+async function processAmbassadorSpend(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  payload: any,
+  shopifyOrderId: string
+): Promise<unknown> {
+  const codes = (payload?.discount_codes ?? []) as Array<{ code?: string | null; amount?: string | number | null }>
+  if (!Array.isArray(codes) || codes.length === 0) return { spend: 'no_codes' }
+
+  const results: unknown[] = []
+  for (const dc of codes) {
+    const code = (dc?.code ?? '').trim()
+    if (!code) continue
+    const appliedAmountCents = moneyStringToCents(dc?.amount ?? 0)
+    try {
+      const r = await spendAmbassadorCagnotte(supabase, { shopifyOrderId, discountCode: code, appliedAmountCents })
+      // On ne remonte que les codes pertinents (une vraie dépense ou un état non trivial).
+      if (r.spent || (r.reason && r.reason !== 'no_redemption')) results.push({ code, ...r })
+    } catch (err) {
+      console.error('[loyalty webhook] ambassador spend error for code %s:', code, err)
+      results.push({ code, spend: 'error', detail: err instanceof Error ? err.message : 'unknown' })
+    }
+  }
+  return results.length > 0 ? results : { spend: 'no_match' }
+}
+
 export async function POST(req: Request) {
   const rawBody = await req.text()
   const hmacHeader = req.headers.get('x-shopify-hmac-sha256')
@@ -137,15 +172,22 @@ export async function POST(req: Request) {
 
   const supabase = getLoyaltyAdminClient()
 
-  // ─── Bloc ambassadeur (AVANT tout skip : indépendant du parrainage/phone) ───
+  // ─── Blocs ambassadeur (AVANT tout skip : indépendants du parrainage/phone) ───
+  // Best-effort : on logge mais on ne casse jamais le webhook.
+  const ambPayload = JSON.parse(rawBody)
   let ambassadorResult: unknown = { ambassador: 'skipped' }
   try {
-    ambassadorResult = await processAmbassadorCommission(supabase, JSON.parse(rawBody), parsed)
+    ambassadorResult = await processAmbassadorCommission(supabase, ambPayload, parsed)
   } catch (err) {
-    // Best-effort : on logge mais on ne casse pas le webhook (le parrainage doit
-    // continuer, et Shopify ne doit pas rejouer indéfiniment pour ça).
-    console.error('[loyalty webhook] ambassador processing error:', err)
+    console.error('[loyalty webhook] ambassador commission error:', err)
     ambassadorResult = { ambassador: 'error', detail: err instanceof Error ? err.message : 'unknown' }
+  }
+  let ambassadorSpendResult: unknown = { spend: 'skipped' }
+  try {
+    ambassadorSpendResult = await processAmbassadorSpend(supabase, ambPayload, parsed.shopifyOrderId)
+  } catch (err) {
+    console.error('[loyalty webhook] ambassador spend error:', err)
+    ambassadorSpendResult = { spend: 'error', detail: err instanceof Error ? err.message : 'unknown' }
   }
 
   if (!parsed.phoneE164) {
@@ -157,6 +199,7 @@ export async function POST(req: Request) {
       skip_reason: 'no_phone_on_order',
       shopify_order_id: parsed.shopifyOrderId,
       ambassador: ambassadorResult,
+      ambassador_spend: ambassadorSpendResult,
     })
   }
 
@@ -182,6 +225,7 @@ export async function POST(req: Request) {
       shopify_order_id: parsed.shopifyOrderId,
       phone: parsed.phoneE164,
       ambassador: ambassadorResult,
+      ambassador_spend: ambassadorSpendResult,
     })
   }
 
@@ -262,7 +306,7 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ ok: true, result, diagnostics: interpreted.diagnostics, ambassador: ambassadorResult })
+    return NextResponse.json({ ok: true, result, diagnostics: interpreted.diagnostics, ambassador: ambassadorResult, ambassador_spend: ambassadorSpendResult })
   } catch (err) {
     console.error('[loyalty webhook] finalize error:', err)
     return NextResponse.json(

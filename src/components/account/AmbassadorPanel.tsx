@@ -1,6 +1,7 @@
 'use client'
 
-import { BadgeCheck, Copy, Loader2, TrendingUp, Users, Wallet, ArrowDownRight, ArrowUpRight } from 'lucide-react'
+import { useState } from 'react'
+import { BadgeCheck, Copy, Loader2, TrendingUp, Users, Wallet, ArrowDownRight, ArrowUpRight, Ticket } from 'lucide-react'
 import { useAmbassador, type AmbassadorTx } from '@/hooks/useAmbassador'
 import toast from 'react-hot-toast'
 
@@ -11,17 +12,24 @@ const TX_LABEL: Record<AmbassadorTx['type'], string> = {
   commission: 'Commission sur vente',
   revoke: 'Reprise (remboursement)',
   spend: 'Utilisation cagnotte',
+  spend_reversal: 'Reprise dépense (remboursement)',
   adjustment: 'Ajustement',
 }
 const TX_IS_CREDIT: Record<AmbassadorTx['type'], boolean> = {
   commission: true,
   revoke: false,
   spend: false,
+  spend_reversal: true,
   adjustment: false,
 }
 
 export function AmbassadorPanel() {
   const state = useAmbassador()
+  // État du flux « Utiliser ma cagnotte » (hooks AVANT tout return conditionnel).
+  const [redeemAmount, setRedeemAmount] = useState('')
+  const [redeeming, setRedeeming] = useState(false)
+  const [redeemResult, setRedeemResult] = useState<{ code: string; amountCents: number } | null>(null)
+  const [redeemError, setRedeemError] = useState<string | null>(null)
 
   if (state.kind === 'loading') {
     return (
@@ -51,6 +59,62 @@ export function AmbassadorPanel() {
       toast.success('Code copié !')
     } catch {
       toast.error('Copie impossible')
+    }
+  }
+
+  async function copyText(text: string) {
+    try {
+      await navigator.clipboard.writeText(text)
+      toast.success('Code copié !')
+    } catch {
+      toast.error('Copie impossible')
+    }
+  }
+
+  function redeemErrorMessage(json: { error?: string; reason?: string }): string {
+    if (json.error === 'rate_limited') return 'Trop de demandes, réessaie dans une minute.'
+    switch (json.reason) {
+      case 'insufficient_balance':
+        return `Ta cagnotte doit atteindre ${euros(a.minToUseCents)} pour être utilisée.`
+      case 'below_min':
+        return `Montant minimum : ${euros(a.minToUseCents)}.`
+      case 'above_balance':
+        return `Montant supérieur à ton solde utilisable (${euros(a.usableCents)}).`
+      default:
+        return 'Impossible de générer le code. Réessaie.'
+    }
+  }
+
+  async function generateRedeemCode() {
+    setRedeemError(null)
+    const amt = parseFloat(redeemAmount.replace(',', '.'))
+    if (!Number.isFinite(amt) || Math.round(amt * 100) < a.minToUseCents) {
+      setRedeemError(`Montant minimum : ${euros(a.minToUseCents)}.`)
+      return
+    }
+    const cents = Math.round(amt * 100)
+    if (cents > a.usableCents) {
+      setRedeemError(`Tu peux utiliser jusqu'à ${euros(a.usableCents)}.`)
+      return
+    }
+    setRedeeming(true)
+    try {
+      const res = await fetch('/api/loyalty/me/ambassador/redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ requestedAmountCents: cents }),
+      })
+      const json = await res.json()
+      if (!res.ok || !json.ok) {
+        setRedeemError(redeemErrorMessage(json))
+        return
+      }
+      setRedeemResult({ code: json.redemption.discountCode, amountCents: json.redemption.amountCents })
+    } catch {
+      setRedeemError('Une erreur est survenue. Réessaie.')
+    } finally {
+      setRedeeming(false)
     }
   }
 
@@ -94,6 +158,83 @@ export function AmbassadorPanel() {
           <p className="mt-2 text-terracotta text-[13px] font-semibold">Ton code est actuellement désactivé.</p>
         )}
       </div>
+
+      {/* Utiliser ma cagnotte (génère un code à appliquer au checkout) */}
+      {a.usableCents > 0 && (
+        <div className="bg-white border border-spruce/10 rounded-2xl p-6 md:p-8">
+          <div className="flex items-center gap-2 mb-1">
+            <Ticket className="w-5 h-5 text-fresh" />
+            <p className="font-display font-bold text-spruce">Utiliser ma cagnotte</p>
+          </div>
+          <p className="text-ink-mute text-sm font-medium mb-4">
+            Génère un code de réduction à appliquer à ton panier. Produit-only, non cumulable, valable 1 h.
+          </p>
+          {redeemResult ? (
+            <div className="bg-sage rounded-xl p-4">
+              <p className="text-[12px] text-ink-mute font-medium mb-2">Ton code (−{euros(redeemResult.amountCents)})</p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 bg-white border border-spruce/10 rounded-lg px-4 py-3 font-mono font-bold tracking-wider text-center text-spruce">
+                  {redeemResult.code}
+                </code>
+                <button
+                  onClick={() => copyText(redeemResult.code)}
+                  className="p-3 border border-spruce/20 text-spruce hover:bg-spruce/5 rounded-lg transition-colors"
+                  aria-label="Copier le code"
+                >
+                  <Copy className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-[12px] text-ink-mute font-medium mt-3">
+                Panier minimum requis :{' '}
+                <span className="font-bold text-spruce">{euros(redeemResult.amountCents * 2)}</span> (la remise s’applique en entier).
+              </p>
+              <p className="text-[12px] text-ink-mute mt-1">
+                Valable 1 h. Applique-le au panier avant de payer ; ta cagnotte est débitée à la validation de la commande.
+              </p>
+              <button
+                onClick={() => {
+                  setRedeemResult(null)
+                  setRedeemAmount('')
+                }}
+                className="mt-3 text-[13px] font-semibold text-fresh underline underline-offset-4"
+              >
+                Générer un autre code
+              </button>
+            </div>
+          ) : (
+            <>
+              <label htmlFor="amb-redeem-amount" className="block text-[12px] text-ink-mute font-medium mb-2">
+                Montant à utiliser ({euros(a.minToUseCents)} – {euros(a.usableCents)})
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <input
+                    id="amb-redeem-amount"
+                    type="number"
+                    inputMode="decimal"
+                    min={a.minToUseCents / 100}
+                    max={a.usableCents / 100}
+                    step="1"
+                    value={redeemAmount}
+                    onChange={(e) => setRedeemAmount(e.target.value)}
+                    placeholder={String(a.minToUseCents / 100)}
+                    className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 pr-8 font-semibold text-spruce focus:outline-none focus:ring-2 focus:ring-fresh/40"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-mute font-semibold">€</span>
+                </div>
+                <button
+                  onClick={generateRedeemCode}
+                  disabled={redeeming}
+                  className="h-12 px-5 text-[14px] font-semibold rounded-xl bg-fresh text-white hover:bg-fresh-deep disabled:opacity-60 transition-colors whitespace-nowrap"
+                >
+                  {redeeming ? 'Génération…' : 'Générer mon code'}
+                </button>
+              </div>
+              {redeemError && <p className="text-terracotta text-[13px] font-semibold mt-2">{redeemError}</p>}
+            </>
+          )}
+        </div>
+      )}
 
       {/* Code + stats ventes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -199,6 +199,75 @@ export async function createRedemptionDiscountCode(opts: {
 }
 
 /**
+ * Cree un code Shopify pour une DÉPENSE de cagnotte AMBASSADEUR (montant fixe, usage unique).
+ *
+ * Specs cle (cf. 00013_ambassador_redemptions) :
+ *   - Code = AMB-XXXXXXXX (distinct des codes fidélité LY- et des codes -10% ambassadeur).
+ *   - Montant fixe = amountCents (remise sur l'ensemble du panier).
+ *   - minimumRequirement = 2 × amountCents → garantit que la remise s'applique
+ *     TOUJOURS en entier (jamais tronquée) et respecte le cap 50% du panier.
+ *   - endsAt = now + 1h (anti-fuite : Shopify rejette le code après).
+ *   - usageLimit = 1, appliesOncePerCustomer = true.
+ *   - combinesWith : shipping uniquement → NON cumulable (ni BIENVENUE10, ni
+ *     code -10% ambassadeur, ni autre remise produit/commande).
+ *
+ * @returns { shopifyDiscountNodeId, discountCode }
+ * @throws si userErrors non vide
+ */
+export async function createAmbassadorRedemptionDiscountCode(opts: {
+  ambassadorHint: string // email de l'ambassadeur, pour le title
+  amountCents: number
+  expiresAt: Date
+}): Promise<{ shopifyDiscountNodeId: string; discountCode: string }> {
+  if (!Number.isInteger(opts.amountCents) || opts.amountCents <= 0) {
+    throw new Error('[createAmbassadorRedemptionDiscountCode] amountCents doit etre un entier positif')
+  }
+  if (!(opts.expiresAt instanceof Date) || Number.isNaN(opts.expiresAt.getTime())) {
+    throw new Error('[createAmbassadorRedemptionDiscountCode] expiresAt doit etre une Date valide')
+  }
+
+  const random = Math.random().toString(16).slice(2, 10).toUpperCase().padEnd(8, '0')
+  const code = `AMB-${random}`
+  const amountEuros = opts.amountCents / 100
+  // Cap 50% : panier requis ≥ 2× le montant → la remise fixe s'applique en entier.
+  const minSubtotalEuros = (opts.amountCents * 2) / 100
+
+  const data = await shopifyAdminFetch<CreateBasicResponse>(CREATE_BASIC_DISCOUNT, {
+    input: {
+      title: `Cagnotte ambassadeur ${code} (${opts.ambassadorHint})`,
+      code,
+      startsAt: new Date().toISOString(),
+      endsAt: opts.expiresAt.toISOString(),
+      customerSelection: { all: true },
+      customerGets: {
+        value: { discountAmount: { amount: amountEuros, appliesOnEachItem: false } },
+        items: { all: true },
+      },
+      minimumRequirement: {
+        subtotal: { greaterThanOrEqualToSubtotal: minSubtotalEuros },
+      },
+      appliesOncePerCustomer: true,
+      usageLimit: 1,
+      combinesWith: {
+        orderDiscounts: false,
+        productDiscounts: false,
+        shippingDiscounts: true,
+      },
+    },
+  })
+
+  const result = data.discountCodeBasicCreate
+  if (result.userErrors.length > 0) {
+    const messages = result.userErrors.map((e) => `${e.field?.join('.') ?? ''}: ${e.message}`).join(' | ')
+    throw new Error(`[createAmbassadorRedemptionDiscountCode] Shopify userErrors: ${messages}`)
+  }
+  if (!result.codeDiscountNode?.id) {
+    throw new Error('[createAmbassadorRedemptionDiscountCode] Pas de codeDiscountNode retourne')
+  }
+  return { shopifyDiscountNodeId: result.codeDiscountNode.id, discountCode: code }
+}
+
+/**
  * Supprime un code Shopify. Utilise pour le cleanup eventuel des codes morts.
  * Idempotent (Shopify accepte les ids inexistants en general, mais on protege).
  *

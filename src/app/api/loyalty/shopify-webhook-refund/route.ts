@@ -24,6 +24,7 @@ import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { verifyShopifyHmac } from '@/lib/loyalty/verify-hmac'
 import { revokeReferralReward } from '@/lib/loyalty/revoke'
 import { revokeAmbassadorCommission } from '@/lib/loyalty/ambassador'
+import { reverseAmbassadorSpend } from '@/lib/loyalty/ambassador-redemption'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -65,13 +66,17 @@ export async function POST(req: Request) {
 
   try {
     const supabase = getLoyaltyAdminClient()
-    // Reprise sur les DEUX programmes — chacun idempotent et keyé par order id ;
-    // au plus l'un des deux a une ligne pour cette commande.
-    const [referral, ambassador] = await Promise.all([
+    // Reprise sur les TROIS leviers — chacun idempotent et keyé par order id ;
+    // au plus l'un d'eux a une ligne pour cette commande :
+    //  - revokeReferralReward      : commission parrain (débit parrain)
+    //  - revokeAmbassadorCommission: commission ambassadeur (débit ambassadeur)
+    //  - reverseAmbassadorSpend    : dépense de cagnotte ambassadeur (re-crédit ambassadeur)
+    const [referral, ambassador, ambassadorSpend] = await Promise.all([
       revokeReferralReward(supabase, orderId),
       revokeAmbassadorCommission(supabase, orderId),
+      reverseAmbassadorSpend(supabase, orderId),
     ])
-    return NextResponse.json({ ok: true, result: referral, ambassador })
+    return NextResponse.json({ ok: true, result: referral, ambassador, ambassador_spend: ambassadorSpend })
   } catch (err) {
     console.error('[loyalty refund webhook] revoke error:', err)
     return NextResponse.json(

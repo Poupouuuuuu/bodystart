@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 export interface AmbassadorTx {
   id: string
-  type: 'commission' | 'revoke' | 'spend' | 'adjustment'
+  type: 'commission' | 'revoke' | 'spend' | 'spend_reversal' | 'adjustment'
   amountCents: number
   balanceAfterCents: number
   shopifyOrderId: string | null
