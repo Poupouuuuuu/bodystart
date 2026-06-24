@@ -33,6 +33,7 @@ interface CommissionRow {
 const euros = (cents: number) =>
   (cents / 100).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €'
 const dateFr = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: '2-digit' })
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
 function messageFor(json: { error?: string }): string {
   switch (json.error) {
@@ -43,7 +44,7 @@ function messageFor(json: { error?: string }): string {
     case 'invalid_code':
       return 'Code invalide (lettres et chiffres).'
     case 'invalid_body':
-      return 'Champs invalides (sélectionne un client + nom).'
+      return 'Champs invalides (nom + email valide requis).'
     case 'shopify_failed':
       return 'Échec de création du code Shopify. Réessaie.'
     case 'conflict':
@@ -62,20 +63,19 @@ export function AdminAmbassadorsPanel() {
   // Form
   const [trackingMode, setTrackingMode] = useState(false)
   const [name, setName] = useState('')
+  const [email, setEmail] = useState('') // email du compte client — TOUJOURS présent (repli garanti)
   const [code, setCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
 
-  // Sélecteur client (mode normal)
+  // Recherche client = enhancement (si l'Admin API Customer est dispo)
   const [custQuery, setCustQuery] = useState('')
   const [custResults, setCustResults] = useState<CustomerHit[]>([])
   const [custSearching, setCustSearching] = useState(false)
   const [custError, setCustError] = useState<string | null>(null)
-  const [selected, setSelected] = useState<CustomerHit | null>(null)
-  // Recherche clients dispo ? (Admin API Customer = PII, indisponible sur forfait
-  // Basic). null = en cours de sonde ; false → saisie email manuelle (repli).
+  const [picked, setPicked] = useState<string | null>(null) // email du dernier client choisi (anti re-recherche)
+  // null = sonde en cours ; true = recherche dispo ; false = repli email manuel.
   const [searchAvailable, setSearchAvailable] = useState<boolean | null>(null)
-  const [manualEmail, setManualEmail] = useState('')
 
   // Toggle / détail
   const [togglingId, setTogglingId] = useState<string | null>(null)
@@ -93,65 +93,55 @@ export function AdminAmbassadorsPanel() {
   }, [])
   useEffect(() => { load() }, [load])
 
-  // Sonde la dispo de la recherche clients (route admin /customers). Sur forfait
-  // Basic, l'Admin API refuse l'objet Customer → on bascule en saisie manuelle.
+  // Sonde la dispo de la recherche clients. Forfait Basic → l'Admin API refuse
+  // l'objet Customer (route 502) → searchAvailable=false → on n'affiche QUE le
+  // champ email manuel. (Le champ email est de toute façon TOUJOURS présent.)
   useEffect(() => {
     let cancelled = false
-    fetch('/api/loyalty/admin/customers?q=probe', { cache: 'no-store', credentials: 'include' })
+    fetch('/api/loyalty/admin/customers?q=zz', { cache: 'no-store', credentials: 'include' })
       .then((r) => { if (!cancelled) setSearchAvailable(r.ok) })
       .catch(() => { if (!cancelled) setSearchAvailable(false) })
     return () => { cancelled = true }
   }, [])
 
-  // Recherche client debouncée (mode normal + recherche dispo uniquement)
+  // Recherche debouncée (seulement si dispo + mode normal)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
     if (trackingMode || searchAvailable !== true) return
-    if (selected && custQuery === selected.name) return // on ne recherche pas après sélection
     if (debounceRef.current) clearTimeout(debounceRef.current)
     const q = custQuery.trim()
-    if (q.length < 2) { setCustResults([]); setCustError(null); return }
+    if (q.length < 2 || picked === custQuery) { setCustResults([]); return }
     debounceRef.current = setTimeout(async () => {
       setCustSearching(true); setCustError(null)
       try {
         const r = await fetch(`/api/loyalty/admin/customers?q=${encodeURIComponent(q)}`, { cache: 'no-store', credentials: 'include' })
         const j = await r.json()
-        if (!r.ok) { setCustError(j.error === 'search_failed' ? 'Recherche indisponible (scope read_customers ?).' : 'Recherche refusée.'); setCustResults([]); return }
+        if (!r.ok) { setCustError('Recherche indisponible — saisis l’email manuellement ci-dessous.'); setCustResults([]); return }
         setCustResults(j.customers ?? [])
-      } catch { setCustError('Erreur de recherche.'); setCustResults([]) }
+      } catch { setCustError('Erreur de recherche — saisis l’email manuellement.'); setCustResults([]) }
       finally { setCustSearching(false) }
     }, 320)
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
-  }, [custQuery, trackingMode, selected, searchAvailable])
+  }, [custQuery, trackingMode, searchAvailable, picked])
 
   function pickCustomer(c: CustomerHit) {
-    setSelected(c)
+    setEmail(c.email)
     setName(c.name)
     setCustQuery(c.name)
+    setPicked(c.name)
     setCustResults([])
     setFormError(null)
-  }
-  function clearCustomer() {
-    setSelected(null)
-    setCustQuery('')
-    setCustResults([])
   }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setFormError(null)
-    if (trackingMode && !code.trim()) { setFormError('Indique le code existant à suivre.'); return }
     let normalEmail: string | undefined
-    if (!trackingMode) {
-      if (searchAvailable === true) {
-        if (!selected) { setFormError('Sélectionne d’abord un compte client.'); return }
-        normalEmail = selected.email
-      } else {
-        normalEmail = manualEmail.trim().toLowerCase()
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(normalEmail)) {
-          setFormError('Saisis l’email EXACT du compte client.'); return
-        }
-      }
+    if (trackingMode) {
+      if (!code.trim()) { setFormError('Indique le code existant à suivre.'); return }
+    } else {
+      normalEmail = email.trim().toLowerCase()
+      if (!EMAIL_RE.test(normalEmail)) { setFormError('Saisis un email valide (celui du compte client).'); return }
     }
     setSubmitting(true)
     try {
@@ -165,7 +155,7 @@ export function AdminAmbassadorsPanel() {
       const j = await r.json()
       if (!r.ok || !j.ok) { setFormError(messageFor(j)); return }
       toast.success(trackingMode ? 'Code de suivi ajouté !' : 'Ambassadeur créé !')
-      setName(''); setCode(''); setManualEmail(''); clearCustomer()
+      setName(''); setEmail(''); setCode(''); setCustQuery(''); setPicked(null); setCustResults([])
       setList((prev) => (prev ? [j.ambassador, ...prev] : [j.ambassador]))
     } catch { setFormError('Une erreur est survenue. Réessaie.') }
     finally { setSubmitting(false) }
@@ -199,6 +189,8 @@ export function AdminAmbassadorsPanel() {
     }
   }
 
+  const inputCls = 'w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 text-spruce font-medium focus:outline-none focus:ring-2 focus:ring-fresh/40'
+
   return (
     <div className="space-y-6">
       <div>
@@ -207,7 +199,7 @@ export function AdminAmbassadorsPanel() {
           <h2 className="font-display text-[28px] font-extrabold tracking-tight text-spruce leading-[1.1]">Gérer les ambassadeurs</h2>
         </div>
         <p className="text-ink-mute font-medium text-sm">
-          Sélectionne un compte client existant pour en faire un ambassadeur (code −10 % généré, cagnotte 10 %), ou ajoute un code de suivi à 0 %.
+          Crée un ambassadeur (code −10 % généré, cagnotte 10 %), ou ajoute un code de suivi à 0 %.
         </p>
       </div>
 
@@ -216,7 +208,7 @@ export function AdminAmbassadorsPanel() {
         <div className="flex items-center justify-between gap-3">
           <p className="font-display font-bold text-spruce">{trackingMode ? 'Ajouter un code de suivi (0 %)' : 'Ajouter un ambassadeur'}</p>
           <label className="inline-flex items-center gap-2 text-[12px] font-medium text-ink-mute cursor-pointer">
-            <input type="checkbox" checked={trackingMode} onChange={(e) => { setTrackingMode(e.target.checked); setFormError(null); clearCustomer(); setName(''); setCode('') }} className="accent-fresh" />
+            <input type="checkbox" checked={trackingMode} onChange={(e) => { setTrackingMode(e.target.checked); setFormError(null) }} className="accent-fresh" />
             Entrée de suivi (0 %, code existant)
           </label>
         </div>
@@ -225,8 +217,7 @@ export function AdminAmbassadorsPanel() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label htmlFor="t-name" className="block text-[12px] text-ink-mute font-medium mb-1">Libellé</label>
-              <input id="t-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={120} placeholder="Code perso BODYSTART15"
-                className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 text-spruce font-medium focus:outline-none focus:ring-2 focus:ring-fresh/40" />
+              <input id="t-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={120} placeholder="Code perso BODYSTART15" className={inputCls} />
             </div>
             <div>
               <label htmlFor="t-code" className="block text-[12px] text-ink-mute font-medium mb-1">Code existant (déjà dans Shopify)</label>
@@ -236,79 +227,55 @@ export function AdminAmbassadorsPanel() {
           </div>
         ) : (
           <>
-            {searchAvailable === true ? (
-              <>
-                {/* Sélecteur client (recherche Admin API dispo) */}
+            {/* Recherche client : enhancement, affichée seulement si l'API le permet */}
+            {searchAvailable === true && (
+              <div className="relative">
+                <label htmlFor="cust-q" className="block text-[12px] text-ink-mute font-medium mb-1">Rechercher un compte client (remplit l’email)</label>
                 <div className="relative">
-                  <label htmlFor="cust-q" className="block text-[12px] text-ink-mute font-medium mb-1">Compte client (recherche par nom ou email)</label>
-                  <div className="relative">
-                    <Search className="w-4 h-4 text-ink-mute absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      id="cust-q"
-                      value={custQuery}
-                      onChange={(e) => { setCustQuery(e.target.value); if (selected) setSelected(null) }}
-                      placeholder="Tape un nom ou un email…"
-                      autoComplete="off"
-                      className="w-full bg-white border border-spruce/15 rounded-xl pl-9 pr-4 py-3 text-spruce font-medium focus:outline-none focus:ring-2 focus:ring-fresh/40"
-                    />
-                    {custSearching && <Loader2 className="w-4 h-4 text-fresh animate-spin absolute right-3 top-1/2 -translate-y-1/2" />}
-                  </div>
-                  {custError && <p className="text-terracotta text-[12px] font-medium mt-1">{custError}</p>}
-                  {custResults.length > 0 && !selected && (
-                    <ul className="absolute z-10 mt-1 w-full bg-white border border-spruce/15 rounded-xl shadow-lg max-h-64 overflow-y-auto">
-                      {custResults.map((c) => (
-                        <li key={c.id}>
-                          <button type="button" onClick={() => pickCustomer(c)} className="w-full text-left px-4 py-2.5 hover:bg-sage/60 transition-colors">
-                            <span className="block text-[14px] font-semibold text-ink">{c.name}</span>
-                            <span className="block text-[12px] text-ink-mute">{c.email}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  <Search className="w-4 h-4 text-ink-mute absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input id="cust-q" value={custQuery} autoComplete="off"
+                    onChange={(e) => { setCustQuery(e.target.value); setPicked(null) }}
+                    placeholder="Tape un nom ou un email…"
+                    className="w-full bg-white border border-spruce/15 rounded-xl pl-9 pr-4 py-3 text-spruce font-medium focus:outline-none focus:ring-2 focus:ring-fresh/40" />
+                  {custSearching && <Loader2 className="w-4 h-4 text-fresh animate-spin absolute right-3 top-1/2 -translate-y-1/2" />}
                 </div>
-
-                {selected && (
-                  <div className="flex items-center justify-between gap-3 bg-sage/60 rounded-xl px-4 py-2.5">
-                    <div className="min-w-0">
-                      <span className="block text-[13px] font-semibold text-spruce truncate">{selected.email}</span>
-                      <span className="block text-[11px] text-ink-mute">Compte sélectionné</span>
-                    </div>
-                    <button type="button" onClick={clearCustomer} className="text-[12px] font-semibold text-ink-mute hover:text-spruce underline">Changer</button>
-                  </div>
+                {custError && <p className="text-terracotta text-[12px] font-medium mt-1">{custError}</p>}
+                {custResults.length > 0 && (
+                  <ul className="absolute z-10 mt-1 w-full bg-white border border-spruce/15 rounded-xl shadow-lg max-h-64 overflow-y-auto">
+                    {custResults.map((c) => (
+                      <li key={c.id}>
+                        <button type="button" onClick={() => pickCustomer(c)} className="w-full text-left px-4 py-2.5 hover:bg-sage/60 transition-colors">
+                          <span className="block text-[14px] font-semibold text-ink">{c.name}</span>
+                          <span className="block text-[12px] text-ink-mute">{c.email}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 )}
-              </>
-            ) : (
-              /* Repli : la recherche de comptes (Admin API Customer) est indisponible
-                 sur le forfait Shopify actuel → saisie de l'email manuelle. */
-              <div>
-                <label htmlFor="n-email" className="block text-[12px] text-ink-mute font-medium mb-1">Email du compte client</label>
-                <input
-                  id="n-email"
-                  type="email"
-                  value={manualEmail}
-                  onChange={(e) => setManualEmail(e.target.value)}
-                  maxLength={180}
-                  placeholder="julie@email.com"
-                  className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 text-spruce font-medium focus:outline-none focus:ring-2 focus:ring-fresh/40"
-                />
-                <p className="text-[12px] text-ink-mute mt-1">
-                  Recherche de comptes indisponible sur le forfait Shopify actuel. Saisis l’email <span className="font-semibold text-spruce">exact</span> du compte client (copie-le depuis Shopify pour éviter toute faute).
-                </p>
               </div>
             )}
 
+            {/* Nom + EMAIL : TOUJOURS présents → la création marche en Basic. */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="n-name" className="block text-[12px] text-ink-mute font-medium mb-1">Nom (pré-rempli, éditable)</label>
-                <input id="n-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={120} placeholder="Julie Coaching"
-                  className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 text-spruce font-medium focus:outline-none focus:ring-2 focus:ring-fresh/40" />
+                <label htmlFor="n-name" className="block text-[12px] text-ink-mute font-medium mb-1">Nom</label>
+                <input id="n-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={120} placeholder="Julie Coaching" className={inputCls} />
               </div>
               <div>
-                <label htmlFor="n-code" className="block text-[12px] text-ink-mute font-medium mb-1">Code (optionnel — sinon prénom)</label>
-                <input id="n-code" value={code} onChange={(e) => setCode(e.target.value)} maxLength={40} placeholder="COACHJULIE"
-                  className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 font-mono font-semibold tracking-wider uppercase text-spruce focus:outline-none focus:ring-2 focus:ring-fresh/40" />
+                <label htmlFor="n-email" className="block text-[12px] text-ink-mute font-medium mb-1">Email du compte client</label>
+                <input id="n-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={180} placeholder="julie@email.com" className={inputCls} />
               </div>
+            </div>
+            {searchAvailable === false && (
+              <p className="text-[12px] text-ink-mute">
+                Saisis l’email <span className="font-semibold text-spruce">exact</span> du compte client (copie-le depuis Shopify pour éviter toute faute). La recherche automatique de comptes nécessite un forfait Shopify supérieur.
+              </p>
+            )}
+
+            <div>
+              <label htmlFor="n-code" className="block text-[12px] text-ink-mute font-medium mb-1">Code (optionnel — sinon prénom)</label>
+              <input id="n-code" value={code} onChange={(e) => setCode(e.target.value)} maxLength={40} placeholder="COACHJULIE"
+                className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 font-mono font-semibold tracking-wider uppercase text-spruce focus:outline-none focus:ring-2 focus:ring-fresh/40" />
             </div>
           </>
         )}
@@ -369,7 +336,6 @@ export function AdminAmbassadorsPanel() {
                     </div>
                   </div>
 
-                  {/* Détail commande par commande */}
                   {expandedId === a.id && (
                     <div className="mt-3 bg-sage/40 rounded-xl p-4">
                       {detail === 'loading' || detail === undefined ? (
