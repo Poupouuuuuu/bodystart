@@ -32,7 +32,7 @@ import {
 import {
   creditAmbassadorCommission,
   computeAmbassadorEligibleCents,
-  isAmbassadorSelfPurchase,
+  isAmbassadorSelfMatch,
   EXCLUDED_AMBASSADOR_PRODUCT_TAGS,
 } from '@/lib/loyalty/ambassador'
 import {
@@ -55,33 +55,34 @@ async function processAmbassadorCommission(
   supabase: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any,
-  parsed: { shopifyOrderId: string; email: string | null; discountCodes: string[]; paidItemsCents: number }
+  parsed: { shopifyOrderId: string; email: string | null; phoneE164: string | null; discountCodes: string[]; paidItemsCents: number }
 ): Promise<unknown> {
   if (parsed.discountCodes.length === 0) return { ambassador: 'no_codes' }
 
   // Le(s) code(s) de la commande correspondent-ils à un ambassadeur actif ?
   const { data: ambassadors } = await supabase
     .from('ambassadors')
-    .select('shopify_discount_code, email')
+    .select('shopify_discount_code, email, phone')
     .eq('active', true)
   // Normalisation trim + casse des DEUX côtés : le code commande (déjà trim par
   // parseShopifyOrder) et le code stocké côté ambassadeur (défense contre un
   // espace parasite saisi à la main dans Supabase). cf. SQL: lower(btrim(...)).
-  const activeByLower = new Map<string, { code: string; email: string }>(
-    (ambassadors ?? []).map((a: { shopify_discount_code: string; email: string }) => [
+  type AmbMatch = { code: string; email: string; phone: string | null }
+  const activeByLower = new Map<string, AmbMatch>(
+    (ambassadors ?? []).map((a: { shopify_discount_code: string; email: string; phone: string | null }) => [
       a.shopify_discount_code.trim().toLowerCase(),
-      { code: a.shopify_discount_code, email: a.email },
+      { code: a.shopify_discount_code, email: a.email, phone: a.phone },
     ])
   )
   const matched = parsed.discountCodes
     .map((c) => activeByLower.get(c.trim().toLowerCase()))
-    .find((m): m is { code: string; email: string } => !!m)
+    .find((m): m is AmbMatch => !!m)
   if (!matched) return { ambassador: 'no_match' }
   const matchedCode = matched.code
 
-  // Anti auto-commission : l'acheteur EST l'ambassadeur (même email) → on saute
-  // (le SQL bloque aussi, mais ici on évite l'appel Admin API is_new_customer).
-  if (isAmbassadorSelfPurchase(parsed.email, matched.email)) {
+  // Anti auto-commission : l'acheteur EST l'ambassadeur sur EMAIL OU TÉLÉPHONE
+  // → on saute (le SQL bloque aussi, mais ici on évite l'appel is_new_customer).
+  if (isAmbassadorSelfMatch(parsed.email, parsed.phoneE164, matched.email, matched.phone)) {
     return { ambassador: 'self_purchase' }
   }
 
@@ -105,6 +106,8 @@ async function processAmbassadorCommission(
     eligibleSubtotalCents: eligibleCents,
     isNewCustomer,
     buyerEmail: parsed.email,
+    // Tél acheteur (E.164) pour l'anti auto-commission tél (cf. isAmbassadorSelfMatch).
+    buyerPhone: parsed.phoneE164,
     // Nom de commande (#1001) pour le reporting admin (capté tel quel du payload).
     shopifyOrderName: typeof payload?.name === 'string' ? payload.name : null,
   })

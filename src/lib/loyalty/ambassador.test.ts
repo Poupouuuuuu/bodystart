@@ -4,6 +4,7 @@ import {
   computeAmbassadorEligibleCents,
   isAmbassadorCagnotteExpired,
   isAmbassadorSelfPurchase,
+  isAmbassadorSelfMatch,
   usableAmbassadorBalanceCents,
   AMBASSADOR_RATE_DEFAULT,
   AMBASSADOR_REDEEM_MIN_BALANCE_CENTS,
@@ -68,6 +69,38 @@ describe('isAmbassadorSelfPurchase (anti auto-commission)', () => {
   })
   it('email ambassadeur manquant → false', () => {
     expect(isAmbassadorSelfPurchase('julie@email.com', null)).toBe(false)
+  })
+})
+
+describe('isAmbassadorSelfMatch (anti-triche email OU téléphone)', () => {
+  // CAS 1 — 2e compte, AUTRE email mais MÊME téléphone → BLOQUÉ.
+  it('email différent mais même tél (formats FR/+33) → true (bloqué)', () => {
+    expect(isAmbassadorSelfMatch('compte2@email.com', '06 12 34 56 78', 'julie@email.com', '+33612345678')).toBe(true)
+    // normalisation : espaces/points/tirets + 0↔+33
+    expect(isAmbassadorSelfMatch('x@y.fr', '0612345678', 'julie@email.com', '06.12.34.56.78')).toBe(true)
+    expect(isAmbassadorSelfMatch('x@y.fr', '+33 6 12 34 56 78', 'julie@email.com', '06-12-34-56-78')).toBe(true)
+  })
+  // CAS 2 — vrai client : email ET tél différents → CRÉDITÉ (pas de match).
+  it('email ET tél différents → false (vrai client, crédité)', () => {
+    expect(isAmbassadorSelfMatch('client@email.com', '0699887766', 'julie@email.com', '0612345678')).toBe(false)
+  })
+  // CAS 3 — ambassadeur SANS tél → email-only, aucune régression.
+  it('ambassadeur sans tél → email-only (pas de match sur le tél)', () => {
+    // même email → bloqué (comme avant)
+    expect(isAmbassadorSelfMatch('julie@email.com', '0612345678', 'julie@email.com', null)).toBe(true)
+    // email différent + ambassadeur sans tél → crédité (pas de régression)
+    expect(isAmbassadorSelfMatch('client@email.com', '0612345678', 'julie@email.com', null)).toBe(false)
+    expect(isAmbassadorSelfMatch('client@email.com', '0612345678', 'julie@email.com', undefined)).toBe(false)
+  })
+  it('acheteur sans tél + ambassadeur avec tél → pas de match tél (email seul décide)', () => {
+    expect(isAmbassadorSelfMatch('client@email.com', null, 'julie@email.com', '0612345678')).toBe(false)
+    expect(isAmbassadorSelfMatch('client@email.com', '', 'julie@email.com', '0612345678')).toBe(false)
+  })
+  it('téléphones invalides des deux côtés → pas de faux positif', () => {
+    expect(isAmbassadorSelfMatch('a@b.fr', 'abc', 'c@d.fr', 'xyz')).toBe(false)
+  })
+  it('priorité email : même email suffit même si tél absent partout', () => {
+    expect(isAmbassadorSelfMatch('Julie@Email.com', null, 'julie@email.com', null)).toBe(true)
   })
 })
 

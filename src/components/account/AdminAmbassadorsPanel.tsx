@@ -64,6 +64,7 @@ export function AdminAmbassadorsPanel() {
   const [trackingMode, setTrackingMode] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('') // email du compte client — TOUJOURS présent (repli garanti)
+  const [phone, setPhone] = useState('') // tél optionnel — anti auto-commission (match email OU tél)
   const [code, setCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
@@ -147,7 +148,7 @@ export function AdminAmbassadorsPanel() {
     try {
       const payload = trackingMode
         ? { name: name.trim() || code.trim(), code: code.trim(), trackingOnly: true }
-        : { name: name.trim(), email: normalEmail, code: code.trim() || undefined }
+        : { name: name.trim(), email: normalEmail, phone: phone.trim() || undefined, code: code.trim() || undefined }
       const r = await fetch('/api/loyalty/admin/ambassadors', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify(payload),
@@ -155,7 +156,7 @@ export function AdminAmbassadorsPanel() {
       const j = await r.json()
       if (!r.ok || !j.ok) { setFormError(messageFor(j)); return }
       toast.success(trackingMode ? 'Code de suivi ajouté !' : 'Ambassadeur créé !')
-      setName(''); setEmail(''); setCode(''); setCustQuery(''); setPicked(null); setCustResults([])
+      setName(''); setEmail(''); setPhone(''); setCode(''); setCustQuery(''); setPicked(null); setCustResults([])
       setList((prev) => (prev ? [j.ambassador, ...prev] : [j.ambassador]))
     } catch { setFormError('Une erreur est survenue. Réessaie.') }
     finally { setSubmitting(false) }
@@ -272,11 +273,20 @@ export function AdminAmbassadorsPanel() {
               </p>
             )}
 
-            <div>
-              <label htmlFor="n-code" className="block text-[12px] text-ink-mute font-medium mb-1">Code (optionnel — sinon prénom)</label>
-              <input id="n-code" value={code} onChange={(e) => setCode(e.target.value)} maxLength={40} placeholder="COACHJULIE"
-                className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 font-mono font-semibold tracking-wider uppercase text-spruce focus:outline-none focus:ring-2 focus:ring-fresh/40" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="n-phone" className="block text-[12px] text-ink-mute font-medium mb-1">Téléphone (optionnel — anti-triche)</label>
+                <input id="n-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={40} placeholder="06 12 34 56 78" className={inputCls} />
+              </div>
+              <div>
+                <label htmlFor="n-code" className="block text-[12px] text-ink-mute font-medium mb-1">Code (optionnel — sinon prénom)</label>
+                <input id="n-code" value={code} onChange={(e) => setCode(e.target.value)} maxLength={40} placeholder="COACHJULIE"
+                  className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 font-mono font-semibold tracking-wider uppercase text-spruce focus:outline-none focus:ring-2 focus:ring-fresh/40" />
+              </div>
             </div>
+            <p className="text-[12px] text-ink-mute">
+              Le téléphone bloque le contournement « 2ᵉ compte, autre email » : une commande passée avec son propre code est refusée si l’email <span className="font-semibold text-spruce">ou</span> le téléphone correspond.
+            </p>
           </>
         )}
 

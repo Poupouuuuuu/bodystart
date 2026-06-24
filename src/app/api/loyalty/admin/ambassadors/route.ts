@@ -17,6 +17,7 @@ import {
   withUniquenessSuffix,
 } from '@/lib/loyalty/admin'
 import { createAmbassadorDiscountCode, deleteDiscountCode } from '@/lib/shopify/loyalty-discounts'
+import { normalizeToE164 } from '@/lib/loyalty/phone'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -66,6 +67,10 @@ const CreateSchema = z.object({
   // Email facultatif : requis en mode normal (vient du sélecteur client),
   // absent en mode « suivi » (email marqueur auto-généré).
   email: z.string().trim().email().max(180).optional(),
+  // Téléphone facultatif (mode normal) : sert l'anti auto-commission (match
+  // email OU tél). Normalisé E.164 avant stockage ; vide/invalide → null
+  // (pas de blocage tél, l'ambassadeur reste en email-only).
+  phone: z.string().trim().max(40).optional(),
   code: z.string().trim().max(40).optional(),
   trackingOnly: z.boolean().optional(),
 })
@@ -195,9 +200,10 @@ export async function POST(req: Request) {
   const code = candidate
 
   // Insert ligne ambassadeur. Si échec → compensation : suppression du code Shopify.
+  const phoneE164 = body.phone ? normalizeToE164(body.phone) : null
   const { data: inserted, error: insErr } = await supabase
     .from('ambassadors')
-    .insert({ name, email, shopify_discount_code: code, rate: 0.1, active: true })
+    .insert({ name, email, phone: phoneE164, shopify_discount_code: code, rate: 0.1, active: true })
     .select('id, name, email, shopify_discount_code, rate, balance_cents, active, created_at')
     .single()
 

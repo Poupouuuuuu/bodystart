@@ -8,6 +8,7 @@
  * Différences : taux 10 %, min 10 € pour utiliser, expiration 12 mois inactivité.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { normalizeToE164 } from './phone'
 
 // ── Constantes métier ──
 
@@ -79,6 +80,26 @@ export function isAmbassadorSelfPurchase(
   return buyerEmail.trim().toLowerCase() === ambassadorEmail.trim().toLowerCase()
 }
 
+/**
+ * Anti auto-commission étendu : l'acheteur EST-il l'ambassadeur sur EMAIL **OU**
+ * TÉLÉPHONE ? Bloque le 2e-compte-même-numéro (autre email, même tél).
+ * - Emails : comparés insensibles casse/espaces.
+ * - Téléphones : normalisés E.164 (normalizeToE164, gère +33 ↔ 0, retire
+ *   espaces/points/tirets). Un téléphone manquant/invalide d'un côté → pas de
+ *   match sur le tél (ambassadeur sans tél = email-only, aucune régression).
+ */
+export function isAmbassadorSelfMatch(
+  buyerEmail: string | null | undefined,
+  buyerPhone: string | null | undefined,
+  ambassadorEmail: string | null | undefined,
+  ambassadorPhone: string | null | undefined
+): boolean {
+  if (isAmbassadorSelfPurchase(buyerEmail, ambassadorEmail)) return true
+  const bp = normalizeToE164(buyerPhone ?? '')
+  const ap = normalizeToE164(ambassadorPhone ?? '')
+  return !!bp && !!ap && bp === ap
+}
+
 /** La cagnotte est-elle expirée (≥ 12 mois sans activité) ? */
 export function isAmbassadorCagnotteExpired(
   lastActivityAt: string | Date,
@@ -123,6 +144,7 @@ export async function creditAmbassadorCommission(
     isNewCustomer: boolean
     buyerEmail: string | null
     shopifyOrderName?: string | null
+    buyerPhone?: string | null
   }
 ): Promise<CreditAmbassadorResult> {
   const { data, error } = await supabase.rpc('credit_ambassador_commission', {
@@ -132,6 +154,7 @@ export async function creditAmbassadorCommission(
     p_is_new_customer: args.isNewCustomer,
     p_buyer_email: args.buyerEmail,
     p_shopify_order_name: args.shopifyOrderName ?? null,
+    p_buyer_phone: args.buyerPhone ?? null,
   })
   if (error) throw new Error(`[creditAmbassadorCommission] RPC error: ${error.message}`)
   const row = (data ?? {}) as Record<string, unknown>
