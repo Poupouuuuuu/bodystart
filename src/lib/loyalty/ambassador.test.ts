@@ -5,6 +5,8 @@ import {
   isAmbassadorCagnotteExpired,
   isAmbassadorSelfPurchase,
   isAmbassadorSelfMatch,
+  computeCagnotteAdjustment,
+  AMBASSADOR_MANUAL_ADJUST_MAX_CENTS,
   usableAmbassadorBalanceCents,
   AMBASSADOR_RATE_DEFAULT,
   AMBASSADOR_REDEEM_MIN_BALANCE_CENTS,
@@ -101,6 +103,39 @@ describe('isAmbassadorSelfMatch (anti-triche email OU téléphone)', () => {
   })
   it('priorité email : même email suffit même si tél absent partout', () => {
     expect(isAmbassadorSelfMatch('Julie@Email.com', null, 'julie@email.com', null)).toBe(true)
+  })
+})
+
+describe('computeCagnotteAdjustment (ajustement manuel admin +/−)', () => {
+  it('CRÉDIT (+) : solde 1500 + 1000 → 2500, appliqué +1000, non plafonné', () => {
+    const r = computeCagnotteAdjustment(1500, 1000)
+    expect(r).toMatchObject({ valid: true, reason: 'applied', appliedDeltaCents: 1000, newBalanceCents: 2500, capped: false })
+  })
+  it('DÉDUCTION (−) normale : solde 3500 − 2000 → 1500, appliqué −2000', () => {
+    const r = computeCagnotteAdjustment(3500, -2000)
+    expect(r).toMatchObject({ valid: true, reason: 'applied', appliedDeltaCents: -2000, newBalanceCents: 1500, capped: false })
+  })
+  it('PLANCHER 0 : déduire 5000 sur 3500 → solde 0, appliqué −3500, capped=true', () => {
+    const r = computeCagnotteAdjustment(3500, -5000)
+    expect(r).toMatchObject({ valid: true, reason: 'applied', appliedDeltaCents: -3500, newBalanceCents: 0, capped: true })
+  })
+  it('NO_CHANGE : déduire alors que solde = 0 → aucune écriture', () => {
+    const r = computeCagnotteAdjustment(0, -2000)
+    expect(r).toMatchObject({ valid: true, reason: 'no_change', appliedDeltaCents: 0, newBalanceCents: 0, capped: true })
+  })
+  it('DELTA = 0 → invalide (zero_delta)', () => {
+    expect(computeCagnotteAdjustment(1000, 0).reason).toBe('zero_delta')
+    expect(computeCagnotteAdjustment(1000, 0).valid).toBe(false)
+  })
+  it('CAP anti-fat-finger ±1 000 € : 100001c → exceeds_cap', () => {
+    expect(AMBASSADOR_MANUAL_ADJUST_MAX_CENTS).toBe(100000)
+    expect(computeCagnotteAdjustment(0, 100001).reason).toBe('exceeds_cap')
+    expect(computeCagnotteAdjustment(500000, -100001).valid).toBe(false)
+    // pile au cap → autorisé
+    expect(computeCagnotteAdjustment(0, 100000)).toMatchObject({ valid: true, reason: 'applied', newBalanceCents: 100000 })
+  })
+  it('solde négatif/invalide traité comme 0', () => {
+    expect(computeCagnotteAdjustment(-50, 1000)).toMatchObject({ newBalanceCents: 1000, appliedDeltaCents: 1000 })
   })
 })
 

@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Loader2, Plus, ShieldCheck, Power, Wallet, TrendingUp, Search, ChevronDown, ChevronUp } from 'lucide-react'
+import { Loader2, Plus, Minus, ShieldCheck, Power, Wallet, TrendingUp, Search, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { computeCagnotteAdjustment, AMBASSADOR_MANUAL_ADJUST_MAX_CENTS } from '@/lib/loyalty/ambassador'
 
 interface AdminAmb {
   id: string
@@ -29,9 +30,33 @@ interface CommissionRow {
   status: string
   createdAt: string
 }
+interface TxRow {
+  id: string
+  type: string
+  sign: 1 | -1 | 0
+  amountCents: number
+  balanceAfterCents: number
+  orderId: string | null
+  notes: string | null
+  createdAt: string
+}
 
 const euros = (cents: number) =>
   (cents / 100).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €'
+/** "12,50" ou "12.50" → 1250 cents. NaN/invalide → null. */
+const eurosToCents = (raw: string): number | null => {
+  const n = Number.parseFloat(raw.replace(',', '.').replace(/\s/g, ''))
+  if (!Number.isFinite(n) || n <= 0) return null
+  return Math.round(n * 100)
+}
+const TX_LABEL: Record<string, string> = {
+  commission: 'Commission',
+  revoke: 'Reprise (remboursement)',
+  spend: 'Dépense cagnotte',
+  spend_reversal: 'Reprise dépense',
+  adjustment: 'Expiration / ajustement',
+  manual_adjustment: 'Ajustement manuel',
+}
 const dateFr = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: '2-digit' })
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
@@ -82,6 +107,16 @@ export function AdminAmbassadorsPanel() {
   const [togglingId, setTogglingId] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [commissions, setCommissions] = useState<Record<string, CommissionRow[] | 'loading' | 'error'>>({})
+  const [transactions, setTransactions] = useState<Record<string, TxRow[] | 'loading' | 'error'>>({})
+
+  // Ajustement manuel de cagnotte (par ambassadeur)
+  const [adjustId, setAdjustId] = useState<string | null>(null)
+  const [adjSign, setAdjSign] = useState<1 | -1>(-1) // défaut : déduire (cas principal POS)
+  const [adjAmount, setAdjAmount] = useState('')
+  const [adjReason, setAdjReason] = useState('')
+  const [adjConfirm, setAdjConfirm] = useState(false)
+  const [adjSubmitting, setAdjSubmitting] = useState(false)
+  const [adjError, setAdjError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoadError(null)
@@ -177,6 +212,15 @@ export function AdminAmbassadorsPanel() {
     finally { setTogglingId(null) }
   }
 
+  const loadTransactions = useCallback(async (id: string) => {
+    setTransactions((p) => ({ ...p, [id]: 'loading' }))
+    try {
+      const r = await fetch(`/api/loyalty/admin/ambassadors/${id}/transactions`, { cache: 'no-store', credentials: 'include' })
+      const j = await r.json()
+      setTransactions((p) => ({ ...p, [id]: r.ok ? (j.transactions ?? []) : 'error' }))
+    } catch { setTransactions((p) => ({ ...p, [id]: 'error' })) }
+  }, [])
+
   async function toggleExpand(a: AdminAmb) {
     if (expandedId === a.id) { setExpandedId(null); return }
     setExpandedId(a.id)
@@ -188,6 +232,54 @@ export function AdminAmbassadorsPanel() {
         setCommissions((p) => ({ ...p, [a.id]: r.ok ? (j.commissions ?? []) : 'error' }))
       } catch { setCommissions((p) => ({ ...p, [a.id]: 'error' })) }
     }
+    if (!transactions[a.id]) loadTransactions(a.id)
+  }
+
+  function openAdjust(a: AdminAmb) {
+    if (adjustId === a.id) { setAdjustId(null); return }
+    setAdjustId(a.id)
+    setAdjSign(-1); setAdjAmount(''); setAdjReason(''); setAdjConfirm(false); setAdjError(null)
+  }
+
+  async function submitAdjust(a: AdminAmb) {
+    setAdjError(null)
+    const cents = eurosToCents(adjAmount)
+    if (cents === null) { setAdjError('Montant invalide.'); return }
+    if (!adjReason.trim()) { setAdjError('Le motif est obligatoire.'); return }
+    const deltaCents = adjSign * cents
+    if (Math.abs(deltaCents) > AMBASSADOR_MANUAL_ADJUST_MAX_CENTS) {
+      setAdjError(`Maximum ${euros(AMBASSADOR_MANUAL_ADJUST_MAX_CENTS)} par ajustement.`); return
+    }
+    setAdjSubmitting(true)
+    try {
+      const r = await fetch(`/api/loyalty/admin/ambassadors/${a.id}/adjust`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+        body: JSON.stringify({ deltaCents, reason: adjReason.trim() }),
+      })
+      const j = await r.json()
+      if (!r.ok || !j.ok) {
+        setAdjError(
+          j.error === 'exceeds_cap' ? `Maximum ${euros(AMBASSADOR_MANUAL_ADJUST_MAX_CENTS)} par ajustement.`
+          : j.error === 'ambassador_not_found' ? 'Ambassadeur introuvable.'
+          : j.error === 'reason_required' ? 'Le motif est obligatoire.'
+          : 'Ajustement impossible. Réessaie.'
+        )
+        return
+      }
+      const newBal = Number(j.newBalanceCents)
+      setList((prev) => prev?.map((x) => (x.id === a.id ? { ...x, balanceCents: newBal } : x)) ?? null)
+      if (j.reason === 'no_change') {
+        toast.success('Aucun changement (solde déjà à 0).')
+      } else {
+        const applied = Number(j.appliedDeltaCents)
+        const sign = applied > 0 ? '+' : '−'
+        toast.success(`${sign}${euros(Math.abs(applied))} appliqué · solde ${euros(newBal)}${j.capped ? ' (plafonné)' : ''}`)
+      }
+      setAdjustId(null); setAdjAmount(''); setAdjReason(''); setAdjConfirm(false)
+      // Rafraîchir l'historique si le détail est ouvert.
+      if (expandedId === a.id) loadTransactions(a.id)
+    } catch { setAdjError('Une erreur est survenue. Réessaie.') }
+    finally { setAdjSubmitting(false) }
   }
 
   const inputCls = 'w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 text-spruce font-medium focus:outline-none focus:ring-2 focus:ring-fresh/40'
@@ -338,6 +430,12 @@ export function AdminAmbassadorsPanel() {
                       <button onClick={() => toggleExpand(a)} className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-[12px] font-semibold text-spruce border border-spruce/20 hover:bg-spruce/5 transition-colors">
                         {expandedId === a.id ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />} Détail
                       </button>
+                      {!tracking && (
+                        <button onClick={() => openAdjust(a)} aria-expanded={adjustId === a.id}
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-[12px] font-semibold text-spruce border border-spruce/20 hover:bg-spruce/5 transition-colors">
+                          <SlidersHorizontal className="w-3.5 h-3.5" /> Ajuster
+                        </button>
+                      )}
                       <button onClick={() => toggle(a)} disabled={togglingId === a.id}
                         className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[12px] font-semibold transition-colors disabled:opacity-50 ${a.active ? 'text-terracotta border border-terracotta/30 hover:bg-terracotta/5' : 'text-fresh border border-fresh/30 hover:bg-fresh/5'}`}>
                         {togglingId === a.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Power className="w-3.5 h-3.5" />}
@@ -345,6 +443,75 @@ export function AdminAmbassadorsPanel() {
                       </button>
                     </div>
                   </div>
+
+                  {adjustId === a.id && (() => {
+                    const cents = eurosToCents(adjAmount)
+                    const preview = cents !== null ? computeCagnotteAdjustment(a.balanceCents, adjSign * cents) : null
+                    return (
+                      <div className="mt-3 bg-white border border-fresh/30 rounded-xl p-4 space-y-3">
+                        <p className="font-display font-bold text-spruce text-[14px]">Ajuster la cagnotte — {a.name}</p>
+                        <div className="flex flex-wrap items-end gap-3">
+                          <div className="inline-flex rounded-full border border-spruce/15 overflow-hidden">
+                            <button type="button" onClick={() => { setAdjSign(-1); setAdjConfirm(false) }}
+                              className={`inline-flex items-center gap-1 px-3 py-2 text-[12px] font-semibold transition-colors ${adjSign === -1 ? 'bg-terracotta text-white' : 'text-terracotta hover:bg-terracotta/5'}`}>
+                              <Minus className="w-3.5 h-3.5" /> Déduire
+                            </button>
+                            <button type="button" onClick={() => { setAdjSign(1); setAdjConfirm(false) }}
+                              className={`inline-flex items-center gap-1 px-3 py-2 text-[12px] font-semibold transition-colors ${adjSign === 1 ? 'bg-fresh text-white' : 'text-fresh hover:bg-fresh/5'}`}>
+                              <Plus className="w-3.5 h-3.5" /> Créditer
+                            </button>
+                          </div>
+                          <div>
+                            <label htmlFor={`adj-amt-${a.id}`} className="block text-[12px] text-ink-mute font-medium mb-1">Montant (€)</label>
+                            <input id={`adj-amt-${a.id}`} inputMode="decimal" value={adjAmount}
+                              onChange={(e) => { setAdjAmount(e.target.value); setAdjConfirm(false) }} placeholder="20,00"
+                              className="w-28 bg-white border border-spruce/15 rounded-xl px-3 py-2 text-spruce font-semibold focus:outline-none focus:ring-2 focus:ring-fresh/40" />
+                          </div>
+                          <div className="flex-1 min-w-[180px]">
+                            <label htmlFor={`adj-reason-${a.id}`} className="block text-[12px] text-ink-mute font-medium mb-1">Motif (obligatoire)</label>
+                            <input id={`adj-reason-${a.id}`} value={adjReason} maxLength={200}
+                              onChange={(e) => { setAdjReason(e.target.value); setAdjConfirm(false) }} placeholder="Dépense 20 € en caisse le 25/06"
+                              className="w-full bg-white border border-spruce/15 rounded-xl px-3 py-2 text-spruce font-medium focus:outline-none focus:ring-2 focus:ring-fresh/40" />
+                          </div>
+                        </div>
+
+                        {preview && (
+                          <p className="text-[12px] text-ink-mute">
+                            Solde <span className="font-semibold text-spruce">{euros(a.balanceCents)}</span> → <span className="font-semibold text-spruce">{euros(preview.newBalanceCents)}</span>
+                            {preview.capped && preview.reason !== 'no_change' && <span className="text-terracotta font-semibold"> · plafonné au solde</span>}
+                            {preview.reason === 'no_change' && <span className="text-terracotta font-semibold"> · aucun changement (solde déjà à 0)</span>}
+                          </p>
+                        )}
+                        {adjError && <p className="text-terracotta text-[13px] font-semibold">{adjError}</p>}
+
+                        <div className="flex items-center gap-2">
+                          {!adjConfirm ? (
+                            <>
+                              <button type="button" disabled={!cents || !adjReason.trim()}
+                                onClick={() => { setAdjError(null); setAdjConfirm(true) }}
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-semibold bg-fresh text-white hover:bg-fresh-deep disabled:opacity-50 transition-colors">
+                                Appliquer
+                              </button>
+                              <button type="button" onClick={() => setAdjustId(null)}
+                                className="px-4 py-2 rounded-full text-[12px] font-semibold text-spruce border border-spruce/20 hover:bg-spruce/5 transition-colors">Annuler</button>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-[12px] font-semibold text-spruce">
+                                Confirmer {adjSign === -1 ? 'la déduction' : 'le crédit'} de {cents ? euros(cents) : '—'} ?
+                              </span>
+                              <button type="button" disabled={adjSubmitting} onClick={() => submitAdjust(a)}
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-semibold bg-fresh text-white hover:bg-fresh-deep disabled:opacity-60 transition-colors">
+                                {adjSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null} Confirmer
+                              </button>
+                              <button type="button" disabled={adjSubmitting} onClick={() => setAdjConfirm(false)}
+                                className="px-4 py-2 rounded-full text-[12px] font-semibold text-spruce border border-spruce/20 hover:bg-spruce/5 transition-colors">Retour</button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })()}
 
                   {expandedId === a.id && (
                     <div className="mt-3 bg-sage/40 rounded-xl p-4">
@@ -382,6 +549,39 @@ export function AdminAmbassadorsPanel() {
                           </table>
                         </div>
                       )}
+
+                      {/* Mouvements de cagnotte (grand livre : commissions, dépenses, ajustements manuels) */}
+                      {(() => {
+                        const tx = transactions[a.id]
+                        return (
+                          <div className="mt-4 pt-4 border-t border-spruce/10">
+                            <p className="font-display font-bold text-spruce text-[13px] mb-2">Mouvements de cagnotte</p>
+                            {tx === 'loading' || tx === undefined ? (
+                              <div className="py-3 text-center"><Loader2 className="w-4 h-4 text-fresh animate-spin mx-auto" /></div>
+                            ) : tx === 'error' ? (
+                              <p className="text-terracotta text-[12px] font-semibold">Erreur de chargement des mouvements.</p>
+                            ) : tx.length === 0 ? (
+                              <p className="text-ink-mute text-[12px] font-medium">Aucun mouvement.</p>
+                            ) : (
+                              <ul className="space-y-1.5">
+                                {tx.map((t) => (
+                                  <li key={t.id} className="flex items-baseline justify-between gap-3 text-[12px]">
+                                    <span className="flex-1 min-w-0">
+                                      <span className="font-semibold text-ink">{TX_LABEL[t.type] ?? t.type}</span>
+                                      {t.notes && <span className="text-ink-mute"> — {t.notes}</span>}
+                                      <span className="text-ink-mute"> · {dateFr(t.createdAt)}</span>
+                                    </span>
+                                    <span className={`font-semibold whitespace-nowrap ${t.sign === 1 ? 'text-fresh' : t.sign === -1 ? 'text-terracotta' : 'text-spruce'}`}>
+                                      {t.sign === 1 ? '+' : t.sign === -1 ? '−' : '±'}{euros(t.amountCents)}
+                                    </span>
+                                    <span className="text-ink-mute whitespace-nowrap" title="Solde après">→ {euros(t.balanceAfterCents)}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        )
+                      })()}
                     </div>
                   )}
                 </li>

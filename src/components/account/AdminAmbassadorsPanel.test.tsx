@@ -25,6 +25,24 @@ function mockFetch(customersOk: boolean) {
   })
 }
 
+const SAMPLE_AMB = {
+  id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+  name: 'Julie Coaching', email: 'julie@email.com', code: 'COACHJULIE',
+  ratePct: 10, balanceCents: 3500, active: true, ordersCount: 2, revenueCents: 12000,
+}
+function mockFetchWithAmb() {
+  return vi.fn(async (url: string) => {
+    const u = String(url)
+    if (u.includes('/admin/customers')) {
+      return { ok: false, status: 502, json: async () => ({ error: 'search_failed' }) } as unknown as Response
+    }
+    if (u.includes('/transactions')) {
+      return { ok: true, json: async () => ({ transactions: [] }) } as Response
+    }
+    return { ok: true, json: async () => ({ ambassadors: [SAMPLE_AMB] }) } as Response
+  })
+}
+
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 
 describe('AdminAmbassadorsPanel — repli email manuel', () => {
@@ -52,5 +70,23 @@ describe('AdminAmbassadorsPanel — repli email manuel', () => {
     await screen.findByPlaceholderText('julie@email.com')
     fireEvent.click(screen.getByRole('checkbox'))
     expect(screen.getByPlaceholderText('BODYSTART15')).toBeTruthy()
+  })
+})
+
+describe('AdminAmbassadorsPanel — ajustement manuel de cagnotte', () => {
+  it('bouton « Ajuster » ouvre le panneau (montant + motif + aperçu plancher 0)', async () => {
+    vi.stubGlobal('fetch', mockFetchWithAmb())
+    render(<AdminAmbassadorsPanel />)
+    // l'ambassadeur est listé
+    const btn = await screen.findByRole('button', { name: /Ajuster/i })
+    fireEvent.click(btn)
+    // champs présents
+    const amount = screen.getByPlaceholderText('20,00') as HTMLInputElement
+    const reason = screen.getByPlaceholderText(/Dépense 20/i)
+    expect(amount).toBeTruthy()
+    expect(reason).toBeTruthy()
+    // déduction 50 € sur 35 € → aperçu plancher 0 : déduction plafonnée au solde
+    fireEvent.change(amount, { target: { value: '50' } })
+    expect(screen.getByText(/plafonné au solde/i)).toBeTruthy()
   })
 })

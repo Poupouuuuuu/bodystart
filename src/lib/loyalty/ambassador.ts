@@ -100,6 +100,46 @@ export function isAmbassadorSelfMatch(
   return !!bp && !!ap && bp === ap
 }
 
+/** Cap anti-fat-finger pour un ajustement manuel admin : ±1 000 € par opération. */
+export const AMBASSADOR_MANUAL_ADJUST_MAX_CENTS = 100000
+
+export interface CagnotteAdjustment {
+  valid: boolean
+  reason: 'applied' | 'no_change' | 'zero_delta' | 'exceeds_cap'
+  requestedDeltaCents: number
+  appliedDeltaCents: number
+  newBalanceCents: number
+  /** true si la déduction a été plafonnée par le plancher 0. */
+  capped: boolean
+}
+
+/**
+ * Calcul PUR d'un ajustement manuel de cagnotte (miroir de la RPC SQL
+ * adjust_ambassador_cagnotte, pour l'aperçu UI + les tests). Plancher 0 :
+ * le nouveau solde ne descend jamais sous 0 ; la déduction réelle est donc
+ * plafonnée au solde. delta = 0 ou hors cap → invalide (pas d'écriture).
+ */
+export function computeCagnotteAdjustment(
+  balanceCents: number,
+  deltaCents: number,
+  maxCents: number = AMBASSADOR_MANUAL_ADJUST_MAX_CENTS
+): CagnotteAdjustment {
+  const base = Number.isInteger(balanceCents) && balanceCents > 0 ? balanceCents : 0
+  if (!Number.isInteger(deltaCents) || deltaCents === 0) {
+    return { valid: false, reason: 'zero_delta', requestedDeltaCents: deltaCents, appliedDeltaCents: 0, newBalanceCents: base, capped: false }
+  }
+  if (Math.abs(deltaCents) > maxCents) {
+    return { valid: false, reason: 'exceeds_cap', requestedDeltaCents: deltaCents, appliedDeltaCents: 0, newBalanceCents: base, capped: false }
+  }
+  const newBalance = Math.max(0, base + deltaCents)
+  const applied = newBalance - base
+  const capped = applied !== deltaCents
+  if (applied === 0) {
+    return { valid: true, reason: 'no_change', requestedDeltaCents: deltaCents, appliedDeltaCents: 0, newBalanceCents: base, capped }
+  }
+  return { valid: true, reason: 'applied', requestedDeltaCents: deltaCents, appliedDeltaCents: applied, newBalanceCents: newBalance, capped }
+}
+
 /** La cagnotte est-elle expirée (≥ 12 mois sans activité) ? */
 export function isAmbassadorCagnotteExpired(
   lastActivityAt: string | Date,
@@ -189,5 +229,40 @@ export async function revokeAmbassadorCommission(
     reason: (row.reason as string | undefined) ?? undefined,
     debitedCents: row.debited_cents != null ? Number(row.debited_cents) : undefined,
     ambassadorId: (row.ambassador_id as string | undefined) ?? undefined,
+  }
+}
+
+export interface AdjustAmbassadorResult {
+  ok: boolean
+  reason?: string
+  ambassadorId?: string
+  requestedDeltaCents?: number
+  appliedDeltaCents?: number
+  newBalanceCents?: number
+  capped?: boolean
+  maxCents?: number
+}
+
+/** Wrapper RPC ajustement manuel admin (gating fait côté route via requireAdmin). */
+export async function adjustAmbassadorCagnotte(
+  supabase: SupabaseClient,
+  args: { ambassadorId: string; deltaCents: number; reason: string }
+): Promise<AdjustAmbassadorResult> {
+  const { data, error } = await supabase.rpc('adjust_ambassador_cagnotte', {
+    p_ambassador_id: args.ambassadorId,
+    p_delta_cents: args.deltaCents,
+    p_reason: args.reason,
+  })
+  if (error) throw new Error(`[adjustAmbassadorCagnotte] RPC error: ${error.message}`)
+  const row = (data ?? {}) as Record<string, unknown>
+  return {
+    ok: Boolean(row.ok),
+    reason: (row.reason as string | undefined) ?? undefined,
+    ambassadorId: (row.ambassador_id as string | undefined) ?? undefined,
+    requestedDeltaCents: row.requested_delta_cents != null ? Number(row.requested_delta_cents) : undefined,
+    appliedDeltaCents: row.applied_delta_cents != null ? Number(row.applied_delta_cents) : undefined,
+    newBalanceCents: row.new_balance_cents != null ? Number(row.new_balance_cents) : undefined,
+    capped: row.capped != null ? Boolean(row.capped) : undefined,
+    maxCents: row.max_cents != null ? Number(row.max_cents) : undefined,
   }
 }
