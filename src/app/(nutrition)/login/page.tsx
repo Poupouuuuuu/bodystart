@@ -91,7 +91,7 @@ function LoginContent() {
                 type="email"
                 required
                 autoComplete="email"
-                className="w-full px-5 py-3.5 rounded-xl border text-[14px] font-medium transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
+                className="w-full px-5 py-3.5 rounded-xl border text-[16px] md:text-[14px] font-medium transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
                 placeholder="ton@email.fr"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -114,7 +114,7 @@ function LoginContent() {
                   type={showPwd ? 'text' : 'password'}
                   required
                   autoComplete="current-password"
-                  className="w-full px-5 py-3.5 rounded-xl border text-[14px] font-medium pr-12 transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
+                  className="w-full px-5 py-3.5 rounded-xl border text-[16px] md:text-[14px] font-medium pr-12 transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
                   placeholder="••••••••"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}

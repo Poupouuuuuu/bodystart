@@ -86,7 +86,7 @@ function ForgotPasswordContent() {
                   type="email"
                   required
                   autoComplete="email"
-                  className="w-full px-5 py-3.5 rounded-xl border text-[14px] font-medium transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
+                  className="w-full px-5 py-3.5 rounded-xl border text-[16px] md:text-[14px] font-medium transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
                   placeholder="ton@email.fr"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

@@ -290,7 +290,7 @@ function AddressesPanel({ customer }: { customer: NonNullable<ReturnType<typeof 
   const abortRef = useRef<AbortController | null>(null)
 
   const addresses = customer.addresses?.nodes ?? []
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-spruce/20 text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-spruce/20 text-[16px] md:text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
   const labelClass = "block text-[12px] font-semibold text-ink mb-2"
   const profileFullName = `${customer.firstName ?? ''} ${customer.lastName ?? ''}`.trim()
 
@@ -508,7 +508,7 @@ function ProfilePanel({ customer }: { customer: NonNullable<ReturnType<typeof us
   const [form, setForm] = useState({ firstName: customer.firstName ?? '', lastName: customer.lastName ?? '', email: customer.email ?? '', phone: customer.phone ?? '' })
   const [phoneValid, setPhoneValid] = useState(true)
   const [saving, setSaving] = useState(false)
-  const inputClass = "w-full px-5 py-3.5 rounded-xl border border-spruce/20 text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
+  const inputClass = "w-full px-5 py-3.5 rounded-xl border border-spruce/20 text-[16px] md:text-sm font-medium text-ink bg-white focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60 transition-all"
   const labelClass = "block text-[12px] font-semibold text-ink mb-2"
 
   async function handleSubmit(e: React.FormEvent) {

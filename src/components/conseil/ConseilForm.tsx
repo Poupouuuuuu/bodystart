@@ -238,7 +238,7 @@ export default function ConseilForm() {
                       value={form.name}
                       onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                       placeholder="Jean Dupont"
-                      className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3.5 text-[14px] text-ink placeholder:text-ink-mute/60 focus:border-fresh focus:ring-1 focus:ring-fresh/30 focus:outline-none transition-all"
+                      className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3.5 text-[16px] md:text-[14px] text-ink placeholder:text-ink-mute/60 focus:border-fresh focus:ring-1 focus:ring-fresh/30 focus:outline-none transition-all"
                     />
                   </div>
                   <div>
@@ -248,7 +248,7 @@ export default function ConseilForm() {
                       value={form.phone}
                       onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                       placeholder="06 00 00 00 00"
-                      className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3.5 text-[14px] text-ink placeholder:text-ink-mute/60 focus:border-fresh focus:ring-1 focus:ring-fresh/30 focus:outline-none transition-all"
+                      className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3.5 text-[16px] md:text-[14px] text-ink placeholder:text-ink-mute/60 focus:border-fresh focus:ring-1 focus:ring-fresh/30 focus:outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -263,7 +263,7 @@ export default function ConseilForm() {
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                     placeholder="jean@exemple.com"
-                    className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3.5 text-[14px] text-ink placeholder:text-ink-mute/60 focus:border-fresh focus:ring-1 focus:ring-fresh/30 focus:outline-none transition-all"
+                    className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3.5 text-[16px] md:text-[14px] text-ink placeholder:text-ink-mute/60 focus:border-fresh focus:ring-1 focus:ring-fresh/30 focus:outline-none transition-all"
                   />
                 </div>
 
@@ -276,7 +276,7 @@ export default function ConseilForm() {
                     value={form.message}
                     onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
                     placeholder="Décris ta situation, tes habitudes sportives, tes contraintes…"
-                    className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3.5 text-[14px] text-ink placeholder:text-ink-mute/60 focus:border-fresh focus:ring-1 focus:ring-fresh/30 focus:outline-none transition-all resize-none"
+                    className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3.5 text-[16px] md:text-[14px] text-ink placeholder:text-ink-mute/60 focus:border-fresh focus:ring-1 focus:ring-fresh/30 focus:outline-none transition-all resize-none"
                   />
                 </div>
               </div>

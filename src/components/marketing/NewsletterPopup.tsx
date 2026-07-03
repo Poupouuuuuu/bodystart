@@ -133,11 +133,14 @@ export default function NewsletterPopup() {
       role="dialog"
       aria-modal="true"
       aria-label="Offre -10 % sur ta première commande"
-      className="fixed inset-0 z-[70] flex items-center justify-center sm:p-4 bg-ink/50 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center sm:p-4 bg-ink/50 backdrop-blur-sm animate-fade-in"
       onClick={close}
     >
+      {/* Mobile : BOTTOM-SHEET (≈ contenu, max 85dvh) au lieu du plein écran —
+          l'interstitiel full-screen est pénalisé par Google et interrompt la
+          navigation. Desktop : modale centrée inchangée. */}
       <div
-        className="relative bg-canvas w-full h-full sm:h-auto sm:max-w-md sm:rounded-2xl overflow-y-auto flex flex-col justify-center shadow-2xl"
+        className="relative bg-canvas w-full max-h-[85dvh] rounded-t-2xl sm:max-w-md sm:rounded-2xl overflow-y-auto flex flex-col shadow-2xl animate-slide-up sm:animate-none"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -198,7 +201,7 @@ export default function NewsletterPopup() {
                   }}
                   placeholder="ton@email.fr"
                   aria-label="Ton adresse email"
-                  className="w-full px-5 py-3.5 rounded-full border border-spruce/20 bg-white text-[15px] font-medium text-ink placeholder:text-ink-mute/60 focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 transition-all"
+                  className="w-full px-5 py-3.5 rounded-full border border-spruce/20 bg-white text-[16px] md:text-[15px] font-medium text-ink placeholder:text-ink-mute/60 focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 transition-all"
                 />
                 {status === 'error' && (
                   <p className="text-[13px] font-medium text-terracotta px-1">{errorMsg}</p>

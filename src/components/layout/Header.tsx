@@ -6,7 +6,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Suspense, useState, useEffect } from 'react'
+import { Suspense, useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { ShoppingBag, Menu, X, ChevronDown, Search, User, Loader2 } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
@@ -58,12 +58,19 @@ function HeaderInner(_props: HeaderProps) {
   const { isLoggedIn, customer } = useCustomer()
   const router = useRouter()
   const pathname = usePathname()
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Focus réel du champ à l'ouverture (autoFocus ne s'applique qu'au montage,
+  // or l'input est toujours monté — replié en max-h-0).
+  useEffect(() => {
+    if (isSearchOpen) searchInputRef.current?.focus()
+  }, [isSearchOpen])
 
   // Live search avec debounce 200ms
   useEffect(() => {
@@ -154,11 +161,19 @@ function HeaderInner(_props: HeaderProps) {
 
             {/* Actions droite */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              {/* Recherche */}
+              {/* Recherche — visible sur TOUTES les tailles (était hidden md:flex :
+                  sous 768px il n'existait AUCUN moyen d'atteindre la recherche). */}
               <button
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="hidden md:flex p-2 rounded-full transition-colors text-gray-700 hover:text-brand-500 hover:bg-brand-50"
+                onClick={() => {
+                  // Exclusion mutuelle avec le menu burger : le dropdown recherche
+                  // (z-30) se rendrait DERRIÈRE le panneau mobile (z-50) → clavier
+                  // ouvert sur un champ invisible.
+                  setMobileOpen(false)
+                  setIsSearchOpen(!isSearchOpen)
+                }}
+                className="flex p-2 rounded-full transition-colors text-gray-700 hover:text-brand-500 hover:bg-brand-50"
                 aria-label="Rechercher"
+                aria-expanded={isSearchOpen}
               >
                 {isSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
               </button>
@@ -203,8 +218,12 @@ function HeaderInner(_props: HeaderProps) {
               {/* Burger mobile */}
               <button
                 className="lg:hidden p-2 rounded-full transition-colors ml-1 text-gray-700 hover:bg-cream-200"
-                onClick={() => setMobileOpen(!mobileOpen)}
+                onClick={() => {
+                  setIsSearchOpen(false) // exclusion mutuelle avec la recherche
+                  setMobileOpen(!mobileOpen)
+                }}
                 aria-label="Menu"
+                aria-expanded={mobileOpen}
               >
                 {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -235,12 +254,13 @@ function HeaderInner(_props: HeaderProps) {
               <div className="relative">
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
+                  ref={searchInputRef}
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Rechercher un produit, une marque, un objectif..."
+                  aria-label="Rechercher un produit"
                   className="w-full text-base font-medium py-4 pl-14 pr-14 rounded-full outline-none border-2 transition-colors bg-cream-100 border-cream-200 text-gray-900 focus:border-brand-500 placeholder-gray-400"
-                  autoFocus={isSearchOpen}
                 />
                 {isSearching ? (
                   <Loader2 className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-brand-500" />

@@ -20,6 +20,13 @@ interface BuyBoxV2Props {
   collectionHandle: string | null
   activeStore?: BodyStartStore
   storeInventory: Record<string, number>
+  /**
+   * Stock boutique PAR VARIANTE (variantId → dispo à l'emplacement actif).
+   * Prioritaire sur storeInventory (qui est un TOTAL toutes variantes) : le
+   * message « En stock à Coignières » suit la saveur/le format sélectionné —
+   * fini le client qui se déplace pour une variante à zéro.
+   */
+  storeVariantInventory?: Record<string, number>
   benefits?: string[]
   /** Format / grammage du produit (ex: "1,5 kg"). Source : metafield Shopify. */
   format?: string | null
@@ -57,6 +64,7 @@ export default function BuyBoxV2({
   collectionHandle,
   activeStore,
   storeInventory,
+  storeVariantInventory,
   benefits = [],
   format = null,
   vendor = null,
@@ -152,9 +160,9 @@ export default function BuyBoxV2({
     if (!selectedVariant.availableForSale) return
     setAdding(true)
     try {
-      for (let i = 0; i < quantity; i++) {
-        await addItem(selectedVariant.id)
-      }
+      // UN SEUL appel avec la quantité (addItem la supporte nativement) —
+      // la boucle historique faisait N aller-retours Shopify + N toasts.
+      await addItem(selectedVariant.id, quantity)
       setAdded(true)
       setTimeout(() => setAdded(false), 2000)
     } finally {
@@ -169,7 +177,11 @@ export default function BuyBoxV2({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const storeStock = activeStore ? storeInventory[activeStore.id] : undefined
+  // Stock boutique : PAR VARIANTE si dispo (suit la saveur/le format sélectionné),
+  // sinon fallback sur le total agrégé (ancien comportement — ex. données absentes).
+  const storeStock = activeStore
+    ? storeVariantInventory?.[selectedVariant.id] ?? storeInventory[activeStore.id]
+    : undefined
   const showExactStock = storeStock !== undefined && storeStock > 0 && storeStock <= LOW_STOCK_THRESHOLD
 
   // Disponibilité en ligne de la variante sélectionnée (achat e-commerce).

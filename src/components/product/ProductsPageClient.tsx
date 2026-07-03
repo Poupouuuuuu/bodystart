@@ -11,7 +11,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { SlidersHorizontal, X, ChevronDown, Search, Plus, Package } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
@@ -372,7 +372,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
               placeholder="Rechercher un produit…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white rounded-full text-[13px] text-ink border border-spruce/15 pl-10 pr-10 py-2.5 focus:outline-none focus:border-spruce/40 placeholder:text-ink-mute"
+              className="w-full bg-white rounded-full text-[16px] text-ink border border-spruce/15 pl-10 pr-10 py-2.5 focus:outline-none focus:border-spruce/40 placeholder:text-ink-mute"
             />
             {searchQuery && (
               <button
@@ -716,6 +716,10 @@ function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
   const soldOut = product.availableForSale === false
   const { addItem } = useCart()
   const [adding, setAdding] = useState(false)
+  const router = useRouter()
+  // Multi-variantes (saveurs/formats) : le quick-add « + » ajoutait silencieusement
+  // la 1re variante → mauvaise saveur commandée. On navigue vers la fiche à la place.
+  const hasMultipleVariants = product.variants.nodes.length > 1
 
   // Vrai libelle categorie (collection title preferee, sinon productType, sinon null)
   const categoryLabel = product.collections?.nodes?.[0]?.title ?? product.productType ?? null
@@ -746,10 +750,20 @@ function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
       )
     : null
 
+  // Le bouton est actif si : multi-variantes AVEC au moins une dispo (→ fiche),
+  // ou mono-variante disponible (→ ajout direct). Produit épuisé → grisé,
+  // cohérent avec les cartes mono-variante (la carte reste cliquable ailleurs).
+  const canQuickAct = hasMultipleVariants ? !soldOut : !!variant?.availableForSale
+
   async function handleAdd(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
-    if (!variant?.availableForSale) return
+    if (!canQuickAct) return
+    if (hasMultipleVariants) {
+      // Le client doit choisir sa saveur/son format sur la fiche.
+      router.push(`/products/${product.handle}`)
+      return
+    }
     setAdding(true)
     try {
       await addItem(variant.id)
@@ -856,11 +870,17 @@ function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
 
           <button
             onClick={handleAdd}
-            disabled={!variant?.availableForSale || adding}
-            aria-label={`Ajouter ${product.title} au panier`}
+            disabled={!canQuickAct || adding}
+            aria-label={
+              hasMultipleVariants
+                ? `Choisir la saveur de ${product.title}`
+                : `Ajouter ${product.title} au panier`
+            }
             className={cn(
-              'flex items-center justify-center w-9 h-9 rounded-full transition-colors',
-              variant?.availableForSale && !adding
+              // w-11 = 44px : minimum tactile (était 36px). flex-shrink-0 : ne pas
+              // se faire comprimer par la ligne prix sur les colonnes étroites.
+              'flex items-center justify-center w-11 h-11 flex-shrink-0 rounded-full transition-colors',
+              canQuickAct && !adding
                 ? 'bg-fresh text-white hover:bg-fresh-deep'
                 : 'bg-spruce/10 text-spruce/30 cursor-not-allowed'
             )}

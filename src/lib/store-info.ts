@@ -4,19 +4,12 @@
  */
 
 /**
- * Lien « Laisser un avis Google ».
- *
- * ⚠️ INTÉRIMAIRE : ouvre la fiche Google Maps de la boutique (le bouton « Avis »
- * y est accessible). L'ancien lien https://g.page/r/bodystart-coignieres/review
- * était un slug inventé qui redirigeait vers google.com (mort, vérifié).
- *
- * À REMPLACER par le lien direct du formulaire d'avis, récupérable par Adam dans
- * Google Business Profile → « Demander des avis », de la forme :
- *   https://g.page/r/<TOKEN>/review
- * ou https://search.google.com/local/writereview?placeid=<PLACE_ID>
+ * Lien « Laisser un avis Google » — lien OFFICIEL de la fiche Google Business
+ * Profile (fourni par Adam le 2026-07-03, vérifié : aboutit sur le formulaire
+ * writereview, placeid ChIJR-Jgxiyd5kcRRb2BKNRdFNM). À réutiliser partout où on
+ * sollicite un avis (fiches produit, /stores, emails post-achat).
  */
-export const GOOGLE_REVIEW_URL =
-  'https://www.google.com/maps/search/?api=1&query=BodyStart+Nutrition+8+Rue+du+Pont+des+Landes+78310+Coigni%C3%A8res'
+export const GOOGLE_REVIEW_URL = 'https://g.page/r/CUW9gSjUXRTTEBM/review'
 
 /** Itinéraire vers la boutique (coordonnées exactes, déjà utilisées sur /stores). */
 export const GOOGLE_DIRECTIONS_URL =

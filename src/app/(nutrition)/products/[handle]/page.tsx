@@ -104,14 +104,18 @@ export default async function ProductPage({ params }: Props) {
 
   if (!product) notFound()
 
-  // Stock boutique physique
+  // Stock boutique physique — agrégé (compat) + PAR VARIANTE (l'API renvoie déjà
+  // le détail ; l'agrégat seul affichait « En stock » pour une saveur à zéro).
   const activeStore = BODY_START_STORES.find((s) => s.isActive)
   const storeInventory: Record<string, number> = {}
+  const storeVariantInventory: Record<string, number> = {}
   if (activeStore?.shopifyLocationId) {
     try {
       const levels = await getProductInventoryByLocation(product.id, activeStore.shopifyLocationId)
-      const totalAvailable = levels.reduce((sum, v) => sum + v.available, 0)
-      storeInventory[activeStore.id] = totalAvailable
+      storeInventory[activeStore.id] = levels.reduce((sum, v) => sum + v.available, 0)
+      for (const level of levels) {
+        storeVariantInventory[level.variantId] = level.available
+      }
     } catch (err) {
       console.error('[ClickCollect] inventory fetch failed for', product.handle, err)
     }
@@ -276,6 +280,7 @@ export default async function ProductPage({ params }: Props) {
             collectionHandle={collectionHandle}
             activeStore={activeStore}
             storeInventory={storeInventory}
+            storeVariantInventory={storeVariantInventory}
             benefits={benefits}
             format={format}
             vendor={product.vendor}
