@@ -1,4 +1,5 @@
 import { MessageCircle } from 'lucide-react'
+import { GOOGLE_REVIEW_URL } from '@/lib/store-info'
 
 /**
  * Section avis V2 — vrais avis seulement (decision Adam 2026-05-23).
@@ -26,7 +27,7 @@ export default function ReviewsV2() {
             suivants à choisir.
           </p>
           <a
-            href="https://g.page/r/bodystart-coignieres/review"
+            href={GOOGLE_REVIEW_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-fresh-deep transition-colors"

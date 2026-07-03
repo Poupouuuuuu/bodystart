@@ -150,6 +150,12 @@ export function CaisseClient({ staff }: { staff: StaffProp }) {
         }),
       })
       const json = await res.json()
+      if (res.status === 401) {
+        // Session staff expirée entre le lookup et la création → même traitement
+        // que handleLookup (la route upsert est gatée staff depuis 2026-07-03).
+        router.push('/staff/login?reason=not_staff')
+        return
+      }
       if (!res.ok) {
         setErrorMsg(json.error ?? json.detail ?? 'Erreur création')
         return

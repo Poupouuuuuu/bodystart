@@ -31,13 +31,9 @@ export default function ConfidentialitePage() {
               </h1>
             </div>
           </div>
+          {/* Date figée : refléter le dernier vrai changement, pas le jour de la visite. */}
           <p className="text-xs font-bold uppercase tracking-widest text-[#89a890] border-t border-[#89a890]/20 pt-4">
-            Dernière mise à jour :{' '}
-            {new Date().toLocaleDateString('fr-FR', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
+            Dernière mise à jour : 3 juillet 2026
           </p>
         </div>
 

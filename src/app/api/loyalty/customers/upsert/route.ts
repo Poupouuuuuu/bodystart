@@ -13,10 +13,18 @@
  *     loyalty_customers_with_failed_referral_code).
  *
  * Validation Zod + libphonenumber-js (E.164).
+ *
+ * SECURITY (review 2026-07-03) : route GATED — session staff Supabase (la caisse)
+ * OU header X-Staff-Token = LOYALTY_STAFF_SECRET (M2M, scripts). Elle était
+ * publique : lecture (nom, email, code parrain, cagnotte) ET écriture d'une
+ * fiche client par simple numéro de téléphone = énumération PII + mutation.
+ * Son seul appelant légitime est la caisse (/staff/caisse), déjà authentifiée.
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import crypto from 'node:crypto'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
+import { getStaffFromRequest } from '@/lib/loyalty/staff-session'
 import { normalizeToE164 } from '@/lib/loyalty/phone'
 import { isValidReferralCode } from '@/lib/loyalty/calculate'
 import { upsertLoyaltyCustomer } from '@/lib/loyalty/upsert-customer'
@@ -56,7 +64,35 @@ const BodySchema = z.object({
   source: z.enum(['in_store', 'online', 'import_legacy']).optional(),
 })
 
+function timingSafeEqualStr(a: string, b: string): boolean {
+  const ba = Buffer.from(a, 'utf8')
+  const bb = Buffer.from(b, 'utf8')
+  if (ba.length !== bb.length) return false
+  try {
+    return crypto.timingSafeEqual(ba, bb)
+  } catch {
+    return false
+  }
+}
+
+/** Session staff (la caisse) OU secret M2M — même pattern que /api/loyalty/finalize. */
+async function isAuthorized(req: NextRequest): Promise<boolean> {
+  const staff = await getStaffFromRequest()
+  if (staff) return true
+  const expectedSecret = process.env.LOYALTY_STAFF_SECRET
+  if (expectedSecret) {
+    const providedSecret = req.headers.get('x-staff-token') ?? ''
+    if (providedSecret && timingSafeEqualStr(providedSecret, expectedSecret)) return true
+  }
+  return false
+}
+
 export async function POST(req: NextRequest) {
+  // ─── Auth (session staff OU secret M2M) — AVANT tout traitement ───
+  if (!(await isAuthorized(req))) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
+
   // ─── Rate limiting (skip si Upstash non configure) ───
   if (rateLimiter) {
     const ip =
@@ -134,10 +170,8 @@ export async function POST(req: NextRequest) {
       },
     })
   } catch (err) {
+    // Détail loggué serveur uniquement — ne pas renvoyer les messages DB au client.
     console.error('[upsert customer] error:', err)
-    return NextResponse.json(
-      { error: 'upsert_failed', detail: err instanceof Error ? err.message : 'unknown' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'upsert_failed' }, { status: 500 })
   }
 }

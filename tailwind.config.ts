@@ -59,6 +59,12 @@ const config: Config = {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         display: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
       },
+      spacing: {
+        // L'échelle Tailwind saute de 16 (4rem) à 20 (5rem) : 9 sections V2
+        // utilisent `md:py-18` qui ne générait RIEN sans ce token — le rythme
+        // vertical desktop voulu par la DA (72px) s'applique enfin.
+        '18': '4.5rem',
+      },
       borderRadius: {
         '2xl': '16px',
       },

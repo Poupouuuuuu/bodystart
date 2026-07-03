@@ -52,7 +52,10 @@ const sections = [
   },
   {
     title: '11. Médiateur de la consommation',
-    content: `Conformément à l'article L612-1 du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable du litige. Médiateur compétent : [À COMPLÉTER : nom du médiateur + adresse postale + site web].`,
+    // ⚠️ Adam doit adhérer à un médiateur agréé (CM2C, AME Conso, MEDICYS…) puis
+    // remplacer la phrase « procédure d'adhésion en cours » par ses coordonnées
+    // complètes (nom + adresse postale + site web). Obligation L612-1.
+    content: `Conformément à l'article L612-1 du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable du litige. La procédure d'adhésion de BODYSTART NUTRITION auprès d'un médiateur de la consommation agréé est en cours ; ses coordonnées seront publiées sur cette page dès l'adhésion effective. Dans l'intervalle, le consommateur peut recourir à la plateforme européenne de règlement en ligne des litiges : ec.europa.eu/consumers/odr.`,
   },
 ]
 
@@ -78,13 +81,11 @@ export default function CGVPage() {
               </h1>
             </div>
           </div>
+          {/* Date FIGÉE volontairement : la date de MAJ d'un document contractuel doit
+              refléter le dernier vrai changement, pas le jour de la visite. À mettre à
+              jour manuellement à chaque édition des CGV. */}
           <p className="text-xs font-bold uppercase tracking-widest text-[#89a890] border-t border-[#89a890]/20 pt-4">
-            Dernière mise à jour :{' '}
-            {new Date().toLocaleDateString('fr-FR', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
+            Dernière mise à jour : 3 juillet 2026
           </p>
         </div>
 
