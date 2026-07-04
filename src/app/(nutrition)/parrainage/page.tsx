@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { Gift, Users, ShoppingBag, ArrowRight } from 'lucide-react'
+import { Gift, Users, ShoppingBag, ArrowRight, ChevronDown } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildPageMetadata({
@@ -59,23 +59,28 @@ const FAQ = [
   },
 ]
 
+const BTN_PRIMARY =
+  'inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-fresh-deep'
+const BTN_OUTLINE =
+  'inline-flex items-center justify-center gap-2 border border-spruce text-spruce font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-spruce/5'
+
 export default function ParrainagePage() {
   // Detection cote serveur : presence cookie shopify (pas besoin de fetch)
   const isLoggedIn = !!cookies().get('body-start-customer-token')?.value
 
   return (
-    <div className="bg-[#f4f6f1] min-h-screen">
+    <div className="bg-canvas min-h-screen">
       {/* Hero */}
-      <section className="bg-[#1a2e23] text-white">
-        <div className="container py-16 md:py-24">
+      <section className="pt-12 md:pt-16 pb-12 md:pb-16">
+        <div className="container">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 border border-white/10 rounded-full text-[11px] font-bold uppercase tracking-widest mb-6">
-              <Gift className="w-3 h-3" /> Programme parrainage
-            </div>
-            <h1 className="font-display text-[40px] md:text-[64px] font-black uppercase tracking-tighter leading-[0.95] mb-6">
+            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+              <Gift className="w-3.5 h-3.5" /> Programme parrainage
+            </p>
+            <h1 className="font-display text-[32px] md:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-5">
               Tu recommandes, ton pote économise, tu gagnes.
             </h1>
-            <p className="text-white/80 text-lg md:text-xl font-medium leading-relaxed max-w-2xl mb-8">
+            <p className="text-ink-mute text-[16px] md:text-[18px] leading-[1.6] max-w-2xl mb-8">
               Le programme parrainage BodyStart, c&apos;est simple. Tu partages ton
               code, ton pote a 10 € sur sa première commande dès 60 € d&apos;achat,
               et tu touches 5 % de tous ses achats, à vie. Aucune carte physique,
@@ -83,25 +88,16 @@ export default function ParrainagePage() {
             </p>
             <div className="flex flex-wrap gap-3">
               {isLoggedIn ? (
-                <Link
-                  href="/account?tab=referral"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#1a2e23] text-[12px] font-bold uppercase tracking-widest rounded-full hover:bg-white/90 transition-all shadow-lg"
-                >
+                <Link href="/account?tab=referral" className={BTN_PRIMARY}>
                   Voir mon code <ArrowRight className="w-4 h-4" />
                 </Link>
               ) : (
                 <>
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#1a2e23] text-[12px] font-bold uppercase tracking-widest rounded-full hover:bg-white/90 transition-all shadow-lg"
-                  >
+                  <Link href="/login" className={BTN_PRIMARY}>
                     Connecte-toi pour avoir ton code
                     <ArrowRight className="w-4 h-4" />
                   </Link>
-                  <Link
-                    href="/register"
-                    className="inline-flex items-center gap-2 px-6 py-4 border border-white/20 text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-white/10 transition-all"
-                  >
+                  <Link href="/register" className={BTN_OUTLINE}>
                     Pas encore de compte ? Inscris-toi en 30 secondes
                   </Link>
                 </>
@@ -112,50 +108,46 @@ export default function ParrainagePage() {
       </section>
 
       {/* Comment ca marche */}
-      <section className="container py-16 md:py-24">
-        <h2 className="font-display text-[32px] md:text-[48px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none mb-12 max-w-2xl">
+      <section className="container pb-16 md:pb-20">
+        <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-8 md:mb-10 max-w-2xl">
           Comment ça marche
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {STEPS.map(({ step, title, desc, icon: Icon }) => (
-            <div key={step} className="bg-white rounded-[24px] border border-[#1a2e23]/5 p-8 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-[#1a2e23] text-white rounded-full flex items-center justify-center font-display font-bold text-sm flex-shrink-0">
+            <div key={step} className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-11 h-11 bg-sage text-spruce rounded-full flex items-center justify-center font-display font-bold text-sm flex-shrink-0">
                   {step}
                 </div>
-                <Icon className="w-6 h-6 text-[#89a890]" />
+                <Icon className="w-5 h-5 text-spruce" />
               </div>
-              <h3 className="font-display font-black uppercase tracking-tight text-[#1a2e23] text-lg mb-3">
+              <h3 className="font-display text-[18px] font-extrabold text-spruce tracking-tight mb-2">
                 {title}
               </h3>
-              <p className="text-[#4a5f4c] text-sm font-medium leading-relaxed">{desc}</p>
+              <p className="text-ink-mute text-[14px] leading-[1.65]">{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="container pb-16 md:pb-24">
-        <h2 className="font-display text-[32px] md:text-[48px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none mb-12 max-w-2xl">
+      <section className="container pb-16 md:pb-20">
+        <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-8 md:mb-10 max-w-2xl">
           Les questions qu&apos;on nous pose
         </h2>
 
-        <div className="space-y-4 max-w-3xl">
+        <div className="space-y-3 max-w-3xl">
           {FAQ.map(({ q, a }) => (
             <details
               key={q}
-              className="group bg-white rounded-[20px] border border-[#1a2e23]/5 shadow-sm"
+              className="group bg-white rounded-2xl border border-spruce/10 px-5 md:px-6"
             >
-              <summary className="cursor-pointer list-none px-6 md:px-8 py-5 flex items-center justify-between gap-4">
-                <span className="font-display font-bold text-[#1a2e23] text-base">{q}</span>
-                <span className="text-[#89a890] text-2xl font-bold transition-transform group-open:rotate-45">
-                  +
-                </span>
+              <summary className="flex items-center justify-between gap-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden py-4 md:py-5 text-[15px] font-semibold text-ink">
+                {q}
+                <ChevronDown className="w-4 h-4 text-spruce flex-shrink-0 transition-transform group-open:rotate-180" />
               </summary>
-              <div className="px-6 md:px-8 pb-5 text-[#4a5f4c] text-sm font-medium leading-relaxed">
-                {a}
-              </div>
+              <p className="text-[14px] text-ink-mute leading-[1.65] pb-5">{a}</p>
             </details>
           ))}
         </div>
@@ -163,25 +155,19 @@ export default function ParrainagePage() {
 
       {/* CTA bas */}
       <section className="container pb-16 md:pb-24">
-        <div className="bg-[#1a2e23] text-white rounded-[28px] p-10 md:p-16 text-center">
-          <p className="text-white/60 text-[11px] font-bold uppercase tracking-widest mb-4">
+        <div className="bg-white rounded-2xl border border-spruce/10 p-8 md:p-14 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
             Aucune carte physique. Aucune appli à installer.
           </p>
-          <h2 className="font-display text-[28px] md:text-[40px] font-black uppercase tracking-tighter leading-tight mb-8">
+          <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-7">
             Ton compte BodyStart fait tout.
           </h2>
           {isLoggedIn ? (
-            <Link
-              href="/account?tab=referral"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#1a2e23] text-[12px] font-bold uppercase tracking-widest rounded-full hover:bg-white/90 transition-all shadow-lg"
-            >
+            <Link href="/account?tab=referral" className={BTN_PRIMARY}>
               Voir mon code <ArrowRight className="w-4 h-4" />
             </Link>
           ) : (
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#1a2e23] text-[12px] font-bold uppercase tracking-widest rounded-full hover:bg-white/90 transition-all shadow-lg"
-            >
+            <Link href="/login" className={BTN_PRIMARY}>
               Connecte-toi pour démarrer <ArrowRight className="w-4 h-4" />
             </Link>
           )}

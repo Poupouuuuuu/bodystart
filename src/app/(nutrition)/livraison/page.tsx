@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Truck, Store, Package, RotateCcw } from 'lucide-react'
+import { Truck, Store, Package } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import {
   CLICK_AND_COLLECT,
@@ -44,69 +44,81 @@ const shippingMethods = [
   },
 ]
 
+const HERO_HIGHLIGHTS = [
+  { Icon: Truck, label: 'Colissimo', sub: `${COLISSIMO.transitDays![0]}-${COLISSIMO.transitDays![1]} jours` },
+  { Icon: Package, label: 'Mondial Relay', sub: `${MONDIAL_RELAY.transitDays![0]}-${MONDIAL_RELAY.transitDays![1]} jours` },
+  { Icon: Store, label: 'Click & Collect', sub: 'Sous 2h' },
+]
+
 export default function LivraisonPage() {
   return (
-    <div className="bg-[#f4f6f1] min-h-screen">
+    <div className="bg-canvas min-h-screen">
       {/* Hero */}
-      <div className="bg-[#1a2e23] text-white pt-24 pb-20 relative overflow-hidden">
-        {/* Decorative Grid */}
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#f4f6f1 1px, transparent 1px), linear-gradient(90deg, #f4f6f1 1px, transparent 1px)', backgroundSize: '64px 64px' }}></div>
-        
-        <div className="container text-center max-w-4xl relative z-10">
-          <div className="flex justify-center mb-6">
-            <span className="bg-white/10 border border-white/20 text-white rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm">
+      <section className="pt-12 md:pt-16 pb-12 md:pb-16">
+        <div className="container">
+          <div className="max-w-2xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
               Expédition & Retours
-            </span>
+            </p>
+            <h1 className="font-display text-[32px] md:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-5">
+              Livraison & Retours
+            </h1>
+            <p className="text-ink-mute text-[16px] md:text-[18px] leading-[1.6]">
+              Livraison rapide partout en France. Retours faciles sous 14 jours.
+            </p>
           </div>
-          <h1 className="font-display text-[45px] md:text-[70px] font-black uppercase tracking-tighter mb-6 leading-none">
-            Livraison & Retours
-          </h1>
-          <p className="text-[#89a890] font-medium text-lg md:text-xl max-w-2xl mx-auto">
-            Livraison rapide partout en France. Retours faciles sous 14 jours.
-          </p>
-          
-          <div className="flex flex-wrap justify-center gap-10 mt-14 bg-white/5 border border-white/10 rounded-[32px] p-8 max-w-3xl mx-auto backdrop-blur-md">
-            {[
-              { icon: '🚚', label: 'Colissimo', sub: `${COLISSIMO.transitDays![0]}-${COLISSIMO.transitDays![1]} jours` },
-              { icon: '📦', label: 'Mondial Relay', sub: `${MONDIAL_RELAY.transitDays![0]}-${MONDIAL_RELAY.transitDays![1]} jours` },
-              { icon: '🏪', label: 'Click & Collect', sub: 'Sous 2h' },
-            ].map(({ icon, label, sub }) => (
-              <div key={label} className="text-center px-4">
-                <div className="text-4xl mb-4 opacity-90">{icon}</div>
-                <p className="font-display font-black uppercase tracking-tight text-sm mb-1">{label}</p>
-                <p className="text-[10px] text-[#89a890] font-bold uppercase tracking-widest">{sub}</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10 max-w-3xl">
+            {HERO_HIGHLIGHTS.map(({ Icon, label, sub }) => (
+              <div
+                key={label}
+                className="bg-white rounded-2xl border border-spruce/10 p-5 flex items-center gap-4"
+              >
+                <div className="w-11 h-11 bg-sage text-spruce rounded-full flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="font-display font-extrabold text-spruce text-[15px] tracking-tight leading-tight">
+                    {label}
+                  </p>
+                  <p className="text-[13px] text-ink-mute mt-0.5">{sub}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="container py-20 max-w-4xl">
+      <div className="container pb-16 md:pb-24 max-w-4xl">
         <h2 className="sr-only">Livraison & Retours détail</h2>
 
         {/* Modes de livraison */}
-        <section className="mb-24">
-          <div className="flex items-center gap-4 mb-10">
-            <h2 className="font-display text-[30px] md:text-[40px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none">Modes de livraison</h2>
-            <div className="h-[2px] flex-1 bg-[#1a2e23]/10 mt-2"></div>
-          </div>
-          <div className="space-y-6">
+        <section className="mb-16 md:mb-20">
+          <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-8">
+            Modes de livraison
+          </h2>
+          <div className="space-y-4">
             {shippingMethods.map(({ Icon, name, delay, price, details }) => (
-              <div key={name} className="bg-white rounded-[28px] border border-[#1a2e23]/5 shadow-sm p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start hover:shadow-md transition-shadow">
-                <div className="w-16 h-16 bg-[#f4f6f1] rounded-[20px] flex items-center justify-center flex-shrink-0 text-[#1a2e23]">
-                  <Icon className="w-8 h-8" />
+              <div
+                key={name}
+                className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-8 flex flex-col md:flex-row gap-5 md:gap-7 items-start"
+              >
+                <div className="w-12 h-12 bg-sage text-spruce rounded-full flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-6 h-6" />
                 </div>
                 <div className="flex-1 w-full">
-                  <div className="flex items-center justify-between gap-4 flex-wrap mb-3">
-                    <h3 className="font-display font-black uppercase tracking-tight text-xl text-[#1a2e23]">{name}</h3>
-                    <span className="text-[10px] bg-[#1a2e23]/5 border border-[#1a2e23]/10 px-3 py-1.5 uppercase tracking-widest rounded-full text-[#1a2e23] font-bold shrink-0">
+                  <div className="flex items-center justify-between gap-4 flex-wrap mb-2">
+                    <h3 className="font-display font-extrabold text-[18px] text-spruce tracking-tight">
+                      {name}
+                    </h3>
+                    <span className="inline-flex items-center bg-sage text-spruce text-[12px] font-semibold px-3 py-1.5 rounded-full shrink-0">
                       {price}
                     </span>
                   </div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#89a890] mb-3 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#89a890]"></span> {delay}
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+                    {delay}
                   </p>
-                  <p className="text-[#4a5f4c] font-medium text-[15px] leading-relaxed">{details}</p>
+                  <p className="text-ink text-[15px] leading-relaxed">{details}</p>
                 </div>
               </div>
             ))}
@@ -114,46 +126,74 @@ export default function LivraisonPage() {
         </section>
 
         {/* Retours */}
-        <section className="mb-20">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="h-[2px] flex-1 bg-[#1a2e23]/10 mt-2"></div>
-            <h2 className="font-display text-[30px] md:text-[40px] font-black uppercase tracking-tighter text-[#1a2e23] leading-none flex items-center gap-3">
-              Politique de retour
-            </h2>
-          </div>
-          <div className="bg-white rounded-[32px] border border-[#1a2e23]/5 shadow-sm p-10 space-y-6 text-[#4a5f4c] font-medium leading-relaxed relative overflow-hidden">
-            {/* Soft decorative background circle */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#f4f6f1] rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
-            
-            <div className="flex items-start gap-4 relative z-10">
-              <div className="w-6 h-6 rounded-full bg-[#1a2e23] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">1</div>
-              <p><strong className="font-black text-[#1a2e23] uppercase tracking-tight">14 jours</strong> pour changer d&apos;avis (droit de rétractation légal).</p>
+        <section className="mb-16 md:mb-20">
+          <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-8">
+            Politique de retour
+          </h2>
+          <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-10 space-y-6 text-ink text-[15px] leading-relaxed">
+            <div className="flex items-start gap-4">
+              <div className="w-6 h-6 rounded-full bg-sage text-spruce font-semibold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                1
+              </div>
+              <p>
+                <strong className="font-semibold text-spruce">14 jours</strong> pour changer
+                d&apos;avis (droit de rétractation légal).
+              </p>
             </div>
-            <div className="flex items-start gap-4 relative z-10">
-              <div className="w-6 h-6 rounded-full bg-[#1a2e23] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">2</div>
-              <p>Les produits doivent être <strong className="font-black text-[#1a2e23]">non ouverts et dans leur emballage d&apos;origine</strong> pour garantir leur intégrité.</p>
+            <div className="flex items-start gap-4">
+              <div className="w-6 h-6 rounded-full bg-sage text-spruce font-semibold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                2
+              </div>
+              <p>
+                Les produits doivent être{' '}
+                <strong className="font-semibold text-spruce">
+                  non ouverts et dans leur emballage d&apos;origine
+                </strong>{' '}
+                pour garantir leur intégrité.
+              </p>
             </div>
-            <div className="flex items-start gap-4 relative z-10">
-              <div className="w-6 h-6 rounded-full bg-[#1a2e23] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">3</div>
-              <p>Pour initier un retour, contactez-nous à <a href="mailto:bodystartnutrition@gmail.com" className="text-[11px] font-bold uppercase tracking-widest text-[#1a2e23] hover:underline underline-offset-4 ml-1">bodystartnutrition@gmail.com</a> avec votre numéro de commande.</p>
+            <div className="flex items-start gap-4">
+              <div className="w-6 h-6 rounded-full bg-sage text-spruce font-semibold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                3
+              </div>
+              <p>
+                Pour initier un retour, contactez-nous à{' '}
+                <a
+                  href="mailto:bodystartnutrition@gmail.com"
+                  className="text-spruce font-semibold hover:underline underline-offset-4 break-words"
+                >
+                  bodystartnutrition@gmail.com
+                </a>{' '}
+                avec votre numéro de commande.
+              </p>
             </div>
-            <div className="flex items-start gap-4 relative z-10">
-              <div className="w-6 h-6 rounded-full bg-[#1a2e23] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">4</div>
-              <p>Le remboursement est effectué sous <strong className="font-black text-[#1a2e23]">14 jours</strong> après réception et validation du retour dans nos locaux.</p>
+            <div className="flex items-start gap-4">
+              <div className="w-6 h-6 rounded-full bg-sage text-spruce font-semibold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                4
+              </div>
+              <p>
+                Le remboursement est effectué sous{' '}
+                <strong className="font-semibold text-spruce">14 jours</strong> après réception
+                et validation du retour dans nos locaux.
+              </p>
             </div>
           </div>
         </section>
 
         {/* Contact Footer */}
-        <section className="bg-[#f4f6f1] rounded-[32px] border border-[#1a2e23]/10 p-10 text-center">
-          <h2 className="font-display text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">Une question ?</h2>
-          <p className="text-[#4a5f4c] font-medium">
-            Notre équipe est disponible du lundi au samedi.
-            <br />
-            <a href="mailto:bodystartnutrition@gmail.com" className="inline-block mt-4 text-[12px] font-bold text-white bg-[#1a2e23] px-6 py-3 rounded-full hover:bg-[#2e4f3c] transition-colors max-w-full break-all">
-              bodystartnutrition@gmail.com
-            </a>
+        <section className="bg-white rounded-2xl border border-spruce/10 p-8 md:p-10 text-center">
+          <h2 className="font-display text-[22px] md:text-[26px] font-extrabold text-spruce tracking-tight mb-3">
+            Une question ?
+          </h2>
+          <p className="text-ink-mute text-[15px] leading-[1.6]">
+            Notre équipe est disponible 7j/7.
           </p>
+          <a
+            href="mailto:bodystartnutrition@gmail.com"
+            className="inline-flex items-center justify-center mt-6 bg-fresh text-white font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-fresh-deep transition-colors max-w-full break-all"
+          >
+            bodystartnutrition@gmail.com
+          </a>
         </section>
       </div>
     </div>

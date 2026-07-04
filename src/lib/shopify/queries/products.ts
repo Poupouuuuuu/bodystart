@@ -204,7 +204,8 @@ export const GET_PRODUCT_BY_HANDLE = `
 `
 
 // Featured = 8 meilleures ventes, AVEC les composants de bundle (pour que
-// les cartes packs affichent les pots empiles sur la home et en cross-sell).
+// les cartes packs affichent les pots empiles en cross-sell — CrossSellV2
+// utilise getFeaturedProducts() en fallback).
 // Requete dediee (pas le fragment ProductCard partage) : on n'ajoute PAS
 // les composants au fragment global, sinon la requete catalogue (first:250)
 // exploserait le cout Storefront. Ici first:8 → cout maitrise.
@@ -241,7 +242,13 @@ export const GET_FEATURED_PRODUCTS = `
             title
           }
         }
-        variants(first: 1) {
+        variants(first: 2) {
+          # first: 2 (et pas 1), comme PRODUCT_CARD_FRAGMENT : le quick-add
+          # « + » de ProductCardShop (home best-sellers) doit savoir si le
+          # produit a PLUSIEURS variantes (nodes.length > 1) pour renvoyer
+          # vers la fiche (choix de saveur) au lieu d'ajouter la 1re à
+          # l'aveugle. Les consommateurs n'utilisent que nodes[0] pour le
+          # prix et les composants de bundle.
           nodes {
             id
             title

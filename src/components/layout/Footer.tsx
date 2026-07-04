@@ -38,7 +38,7 @@ const FOOTER_LINKS = {
   ],
   compte: [
     { label: 'Mon Compte', href: '/account' },
-    { label: 'Mes Commandes', href: '/account' },
+    { label: 'Mes Commandes', href: '/account?tab=orders' },
     { label: 'Guides nutrition', href: '/blog' },
     { label: 'Livraison & Retours', href: '/livraison' },
     { label: 'FAQ', href: '/faq' },
@@ -47,6 +47,7 @@ const FOOTER_LINKS = {
     { label: 'Mentions légales', href: '/mentions-legales' },
     { label: 'CGV', href: '/cgv' },
     { label: 'Confidentialité', href: '/confidentialite' },
+    { label: 'Cookies', href: '/cookies' },
   ],
 }
 
@@ -78,20 +79,20 @@ const INSTAGRAM_URL = 'https://www.instagram.com/bodystart_nutrition/'
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-cream-300">
+    <footer className="bg-white border-t border-spruce/10">
 
       {/* ─── Trust Badges ─── */}
-      <div className="border-b border-cream-200">
+      <div className="border-b border-spruce/10">
         <div className="container mx-auto px-4 lg:px-8 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {TRUST_BADGES.map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-cream-100 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-5 h-5 text-brand-500" />
+                <div className="w-11 h-11 rounded-full bg-sage flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5 text-spruce" />
                 </div>
                 <div>
-                  <p className="text-gray-900 text-sm font-semibold">{label}</p>
-                  <p className="text-gray-500 text-xs">{sub}</p>
+                  <p className="text-ink text-sm font-semibold">{label}</p>
+                  <p className="text-ink-mute text-xs">{sub}</p>
                 </div>
               </div>
             ))}
@@ -115,7 +116,7 @@ export default function Footer() {
                   className="h-9 w-auto"
                 />
               </Link>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6 max-w-xs">
+              <p className="text-ink-mute text-sm leading-relaxed mb-6 max-w-xs">
                 Compléments sport et santé, conseillés à Coignières, livrés dans le 78.
               </p>
               {/* Reseaux sociaux : Instagram visible, Facebook+TikTok masques tant
@@ -126,16 +127,16 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram BodyStart"
-                  className="w-9 h-9 rounded-full bg-cream-100 flex items-center justify-center text-gray-700 hover:bg-brand-500 hover:text-white transition-colors"
+                  className="w-11 h-11 rounded-full bg-sage flex items-center justify-center text-ink hover:bg-fresh hover:text-white transition-colors"
                 >
-                  <Instagram className="w-4 h-4" />
+                  <Instagram className="w-5 h-5" />
                 </a>
               </div>
             </div>
 
             {/* Colonne 2 : Boutique */}
             <div>
-              <h4 className="font-display font-bold text-xs uppercase tracking-widest text-gray-900 mb-5">
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-5">
                 Boutique
               </h4>
               <ul className="space-y-1">
@@ -143,7 +144,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="block py-2.5 text-sm text-gray-600 hover:text-brand-500 transition-colors"
+                      className="block py-2.5 text-sm text-ink-mute hover:text-spruce transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -154,7 +155,7 @@ export default function Footer() {
 
             {/* Colonne 3 : Aide */}
             <div>
-              <h4 className="font-display font-bold text-xs uppercase tracking-widest text-gray-900 mb-5">
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-5">
                 Aide
               </h4>
               <ul className="space-y-1">
@@ -162,7 +163,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="block py-2.5 text-sm text-gray-600 hover:text-brand-500 transition-colors"
+                      className="block py-2.5 text-sm text-ink-mute hover:text-spruce transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -173,27 +174,27 @@ export default function Footer() {
 
             {/* Colonne 4 : Boutique physique */}
             <div>
-              <h4 className="font-display font-bold text-xs uppercase tracking-widest text-gray-900 mb-5">
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-5">
                 Notre boutique
               </h4>
               <ul className="space-y-4">
-                <li className="flex items-start gap-3 text-sm text-gray-600">
-                  <MapPin className="w-4 h-4 text-brand-500 mt-0.5 flex-shrink-0" />
+                <li className="flex items-start gap-3 text-sm text-ink-mute">
+                  <MapPin className="w-4 h-4 text-spruce mt-0.5 flex-shrink-0" />
                   <span>8 Rue du Pont des Landes<br />78310 Coignières</span>
                 </li>
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <Phone className="w-4 h-4 text-brand-500 flex-shrink-0" />
-                  <a href="tel:+33761847580" className="hover:text-brand-500 transition-colors">
+                <li className="flex items-center gap-3 text-sm text-ink-mute">
+                  <Phone className="w-4 h-4 text-spruce flex-shrink-0" />
+                  <a href="tel:+33761847580" className="hover:text-spruce transition-colors">
                     07 61 84 75 80
                   </a>
                 </li>
                 <li className="text-sm">
-                  <Link href="/complements-alimentaires-coignieres" className="text-gray-600 hover:text-brand-500 transition-colors">
+                  <Link href="/complements-alimentaires-coignieres" className="text-ink-mute hover:text-spruce transition-colors">
                     Compléments alimentaires à Coignières
                   </Link>
                 </li>
-                <li className="flex items-center gap-3 text-sm text-gray-600">
-                  <Clock className="w-4 h-4 text-brand-500 flex-shrink-0" />
+                <li className="flex items-center gap-3 text-sm text-ink-mute">
+                  <Clock className="w-4 h-4 text-spruce flex-shrink-0" />
                   <span>11h à 19h (7j/7)</span>
                 </li>
               </ul>
@@ -202,8 +203,8 @@ export default function Footer() {
           </div>
 
           {/* ─── Bottom Bar ─── */}
-          <div className="border-t border-cream-200 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-gray-500">
+          <div className="border-t border-spruce/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-ink-mute">
               © {new Date().getFullYear()} BodyStart. Tous droits réservés.
             </p>
             <div className="flex flex-wrap justify-center gap-4 md:gap-6">
@@ -211,7 +212,7 @@ export default function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-xs text-gray-500 hover:text-brand-500 transition-colors"
+                  className="text-xs text-ink-mute hover:text-spruce transition-colors"
                 >
                   {link.label}
                 </Link>

@@ -40,7 +40,7 @@ interface HeaderProps {
 
 export default function Header(props: HeaderProps) {
   return (
-    <Suspense fallback={<div className="h-[104px] bg-white border-b border-cream-300" />}>
+    <Suspense fallback={<div className="h-[104px] bg-white border-b border-spruce/10" />}>
       <HeaderInner {...props} />
     </Suspense>
   )
@@ -121,7 +121,7 @@ function HeaderInner(_props: HeaderProps) {
       scrolled ? 'shadow-md' : 'shadow-none'
     )}>
       {/* ─── Bandeau promo (top bar) ─── */}
-      <div className="bg-[#1A1A1A] relative z-50">
+      <div className="bg-ink relative z-50">
         <div className="container">
           <p className="text-center text-[11px] text-white/80 font-medium py-2">
             Livraison offerte dès 85€ · Click &amp; Collect gratuit · Conseil gratuit en boutique
@@ -130,7 +130,7 @@ function HeaderInner(_props: HeaderProps) {
       </div>
 
       {/* ─── Header principal ─── */}
-      <div className="border-b transition-colors relative z-40 bg-white border-cream-300">
+      <div className="border-b transition-colors relative z-40 bg-white border-spruce/10">
         <nav className="container relative">
           <div className="flex items-center justify-between h-16 gap-4">
 
@@ -148,15 +148,24 @@ function HeaderInner(_props: HeaderProps) {
 
             {/* Nav desktop */}
             <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
-              {NAV_CATEGORIES.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap text-gray-700 hover:text-brand-500 hover:bg-brand-50"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {NAV_CATEGORIES.map((item) => {
+                const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 py-2 rounded-full text-sm transition-colors whitespace-nowrap',
+                      active
+                        ? 'text-spruce bg-sage font-semibold'
+                        : 'font-medium text-ink hover:text-spruce hover:bg-sage'
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              })}
             </div>
 
             {/* Actions droite */}
@@ -171,7 +180,7 @@ function HeaderInner(_props: HeaderProps) {
                   setMobileOpen(false)
                   setIsSearchOpen(!isSearchOpen)
                 }}
-                className="flex p-2 rounded-full transition-colors text-gray-700 hover:text-brand-500 hover:bg-brand-50"
+                className="flex p-2 rounded-full transition-colors text-ink hover:text-spruce hover:bg-sage"
                 aria-label="Rechercher"
                 aria-expanded={isSearchOpen}
               >
@@ -182,10 +191,10 @@ function HeaderInner(_props: HeaderProps) {
               {isLoggedIn ? (
                 <Link
                   href="/account"
-                  className="hidden md:flex items-center gap-2 px-3 py-2 rounded-full transition-colors text-sm font-medium text-gray-700 hover:bg-brand-50"
+                  className="hidden md:flex items-center gap-2 px-3 py-2 rounded-full transition-colors text-sm font-medium text-ink hover:bg-sage"
                   aria-label="Mon compte"
                 >
-                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-brand-500 text-white">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-fresh text-white">
                     {customer?.firstName?.[0]?.toUpperCase() ?? <User className="w-3.5 h-3.5" />}
                   </div>
                   <span className="hidden lg:inline">{customer?.firstName ?? 'Compte'}</span>
@@ -193,7 +202,7 @@ function HeaderInner(_props: HeaderProps) {
               ) : (
                 <Link
                   href="/login"
-                  className="hidden md:flex p-2 rounded-full transition-colors text-gray-700 hover:text-brand-500 hover:bg-brand-50"
+                  className="hidden md:flex p-2 rounded-full transition-colors text-ink hover:text-spruce hover:bg-sage"
                   aria-label="Connexion"
                 >
                   <User className="w-5 h-5" />
@@ -203,7 +212,7 @@ function HeaderInner(_props: HeaderProps) {
               {/* Panier */}
               <button
                 onClick={openCart}
-                className="relative flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-bold transition-all ml-1 bg-brand-500 hover:bg-brand-600 shadow-md hover:shadow-lg"
+                className="relative flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-semibold transition-colors ml-1 bg-fresh hover:bg-fresh-deep"
                 aria-label="Ouvrir le panier"
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -217,7 +226,7 @@ function HeaderInner(_props: HeaderProps) {
 
               {/* Burger mobile */}
               <button
-                className="lg:hidden p-2 rounded-full transition-colors ml-1 text-gray-700 hover:bg-cream-200"
+                className="lg:hidden p-2 rounded-full transition-colors ml-1 text-ink hover:bg-sage"
                 onClick={() => {
                   setIsSearchOpen(false) // exclusion mutuelle avec la recherche
                   setMobileOpen(!mobileOpen)
@@ -234,7 +243,7 @@ function HeaderInner(_props: HeaderProps) {
         {/* ─── Inline Search Dropdown ─── */}
         <div
           className={cn(
-            "absolute left-0 w-full border-b transition-[max-height,opacity] duration-300 ease-out z-30 shadow-xl bg-white border-cream-300",
+            "absolute left-0 w-full border-b transition-[max-height,opacity] duration-300 ease-out z-30 shadow-xl bg-white border-spruce/10",
             isSearchOpen ? "max-h-[85vh] opacity-100" : "max-h-0 opacity-0 overflow-hidden"
           )}
           style={{ top: '100%' }}
@@ -252,7 +261,7 @@ function HeaderInner(_props: HeaderProps) {
               }}
             >
               <div className="relative">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-mute" />
                 <input
                   ref={searchInputRef}
                   type="text"
@@ -260,15 +269,15 @@ function HeaderInner(_props: HeaderProps) {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Rechercher un produit, une marque, un objectif..."
                   aria-label="Rechercher un produit"
-                  className="w-full text-base font-medium py-4 pl-14 pr-14 rounded-full outline-none border-2 transition-colors bg-cream-100 border-cream-200 text-gray-900 focus:border-brand-500 placeholder-gray-400"
+                  className="w-full text-base font-medium py-4 pl-14 pr-14 rounded-full outline-none border-2 transition-colors bg-canvas border-spruce/15 text-ink focus:border-fresh placeholder-ink-mute"
                 />
                 {isSearching ? (
-                  <Loader2 className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-brand-500" />
+                  <Loader2 className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-fresh" />
                 ) : searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors text-gray-500 hover:bg-cream-200"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors text-ink-mute hover:bg-sage"
                     aria-label="Effacer"
                   >
                     <X className="w-4 h-4" />
@@ -287,7 +296,7 @@ function HeaderInner(_props: HeaderProps) {
               <div className="container max-w-5xl mx-auto pb-6">
                 {searchResults.length > 0 ? (
                   <>
-                    <p className="text-[11px] font-bold uppercase tracking-widest mb-4 text-gray-400">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-4 text-ink-mute">
                       {searchResults.length} produit{searchResults.length > 1 ? 's' : ''} trouvé{searchResults.length > 1 ? 's' : ''}
                     </p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
@@ -296,11 +305,11 @@ function HeaderInner(_props: HeaderProps) {
                           key={result.id}
                           href={`/products/${result.handle}`}
                           onClick={() => setIsSearchOpen(false)}
-                          className="group relative flex flex-col rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 bg-white border-cream-200 hover:border-brand-500/40 hover:shadow-lg"
+                          className="group relative flex flex-col rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 bg-white border-spruce/10 hover:border-spruce/30 hover:shadow-[0_8px_30px_rgba(45,90,45,0.08)]"
                         >
-                          <div className="relative aspect-square overflow-hidden bg-cream-100">
+                          <div className="relative aspect-square overflow-hidden bg-canvas">
                             {result.availableForSale === false && (
-                              <span className="absolute top-2 left-2 z-10 inline-flex items-center bg-[#2A2A2A] text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                              <span className="absolute top-2 left-2 z-10 inline-flex items-center bg-ink text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
                                 Épuisé
                               </span>
                             )}
@@ -314,15 +323,15 @@ function HeaderInner(_props: HeaderProps) {
                               />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <Search className="w-8 h-8 text-cream-300" />
+                                <Search className="w-8 h-8 text-spruce/20" />
                               </div>
                             )}
                           </div>
                           <div className="flex flex-col gap-1 p-3">
-                            <p className="text-sm font-semibold line-clamp-2 leading-snug min-h-[2.5rem] text-gray-900">
+                            <p className="text-sm font-semibold line-clamp-2 leading-snug min-h-[2.5rem] text-ink">
                               {result.title}
                             </p>
-                            <p className="text-sm font-bold mt-0.5 text-brand-500">
+                            <p className="text-sm font-bold mt-0.5 text-spruce">
                               {formatPrice({ amount: result.price, currencyCode: result.currency })}
                             </p>
                           </div>
@@ -336,7 +345,7 @@ function HeaderInner(_props: HeaderProps) {
                         setIsSearchOpen(false)
                         router.push('/search?q=' + encodeURIComponent(searchQuery.trim()))
                       }}
-                      className="w-full mt-6 flex items-center justify-center gap-2 text-sm font-bold py-4 rounded-full transition-all bg-brand-500 text-white hover:bg-brand-600 shadow-md hover:shadow-lg"
+                      className="w-full mt-6 flex items-center justify-center gap-2 text-sm font-semibold py-4 rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep"
                     >
                       Voir tous les résultats pour « {searchQuery.trim()} »
                       <ChevronDown className="w-4 h-4 -rotate-90" />
@@ -345,13 +354,13 @@ function HeaderInner(_props: HeaderProps) {
                 ) : (
                   !isSearching && (
                     <div className="text-center py-12">
-                      <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-cream-100">
-                        <Search className="w-6 h-6 text-gray-400" />
+                      <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-sage">
+                        <Search className="w-6 h-6 text-ink-mute" />
                       </div>
-                      <p className="text-sm font-semibold mb-1 text-gray-900">
+                      <p className="text-sm font-semibold mb-1 text-ink">
                         Aucun produit trouvé
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-ink-mute">
                         Essaie avec un autre mot-clé
                       </p>
                     </div>
@@ -365,24 +374,33 @@ function HeaderInner(_props: HeaderProps) {
 
       {/* ─── Menu mobile ─── */}
       {mobileOpen && (
-        <div className="lg:hidden border-t max-h-[80vh] overflow-y-auto animate-slide-up relative z-50 bg-white border-cream-300">
+        <div className="lg:hidden border-t max-h-[80vh] overflow-y-auto animate-slide-up relative z-50 bg-white border-spruce/10">
           <div className="container py-4 space-y-1">
-            {NAV_CATEGORIES.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="flex items-center justify-between px-4 py-3.5 text-sm font-medium transition-colors rounded-2xl text-gray-700 hover:bg-brand-50 hover:text-brand-500"
-                onClick={() => setMobileOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {NAV_CATEGORIES.map((item) => {
+              const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  aria-current={active ? 'page' : undefined}
+                  className={cn(
+                    'flex items-center justify-between px-4 py-3.5 text-sm transition-colors rounded-2xl',
+                    active
+                      ? 'text-spruce bg-sage font-semibold'
+                      : 'font-medium text-ink hover:text-spruce hover:bg-sage'
+                  )}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
 
             {/* Mobile Auth */}
-            <div className="border-y py-4 my-4 border-cream-300">
+            <div className="border-y py-4 my-4 border-spruce/10">
               <Link
                 href={isLoggedIn ? '/account' : '/login'}
-                className="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors rounded-2xl text-gray-700 hover:text-brand-500"
+                className="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors rounded-2xl text-ink hover:text-spruce hover:bg-sage"
                 onClick={() => setMobileOpen(false)}
               >
                 <User className="w-4 h-4" />

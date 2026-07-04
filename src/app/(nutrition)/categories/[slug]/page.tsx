@@ -6,7 +6,7 @@ import { getProducts } from '@/lib/shopify'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES, getCategoryPage } from '@/lib/categories'
-import ProductCard from '@/components/product/ProductCard'
+import { ProductCardShop } from '@/components/product/ProductCardShop'
 
 // Pages catégories SEO : 1 URL indexable par famille de produits (les filtres
 // `?cat=` de /products restent du confort client-side, non indexable).
@@ -127,7 +127,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
         {products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-14">
             {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCardShop key={p.id} product={p} />
             ))}
           </div>
         ) : (

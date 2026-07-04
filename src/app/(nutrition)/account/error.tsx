@@ -16,37 +16,39 @@ export default function AccountError({
   }, [error])
 
   return (
-    <main className="min-h-[60vh] flex items-center justify-center bg-[#f4f6f1] px-4">
-      <div className="text-center max-w-lg">
-        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-8">
-          <AlertTriangle className="w-10 h-10 text-red-500" />
+    <main className="min-h-[60vh] flex items-center justify-center bg-canvas px-4 py-16">
+      <div className="bg-white rounded-2xl border border-spruce/10 p-8 md:p-12 text-center max-w-lg w-full">
+        <div className="w-20 h-20 rounded-full bg-terracotta/10 flex items-center justify-center mx-auto mb-8">
+          <AlertTriangle className="w-9 h-9 text-terracotta" />
         </div>
 
-        <h1 className="font-display text-[32px] md:text-[40px] font-black uppercase tracking-tighter text-[#1a2e23] mb-4 leading-none">
+        <h1 className="font-display text-[28px] md:text-[34px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-4">
           Erreur espace client
         </h1>
-        <p className="text-[#4a5f4c] font-medium mb-8 leading-relaxed text-sm">
-          Impossible de charger votre espace client. Votre session a peut-être expiré. Reconnectez-vous ou réessayez.
+        <p className="text-[15px] text-ink-mute leading-relaxed mb-8">
+          Impossible de charger ton espace client. Ta session a peut-être expiré.
+          Reconnecte-toi ou réessaie.
         </p>
 
         <div className="flex flex-wrap gap-3 justify-center">
           <button
             onClick={reset}
-            className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#1a2e23] text-white font-bold uppercase tracking-widest text-[11px] rounded-full hover:bg-[#2e4f3c] transition-all shadow-lg"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-fresh text-white text-[14px] font-semibold rounded-full hover:bg-fresh-deep transition-colors"
           >
+            {/* Boutons à l'infinitif (convention UI fr), tutoiement dans le corps. */}
             <RotateCcw className="w-4 h-4" />
             Réessayer
           </button>
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 px-6 py-3.5 bg-white text-[#1a2e23] font-bold uppercase tracking-widest text-[11px] rounded-full border border-[#1a2e23]/10 hover:bg-[#1a2e23]/5 transition-all"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-spruce text-spruce text-[14px] font-semibold rounded-full hover:bg-spruce/5 transition-colors"
           >
             <LogIn className="w-4 h-4" />
             Se reconnecter
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 text-[#89a890] font-bold uppercase tracking-wider text-[11px] rounded-full hover:text-[#1a2e23] transition-all"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-semibold text-ink-mute rounded-full hover:text-spruce transition-colors"
           >
             <Home className="w-4 h-4" />
             Accueil
@@ -54,7 +56,7 @@ export default function AccountError({
         </div>
 
         {error.digest && (
-          <p className="mt-8 text-[10px] font-bold uppercase tracking-widest text-[#89a890]">
+          <p className="mt-8 text-[11px] font-medium text-ink-mute">
             Code : {error.digest}
           </p>
         )}

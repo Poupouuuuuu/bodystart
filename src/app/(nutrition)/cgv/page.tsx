@@ -61,22 +61,22 @@ const sections = [
 
 export default function CGVPage() {
   return (
-    <div className="min-h-screen bg-[#f4f6f1]">
+    <div className="min-h-screen bg-canvas">
       <div className="container py-16 md:py-24 max-w-3xl">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#4a5f4c] hover:text-[#1a2e23] mb-10 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-ink-mute hover:text-spruce mb-10 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Retour à l&apos;accueil
         </Link>
 
-        <div className="bg-white rounded-[20px] p-8 md:p-12 mb-10">
+        <div className="bg-white rounded-2xl border border-spruce/10 p-8 md:p-12 mb-10">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-full bg-[#89a890]/10 flex items-center justify-center flex-shrink-0">
-              <ScrollText className="w-6 h-6 text-[#4a5f4c]" />
+            <div className="w-12 h-12 rounded-full bg-sage flex items-center justify-center flex-shrink-0">
+              <ScrollText className="w-6 h-6 text-spruce" />
             </div>
             <div>
-              <h1 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight text-[#1a2e23] leading-none">
+              <h1 className="font-display text-[32px] md:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight">
                 Conditions Générales de Vente
               </h1>
             </div>
@@ -84,7 +84,7 @@ export default function CGVPage() {
           {/* Date FIGÉE volontairement : la date de MAJ d'un document contractuel doit
               refléter le dernier vrai changement, pas le jour de la visite. À mettre à
               jour manuellement à chaque édition des CGV. */}
-          <p className="text-xs font-bold uppercase tracking-widest text-[#89a890] border-t border-[#89a890]/20 pt-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute border-t border-spruce/10 pt-4">
             Dernière mise à jour : 3 juillet 2026
           </p>
         </div>
@@ -93,12 +93,12 @@ export default function CGVPage() {
           {sections.map(({ title, content }) => (
             <section
               key={title}
-              className="bg-white rounded-[20px] p-8"
+              className="bg-white rounded-2xl border border-spruce/10 p-8"
             >
-              <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+              <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
                 {title}
               </h2>
-              <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+              <p className="text-ink leading-relaxed text-base">
                 {content}
               </p>
             </section>

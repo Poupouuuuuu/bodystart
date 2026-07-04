@@ -11,50 +11,50 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function ConfidentialitePage() {
   return (
-    <div className="min-h-screen bg-[#f4f6f1]">
+    <div className="min-h-screen bg-canvas">
       <div className="container py-16 md:py-24 max-w-3xl">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#4a5f4c] hover:text-[#1a2e23] mb-10 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-ink-mute hover:text-spruce mb-10 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Retour à l&apos;accueil
         </Link>
 
-        <div className="bg-white rounded-[20px] p-8 md:p-12 mb-10">
+        <div className="bg-white rounded-2xl border border-spruce/10 p-8 md:p-12 mb-10">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-full bg-[#89a890]/10 flex items-center justify-center flex-shrink-0">
-              <Shield className="w-6 h-6 text-[#4a5f4c]" />
+            <div className="w-12 h-12 rounded-full bg-sage flex items-center justify-center flex-shrink-0">
+              <Shield className="w-6 h-6 text-spruce" />
             </div>
             <div className="min-w-0">
-              <h1 className="font-display text-xl sm:text-3xl md:text-4xl font-black uppercase tracking-tight text-[#1a2e23] leading-tight break-words">
+              <h1 className="font-display text-[32px] md:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight break-words">
                 Politique de confidentialité
               </h1>
             </div>
           </div>
           {/* Date figée : refléter le dernier vrai changement, pas le jour de la visite. */}
-          <p className="text-xs font-bold uppercase tracking-widest text-[#89a890] border-t border-[#89a890]/20 pt-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute border-t border-spruce/10 pt-4">
             Dernière mise à jour : 3 juillet 2026
           </p>
         </div>
 
         <div className="space-y-6">
-          <section className="bg-white rounded-[20px] p-8">
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Responsable du traitement
             </h2>
-            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+            <p className="text-ink leading-relaxed text-base">
               BODYSTART NUTRITION (SASU) dont le siège social est situé 8 Rue du Pont des Landes, 78310 Coignières, est responsable du traitement de vos données personnelles. Contact :{' '}
               <a
                 href="mailto:bodystartnutrition@gmail.com"
-                className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
+                className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
               >
                 bodystartnutrition@gmail.com
               </a>
             </p>
           </section>
 
-          <section className="bg-white rounded-[20px] p-8">
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Données collectées
             </h2>
             <ul className="space-y-3 list-none">
@@ -64,37 +64,37 @@ export default function ConfidentialitePage() {
                 "Données de commande : historique d'achats, préférences",
                 'Données de navigation : cookies, adresse IP (anonymisée)',
               ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-[#4a5f4c] font-medium">
-                  <ChevronRight className="w-4 h-4 text-[#7cb98b] mt-1 flex-shrink-0" />
+                <li key={item} className="flex items-start gap-3 text-ink">
+                  <ChevronRight className="w-4 h-4 text-spruce mt-1 flex-shrink-0" />
                   {item}
                 </li>
               ))}
             </ul>
           </section>
 
-          <section className="bg-white rounded-[20px] p-8">
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Finalités du traitement
             </h2>
-            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+            <p className="text-ink leading-relaxed text-base">
               Vos données sont utilisées pour : le traitement et le suivi des commandes, la gestion de votre compte client, l&apos;envoi de newsletters (avec votre consentement), l&apos;amélioration de nos services et la prévention des fraudes.
             </p>
           </section>
 
-          <section className="bg-white rounded-[20px] p-8">
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Conservation des données
             </h2>
-            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+            <p className="text-ink leading-relaxed text-base">
               Vos données sont conservées pendant 3 ans à compter de votre dernière interaction avec BODYSTART NUTRITION, ou pendant la durée légalement requise.
             </p>
           </section>
 
-          <section className="bg-white rounded-[20px] p-8">
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Vos droits
             </h2>
-            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base mb-4">
+            <p className="text-ink leading-relaxed text-base mb-4">
               Conformément au RGPD, vous disposez des droits suivants :
             </p>
             <ul className="space-y-3 list-none">
@@ -106,28 +106,28 @@ export default function ConfidentialitePage() {
                 "Droit d'opposition au traitement",
                 'Droit de retirer votre consentement à tout moment',
               ].map((right) => (
-                <li key={right} className="flex items-start gap-3 text-[#4a5f4c] font-medium">
-                  <ChevronRight className="w-4 h-4 text-[#7cb98b] mt-1 flex-shrink-0" />
+                <li key={right} className="flex items-start gap-3 text-ink">
+                  <ChevronRight className="w-4 h-4 text-spruce mt-1 flex-shrink-0" />
                   {right}
                 </li>
               ))}
             </ul>
-            <p className="mt-6 text-[#4a5f4c] font-medium">
+            <p className="mt-6 text-ink">
               Pour exercer ces droits, contactez-nous :{' '}
               <a
                 href="mailto:bodystartnutrition@gmail.com"
-                className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
+                className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
               >
                 bodystartnutrition@gmail.com
               </a>
             </p>
-            <p className="mt-4 text-[#4a5f4c] font-medium leading-relaxed">
+            <p className="mt-4 text-ink leading-relaxed">
               Vous disposez également du droit d&apos;introduire une réclamation auprès de la CNIL :{' '}
               <a
                 href="https://www.cnil.fr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
+                className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
               >
                 www.cnil.fr
               </a>
@@ -135,11 +135,11 @@ export default function ConfidentialitePage() {
             </p>
           </section>
 
-          <section className="bg-white rounded-[20px] p-8">
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Sous-traitants et transferts
             </h2>
-            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+            <p className="text-ink leading-relaxed text-base">
               Pour fournir nos services, nous faisons appel à des sous-traitants : Shopify
               (hébergement de la boutique et traitement des commandes), nos prestataires de
               paiement (Shopify Payments) et de livraison (Colissimo, Mondial Relay). Certaines
@@ -149,11 +149,11 @@ export default function ConfidentialitePage() {
             </p>
           </section>
 
-          <section className="bg-white rounded-[20px] p-8">
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Mesure d&apos;audience (Google Analytics 4)
             </h2>
-            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+            <p className="text-ink leading-relaxed text-base">
               Avec votre consentement, nous utilisons Google Analytics 4 (fourni par Google
               Ireland Limited) pour mesurer l&apos;audience du site : pages consultées, parcours de
               navigation et événements e-commerce (vues de produits, ajouts au panier). Cela nous
@@ -166,20 +166,20 @@ export default function ConfidentialitePage() {
                 "Données traitées : un identifiant de mesure pseudonyme, les pages vues et les événements, l'adresse IP étant tronquée par Google.",
                 'Conservation : les données de mesure d’audience sont conservées 14 mois maximum.',
               ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-[#4a5f4c] font-medium">
-                  <ChevronRight className="w-4 h-4 text-[#7cb98b] mt-1 flex-shrink-0" />
+                <li key={item} className="flex items-start gap-3 text-ink">
+                  <ChevronRight className="w-4 h-4 text-spruce mt-1 flex-shrink-0" />
                   {item}
                 </li>
               ))}
             </ul>
-            <p className="mt-6 text-[#4a5f4c] font-medium leading-relaxed">
+            <p className="mt-6 text-ink leading-relaxed">
               Vous pouvez retirer votre consentement à tout moment via le bandeau cookies, ou
               installer le{' '}
               <a
                 href="https://tools.google.com/dlpage/gaoptout"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
+                className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
               >
                 module de désactivation de Google Analytics
               </a>
@@ -188,15 +188,15 @@ export default function ConfidentialitePage() {
             </p>
           </section>
 
-          <section className="bg-white rounded-[20px] p-8">
-            <h2 className="font-display text-xl md:text-2xl font-black uppercase tracking-tight text-[#1a2e23] mb-4">
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Cookies
             </h2>
-            <p className="text-[#4a5f4c] font-medium leading-relaxed text-base">
+            <p className="text-ink leading-relaxed text-base">
               Notre site utilise des cookies essentiels au fonctionnement du site (panier, session) et des cookies analytiques (avec votre consentement). Consultez notre{' '}
               <Link
                 href="/cookies"
-                className="text-[#7cb98b] hover:text-[#1a2e23] font-bold underline underline-offset-4 transition-colors"
+                className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
               >
                 politique cookies
               </Link>{' '}
