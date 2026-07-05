@@ -22,7 +22,7 @@
 import { NextResponse } from 'next/server'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { verifyShopifyHmac } from '@/lib/loyalty/verify-hmac'
-import { revokeReferralReward } from '@/lib/loyalty/revoke'
+import { revokeReferralReward, reverseLoyaltySpend } from '@/lib/loyalty/revoke'
 import { revokeAmbassadorCommission } from '@/lib/loyalty/ambassador'
 import { reverseAmbassadorSpend } from '@/lib/loyalty/ambassador-redemption'
 
@@ -66,17 +66,28 @@ export async function POST(req: Request) {
 
   try {
     const supabase = getLoyaltyAdminClient()
-    // Reprise sur les TROIS leviers — chacun idempotent et keyé par order id ;
-    // au plus l'un d'eux a une ligne pour cette commande :
+    // Reprise sur les QUATRE leviers — chacun idempotent et keyé par order id :
     //  - revokeReferralReward      : commission parrain (débit parrain)
     //  - revokeAmbassadorCommission: commission ambassadeur (débit ambassadeur)
-    //  - reverseAmbassadorSpend    : dépense de cagnotte ambassadeur (re-crédit ambassadeur)
-    const [referral, ambassador, ambassadorSpend] = await Promise.all([
+    //  - reverseAmbassadorSpend    : dépense de cagnotte ambassadeur (re-crédit)
+    //  - reverseLoyaltySpend       : dépense de cagnotte FIDÉLITÉ (re-crédit
+    //    acheteur, 00017) — asymétrie corrigée : le client qui payait avec sa
+    //    cagnotte puis était remboursé perdait ce montant définitivement.
+    // NB : commission parrain ET dépense fidélité peuvent coexister sur la
+    // même commande (le filleul a payé avec sa cagnotte + code parrain lié).
+    const [referral, ambassador, ambassadorSpend, loyaltySpend] = await Promise.all([
       revokeReferralReward(supabase, orderId),
       revokeAmbassadorCommission(supabase, orderId),
       reverseAmbassadorSpend(supabase, orderId),
+      reverseLoyaltySpend(supabase, orderId),
     ])
-    return NextResponse.json({ ok: true, result: referral, ambassador, ambassador_spend: ambassadorSpend })
+    return NextResponse.json({
+      ok: true,
+      result: referral,
+      ambassador,
+      ambassador_spend: ambassadorSpend,
+      loyalty_spend: loyaltySpend,
+    })
   } catch (err) {
     console.error('[loyalty refund webhook] revoke error:', err)
     return NextResponse.json(

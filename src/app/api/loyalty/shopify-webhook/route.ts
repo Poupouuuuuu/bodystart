@@ -9,7 +9,11 @@
  *   1. RAW body + HMAC SHA256 → 401 si invalide
  *   2. Parser le payload → phone E.164, sous-total cents, discount_codes[]
  *   3. Si pas de phone : marquer order processed + 200 (skip propre)
- *   4. Lookup loyalty_customer par phone. Si absent : pareil skip.
+ *   4. Lookup loyalty_customer par phone. Si absent : AUTO-ENRÔLEMENT à la
+ *      volée (GO parrainage boutique 2026-07-06) — le client a donné son
+ *      téléphone (attaché à la vente POS ou saisi au checkout), on crée sa
+ *      fiche et on continue. Avant : skip customer_not_found → un code
+ *      parrain BS- sur la commande était perdu DÉFINITIVEMENT (idempotence).
  *   5. Pour chaque code utilise : lookup parrain (loyalty_customers.referral_code)
  *      + lookup redemption (loyalty_redemptions.discount_code de cet acheteur, 'reserved')
  *   6. interpretDiscountCodes → { referredByCodeUsed, spentLoyaltyCents, appliedRedemptionId }
@@ -24,6 +28,8 @@ import { verifyShopifyHmac } from '@/lib/loyalty/verify-hmac'
 import { parseShopifyOrder, moneyStringToCents } from '@/lib/loyalty/parse-shopify-order'
 import { spendAmbassadorCagnotte } from '@/lib/loyalty/ambassador-redemption'
 import { finalizeOrderLoyalty } from '@/lib/loyalty/finalize'
+import { upsertLoyaltyCustomer } from '@/lib/loyalty/upsert-customer'
+import { ensureReferralCodeShopify } from '@/lib/loyalty/referral-shopify'
 import {
   interpretDiscountCodes,
   type ReferralCodeLookup,
@@ -209,7 +215,7 @@ export async function POST(req: Request) {
   }
 
   // Lookup customer par phone
-  const { data: customer, error: lookupErr } = await supabase
+  const { data: existingCustomer, error: lookupErr } = await supabase
     .from('loyalty_customers')
     .select('id')
     .eq('phone', parsed.phoneE164)
@@ -220,18 +226,43 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'lookup_failed' }, { status: 500 })
   }
 
+  let customer: { id: string } | null = existingCustomer
+
+  // ─── AUTO-ENRÔLEMENT à la volée (GO parrainage boutique, 2026-07-06) ───
+  // Le client a un téléphone sur la commande (attaché à la vente en caisse
+  // Shopify POS, ou saisi au checkout en ligne) mais pas encore de fiche
+  // fidélité → on la crée et on CONTINUE le traitement. Avant : la vente
+  // était ignorée (skip customer_not_found + marquée processed) et un code
+  // parrain BS- présent sur la commande était perdu définitivement.
+  // RGPD : donner son téléphone en caisse pour le programme = l'adhésion ;
+  // AUCUN consentement marketing implicite (emailOptIn: false).
   if (!customer) {
-    await supabase
-      .from('loyalty_processed_orders')
-      .upsert({ shopify_order_id: parsed.shopifyOrderId }, { onConflict: 'shopify_order_id' })
-    return NextResponse.json({
-      ok: true,
-      skip_reason: 'customer_not_found',
-      shopify_order_id: parsed.shopifyOrderId,
-      phone: parsed.phoneE164,
-      ambassador: ambassadorResult,
-      ambassador_spend: ambassadorSpendResult,
-    })
+    try {
+      const created = await upsertLoyaltyCustomer(supabase, {
+        phone: parsed.phoneE164,
+        firstName: parsed.firstName ?? 'Client',
+        lastName: parsed.lastName ?? null,
+        email: parsed.email ?? null,
+        shopifyCustomerId:
+          ambPayload?.customer?.id != null ? String(ambPayload.customer.id) : null,
+        referredByCode: null, // le lien parrain passe par finalize (code sur la commande)
+        emailOptIn: false,
+        source: ambPayload?.source_name === 'pos' ? 'in_store' : 'online',
+      })
+      customer = { id: created.id }
+      // Code parrain Shopify du nouveau membre : best-effort — l'échec est
+      // tracé en DB par la lib (vue de réparation) et ne bloque pas le webhook.
+      try {
+        await ensureReferralCodeShopify(supabase, created.id, created.referralCode, created.email)
+      } catch (err) {
+        console.error('[loyalty webhook] ensureReferralCodeShopify failed (non-blocking):', err)
+      }
+    } catch (err) {
+      // Échec de création → 500 SANS marquer la commande processed :
+      // Shopify retentera le webhook, rien n'est perdu.
+      console.error('[loyalty webhook] auto-enroll failed:', err)
+      return NextResponse.json({ error: 'enroll_failed' }, { status: 500 })
+    }
   }
 
   // ─── L3 : interpretation des codes de reduction ───
@@ -239,22 +270,36 @@ export async function POST(req: Request) {
   let redemptionLookups: RedemptionLookup[] = []
 
   if (parsed.discountCodes.length > 0) {
+    // ⚠️ Les DEUX lookups checkent `error` (GO parrainage boutique) : un blip
+    // DB avalé faisait tourner finalize avec spentLoyaltyCents=0 /
+    // referredByCodeUsed=null PUIS marquait la commande processed →
+    // commission parrain perdue / cagnotte non débitée, DÉFINITIVEMENT.
+    // 500 AVANT finalize → Shopify retente, rien n'est perdu.
+
     // Lookup parrains (codes BS-* qui appartiennent a un autre customer)
-    const { data: parrains } = await supabase
+    const { data: parrains, error: parrainsErr } = await supabase
       .from('loyalty_customers')
       .select('id, referral_code')
       .in('referral_code', parsed.discountCodes)
+    if (parrainsErr) {
+      console.error('[loyalty webhook] referral lookup error:', parrainsErr)
+      return NextResponse.json({ error: 'lookup_failed' }, { status: 500 })
+    }
     referralLookups = (parrains ?? []).map((p) => ({
       code: p.referral_code,
       ownerId: p.id,
     }))
 
     // Lookup redemptions de cet acheteur
-    const { data: redemptions } = await supabase
+    const { data: redemptions, error: redemptionsErr } = await supabase
       .from('loyalty_redemptions')
       .select('id, discount_code, amount_cents, status, customer_id')
       .eq('customer_id', customer.id)
       .in('discount_code', parsed.discountCodes)
+    if (redemptionsErr) {
+      console.error('[loyalty webhook] redemption lookup error:', redemptionsErr)
+      return NextResponse.json({ error: 'lookup_failed' }, { status: 500 })
+    }
     redemptionLookups = (redemptions ?? []).map((r) => ({
       code: r.discount_code,
       id: r.id,
@@ -287,7 +332,10 @@ export async function POST(req: Request) {
       paidItemsCents: parsed.paidItemsCents,
       spentLoyaltyCents: interpreted.spentLoyaltyCents,
       referredByCodeUsed: interpreted.referredByCodeUsed,
-      channel: 'online',
+      // Canal réel : vente Shopify POS → in_store (reporting). L'idempotence
+      // par order_ref est inconditionnelle depuis 00009, les retries webhook
+      // restent dédupliqués quel que soit le canal.
+      channel: ambPayload?.source_name === 'pos' ? 'in_store' : 'online',
       staffUserId: null,
     })
 
