@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
@@ -175,6 +175,16 @@ export default function BuyBoxV2({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // A11y : la sticky bar cachée n'est que translate-y-full (hors écran mais
+  // dans le DOM) — sans inert, son bouton restait tabbable en permanence.
+  const stickyBarRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const bar = stickyBarRef.current
+    if (!bar) return
+    if (isStickyVisible) bar.removeAttribute('inert')
+    else bar.setAttribute('inert', '')
+  }, [isStickyVisible])
+
   // Stock boutique PAR VARIANTE, fetché côté client (page en ISR → le rendu
   // serveur est caché, mais ce fetch tourne à chaque visite = temps réel).
   // null = pas encore chargé / échec → bloc stock masqué (storeStock undefined).
@@ -327,6 +337,7 @@ export default function BuyBoxV2({
                           key={flavor}
                           onClick={() => handleOptionChange(flavor, selectedSize)}
                           disabled={!isAvailable}
+                          aria-pressed={selectedFlavor === flavor}
                           className={cn(
                             'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
                             selectedFlavor === flavor
@@ -360,6 +371,7 @@ export default function BuyBoxV2({
                           key={size}
                           onClick={() => handleOptionChange(selectedFlavor, size)}
                           disabled={!isAvailable}
+                          aria-pressed={selectedSize === size}
                           className={cn(
                             'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
                             selectedSize === size
@@ -503,8 +515,15 @@ export default function BuyBoxV2({
         </div>
       </div>
 
+      {/* A11y : confirmation d'ajout annoncée aux lecteurs d'écran (le
+          changement de libellé du bouton n'est pas annoncé de façon fiable). */}
+      <span className="sr-only" role="status" aria-live="polite">
+        {added ? 'Produit ajouté au panier' : ''}
+      </span>
+
       {/* ─── Sticky buy bar ─── */}
       <div
+        ref={stickyBarRef}
         className={cn(
           'fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-spruce/10 py-3 px-4 md:px-6 z-50 transition-transform duration-300 shadow-[0_-4px_20px_rgba(45,90,45,0.06)]',
           isStickyVisible ? 'translate-y-0' : 'translate-y-full'

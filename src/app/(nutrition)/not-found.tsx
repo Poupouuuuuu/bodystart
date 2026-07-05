@@ -14,7 +14,7 @@ export default function NotFound() {
         <div className="w-16 h-16 rounded-full bg-sage flex items-center justify-center mx-auto mb-6">
           <Search className="w-7 h-7 text-spruce" />
         </div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard mb-3">Erreur 404</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink mb-3">Erreur 404</p>
         <h1 className="font-display text-[34px] md:text-[44px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-4">
           Page introuvable
         </h1>

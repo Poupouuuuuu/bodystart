@@ -85,7 +85,9 @@ const BTN_PRIMARY =
   'inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-fresh-deep'
 const BTN_OUTLINE =
   'inline-flex items-center justify-center gap-2 border border-spruce text-spruce font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-spruce/5'
-const EYEBROW = 'text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard mb-3'
+// mustard-ink (pas mustard) : le jaune #C9A227 tombait à 2,28:1 sur canvas —
+// mustard = fond de badge uniquement, jamais couleur de texte sur surface claire.
+const EYEBROW = 'text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink mb-3'
 
 export default function StoresPage() {
   const store = BODY_START_STORES[0]

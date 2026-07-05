@@ -5,7 +5,7 @@
 // est desormais nutrition-only (titre "Mon panier").
 // Re-theme DA claire V2 (2026-05-31) : surfaces creme/blanc, vert frais en
 // accent, sentence case. Aucune logique panier/checkout touchee.
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, CheckCircle2 } from 'lucide-react'
@@ -56,6 +56,76 @@ export default function CartDrawer() {
     }
   }, [isOpen])
 
+  // ─── A11y clavier (sprint 4) : le drawer avait role="dialog" aria-modal
+  // sans RIEN derrière — pas d'Escape, focus resté derrière l'overlay, Tab
+  // qui parcourait la page masquée. C'est le chemin d'achat principal.
+  const panelRef = useRef<HTMLDivElement>(null)
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const restoreFocusRef = useRef<HTMLElement | null>(null)
+
+  // inert quand fermé : le drawer est juste translate-x-full (hors écran mais
+  // dans le DOM) — sans inert, tous ses boutons restent tabbables sur CHAQUE page.
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!panel) return
+    if (isOpen) panel.removeAttribute('inert')
+    else panel.setAttribute('inert', '')
+  }, [isOpen])
+
+  // Ouverture : mémorise l'élément actif puis focus le bouton Fermer.
+  // Fermeture : restaure le focus à l'élément déclencheur.
+  useEffect(() => {
+    if (isOpen) {
+      restoreFocusRef.current = document.activeElement as HTMLElement | null
+      closeBtnRef.current?.focus()
+    } else {
+      restoreFocusRef.current?.focus?.()
+      restoreFocusRef.current = null
+    }
+  }, [isOpen])
+
+  // Escape ferme + focus trap (Tab boucle dans le panneau).
+  useEffect(() => {
+    if (!isOpen) return
+    function onKeyDown(e: KeyboardEvent) {
+      // Une modale est-elle ouverte AU-DESSUS du drawer (picker point relais
+      // monté DANS le panneau, popup newsletter, lightbox) ? Alors on lui cède
+      // entièrement le clavier : sans ce garde, UN Escape dans le picker
+      // fermait le picker ET tout le panier (2 listeners document).
+      const otherDialogOpen = Array.from(
+        document.querySelectorAll('[role="dialog"][aria-modal="true"]')
+      ).some(
+        (d) =>
+          d !== panelRef.current &&
+          !d.hasAttribute('inert') &&
+          d.getAttribute('aria-hidden') !== 'true'
+      )
+      if (otherDialogOpen) return
+
+      if (e.key === 'Escape') {
+        closeCart()
+        return
+      }
+      if (e.key !== 'Tab' || !panelRef.current) return
+      const focusables = panelRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), a[href], input:not([disabled]):not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusables.length === 0) return
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      const active = document.activeElement
+      if (e.shiftKey && (active === first || !panelRef.current.contains(active))) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, closeCart])
+
   const items = cart?.lines?.nodes ?? []
   const isEmpty = items.length === 0
 
@@ -102,6 +172,7 @@ export default function CartDrawer() {
 
       {/* Drawer */}
       <div
+        ref={panelRef}
         className={cn(
           'fixed top-0 right-0 h-full w-full sm:w-[480px] bg-canvas z-50 flex flex-col shadow-[-10px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -112,6 +183,7 @@ export default function CartDrawer() {
         role="dialog"
         aria-modal="true"
         aria-label="Ton panier"
+        aria-hidden={!isOpen}
       >
         {/* ─── Header (toujours visible) ─── */}
         <div className="flex-shrink-0 flex items-center justify-between px-8 py-6">
@@ -119,6 +191,7 @@ export default function CartDrawer() {
             Mon panier
           </h2>
           <button
+            ref={closeBtnRef}
             onClick={closeCart}
             className="p-2 -mr-2 rounded-full text-ink-mute hover:text-spruce hover:bg-spruce/5 transition-colors"
             aria-label="Fermer le panier"
@@ -171,7 +244,14 @@ export default function CartDrawer() {
                         pour la livraison offerte
                       </p>
                     )}
-                    <div className="relative h-1.5 bg-spruce/10 rounded-full overflow-hidden">
+                    <div
+                      className="relative h-1.5 bg-spruce/10 rounded-full overflow-hidden"
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={Math.round(freeShippingProgress)}
+                      aria-label="Progression vers la livraison offerte"
+                    >
                       <div
                         className="absolute inset-y-0 left-0 bg-fresh rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${freeShippingProgress}%` }}
@@ -245,7 +325,8 @@ export default function CartDrawer() {
                         {/* Remove link */}
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-terracotta mt-1 transition-colors"
+                          aria-label={`Retirer ${product.title} du panier`}
+                          className="text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-terracotta mt-1 py-1.5 transition-colors"
                         >
                           Retirer
                         </button>
@@ -257,22 +338,26 @@ export default function CartDrawer() {
 
                     <div className="mt-auto pt-4">
                       {/* Quantité pill */}
+                      {/* Cibles tactiles : w-6 (24px) → w-10 (40px, ~44 avec le
+                          padding du pill) + aria-labels (icône seule sinon). */}
                       <div className="inline-flex items-center bg-white border border-spruce/15 rounded-full px-1 py-1">
                         <button
                           onClick={() => updateItem(item.id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
-                          className="w-6 h-6 flex items-center justify-center rounded-full text-ink-mute hover:bg-spruce/5 disabled:opacity-30 transition-all"
+                          aria-label={`Réduire la quantité de ${product.title}`}
+                          className="w-10 h-10 flex items-center justify-center rounded-full text-ink-mute hover:bg-spruce/5 disabled:opacity-30 transition-all"
                         >
-                          <Minus className="w-3 h-3" />
+                          <Minus className="w-3.5 h-3.5" />
                         </button>
-                        <span className="w-6 text-center text-[12px] font-bold text-ink">
+                        <span className="w-7 text-center text-[13px] font-bold text-ink tabular-nums" aria-live="polite">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateItem(item.id, item.quantity + 1)}
-                          className="w-6 h-6 flex items-center justify-center rounded-full text-ink-mute hover:bg-spruce/5 transition-all"
+                          aria-label={`Augmenter la quantité de ${product.title}`}
+                          className="w-10 h-10 flex items-center justify-center rounded-full text-ink-mute hover:bg-spruce/5 transition-all"
                         >
-                          <Plus className="w-3 h-3" />
+                          <Plus className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>

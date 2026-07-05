@@ -170,7 +170,8 @@ function RegisterContent() {
                 <button
                   type="button"
                   onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors text-ink-mute hover:text-spruce"
+                  aria-label={showPwd ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors text-ink-mute hover:text-spruce"
                 >
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -179,20 +180,22 @@ function RegisterContent() {
 
             {/* Newsletter */}
             <label className="flex items-start gap-3 cursor-pointer group mt-2">
+              {/* La checkbox native est sr-only : la coche custom doit refléter
+                  le focus clavier (peer-focus-visible), sinon il est invisible. */}
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={form.acceptsMarketing}
+                onChange={(e) => setForm({ ...form, acceptsMarketing: e.target.checked })}
+              />
               <div className={cn(
-                "w-5 h-5 rounded-md border flex items-center justify-center mt-0.5 flex-shrink-0 transition-all",
+                "w-5 h-5 rounded-md border flex items-center justify-center mt-0.5 flex-shrink-0 transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-fresh peer-focus-visible:ring-offset-2",
                 form.acceptsMarketing
                   ? 'bg-fresh border-fresh'
                   : 'border-spruce/25 bg-white group-hover:border-spruce/40'
               )}>
                 {form.acceptsMarketing && <Check className="w-3.5 h-3.5 text-white" />}
               </div>
-              <input
-                type="checkbox"
-                className="sr-only"
-                checked={form.acceptsMarketing}
-                onChange={(e) => setForm({ ...form, acceptsMarketing: e.target.checked })}
-              />
               <span className="text-[12px] font-medium leading-snug text-ink-mute">
                 Je souhaite recevoir les offres exclusives et l&apos;actualité BodyStart
               </span>

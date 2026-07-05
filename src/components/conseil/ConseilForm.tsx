@@ -72,7 +72,7 @@ export default function ConseilForm() {
             ton rendez-vous en boutique.
           </p>
           <div className="bg-white rounded-2xl border border-spruce/10 p-6 text-left mb-8">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard mb-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink mb-2">
               Notre boutique
             </p>
             <p className="font-semibold text-ink">8 Rue du Pont des Landes, 78310 Coignières</p>
@@ -94,7 +94,7 @@ export default function ConseilForm() {
       {/* ─── Hero ─── */}
       <div className="pt-12 md:pt-16 pb-10 md:pb-12">
         <div className="container text-center max-w-3xl">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink mb-3">
             Conseil gratuit · Coignières
           </p>
           <h1 className="font-display text-[36px] sm:text-[44px] lg:text-[52px] font-extrabold text-spruce tracking-tight leading-[1.05] mb-5">
@@ -148,6 +148,7 @@ export default function ConseilForm() {
                     <button
                       key={obj.value}
                       onClick={() => setObjectif(obj.value)}
+                      aria-pressed={selected}
                       className={cn(
                         'text-left p-5 rounded-2xl border transition-all',
                         selected
@@ -229,12 +230,14 @@ export default function ConseilForm() {
               <div className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-[12px] font-semibold text-ink mb-2">
+                    <label htmlFor="conseil-name" className="block text-[12px] font-semibold text-ink mb-2">
                       Ton prénom et nom <span className="text-fresh">*</span>
                     </label>
                     <input
+                      id="conseil-name"
                       type="text"
                       required
+                      autoComplete="name"
                       value={form.name}
                       onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                       placeholder="Jean Dupont"
@@ -242,9 +245,11 @@ export default function ConseilForm() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[12px] font-semibold text-ink mb-2">Ton téléphone</label>
+                    <label htmlFor="conseil-phone" className="block text-[12px] font-semibold text-ink mb-2">Ton téléphone</label>
                     <input
+                      id="conseil-phone"
                       type="tel"
+                      autoComplete="tel"
                       value={form.phone}
                       onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                       placeholder="06 00 00 00 00"
@@ -254,12 +259,14 @@ export default function ConseilForm() {
                 </div>
 
                 <div>
-                  <label className="block text-[12px] font-semibold text-ink mb-2">
+                  <label htmlFor="conseil-email" className="block text-[12px] font-semibold text-ink mb-2">
                     Ton email <span className="text-fresh">*</span>
                   </label>
                   <input
+                    id="conseil-email"
                     type="email"
                     required
+                    autoComplete="email"
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                     placeholder="jean@exemple.com"
@@ -268,10 +275,11 @@ export default function ConseilForm() {
                 </div>
 
                 <div>
-                  <label className="block text-[12px] font-semibold text-ink mb-2">
+                  <label htmlFor="conseil-message" className="block text-[12px] font-semibold text-ink mb-2">
                     Ton message (facultatif)
                   </label>
                   <textarea
+                    id="conseil-message"
                     rows={4}
                     value={form.message}
                     onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
@@ -282,7 +290,7 @@ export default function ConseilForm() {
               </div>
 
               {error && (
-                <p className="mt-4 text-[14px] font-medium text-terracotta bg-terracotta/10 rounded-xl px-4 py-3">
+                <p role="alert" className="mt-4 text-[14px] font-medium text-terracotta bg-terracotta/10 rounded-xl px-4 py-3">
                   {error}
                 </p>
               )}
@@ -316,7 +324,7 @@ export default function ConseilForm() {
                   <Icon className="w-5 h-5 text-spruce" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard mb-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink mb-1">
                     {label}
                   </p>
                   {href ? (

@@ -66,10 +66,21 @@ function HeaderInner(_props: HeaderProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Focus réel du champ à l'ouverture (autoFocus ne s'applique qu'au montage,
-  // or l'input est toujours monté — replié en max-h-0).
+  // A11y : le dropdown recherche replié (max-h-0 opacity-0) reste dans le DOM —
+  // sans inert, son input et ses liens restaient tabbables invisibles.
+  // UN SEUL effet inert+focus, dans CET ordre : retirer inert PUIS focus —
+  // focus() sur un élément encore inert est silencieusement ignoré (bug attrapé
+  // en review : deux effets séparés cassaient l'autofocus à l'ouverture).
+  const searchPanelRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (isSearchOpen) searchInputRef.current?.focus()
+    const panel = searchPanelRef.current
+    if (!panel) return
+    if (isSearchOpen) {
+      panel.removeAttribute('inert')
+      searchInputRef.current?.focus()
+    } else {
+      panel.setAttribute('inert', '')
+    }
   }, [isSearchOpen])
 
   // Live search avec debounce 200ms
@@ -215,7 +226,11 @@ function HeaderInner(_props: HeaderProps) {
               <button
                 onClick={openCart}
                 className="relative flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-semibold transition-colors ml-1 bg-fresh hover:bg-fresh-deep"
-                aria-label="Ouvrir le panier"
+                aria-label={
+                  totalQuantity > 0
+                    ? `Ouvrir le panier, ${totalQuantity} article${totalQuantity > 1 ? 's' : ''}`
+                    : 'Ouvrir le panier'
+                }
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span className="hidden sm:inline">Panier</span>
@@ -244,6 +259,7 @@ function HeaderInner(_props: HeaderProps) {
 
         {/* ─── Inline Search Dropdown ─── */}
         <div
+          ref={searchPanelRef}
           className={cn(
             "absolute left-0 w-full border-b transition-[max-height,opacity] duration-300 ease-out z-30 shadow-xl bg-white border-spruce/10",
             isSearchOpen ? "max-h-[85vh] opacity-100" : "max-h-0 opacity-0 overflow-hidden"

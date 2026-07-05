@@ -163,6 +163,10 @@ export function CagnotteCartWidget() {
         step={100}
         value={redeemAmount}
         onChange={(e) => setRedeemAmount(Number(e.target.value))}
+        // A11y : sans label le lecteur d'écran annonçait un slider anonyme, et
+        // sans valuetext il lisait la valeur en CENTIMES (« 2000 » pour 20 €).
+        aria-label="Montant de cagnotte à utiliser"
+        aria-valuetext={`${(redeemAmount / 100).toLocaleString('fr-FR')} euros`}
         className="w-full mb-3 accent-fresh"
       />
 

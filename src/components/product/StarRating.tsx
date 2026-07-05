@@ -14,7 +14,13 @@ export default function StarRating({ rating, count, size = 'md', showCount = tru
 
   return (
     <div className={cn('flex items-center gap-1.5', className)}>
-      <div className="flex items-center gap-0.5">
+      {/* A11y : la note n'existait que visuellement — un lecteur d'écran
+          n'entendait que « (12 avis) » sans jamais connaître la note. */}
+      <div
+        className="flex items-center gap-0.5"
+        role="img"
+        aria-label={`Note : ${rating.toLocaleString('fr-FR')} sur 5`}
+      >
         {[1, 2, 3, 4, 5].map((star) => {
           const filled = star <= Math.floor(rating)
           const partial = !filled && star === Math.ceil(rating) && rating % 1 >= 0.5

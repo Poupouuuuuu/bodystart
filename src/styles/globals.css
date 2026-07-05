@@ -22,7 +22,9 @@
   /* Accents contextuels */
   --color-mustard: #C9A227;
   --color-mustard-ink: #5C4A14;
-  --color-terracotta: #B85C3E;
+  /* Assombri #B85C3E → #A44F33 (a11y) : l'ancien tombait à 4,27:1 sur canvas
+     et 4,0:1 sur bg-terracotta/10 — sous le seuil AA 4,5:1 pour du texte 13-14px. */
+  --color-terracotta: #A44F33;
 
   /* ─── V1 (DEPRECATED, conserve pour pages non-refondues) ─── */
   --color-brand-primary: #2D5A3D;
@@ -56,6 +58,31 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* A11y : focus clavier VISIBLE partout (beaucoup de contrôles V2 faisaient
+     outline-none avec une bordure à ~2:1). :focus-visible ne s'affiche qu'au
+     clavier — aucun halo au clic souris. Outline (≠ ring/box-shadow) : ne
+     rentre pas en conflit avec les ombres existantes. */
+  :focus-visible {
+    outline: 2px solid #3B7A3F; /* fresh */
+    outline-offset: 2px;
+  }
+
+  /* A11y : respect de prefers-reduced-motion (réglage OS). Neutralise le
+     smooth-scroll et les animations continues (float 6s infinite, marquee 30s,
+     bounce) pour les utilisateurs sensibles au mouvement (vestibulaire). */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   body {

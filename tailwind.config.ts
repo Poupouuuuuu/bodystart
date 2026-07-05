@@ -31,7 +31,9 @@ const config: Config = {
         // Accents contextuels (badges, alertes — limite a 1-2 elements/section)
         mustard:     '#C9A227',  // best-seller, medaille
         'mustard-ink': '#5C4A14',  // texte brun fonce sur fond mustard
-        terracotta:  '#B85C3E',  // promo, stock bas, alerte
+        // Assombri #B85C3E → #A44F33 (a11y sprint 4) : l'ancien tombait sous le
+        // seuil AA 4,5:1 en texte sur canvas / fonds terracotta/10.
+        terracotta:  '#A44F33',  // promo, stock bas, alerte
 
         // ─── V1 (DEPRECATED, conserve pour pages non-refondues) ──
         // A retirer au fur et a mesure que les pages migrent vers V2.

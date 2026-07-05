@@ -101,6 +101,14 @@ export default function NewsletterPopup() {
     return () => document.removeEventListener('keydown', onKey)
   }, [open, close])
 
+  // A11y : à l'ouverture, déplacer le focus DANS la modale (sinon l'utilisateur
+  // clavier/lecteur d'écran continue de naviguer la page derrière l'overlay
+  // sans savoir qu'une modale s'affiche).
+  const emailInputRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (open) emailInputRef.current?.focus()
+  }, [open])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (status === 'loading') return
@@ -190,6 +198,7 @@ export default function NewsletterPopup() {
 
               <form onSubmit={handleSubmit} className="space-y-3" noValidate>
                 <input
+                  ref={emailInputRef}
                   type="email"
                   inputMode="email"
                   autoComplete="email"
@@ -201,10 +210,14 @@ export default function NewsletterPopup() {
                   }}
                   placeholder="ton@email.fr"
                   aria-label="Ton adresse email"
+                  aria-invalid={status === 'error'}
+                  aria-describedby={status === 'error' ? 'newsletter-error' : undefined}
                   className="w-full px-5 py-3.5 rounded-full border border-spruce/20 bg-white text-[16px] md:text-[15px] font-medium text-ink placeholder:text-ink-mute/60 focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 transition-all"
                 />
                 {status === 'error' && (
-                  <p className="text-[13px] font-medium text-terracotta px-1">{errorMsg}</p>
+                  <p id="newsletter-error" role="alert" className="text-[13px] font-medium text-terracotta px-1">
+                    {errorMsg}
+                  </p>
                 )}
                 <button
                   type="submit"

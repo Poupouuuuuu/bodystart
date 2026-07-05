@@ -120,6 +120,8 @@ export default function MondialRelayPicker({ postCode, onClose, onSelected, onUn
   onSelectedRef.current = onSelected
   const onUnavailableRef = useRef(onUnavailable)
   onUnavailableRef.current = onUnavailable
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   useEffect(() => {
     let cancelled = false
@@ -164,6 +166,19 @@ export default function MondialRelayPicker({ postCode, onClose, onSelected, onUn
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // A11y (sprint 4) : la modale déclarait role="dialog" sans gestion clavier.
+  // Escape ferme + focus initial sur le bouton Fermer au montage (le composant
+  // n'est monté QUE quand la modale est ouverte).
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    closeBtnRef.current?.focus()
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') onCloseRef.current()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [])
+
   return (
     <div
       className="fixed inset-0 z-[60] flex sm:items-center sm:justify-center bg-ink/50 backdrop-blur-sm animate-fade-in"
@@ -185,6 +200,7 @@ export default function MondialRelayPicker({ postCode, onClose, onSelected, onUn
             </h2>
           </div>
           <button
+            ref={closeBtnRef}
             onClick={onClose}
             className="p-2 -mr-2 rounded-full text-ink-mute hover:text-spruce hover:bg-spruce/5 transition-colors"
             aria-label="Fermer"

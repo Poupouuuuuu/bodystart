@@ -90,13 +90,21 @@ export default async function NutritionLayout({ children }: { children: React.Re
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
+      {/* A11y : skip-link — 1er élément focusable, visible uniquement au focus
+          clavier. Évite de retraverser bandeau + nav (~10 tab stops) par page. */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-fresh focus:text-white focus:px-5 focus:py-3 focus:rounded-full focus:text-[14px] focus:font-semibold"
+      >
+        Aller au contenu
+      </a>
       <Suspense fallback={<div className="h-[104px] bg-white border-b border-gray-100" />}>
         <Header collections={collections} />
       </Suspense>
       <Suspense fallback={null}>
         <CartDrawer />
       </Suspense>
-      <main className="flex-1">{children}</main>
+      <main id="main" className="flex-1">{children}</main>
       <Suspense fallback={null}>
         <Footer />
       </Suspense>

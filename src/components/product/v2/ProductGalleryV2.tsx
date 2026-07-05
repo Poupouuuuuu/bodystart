@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { ShopifyImage } from '@/lib/shopify/types'
@@ -36,14 +36,37 @@ export default function ProductGalleryV2({
     onImageChange?.(i)
   }
 
-  // Prevent scrolling when lightbox is open
-  if (typeof window !== 'undefined') {
-    if (isLightboxOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
+  // Verrou scroll lightbox — dans un useEffect (l'ancien code mutait le DOM
+  // PENDANT le render, anti-pattern React qui combattait aussi le verrou du
+  // CartDrawer via son 'unset' à chaque re-render) et sur <html> ET <body>
+  // (c'est <html> qui scrolle en mode standards, body seul ne suffisait pas).
+  const closeLightboxBtnRef = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    if (!isLightboxOpen) return
+    const html = document.documentElement
+    const body = document.body
+    const prevHtml = html.style.overflow
+    const prevBody = body.style.overflow
+    html.style.overflow = 'hidden'
+    body.style.overflow = 'hidden'
+    // Focus initial + fermeture Escape (la lightbox était inaccessible clavier).
+    closeLightboxBtnRef.current?.focus()
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setIsLightboxOpen(false)
+      // Trap trivial : le bouton Fermer est le SEUL focusable de la lightbox —
+      // Tab ne doit pas partir parcourir la page derrière l'overlay.
+      if (e.key === 'Tab') {
+        e.preventDefault()
+        closeLightboxBtnRef.current?.focus()
+      }
     }
-  }
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      html.style.overflow = prevHtml
+      body.style.overflow = prevBody
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isLightboxOpen])
 
   return (
     <>
@@ -54,8 +77,12 @@ export default function ProductGalleryV2({
           style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
         >
           {currentImage ? (
-            <div
-              className="relative w-[85%] h-[85%] animate-float drop-shadow-2xl pointer-events-auto cursor-zoom-in"
+            // <button> (était un div onClick) : le zoom était inatteignable au
+            // clavier — important pour lire une étiquette de composition.
+            <button
+              type="button"
+              aria-label="Agrandir l'image"
+              className="relative w-[85%] h-[85%] motion-safe:animate-float drop-shadow-2xl pointer-events-auto cursor-zoom-in"
               onClick={() => setIsLightboxOpen(true)}
             >
               <Image
@@ -72,7 +99,7 @@ export default function ProductGalleryV2({
                   <ZoomIn className="w-5 h-5" />
                 </div>
               </div>
-            </div>
+            </button>
           ) : (
             <div className="text-spruce/40 text-5xl font-extrabold">BS</div>
           )}
@@ -121,8 +148,12 @@ export default function ProductGalleryV2({
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-ink/90 backdrop-blur-md animate-fade-in"
           onClick={() => setIsLightboxOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${title} — vue plein écran`}
         >
           <button
+            ref={closeLightboxBtnRef}
             onClick={(e) => {
               e.stopPropagation()
               setIsLightboxOpen(false)
