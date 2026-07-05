@@ -19,14 +19,13 @@ interface BuyBoxV2Props {
   collectionName: string | null
   collectionHandle: string | null
   activeStore?: BodyStartStore
-  storeInventory: Record<string, number>
   /**
-   * Stock boutique PAR VARIANTE (variantId → dispo à l'emplacement actif).
-   * Prioritaire sur storeInventory (qui est un TOTAL toutes variantes) : le
-   * message « En stock à Coignières » suit la saveur/le format sélectionné —
-   * fini le client qui se déplace pour une variante à zéro.
+   * gid du produit — sert au fetch CLIENT du stock boutique par variante
+   * (/api/inventory?productId=…&locationId=…). La page est en ISR : le stock
+   * C&C reste temps réel car il est chargé au montage, pas au rendu serveur.
+   * Le bloc stock n'apparaît qu'une fois la réponse reçue (pas de flash faux).
    */
-  storeVariantInventory?: Record<string, number>
+  productId?: string
   benefits?: string[]
   /** Format / grammage du produit (ex: "1,5 kg"). Source : metafield Shopify. */
   format?: string | null
@@ -63,8 +62,7 @@ export default function BuyBoxV2({
   discountPct,
   collectionHandle,
   activeStore,
-  storeInventory,
-  storeVariantInventory,
+  productId,
   benefits = [],
   format = null,
   vendor = null,
@@ -177,11 +175,39 @@ export default function BuyBoxV2({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Stock boutique : PAR VARIANTE si dispo (suit la saveur/le format sélectionné),
-  // sinon fallback sur le total agrégé (ancien comportement — ex. données absentes).
-  const storeStock = activeStore
-    ? storeVariantInventory?.[selectedVariant.id] ?? storeInventory[activeStore.id]
-    : undefined
+  // Stock boutique PAR VARIANTE, fetché côté client (page en ISR → le rendu
+  // serveur est caché, mais ce fetch tourne à chaque visite = temps réel).
+  // null = pas encore chargé / échec → bloc stock masqué (storeStock undefined).
+  const [variantStock, setVariantStock] = useState<Record<string, number> | null>(null)
+  useEffect(() => {
+    // Bundles : le bloc stock est toujours masqué (un pack n'a pas d'inventaire
+    // propre) → inutile de consommer un appel Admin + le rate-limit du visiteur.
+    if (isBundle) return
+    if (!productId || !activeStore?.shopifyLocationId) return
+    let cancelled = false
+    const params = new URLSearchParams({
+      productId,
+      locationId: activeStore.shopifyLocationId,
+    })
+    fetch(`/api/inventory?${params}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (cancelled || !j?.variants) return
+        const map: Record<string, number> = {}
+        for (const v of j.variants as { variantId: string; available: number }[]) {
+          map[v.variantId] = v.available
+        }
+        setVariantStock(map)
+      })
+      .catch(() => {
+        // Best-effort : sans stock, le bloc reste simplement masqué.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [productId, activeStore?.shopifyLocationId, isBundle])
+
+  const storeStock = activeStore ? variantStock?.[selectedVariant.id] : undefined
   const showExactStock = storeStock !== undefined && storeStock > 0 && storeStock <= LOW_STOCK_THRESHOLD
 
   // Disponibilité en ligne de la variante sélectionnée (achat e-commerce).

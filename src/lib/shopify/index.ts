@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { shopifyFetch, shopifyAdminFetch } from './client'
 import {
   GET_PRODUCTS,
@@ -65,15 +66,19 @@ export async function searchProducts(query: string, first = 24) {
   return data.products.nodes
 }
 
-export async function getProductByHandle(handle: string) {
+// cache() (React request memoization) : generateMetadata ET la page appellent
+// getProductByHandle avec le même handle dans le même rendu — sans cache(), le
+// produit était fetché DEUX FOIS par requête (graphql-request passe par POST,
+// la memoization fetch de Next ne s'applique pas). Idem collections/featured.
+export const getProductByHandle = cache(async (handle: string) => {
   const data = await shopifyFetch<{ product: ShopifyProduct | null }>(
     GET_PRODUCT_BY_HANDLE,
     { handle }
   )
   return data.product
-}
+})
 
-export async function getFeaturedProducts(): Promise<ShopifyProduct[]> {
+export const getFeaturedProducts = cache(async (): Promise<ShopifyProduct[]> => {
   // 8 meilleures ventes avec composants de bundle (cf. GET_FEATURED_PRODUCTS).
   try {
     const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>(
@@ -84,7 +89,7 @@ export async function getFeaturedProducts(): Promise<ShopifyProduct[]> {
     // Sans cles API : section vide (graceful)
     return []
   }
-}
+})
 
 // ─── COLLECTIONS ─────────────────────────────────────────────
 
@@ -96,13 +101,13 @@ export async function getCollections(first = 20) {
   return data.collections.nodes
 }
 
-export async function getCollectionByHandle(handle: string, productsFirst = 20) {
+export const getCollectionByHandle = cache(async (handle: string, productsFirst = 20) => {
   const data = await shopifyFetch<{ collection: ShopifyCollection | null }>(
     GET_COLLECTION_BY_HANDLE,
     { handle, productsFirst }
   )
   return data.collection
-}
+})
 
 // ─── BLOG ────────────────────────────────────────────────────
 

@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 
 /**
  * Visuel composite d'un bundle : les pots des composants empilés sur le
- * fond végétal de marque (Background.webp). Source unique partagée entre :
+ * fond végétal de marque (bg-vegetal.webp). Source unique partagée entre :
  *   - les cartes /packs (PackCardV2)          → variant="card"
  *   - la vignette panier (CartDrawer)         → variant="thumb"
  *
@@ -87,7 +87,7 @@ export default function BundleComposite({
       // On remplit donc le parent dimensionné (aspect-square pour card,
       // w-20/h-24 pour thumb) via `w-full h-full` dans les DEUX variantes.
       className={`relative w-full h-full bg-cover bg-bottom bg-no-repeat overflow-hidden ${className}`}
-      style={{ backgroundImage: "url('/Background.webp')" }}
+      style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
     >
       {n > 0 ? (
         <div className={`absolute inset-0 flex items-end justify-center ${padClass}`}>

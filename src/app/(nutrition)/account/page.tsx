@@ -14,7 +14,15 @@ import { AmbassadorPanel } from '@/components/account/AmbassadorPanel'
 import { AdminAmbassadorsPanel } from '@/components/account/AdminAmbassadorsPanel'
 import { useAmbassador } from '@/hooks/useAmbassador'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
-import PhoneField from '@/components/ui/PhoneField'
+import nextDynamic from 'next/dynamic'
+// Import dynamique : PhoneField embarque libphonenumber-js (~116 Ko) — chargé
+// seulement quand l'onglet profil le rend, hors bundle initial de /account.
+const PhoneField = nextDynamic(() => import('@/components/ui/PhoneField'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[50px] rounded-xl border border-spruce/20 bg-sage/40 animate-pulse" aria-hidden="true" />
+  ),
+})
 import { useCustomer } from '@/context/CustomerContext'
 import { updateCustomer, getStoredToken } from '@/lib/shopify/customer'
 import type { AddressInput } from '@/lib/shopify/customer'

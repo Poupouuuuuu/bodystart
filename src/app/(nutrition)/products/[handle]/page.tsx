@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import {
   getProductByHandle,
-  getProductInventoryByLocation,
+  getProducts,
   getCollectionByHandle,
   getFeaturedProducts,
 } from '@/lib/shopify'
@@ -23,13 +23,28 @@ import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
 import { getProductRating, buildAggregateRating } from '@/lib/reviews'
 import TrackViewItem from '@/components/analytics/TrackViewItem'
 
-// Données fraîches à chaque visite (stock C&C à jour) SANS `dynamic =
-// 'force-dynamic'` : avec force-dynamic, notFound() renvoyait un HTTP 200
-// (quirk Next 14 sur les routes dynamiques streamées). revalidate=0 +
-// fetchCache 'force-no-store' garde le rendu par requête et les fetches Shopify
-// non-cachés (stock à jour), tout en laissant notFound() émettre un vrai 404.
-export const revalidate = 0
-export const fetchCache = 'force-no-store'
+// ISR 3 min (sprint perf 2026-07-04) : la page était en revalidate=0 +
+// force-no-store « pour le stock C&C temps réel » → TTFB ~600 ms mesuré en prod
+// (rendu SSR complet + 4-5 appels Shopify à CHAQUE vue, y compris Googlebot).
+// Le stock boutique est désormais fetché CÔTÉ CLIENT par BuyBoxV2 via
+// /api/inventory?productId=… (toujours temps réel), donc la page peut être
+// servie depuis le cache CDN. notFound() sous ISR émet un vrai 404 (le quirk
+// 200 ne concernait que force-dynamic). Nouveau produit → généré à la 1re
+// visite (dynamicParams par défaut).
+export const revalidate = 180
+
+// Pré-génère le catalogue au build → cache chaud dès le deploy.
+// Best-effort : si Shopify est indisponible au build, on retombe sur la
+// génération à la demande plutôt que de faire échouer le build.
+export async function generateStaticParams() {
+  try {
+    const { nodes } = await getProducts({ first: 250 })
+    return nodes.map((p) => ({ handle: p.handle }))
+  } catch (err) {
+    console.error('[ProductPage] generateStaticParams failed (fallback on-demand):', err)
+    return []
+  }
+}
 
 interface Props {
   params: { handle: string }
@@ -100,26 +115,23 @@ export default async function ProductPage({ params }: Props) {
     product = await getProductByHandle(params.handle)
   } catch (err) {
     console.error('[ProductPage] Erreur API pour handle:', params.handle, err)
+    // PENDANT LE BUILD (prérendu des ~250 fiches) : un hiccup Shopify sur UNE
+    // fiche ne doit pas faire échouer tout le deploy → notFound() ; la page
+    // sera régénérée saine par l'ISR (≤3 min) après mise en prod.
+    if (process.env.NEXT_PHASE === 'phase-production-build') notFound()
+    // AU RUNTIME : erreur API ≠ produit absent → on THROW pour que l'ISR
+    // conserve la dernière version valide (avant : notFound() → une fiche
+    // VALIDE servait un 404, caché et indexable, à chaque hiccup Shopify).
+    throw err
   }
 
+  // API OK mais produit réellement introuvable → vrai 404.
   if (!product) notFound()
 
-  // Stock boutique physique — agrégé (compat) + PAR VARIANTE (l'API renvoie déjà
-  // le détail ; l'agrégat seul affichait « En stock » pour une saveur à zéro).
+  // Stock boutique physique : fetché CÔTÉ CLIENT par BuyBoxV2 (/api/inventory
+  // ?productId=…) — temps réel même avec la page en ISR. On ne passe plus que
+  // l'identité du magasin actif.
   const activeStore = BODY_START_STORES.find((s) => s.isActive)
-  const storeInventory: Record<string, number> = {}
-  const storeVariantInventory: Record<string, number> = {}
-  if (activeStore?.shopifyLocationId) {
-    try {
-      const levels = await getProductInventoryByLocation(product.id, activeStore.shopifyLocationId)
-      storeInventory[activeStore.id] = levels.reduce((sum, v) => sum + v.available, 0)
-      for (const level of levels) {
-        storeVariantInventory[level.variantId] = level.available
-      }
-    } catch (err) {
-      console.error('[ClickCollect] inventory fetch failed for', product.handle, err)
-    }
-  }
 
   // Produits cross-sell (meme collection) avec fallback featured products
   // si le produit n'a pas de collection rattachee.
@@ -279,8 +291,7 @@ export default async function ProductPage({ params }: Props) {
             collectionName={collectionName}
             collectionHandle={collectionHandle}
             activeStore={activeStore}
-            storeInventory={storeInventory}
-            storeVariantInventory={storeVariantInventory}
+            productId={product.id}
             benefits={benefits}
             format={format}
             vendor={product.vendor}

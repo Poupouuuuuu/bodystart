@@ -109,7 +109,7 @@ export default function Footer() {
             <div>
               <Link href="/" className="inline-block mb-5">
                 <Image
-                  src="/assets/logos/Logo_texte.png"
+                  src="/assets/logos/logo-texte-240.png"
                   alt="BodyStart"
                   width={150}
                   height={40}

@@ -18,7 +18,7 @@ export default function ConseilDifferenciantV2() {
           <div className="order-2 lg:order-1">
             <div className="relative aspect-[5/4] w-full rounded-2xl overflow-hidden border border-spruce/10 bg-white">
               <Image
-                src="/assets/interieur.png"
+                src="/assets/interieur.webp"
                 alt="Intérieur de la boutique BodyStart Nutrition à Coignières"
                 fill
                 sizes="(max-width: 1024px) 100vw, 600px"

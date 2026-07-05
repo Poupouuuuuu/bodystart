@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { shopifyAdminFetch } from '@/lib/shopify/client'
+import { getProductInventoryByLocation } from '@/lib/shopify'
 
 // Lit les query params → forcer le rendu dynamique pour éviter le warning au build
 export const dynamic = 'force-dynamic'
@@ -56,13 +57,27 @@ export async function GET(req: NextRequest) {
     }
 
     const variantId = req.nextUrl.searchParams.get('variantId')
+    const productId = req.nextUrl.searchParams.get('productId')
     const locationId = req.nextUrl.searchParams.get('locationId')
 
-    if (!variantId || !locationId) {
+    if ((!variantId && !productId) || !locationId) {
       return NextResponse.json(
-        { error: 'Paramètres variantId et locationId requis.' },
+        { error: 'Paramètres (variantId OU productId) et locationId requis.' },
         { status: 400 }
       )
+    }
+
+    // ─── Mode PRODUIT : stock de TOUTES les variantes en 1 appel Admin ───
+    // (fiche produit ISR : le stock C&C temps réel est fetché côté client —
+    // 1 requête par vue au lieu d'1 par variante.)
+    if (productId) {
+      const levels = await getProductInventoryByLocation(productId, locationId)
+      return NextResponse.json({
+        locationId,
+        productId,
+        variants: levels.map((l) => ({ variantId: l.variantId, available: l.available })),
+        totalAvailable: levels.reduce((sum, l) => sum + l.available, 0),
+      })
     }
 
     const data = await shopifyAdminFetch<{

@@ -62,12 +62,13 @@ export default function HeroV2() {
           <div className="relative">
             <div className="relative aspect-[4/5] w-full max-w-[520px] mx-auto rounded-[20px] overflow-hidden border border-spruce/10 bg-white">
               <Image
-                src="/assets/devanture.png"
+                src="/assets/devanture.webp"
                 alt="Devanture de la boutique BodyStart Nutrition à Coignières"
                 fill
                 sizes="(max-width: 1024px) 100vw, 520px"
                 className="object-cover"
                 priority
+                quality={65}
               />
             </div>
           </div>

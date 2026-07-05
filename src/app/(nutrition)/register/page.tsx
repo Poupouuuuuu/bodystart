@@ -81,7 +81,7 @@ function RegisterContent() {
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <Image
-              src="/assets/logos/Logo_texte.png"
+              src="/assets/logos/logo-texte-240.png"
               alt="BodyStart"
               width={160}
               height={48}

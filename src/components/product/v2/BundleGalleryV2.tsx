@@ -24,7 +24,7 @@ interface BundleGalleryV2Props {
  * du bundle. Les bundles n'ont pas (et n'auront pas) d'image propre.
  *
  * Rendu :
- * - Hero : pots des composants en ligne, leger overlap, sur Background.webp
+ * - Hero : pots des composants en ligne, leger overlap, sur bg-vegetal.webp
  *   (coherent avec PackCardV2 mais en plus grand).
  * - Sous le hero : strip horizontale avec les noms des composants
  *   (et leur quantite si > 1), chaque carte cliquable vers la fiche.
@@ -45,7 +45,7 @@ export default function BundleGalleryV2({
     return (
       <div
         className="aspect-square w-full bg-cover bg-bottom rounded-2xl border border-spruce/10"
-        style={{ backgroundImage: "url('/Background.webp')" }}
+        style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
         aria-label={title}
       />
     )
@@ -68,7 +68,7 @@ export default function BundleGalleryV2({
       {/* ─── Hero : pots empiles sur fond vegetal ─── */}
       <div
         className="relative w-full aspect-square bg-cover bg-bottom bg-no-repeat overflow-hidden rounded-2xl border border-spruce/10"
-        style={{ backgroundImage: "url('/Background.webp')" }}
+        style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
       >
         {/* Badge promo eventuel (coherence avec ProductGalleryV2) */}
         {discountPct !== null && (

@@ -1,9 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Loader2, Phone } from 'lucide-react'
 import toast from 'react-hot-toast'
-import PhoneField from '@/components/ui/PhoneField'
+// Import dynamique : PhoneField embarque libphonenumber-js (~116 Ko) — on ne le
+// charge que lorsque le bloc est réellement rendu, hors bundle initial.
+const PhoneField = dynamic(() => import('@/components/ui/PhoneField'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[50px] rounded-xl border border-spruce/20 bg-sage/40 animate-pulse" aria-hidden="true" />
+  ),
+})
 import { useCustomer } from '@/context/CustomerContext'
 import { readReferralCookie } from '@/components/marketing/ReferralCapture'
 

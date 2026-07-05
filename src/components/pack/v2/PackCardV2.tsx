@@ -17,7 +17,7 @@ const FRANCO_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100 // euros
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Packs
  *
  * Hierarchie visuelle :
- *  - Image du pack sur fond Background.webp (coherence catalogue/cross-sell).
+ *  - Image du pack sur fond bg-vegetal.webp (coherence catalogue/cross-sell).
  *  - Titre court, ligne benefice optionnelle (1-2 lignes max, depuis description).
  *  - Nombre de composants ("X produits inclus") deduit du metafield
  *    custom.composition (1 ligne = 1 produit, lignes vides ignorees).

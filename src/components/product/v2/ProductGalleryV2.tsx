@@ -15,7 +15,7 @@ interface ProductGalleryV2Props {
 }
 
 /**
- * Galerie V2 — palette DA claire + fond vegetal Background.webp (coherent /products + home).
+ * Galerie V2 — palette DA claire + fond vegetal bg-vegetal.webp (coherent /products + home).
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Fiche produit.1
  */
 export default function ProductGalleryV2({
@@ -51,7 +51,7 @@ export default function ProductGalleryV2({
         {/* Image principale avec fond vegetal */}
         <div
           className="relative w-full aspect-square flex items-center justify-center pointer-events-none group rounded-2xl bg-cover bg-center overflow-hidden border border-spruce/10"
-          style={{ backgroundImage: "url('/Background.webp')" }}
+          style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
         >
           {currentImage ? (
             <div

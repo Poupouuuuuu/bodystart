@@ -119,7 +119,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
       <Link
         href={`/products/${product.handle}`}
         className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden block"
-        style={{ backgroundImage: "url('/Background.webp')" }}
+        style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
       >
         <div className="absolute inset-0 flex items-end justify-center pb-4">
           {product.featuredImage ? (

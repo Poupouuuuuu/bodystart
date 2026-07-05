@@ -41,7 +41,7 @@ export default function ProductGallery({ images, title, discountPct, selectedInd
         {/* Image principale (Floating) */}
         <div 
           className="relative w-full aspect-square flex items-center justify-center pointer-events-none group rounded-[32px] bg-cover bg-center overflow-hidden border border-[#1a2e23]/5"
-          style={{ backgroundImage: "url('/Background.webp')" }}
+          style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
         >
           {/* Subtle overlay to soften the background */}
           <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />

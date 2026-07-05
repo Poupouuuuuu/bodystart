@@ -1,8 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { cookies } from 'next/headers'
 import { Gift, Users, ShoppingBag, ArrowRight, ChevronDown } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
+import ParrainageCta from '@/components/marketing/ParrainageCta'
+
+// Page marketing STATIQUE (ISR 1 h) : l'appel cookies() qui la rendait
+// dynamique (TTFB ~490 ms) est remplacé par le composant client ParrainageCta.
+export const revalidate = 3600
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/parrainage',
@@ -65,9 +69,6 @@ const BTN_OUTLINE =
   'inline-flex items-center justify-center gap-2 border border-spruce text-spruce font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-spruce/5'
 
 export default function ParrainagePage() {
-  // Detection cote serveur : presence cookie shopify (pas besoin de fetch)
-  const isLoggedIn = !!cookies().get('body-start-customer-token')?.value
-
   return (
     <div className="bg-canvas min-h-screen">
       {/* Hero */}
@@ -86,23 +87,7 @@ export default function ParrainagePage() {
               et tu touches 5 % de tous ses achats, à vie. Aucune carte physique,
               aucune appli, ton compte BodyStart suffit.
             </p>
-            <div className="flex flex-wrap gap-3">
-              {isLoggedIn ? (
-                <Link href="/account?tab=referral" className={BTN_PRIMARY}>
-                  Voir mon code <ArrowRight className="w-4 h-4" />
-                </Link>
-              ) : (
-                <>
-                  <Link href="/login" className={BTN_PRIMARY}>
-                    Connecte-toi pour avoir ton code
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                  <Link href="/register" className={BTN_OUTLINE}>
-                    Pas encore de compte ? Inscris-toi en 30 secondes
-                  </Link>
-                </>
-              )}
-            </div>
+            <ParrainageCta />
           </div>
         </div>
       </section>
@@ -162,15 +147,7 @@ export default function ParrainagePage() {
           <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-7">
             Ton compte BodyStart fait tout.
           </h2>
-          {isLoggedIn ? (
-            <Link href="/account?tab=referral" className={BTN_PRIMARY}>
-              Voir mon code <ArrowRight className="w-4 h-4" />
-            </Link>
-          ) : (
-            <Link href="/login" className={BTN_PRIMARY}>
-              Connecte-toi pour démarrer <ArrowRight className="w-4 h-4" />
-            </Link>
-          )}
+          <ParrainageCta variant="footer" />
         </div>
       </section>
     </div>

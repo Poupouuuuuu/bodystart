@@ -82,7 +82,7 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
               >
                 <div
                   className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden"
-                  style={{ backgroundImage: "url('/Background.webp')" }}
+                  style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
                 >
                   {soldOut && (
                     <span className="absolute top-3 left-3 z-30 inline-flex items-center bg-ink text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">

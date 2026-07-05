@@ -136,13 +136,15 @@ function HeaderInner(_props: HeaderProps) {
 
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
+              {/* PAS de priority : le hero de la home doit rester le SEUL preload
+                  prioritaire (2 preloads high se concurrençaient) ; le logo, 10 Ko,
+                  arrive de toute façon très tôt. */}
               <Image
-                src="/assets/logos/Logo_texte.png"
+                src="/assets/logos/logo-texte-240.png"
                 alt="BodyStart"
                 width={120}
                 height={40}
                 className="h-10 w-auto"
-                priority
               />
             </Link>
 
