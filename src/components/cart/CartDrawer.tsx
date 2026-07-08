@@ -369,15 +369,26 @@ export default function CartDrawer() {
 
               {/* ─── Widget Cagnotte (loyalty) — dans la zone scrollable ─── */}
               <CagnotteCartWidget />
+
+              {/* Point relais Mondial Relay (livraison uniquement, non bloquant).
+                  Déplacé du pied fixe vers la zone scrollable : sur petit écran
+                  le pied ~400px masquait les articles (retour client 2026-07). */}
+              {!isClickAndCollect && (
+                <div className="px-8">
+                  <RelayPickupBlock />
+                </div>
+              )}
             </div>
 
-            {/* ─── Footer récap + checkout (flex-shrink-0, toujours visible) ─── */}
+            {/* ─── Footer récap + checkout (flex-shrink-0, toujours visible).
+                Compact sur mobile (paddings réduits, détail du récap masqué) :
+                seul l'essentiel — mode de livraison, total, CTA — reste fixe. ─── */}
             {cart && (
-              <div className="flex-shrink-0 px-8 pb-6 pt-5 border-t border-spruce/10 bg-canvas shadow-[0_-8px_20px_-12px_rgba(0,0,0,0.08)]">
+              <div className="flex-shrink-0 px-5 pb-4 pt-4 sm:px-8 sm:pb-6 sm:pt-5 border-t border-spruce/10 bg-canvas shadow-[0_-8px_20px_-12px_rgba(0,0,0,0.08)]">
 
             {/* ─── Toggle Livraison / Click & Collect ─── */}
             {activeStore && (
-              <div className="flex bg-white p-1 rounded-xl mb-5 border border-spruce/10">
+              <div className="flex bg-white p-1 rounded-xl mb-3 sm:mb-5 border border-spruce/10">
                 <button
                   onClick={() => isClickAndCollect && toggleClickAndCollect()}
                   className={cn(
@@ -405,25 +416,26 @@ export default function CartDrawer() {
               </div>
             )}
 
-            {/* Récap prix */}
-            <div className="space-y-3 mb-6 bg-white p-4 rounded-xl border border-spruce/10">
-              <div className="flex justify-between text-[13px] text-ink-mute font-medium">
+            {/* Récap prix — sur mobile, seul le Total reste visible (le détail
+                sous-total/livraison/TVA est sur le checkout Shopify) */}
+            <div className="space-y-3 mb-3 sm:mb-6 bg-white p-3 sm:p-4 rounded-xl border border-spruce/10">
+              <div className="hidden sm:flex justify-between text-[13px] text-ink-mute font-medium">
                 <span>Sous-total</span>
                 <span className="font-semibold text-ink">{formatPrice(cart.cost.subtotalAmount)}</span>
               </div>
-              <div className="flex justify-between text-[13px] text-ink-mute font-medium">
+              <div className="hidden sm:flex justify-between text-[13px] text-ink-mute font-medium">
                 <span>Livraison</span>
                 <span className="font-semibold text-ink">
                   {isClickAndCollect ? 'Gratuit' : 'Calculée à l\'étape suivante'}
                 </span>
               </div>
               {cart.cost.totalTaxAmount && (
-                <div className="flex justify-between text-[13px] text-ink-mute font-medium">
+                <div className="hidden sm:flex justify-between text-[13px] text-ink-mute font-medium">
                   <span>Dont TVA</span>
                   <span className="font-semibold text-ink">{formatPrice(cart.cost.totalTaxAmount)}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center pt-3 border-t border-spruce/10 mt-1">
+              <div className="flex justify-between items-center sm:pt-3 sm:border-t border-spruce/10 sm:mt-1">
                 <span className="text-[14px] font-bold text-ink">Total</span>
                 <span className="font-display font-extrabold text-2xl text-spruce">
                   {formatPrice(cart.cost.totalAmount)}
@@ -431,14 +443,19 @@ export default function CartDrawer() {
               </div>
             </div>
 
-            {/* Point relais Mondial Relay (livraison uniquement, non bloquant) */}
-            {!isClickAndCollect && <RelayPickupBlock />}
-
             {/* Bouton checkout */}
             <div className="flex flex-col gap-3">
               <a
                 href={cart.checkoutUrl}
                 onClick={() => {
+                  // Marqueur « retour checkout » : si l'utilisateur revient du
+                  // checkout Shopify avec « précédent » et que la page se
+                  // recharge, CartContext rouvre le panier (retour client 2026-07).
+                  try {
+                    sessionStorage.setItem('bs-reopen-cart', String(Date.now()))
+                  } catch {
+                    /* navigation privée : tant pis, pas de réouverture */
+                  }
                   // GA4 begin_checkout avant redirection vers le checkout Shopify
                   // (no-op sans consentement ; n'empêche jamais la navigation).
                   try {

@@ -8,8 +8,8 @@
  * visuelle complete (sentence case partout, palette V2, carte produit
  * allegee sans note pseudo-aleatoire ni selecteur qty, badges DA).
  */
-import { useState, useMemo, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useMemo, useEffect, useCallback } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { SlidersHorizontal, X, ChevronDown, Search, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
@@ -19,7 +19,7 @@ import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 const GOALS: { key: string; label: string; image: string | null; linkedCategories: string[] }[] = [
   { key: 'all', label: 'Tout voir', image: null, linkedCategories: [] },
   { key: 'muscle', label: 'Muscle', image: '/Logomuscle.png', linkedCategories: ['proteines', 'creatine', 'acides-amines'] },
-  { key: 'energie', label: 'Énergie', image: '/Logoenergy.png', linkedCategories: ['boosters', 'pre-workout'] },
+  { key: 'energie', label: 'Énergie', image: '/Logoenergy.png', linkedCategories: ['boosters', 'pre-workout', 'boissons'] },
   { key: 'recuperation', label: 'Récupération', image: '/Logo-recuperation.png', linkedCategories: ['acides-amines', 'sante'] },
   { key: 'sante', label: 'Santé', image: '/Logo-sante-vitalite.png', linkedCategories: ['sante', 'bruleurs'] },
 ]
@@ -84,7 +84,24 @@ const CATEGORIES: Category[] = [
   { key: 'snacks', label: 'Snacks', productTypes: ['Snacks'], subcategories: [
     { key: 'barre', label: 'Barres', tags: ['barre'] },
   ]},
+  { key: 'boissons', label: 'Boissons', productTypes: ['Boissons'], subcategories: [] },
+  { key: 'accessoires', label: 'Accessoires', productTypes: ['Accessoires'], subcategories: [] },
 ]
+
+// ─── Retour depuis une fiche produit ───
+// Marqueur écrit au clic sur un produit de la grille, consommé au montage.
+// Le stash module-scope survit au double-passage des effets de StrictMode
+// (dev) : la 2e invocation ne retrouve plus le marqueur sessionStorage déjà
+// consommé, et le reset de pagination écraserait la restauration sans lui.
+type ProductsReturnState = {
+  y: number
+  count?: number
+  ts?: number
+  obj?: string
+  cat?: string | null
+  tag?: string | null
+}
+let pendingReturn: ProductsReturnState | null = null
 
 // Normalisation casse + diacritiques (accents) → matching robuste.
 function normalize(s: string): string {
@@ -110,6 +127,7 @@ interface Props {
 
 export default function ProductsPageClient({ products, stockByProductId = {} }: Props) {
   const searchParams = useSearchParams()
+  const pathname = usePathname()
 
   const initialCat = searchParams?.get('cat') ?? null
   const initialObj = searchParams?.get('obj') ?? 'all'
@@ -158,10 +176,109 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
     setVisibleCount(12)
   }, [activeGoal, activeCategory, activeTag, priceRange, sortKey, searchQuery])
 
+  // ─── Retour depuis une fiche produit : filtres + scroll (retour client
+  // mobile 2026-07). Le state seul est perdu au « back » : on écrit donc les
+  // filtres dans l'URL (replace, sans navigation) et on mémorise la position
+  // de scroll + la pagination en sessionStorage au clic sur un produit. ───
+  const syncFiltersToUrl = useCallback(
+    (obj: string, cat: string | null, tag: string | null) => {
+      const params = new URLSearchParams(searchParams?.toString() ?? '')
+      if (obj && obj !== 'all') params.set('obj', obj)
+      else params.delete('obj')
+      if (cat) params.set('cat', cat)
+      else params.delete('cat')
+      if (tag) params.set('tag', tag)
+      else params.delete('tag')
+      const qs = params.toString()
+      // History API native (synchronisée avec useSearchParams depuis Next 14.1) :
+      // contrairement à router.replace, AUCUNE requête RSC serveur par clic.
+      window.history.replaceState(null, '', qs ? `${pathname}?${qs}` : pathname)
+    },
+    [searchParams, pathname]
+  )
+
+  // Le marqueur n'est consommé que si les filtres de l'URL correspondent à
+  // ceux mémorisés : revenir via le menu (URL nue) ne saute pas mi-liste
+  // alors qu'un filtre était actif.
+  const [pendingScrollY, setPendingScrollY] = useState<number | null>(null)
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('bs-products-return')
+      if (raw) {
+        sessionStorage.removeItem('bs-products-return')
+        const parsed = JSON.parse(raw) as ProductsReturnState
+        if (typeof parsed?.y === 'number' && Date.now() - (parsed.ts ?? 0) <= 30 * 60 * 1000) {
+          pendingReturn = parsed
+        }
+      }
+    } catch {
+      /* sessionStorage indisponible (navigation privée) : on repart en haut */
+    }
+    const saved = pendingReturn
+    if (!saved) return
+    const sameFilters =
+      (saved.obj ?? 'all') === (searchParams?.get('obj') ?? 'all') &&
+      (saved.cat ?? null) === (searchParams?.get('cat') ?? null) &&
+      (saved.tag ?? null) === (searchParams?.get('tag') ?? null)
+    if (!sameFilters) {
+      pendingReturn = null
+      return
+    }
+    if (typeof saved.count === 'number' && saved.count > 12) setVisibleCount(saved.count)
+    setPendingScrollY(saved.y)
+    // Consommation du marqueur : uniquement au montage.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (pendingScrollY == null) return
+    // Double rAF : laisse la grille ré-étendue se peindre avant de
+    // repositionner (cartes à hauteur fixe → position stable sans images).
+    let raf2 = 0
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        // 'instant' : html a scroll-behavior:smooth — sans ça, le retour
+        // serait un défilement animé de plusieurs milliers de px.
+        window.scrollTo({ top: pendingScrollY, behavior: 'instant' as ScrollBehavior })
+        pendingReturn = null
+        setPendingScrollY(null)
+      })
+    })
+    return () => {
+      cancelAnimationFrame(raf1)
+      if (raf2) cancelAnimationFrame(raf2)
+    }
+  }, [pendingScrollY])
+
+  // Posé en onClickCapture sur la grille : ne mémorise que les vrais départs
+  // vers une fiche produit (pas le quick-add « + », qui est un <button>).
+  const rememberGridState = (e: React.MouseEvent) => {
+    const el = e.target as HTMLElement
+    if (el.closest('button')) return
+    if (!el.closest('a[href^="/products/"]')) return
+    try {
+      sessionStorage.setItem(
+        'bs-products-return',
+        JSON.stringify({
+          y: window.scrollY,
+          count: visibleCount,
+          ts: Date.now(),
+          obj: activeGoal,
+          cat: activeCategory,
+          tag: activeTag,
+        })
+      )
+    } catch {
+      /* best-effort */
+    }
+  }
+
   const handleGoalClick = (key: string) => {
     setActiveGoal(key)
     setActiveCategory(null)
     setActiveTag(null)
+    syncFiltersToUrl(key, null, null)
   }
 
   const handleCategoryClick = (key: string) => {
@@ -175,10 +292,12 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
         next.add(key)
         return next
       })
+      syncFiltersToUrl(activeGoal, key, null)
     }
   }
 
   const selectTag = (categoryKey: string, tag: string) => {
+    const nextTag = activeTag === tag ? null : tag
     if (activeCategory !== categoryKey) {
       setActiveCategory(categoryKey)
       setOpenSections((prev) => {
@@ -187,7 +306,8 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
         return next
       })
     }
-    setActiveTag(activeTag === tag ? null : tag)
+    setActiveTag(nextTag)
+    syncFiltersToUrl(activeGoal, categoryKey, nextTag)
   }
 
   // ─── Filtrage (logique inchangee de la V1) ───
@@ -439,6 +559,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                 onClick={() => {
                   setActiveCategory(null)
                   setActiveTag(null)
+                  syncFiltersToUrl(activeGoal, null, null)
                 }}
                 className={cn(
                   'flex items-center justify-between w-full text-left text-[13px] py-2 px-3 rounded-xl transition-colors mb-1 font-semibold',
@@ -536,6 +657,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                   setPriceRange([0, 200])
                   setSortKey('best')
                   setSearchQuery('')
+                  syncFiltersToUrl('all', null, null)
                 }}
                 className="w-full py-2.5 text-[12px] font-semibold text-spruce border border-spruce/20 rounded-full hover:bg-spruce/5 transition-colors"
               >
@@ -556,7 +678,10 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                 <span className="text-[12px] text-ink-mute mr-1">Filtres :</span>
                 {activeGoal !== 'all' && (
                   <button
-                    onClick={() => setActiveGoal('all')}
+                    onClick={() => {
+                      setActiveGoal('all')
+                      syncFiltersToUrl('all', activeCategory, activeTag)
+                    }}
                     className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {GOALS.find((g) => g.key === activeGoal)?.label}
@@ -568,6 +693,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                     onClick={() => {
                       setActiveCategory(null)
                       setActiveTag(null)
+                      syncFiltersToUrl(activeGoal, null, null)
                     }}
                     className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
@@ -577,7 +703,10 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                 )}
                 {activeTag && currentCategory && (
                   <button
-                    onClick={() => setActiveTag(null)}
+                    onClick={() => {
+                      setActiveTag(null)
+                      syncFiltersToUrl(activeGoal, activeCategory, null)
+                    }}
                     className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {currentCategory.subcategories.find((s) => s.key === activeTag)?.label ?? activeTag}
@@ -609,6 +738,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                     setActiveTag(null)
                     setPriceRange([0, 200])
                     setSearchQuery('')
+                    syncFiltersToUrl('all', null, null)
                   }}
                   className="text-[12px] text-ink-mute hover:text-spruce underline underline-offset-4 ml-1"
                 >
@@ -619,7 +749,10 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
 
             {hasProducts && filtered.length > 0 ? (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-5 lg:gap-6">
+                <div
+                  className="grid grid-cols-2 md:grid-cols-3 gap-5 lg:gap-6"
+                  onClickCapture={rememberGridState}
+                >
                   {filtered.slice(0, visibleCount).map((product) => (
                     <ProductCardShop
                       key={product.id}
@@ -664,6 +797,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
                     setActiveTag(null)
                     setPriceRange([0, 200])
                     setSearchQuery('')
+                    syncFiltersToUrl('all', null, null)
                   }}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-fresh text-white rounded-full text-[14px] font-semibold hover:bg-fresh-deep transition-colors"
                 >

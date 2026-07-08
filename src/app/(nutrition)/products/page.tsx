@@ -31,7 +31,9 @@ const CATEGORY_ORDER: Record<string, number> = {
   'Boosters': 7,
   'Santé': 8,
   'Snacks': 9,
-  'Pack': 10,
+  'Boissons': 10,
+  'Accessoires': 11,
+  'Pack': 12,
 }
 const categoryRank = (p: ShopifyProduct): number => CATEGORY_ORDER[p.productType ?? ''] ?? 99
 

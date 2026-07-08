@@ -36,10 +36,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Charger le panier depuis localStorage (avec fallback si expiré)
   useEffect(() => {
     const cartId = localStorage.getItem('body-start-cart-id')
+
+    // Retour depuis le checkout Shopify (bouton « précédent ») : quand la
+    // page se recharge (pas de bfcache), l'utilisateur retombe sur le site
+    // sans repère. Le marqueur posé au clic « Paiement sécurisé » (CartDrawer)
+    // rouvre le panier — seulement s'il reste des articles : après une
+    // commande payée, Shopify invalide le cart et getCart renvoie null.
+    let reopenAt = 0
+    try {
+      reopenAt = Number(sessionStorage.getItem('bs-reopen-cart') ?? 0)
+      if (reopenAt) sessionStorage.removeItem('bs-reopen-cart')
+    } catch {
+      /* navigation privée */
+    }
+    const shouldReopen = reopenAt > 0 && Date.now() - reopenAt < 30 * 60 * 1000
+
     if (cartId) {
       getCart(cartId).then((c) => {
         if (c) {
           setCart(c)
+          if (shouldReopen && (c.totalQuantity ?? 0) > 0) setIsOpen(true)
         } else {
           // Panier expiré ou supprimé côté Shopify
           localStorage.removeItem('body-start-cart-id')
@@ -48,6 +64,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('body-start-cart-id')
       })
     }
+
+    // Retour via bfcache : la page est restaurée telle quelle (drawer encore
+    // ouvert, aucun re-montage) → on consomme le marqueur pour éviter une
+    // réouverture surprise lors d'un rechargement complet ultérieur.
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        try {
+          sessionStorage.removeItem('bs-reopen-cart')
+        } catch {
+          /* navigation privée */
+        }
+      }
+    }
+    window.addEventListener('pageshow', onPageShow)
+    return () => window.removeEventListener('pageshow', onPageShow)
   }, [])
 
   const totalQuantity = cart?.totalQuantity ?? 0
