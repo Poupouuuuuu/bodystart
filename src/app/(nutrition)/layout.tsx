@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
 import BackToTop from '@/components/ui/BackToTop'
+import BirthdayBanner from '@/components/marketing/BirthdayBanner'
 import { getCollections } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/shopify/types'
 
@@ -98,6 +99,9 @@ export default async function NutritionLayout({ children }: { children: React.Re
       >
         Aller au contenu
       </a>
+      {/* Bandeau anniversaire (auto-expiré le 10/07/2026, heure de Paris) —
+          au-dessus du header, sur toutes les pages boutique. */}
+      <BirthdayBanner />
       <Suspense fallback={<div className="h-[104px] bg-white border-b border-gray-100" />}>
         <Header collections={collections} />
       </Suspense>
