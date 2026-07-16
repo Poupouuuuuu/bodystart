@@ -81,6 +81,18 @@ const CART_FRAGMENT = `
       code
       applicable
     }
+    # Montants réellement déduits par code — affichés dans le récap et le
+    # widget cagnotte (« Cagnotte appliquée : -X € ») ; sans ça le client ne
+    # voyait jamais combien sa remise a déduit.
+    discountAllocations {
+      discountedAmount {
+        amount
+        currencyCode
+      }
+      ... on CartCodeDiscountAllocation {
+        code
+      }
+    }
     # Attributs personnalisés du cart (dont "Point Relais" Mondial Relay).
     attributes {
       key

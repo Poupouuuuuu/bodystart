@@ -26,7 +26,7 @@ function eurosToCents(amount: string | number): number {
 
 export function CagnotteCartWidget() {
   const { state, refresh } = useLoyaltyMe()
-  const { cart, applyDiscountCode, removeDiscountCode } = useCart()
+  const { cart, applyDiscountCode, removeDiscountCode, closeCart } = useCart()
   const [redeemAmount, setRedeemAmount] = useState(0)
   const [busy, setBusy] = useState(false)
 
@@ -41,9 +41,29 @@ export function CagnotteCartWidget() {
     return codes.find((c) => c.code.startsWith(LOYALTY_CODE_PREFIX))
   }, [cart])
 
-  // Cas A : logged_out / loading / error -> rien
-  if (state.kind === 'logged_out' || state.kind === 'loading' || state.kind === 'error') {
+  // Cas A : loading / error -> rien
+  if (state.kind === 'loading' || state.kind === 'error') {
     return null
+  }
+
+  // Cas A' : invité — le moment le plus chaud du parcours était le seul
+  // endroit où le programme fidélité n'existait pas. Bandeau discret + lien
+  // connexion (closeCart : sinon la navigation se fait DERRIÈRE le drawer).
+  if (state.kind === 'logged_out') {
+    return (
+      <div className="bg-sage border border-spruce/10 rounded-xl p-4 mx-8 mb-4">
+        <p className="text-[12px] text-ink-mute font-medium">
+          Parrainage : ton pote a 10 € dès 60 €, toi 5 % de ses achats en cagnotte.{' '}
+          <Link
+            href="/login?redirect=/account%3Ftab%3Dreferral"
+            onClick={closeCart}
+            className="font-semibold text-spruce underline underline-offset-2 hover:text-fresh-deep"
+          >
+            Connecte-toi
+          </Link>
+        </p>
+      </div>
+    )
   }
 
   // Cas B : not_enrolled -> CTA activer
@@ -55,6 +75,7 @@ export function CagnotteCartWidget() {
         </p>
         <Link
           href="/account?tab=cagnotte"
+          onClick={closeCart}
           className="inline-flex items-center gap-2 px-4 py-2 bg-fresh text-white text-[12px] font-semibold rounded-full hover:bg-fresh-deep transition-colors"
         >
           Activer
@@ -68,6 +89,11 @@ export function CagnotteCartWidget() {
 
   // Cas E : cagnotte deja appliquee
   if (appliedLoyaltyCode) {
+    // Montant réellement déduit par le code LY- (allocations du cart) — sans
+    // ça, après un reload impossible de savoir combien la cagnotte a déduit.
+    const appliedCents = (cart?.discountAllocations ?? [])
+      .filter((a) => a.code?.startsWith(LOYALTY_CODE_PREFIX))
+      .reduce((sum, a) => sum + eurosToCents(a.discountedAmount.amount), 0)
     const handleRemove = async () => {
       if (!appliedLoyaltyCode) return
       setBusy(true)
@@ -85,7 +111,7 @@ export function CagnotteCartWidget() {
         <div className="flex items-center gap-2 min-w-0">
           <Check className="w-4 h-4 text-fresh flex-shrink-0" />
           <p className="text-[13px] font-semibold text-spruce truncate">
-            Cagnotte appliquée
+            Cagnotte appliquée{appliedCents > 0 ? ` : −${formatEuros(appliedCents)}` : ''}
           </p>
         </div>
         <button

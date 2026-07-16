@@ -178,6 +178,8 @@ export interface ShopifyCart {
     totalTaxAmount: ShopifyMoney | null
   }
   discountCodes: CartDiscountCode[]
+  // Montants déduits par remise (code présent si remise par code promo).
+  discountAllocations?: { discountedAmount: ShopifyMoney; code?: string }[]
   // Attributs personnalisés (dont "Point Relais" Mondial Relay).
   attributes?: { key: string; value: string | null }[]
   // Adresses de livraison posées sur le cart (Storefront cartDeliveryAddresses).

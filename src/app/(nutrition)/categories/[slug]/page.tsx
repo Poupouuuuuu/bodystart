@@ -125,7 +125,8 @@ export default async function CategoryPage({ params }: { params: { slug: string 
           Tous nos produits {cat.label.toLowerCase()} ({products.length})
         </h2>
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-14">
+          // 2 colonnes dès le mobile — cohérent avec /products (même carte)
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-14">
             {products.map((p) => (
               <ProductCardShop key={p.id} product={p} />
             ))}

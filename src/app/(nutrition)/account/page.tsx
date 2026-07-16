@@ -742,7 +742,44 @@ function AccountContent() {
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
           {/* ─── Colonne gauche : Nav ─── */}
           <div>
-            <nav className="rounded-2xl overflow-hidden bg-white border border-spruce/10 sticky top-24">
+            {/* Mobile : pastilles horizontales scrollables — la liste verticale
+                (~10 items empilés) laissait le contenu de l'onglet sous la
+                ligne de flottaison : on tapait un onglet sans rien voir changer. */}
+            <nav
+              aria-label="Sections du compte"
+              className="lg:hidden -mx-4 px-4 flex gap-2 overflow-x-auto snap-x pb-1"
+            >
+              {[{ icon: User, label: 'Mon profil', tab: 'profile' as Tab, count: undefined as number | undefined }, ...navItems].map(
+                ({ icon: Icon, label, tab, count }) => (
+                  <button
+                    key={tab}
+                    onClick={() => selectTab(tab)}
+                    aria-pressed={activeTab === tab}
+                    className={cn(
+                      'flex-shrink-0 snap-start inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-[13px] font-semibold border transition-colors whitespace-nowrap',
+                      activeTab === tab
+                        ? 'bg-spruce text-white border-spruce'
+                        : 'bg-white text-ink border-spruce/15 hover:border-spruce/40'
+                    )}
+                  >
+                    <Icon className={cn('w-4 h-4', activeTab === tab ? 'text-white' : 'text-ink-mute')} />
+                    {label}
+                    {count !== undefined && count > 0 && (
+                      <span
+                        className={cn(
+                          'text-[10px] font-bold px-2 py-0.5 rounded-full',
+                          activeTab === tab ? 'bg-white/20 text-white' : 'bg-sage text-spruce'
+                        )}
+                      >
+                        {count}
+                      </span>
+                    )}
+                  </button>
+                )
+              )}
+            </nav>
+
+            <nav className="hidden lg:block rounded-2xl overflow-hidden bg-white border border-spruce/10 sticky top-24">
               {/* Profil en premier */}
               <button
                 onClick={() => selectTab('profile')}

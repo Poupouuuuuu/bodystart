@@ -34,6 +34,25 @@ const NAV_CATEGORIES: NavCategory[] = [
   { label: 'Conseil gratuit', href: '/conseil' },
 ]
 
+// Rayons du burger mobile — 1 tap vers la catégorie (le burger est LA nav
+// principale sur téléphone : sans ça, « créatine » = ouvrir /products puis
+// manipuler les filtres, ou scroller jusqu'au footer).
+// Source de vérité des 8 slugs SEO : src/lib/categories.ts (import évité
+// exprès — le registre embarque les intros complètes, trop lourd en client).
+// Accessoires/Boissons n'ont pas de page SEO → filtre /products?cat=.
+const MOBILE_CATEGORY_LINKS: { label: string; href: string }[] = [
+  { label: 'Protéines', href: '/categories/proteines' },
+  { label: 'Créatine', href: '/categories/creatine' },
+  { label: 'Pré-workout', href: '/categories/pre-workout' },
+  { label: 'Acides aminés', href: '/categories/acides-amines' },
+  { label: 'Brûleurs', href: '/categories/bruleurs' },
+  { label: 'Boosters', href: '/categories/boosters' },
+  { label: 'Glucides', href: '/categories/glucides' },
+  { label: 'Santé & bien-être', href: '/categories/sante' },
+  { label: 'Accessoires', href: '/products?cat=accessoires' },
+  { label: 'Boissons', href: '/products?cat=boissons' },
+]
+
 interface HeaderProps {
   collections?: ShopifyCollection[]
 }
@@ -48,6 +67,7 @@ export default function Header(props: HeaderProps) {
 
 function HeaderInner(_props: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileCatsOpen, setMobileCatsOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -128,6 +148,7 @@ function HeaderInner(_props: HeaderProps) {
     // cette ligne, naviguer via le LOGO (seul lien sans onClick de fermeture)
     // laissait le menu burger déplié par-dessus la nouvelle page.
     setMobileOpen(false)
+    setMobileCatsOpen(false)
   }, [pathname])
 
   return (
@@ -406,20 +427,54 @@ function HeaderInner(_props: HeaderProps) {
             {NAV_CATEGORIES.map((item) => {
               const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
               return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  className={cn(
-                    'flex items-center justify-between px-4 py-3.5 text-sm transition-colors rounded-2xl',
-                    active
-                      ? 'text-spruce bg-sage font-semibold'
-                      : 'font-medium text-ink hover:text-spruce hover:bg-sage'
+                <div key={item.label}>
+                  <Link
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'flex items-center justify-between px-4 py-3.5 text-sm transition-colors rounded-2xl',
+                      active
+                        ? 'text-spruce bg-sage font-semibold'
+                        : 'font-medium text-ink hover:text-spruce hover:bg-sage'
+                    )}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+
+                  {/* Rayons en accordéon, juste sous « Tous les produits » */}
+                  {item.href === '/products' && (
+                    <div>
+                      <button
+                        onClick={() => setMobileCatsOpen(!mobileCatsOpen)}
+                        aria-expanded={mobileCatsOpen}
+                        className="flex items-center justify-between w-full px-4 py-3.5 text-sm font-medium text-ink hover:text-spruce hover:bg-sage rounded-2xl transition-colors"
+                      >
+                        Catégories
+                        <ChevronDown
+                          className={cn(
+                            'w-4 h-4 text-ink-mute transition-transform',
+                            mobileCatsOpen && 'rotate-180'
+                          )}
+                        />
+                      </button>
+                      {mobileCatsOpen && (
+                        <div className="ml-4 pl-3 border-l border-spruce/10 space-y-0.5 pb-1">
+                          {MOBILE_CATEGORY_LINKS.map((cat) => (
+                            <Link
+                              key={cat.href}
+                              href={cat.href}
+                              onClick={() => setMobileOpen(false)}
+                              className="block px-4 py-2.5 text-sm font-medium text-ink-mute hover:text-spruce hover:bg-sage rounded-xl transition-colors"
+                            >
+                              {cat.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item.label}
-                </Link>
+                </div>
               )
             })}
 

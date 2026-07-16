@@ -104,7 +104,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          // 2 colonnes dès le mobile — même densité que /products et la home
+          // (1 colonne = 1 produit géant par écran, comparaison impossible)
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {results.map((product) => (
               <ProductCardShop key={product.id} product={product} />
             ))}

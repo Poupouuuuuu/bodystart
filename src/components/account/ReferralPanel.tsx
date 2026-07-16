@@ -54,8 +54,12 @@ export function ReferralPanel() {
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(referralCode)
-      toast.success('Code copié !')
+      // Le LIEN complet (il applique le code tout seul via ?parrain=), pas le
+      // code nu : collé dans un DM, le filleul n'avait rien d'actionnable.
+      const url = getSiteUrl()
+      const link = url ? `${url}/?parrain=${referralCode}` : referralCode
+      await navigator.clipboard.writeText(link)
+      toast.success(url ? 'Lien de parrainage copié !' : 'Code copié !')
     } catch {
       toast.error('Copie impossible')
     }
@@ -123,8 +127,11 @@ export function ReferralPanel() {
         </code>
 
         <div className="grid grid-cols-3 gap-2">
+          {/* aria-labels : sous sm le texte est masqué (icône seule) — sans
+              nom accessible les 3 contrôles étaient anonymes sur mobile */}
           <button
             onClick={handleCopy}
+            aria-label="Copier le lien de parrainage"
             className="flex items-center justify-center gap-2 px-3 py-3 border border-spruce/20 text-spruce hover:bg-spruce/5 rounded-xl transition-colors text-[13px] font-semibold"
           >
             <Copy className="w-4 h-4" />
@@ -134,6 +141,7 @@ export function ReferralPanel() {
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Partager sur WhatsApp"
             className="flex items-center justify-center gap-2 px-3 py-3 border border-spruce/20 text-spruce hover:bg-spruce/5 rounded-xl transition-colors text-[13px] font-semibold"
           >
             <MessageCircle className="w-4 h-4" />
@@ -141,6 +149,7 @@ export function ReferralPanel() {
           </a>
           <button
             onClick={handleShare}
+            aria-label="Partager mon code parrain"
             className="flex items-center justify-center gap-2 px-3 py-3 border border-spruce/20 text-spruce hover:bg-spruce/5 rounded-xl transition-colors text-[13px] font-semibold"
           >
             <Share2 className="w-4 h-4" />

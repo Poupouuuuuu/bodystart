@@ -5,6 +5,7 @@ import BrandValuesV2 from '@/components/home/v2/BrandValuesV2'
 import BestSellersV2 from '@/components/home/v2/BestSellersV2'
 import ConseilDifferenciantV2 from '@/components/home/v2/ConseilDifferenciantV2'
 import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
+import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import { getFeaturedProducts } from '@/lib/shopify'
 import { buildPageMetadata } from '@/lib/seo'
@@ -67,7 +68,10 @@ export default function HomePage() {
       {/* 6. Bande parrainage (exploite loyalty L4) */}
       <BandeauParrainageV2 />
 
-      {/* 7. Boutique & Click & Collect */}
+      {/* 7a. Galerie boutique (vraies photos du magasin, 07/2026) */}
+      <BoutiqueGalleryV2 />
+
+      {/* 7b. Boutique & Click & Collect */}
       <StoreCallV2 />
 
       {/* 8. Avis : retire (cf. site-rewrite-copy-v1.md §3.6). A reactiver

@@ -68,7 +68,6 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
           {items.map((product) => {
-            const variant = product.variants.nodes[0]
             const soldOut = product.availableForSale === false
             const productIsBundle = isBundle(product)
             const componentImages = productIsBundle ? getBundleComponentImages(product) : []
@@ -124,11 +123,12 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                   <h3 className="font-display font-bold text-[15px] text-ink leading-tight mb-2 line-clamp-2">
                     {product.title}
                   </h3>
-                  {variant && (
-                    <p className="font-semibold text-[15px] text-spruce">
-                      {formatPrice(variant.price)}
-                    </p>
-                  )}
+                  {/* minVariantPrice : MÊME prix que la carte catalogue
+                      (variants.nodes[0].price pouvait afficher le prix d'un
+                      autre format → le site se contredisait entre 2 écrans) */}
+                  <p className="font-semibold text-[15px] text-spruce">
+                    {formatPrice(product.priceRange.minVariantPrice)}
+                  </p>
                 </div>
               </Link>
             )

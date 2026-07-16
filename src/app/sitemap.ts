@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/conseil`, priority: 0.8, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/parrainage`, priority: 0.75, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/about`, priority: 0.7, changeFrequency: 'monthly' },
+    { url: `${BASE_URL}/pourquoi-bodystart`, priority: 0.7, changeFrequency: 'monthly' },
     // STANDBY 2026-05-23 : /coaching et /vetements hors sitemap (redirect 301 vers /products)
     { url: `${BASE_URL}/faq`, priority: 0.7, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/livraison`, priority: 0.7, changeFrequency: 'monthly' },

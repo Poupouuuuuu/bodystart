@@ -27,6 +27,10 @@ export default function ProductGalleryV2({
 }: ProductGalleryV2Props) {
   const [internalIndex, setInternalIndex] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  // Zoom lightbox : l'image « plein écran » restait à ~la taille de l'écran —
+  // impossible de lire une étiquette de composition sur téléphone. Un tap sur
+  // l'image bascule à 250 % avec déplacement au doigt (scroll natif).
+  const [isZoomed, setIsZoomed] = useState(false)
 
   const selectedIndex = controlledIndex ?? internalIndex
   const currentImage = images[selectedIndex] ?? null
@@ -35,6 +39,30 @@ export default function ProductGalleryV2({
     setInternalIndex(i)
     onImageChange?.(i)
   }
+
+  // Swipe horizontal sur l'image principale (geste n°1 d'une galerie mobile).
+  // Seuils : ≥48 px ET nettement plus horizontal que vertical — un tap ou un
+  // scroll de page ne déclenchent rien ; le navigateur supprime de lui-même le
+  // click après un vrai swipe, donc pas de conflit avec l'ouverture lightbox.
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const start = touchStart.current
+    touchStart.current = null
+    if (!start || images.length < 2) return
+    const dx = e.changedTouches[0].clientX - start.x
+    const dy = e.changedTouches[0].clientY - start.y
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.5) return
+    const next = (selectedIndex + (dx < 0 ? 1 : -1) + images.length) % images.length
+    handleSelect(next)
+  }
+
+  // Retour à l'échelle 1 quand on ferme ou change d'image.
+  useEffect(() => {
+    setIsZoomed(false)
+  }, [isLightboxOpen, selectedIndex])
 
   // Verrou scroll lightbox — dans un useEffect (l'ancien code mutait le DOM
   // PENDANT le render, anti-pattern React qui combattait aussi le verrou du
@@ -84,6 +112,8 @@ export default function ProductGalleryV2({
               aria-label="Agrandir l'image"
               className="relative w-[85%] h-[85%] motion-safe:animate-float drop-shadow-2xl pointer-events-auto cursor-zoom-in"
               onClick={() => setIsLightboxOpen(true)}
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
             >
               <Image
                 key={currentImage.url}
@@ -164,18 +194,46 @@ export default function ProductGalleryV2({
             <X className="w-6 h-6" />
           </button>
 
-          <div
-            className="relative w-full h-[80vh] max-w-5xl px-4 lg:px-0"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Image
-              src={currentImage.url}
-              alt={currentImage.altText ?? title}
-              fill
-              className="object-contain"
-              sizes="100vw"
-            />
-          </div>
+          {isZoomed ? (
+            /* Zoom 250 % : conteneur scrollable (pan au doigt/molette), un tap
+               sur l'image revient à l'échelle normale. */
+            <div
+              className="w-full h-[88vh] max-w-5xl overflow-auto overscroll-contain cursor-zoom-out"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsZoomed(false)
+              }}
+            >
+              <div className="relative w-[250%] h-[250%]">
+                <Image
+                  src={currentImage.url}
+                  alt={currentImage.altText ?? title}
+                  fill
+                  className="object-contain"
+                  sizes="250vw"
+                />
+              </div>
+            </div>
+          ) : (
+            <div
+              className="relative w-full h-[80vh] max-w-5xl px-4 lg:px-0 cursor-zoom-in"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsZoomed(true)
+              }}
+            >
+              <Image
+                src={currentImage.url}
+                alt={currentImage.altText ?? title}
+                fill
+                className="object-contain"
+                sizes="100vw"
+              />
+              <p className="absolute bottom-4 inset-x-0 text-center text-white/70 text-[12px] font-medium pointer-events-none">
+                Touche l&apos;image pour zoomer
+              </p>
+            </div>
+          )}
         </div>
       )}
     </>

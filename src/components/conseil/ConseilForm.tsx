@@ -176,7 +176,17 @@ export default function ConseilForm() {
               </div>
               <button
                 disabled={!objectif}
-                onClick={() => setStep(2)}
+                onClick={() => {
+                  setStep(2)
+                  // Remonter en haut : sinon on atterrit au milieu de l'étape 2,
+                  // sans voir le stepper ni le récap (désorientant sur mobile).
+                  window.scrollTo({
+                    top: 0,
+                    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                      ? 'auto'
+                      : 'smooth',
+                  })
+                }}
                 className={cn(
                   'w-full flex items-center justify-center gap-2 font-semibold text-[15px] px-8 py-3.5 rounded-full transition-colors',
                   objectif
@@ -198,7 +208,15 @@ export default function ConseilForm() {
                 </h2>
                 <button
                   type="button"
-                  onClick={() => setStep(1)}
+                  onClick={() => {
+                    setStep(1)
+                    window.scrollTo({
+                      top: 0,
+                      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                        ? 'auto'
+                        : 'smooth',
+                    })
+                  }}
                   className="text-[13px] font-semibold text-ink-mute hover:text-spruce transition-colors underline underline-offset-4"
                 >
                   Modifier l&apos;objectif

@@ -522,6 +522,27 @@ export default function CartDrawer() {
                   {isClickAndCollect ? 'Gratuit' : 'Calculée à l\'étape suivante'}
                 </span>
               </div>
+              {/* Remises (cagnotte LY-, code parrain…) — visible AUSSI sur
+                  mobile : le client doit voir ce que sa remise déduit avant
+                  de payer, pas seulement un Total qui a changé. */}
+              {(() => {
+                const discountCents = (cart.discountAllocations ?? []).reduce(
+                  (sum, a) => sum + Math.round(parseFloat(a.discountedAmount.amount) * 100),
+                  0
+                )
+                if (discountCents <= 0) return null
+                return (
+                  <div className="flex justify-between text-[13px] font-medium text-fresh-deep">
+                    <span>Remises</span>
+                    <span className="font-semibold">
+                      −{formatPrice({
+                        amount: (discountCents / 100).toFixed(2),
+                        currencyCode: cart.cost.subtotalAmount.currencyCode,
+                      })}
+                    </span>
+                  </div>
+                )
+              })()}
               {cart.cost.totalTaxAmount && (
                 <div className="hidden sm:flex justify-between text-[13px] text-ink-mute font-medium">
                   <span>Dont TVA</span>
@@ -590,6 +611,15 @@ export default function CartDrawer() {
               >
                 {isClickAndCollect ? 'Valider le retrait' : 'Paiement sécurisé'}
               </a>
+              {/* Porte de sortie au pouce : la seule fermeture était la croix
+                  en haut à droite (inatteignable à une main sur grand téléphone,
+                  et l'overlay n'existe pas en w-full mobile) */}
+              <button
+                onClick={closeCart}
+                className="w-full text-center text-[13px] font-medium text-ink-mute hover:text-spruce underline underline-offset-4 py-1 transition-colors"
+              >
+                Continuer mes achats
+              </button>
             </div>
               </div>
             )}

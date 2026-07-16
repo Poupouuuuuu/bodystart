@@ -516,9 +516,17 @@ export default function BuyBoxV2({
               l'emplacement, son stock boutique depend de ses composants (et de
               la variante selectionnee). On ne montre donc jamais "Indisponible
               en boutique" a tort sur un pack. */}
-          {!isBundle && storeStock !== undefined && (
-            <div className="mt-6 pt-5 border-t border-spruce/10">
-              {storeStock === 0 ? (
+          {/* L'ESPACE est réservé dès le 1er rendu (min-h + placeholder) : le
+              stock arrive par fetch client ~1s après — avant, le bloc
+              s'insérait d'un coup et décalait toute la page sous le doigt (CLS). */}
+          {!isBundle && productId && activeStore?.shopifyLocationId && (
+            <div className="mt-6 pt-5 border-t border-spruce/10 min-h-[42px]">
+              {variantStock === null ? (
+                <div className="inline-flex items-center gap-2 text-[13px] font-medium text-ink-mute/50">
+                  <span className="w-2 h-2 bg-spruce/15 rounded-full" />
+                  Disponibilité en boutique…
+                </div>
+              ) : storeStock === undefined ? null : storeStock === 0 ? (
                 <div className="inline-flex items-center gap-2 text-[13px] font-semibold text-terracotta">
                   <span className="w-2 h-2 bg-terracotta rounded-full" />
                   Indisponible en boutique

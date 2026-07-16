@@ -40,6 +40,7 @@ const FOOTER_LINKS = {
     { label: 'Mon Compte', href: '/account' },
     { label: 'Mes Commandes', href: '/account?tab=orders' },
     { label: 'Guides nutrition', href: '/blog' },
+    { label: 'Pourquoi BodyStart ?', href: '/pourquoi-bodystart' },
     { label: 'Livraison & Retours', href: '/livraison' },
     { label: 'FAQ', href: '/faq' },
   ],
