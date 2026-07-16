@@ -2,24 +2,28 @@
 
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
+import { hasInternalHistory } from '@/lib/nav-history'
 
 interface BackButtonProps {
-  /** Destination si aucun historique (accès direct / nouvel onglet). */
+  /** Destination si la page précédente n'est pas une page du site. */
   fallbackHref: string
 }
 
 /**
  * Bouton "← Retour" en tête de fiche produit/pack.
  * Remplace le fil d'ariane. Comportement :
- *  - s'il y a un historique de navigation → revient à la page précédente
- *  - sinon (accès direct, nouvel onglet, lien externe) → va vers fallbackHref
- *    (/packs pour un pack, /products sinon).
+ *  - navigation INTERNE précédente (traquée par NavigationTracker) → back()
+ *  - sinon (arrivée directe depuis Google/Instagram/nouvel onglet) →
+ *    fallbackHref (/packs pour un pack, /products sinon).
+ * ⚠️ `history.length > 1` seul ne suffit PAS : il est vrai aussi quand la
+ * page précédente est Google → back() éjectait le visiteur hors du site
+ * depuis nos landing pages SEO.
  */
 export default function BackButton({ fallbackHref }: BackButtonProps) {
   const router = useRouter()
 
   const handleBack = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
+    if (typeof window !== 'undefined' && hasInternalHistory() && window.history.length > 1) {
       router.back()
     } else {
       router.push(fallbackHref)

@@ -641,9 +641,13 @@ function AccountContent() {
   // /account cote serveur : meme comportement en nav soft qu'en hard-load.
   useEffect(() => {
     if (!isLoading && !isLoggedIn) {
-      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`)
+      // ?tab= inclus dans le redirect : « Mes commandes » (footer) déconnecté
+      // doit atterrir sur l'onglet Commandes après connexion, pas sur l'aperçu
+      // (usePathname ne contient jamais la query string).
+      const qs = searchParams.toString()
+      router.replace(`/login?redirect=${encodeURIComponent(qs ? `${pathname}?${qs}` : pathname)}`)
     }
-  }, [isLoading, isLoggedIn, router, pathname])
+  }, [isLoading, isLoggedIn, router, pathname, searchParams])
 
   async function handleLogout() {
     await logout()
@@ -653,6 +657,18 @@ function AccountContent() {
   const handleViewOrderDetail = (id: string) => {
     setSelectedOrderId(id)
     setActiveTab('order-detail')
+  }
+
+  // Sélection d'onglet via la nav : écrit AUSSI l'URL (replaceState natif,
+  // synchronisé avec useSearchParams depuis Next 14.1, zéro requête serveur).
+  // Sans ça, un pull-to-refresh mobile ramenait systématiquement sur
+  // « Aperçu » — incohérent avec /products qui persiste ses filtres.
+  // ('order-detail' reste un état interne, jamais dans l'URL.)
+  const selectTab = (tab: Tab) => {
+    setActiveTab(tab)
+    if (isUrlTab(tab)) {
+      window.history.replaceState(null, '', `/account?tab=${tab}`)
+    }
   }
 
   if (isLoading) {
@@ -729,7 +745,7 @@ function AccountContent() {
             <nav className="rounded-2xl overflow-hidden bg-white border border-spruce/10 sticky top-24">
               {/* Profil en premier */}
               <button
-                onClick={() => setActiveTab('profile')}
+                onClick={() => selectTab('profile')}
                 className={cn(
                   "flex items-center justify-between w-full px-5 py-4 transition-colors border-b border-spruce/10 group",
                   activeTab === 'profile' ? 'bg-sage' : 'hover:bg-canvas'
@@ -745,7 +761,7 @@ function AccountContent() {
               {navItems.map(({ icon: Icon, label, tab, count }) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => selectTab(tab)}
                   className={cn(
                     "flex items-center justify-between w-full px-5 py-4 transition-colors border-b last:border-0 group border-spruce/10",
                     activeTab === tab ? 'bg-sage' : 'hover:bg-canvas'

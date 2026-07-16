@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef, type ReactNode } from 'react'
 import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, addCartDeliveryAddresses, removeCartDeliveryAddresses } from '@/lib/shopify'
 import type { ShopifyCart } from '@/lib/shopify/types'
 import { RELAY_ATTRIBUTE_KEY, formatRelayAttributeValue, parseRelayAttributeValue, buildRelayDeliveryAddress, type ParcelShop } from '@/lib/mondialRelay'
@@ -10,12 +10,20 @@ import toast from 'react-hot-toast'
 interface CartContextType {
   cart: ShopifyCart | null
   isLoading: boolean
+  /** true pendant le chargement initial du cart persisté (localStorage) —
+   *  le drawer affiche un squelette au lieu de « panier vide » à tort. */
+  isInitializing: boolean
   isOpen: boolean
   totalQuantity: number
   openCart: () => void
   closeCart: () => void
-  addItem: (merchandiseId: string, quantity?: number) => Promise<void>
+  /** Renvoie true si l'ajout a réussi (les erreurs sont déjà toastées ici) —
+   *  les CTA ne doivent afficher « Ajouté ✓ » que sur true. */
+  addItem: (merchandiseId: string, quantity?: number) => Promise<boolean>
   updateItem: (lineId: string, quantity: number) => Promise<void>
+  /** Attend la fin des mutations quantité en cours (à appeler avant de
+   *  partir au checkout pour ne pas payer une quantité périmée). */
+  flushCartUpdates: () => Promise<void>
   removeItem: (lineId: string) => Promise<void>
   setCartAttributes: (attributes: { key: string; value: string }[]) => Promise<void>
   applyDiscountCode: (code: string) => Promise<void>
@@ -31,7 +39,20 @@ const CartContext = createContext<CartContextType | null>(null)
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<ShopifyCart | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isInitializing, setIsInitializing] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+
+  // Miroir ref du cart : les mutations quantité sont SÉRIALISÉES (file de
+  // promesses) — un callback en file lirait un `cart` de closure périmé,
+  // la ref donne toujours le dernier état.
+  const cartRef = useRef<ShopifyCart | null>(null)
+  useEffect(() => {
+    cartRef.current = cart
+  }, [cart])
+
+  // File des mutations quantité : deux cartLinesUpdate parallèles peuvent se
+  // doubler sur le réseau et la réponse PÉRIMÉE écraserait la plus récente.
+  const updateQueueRef = useRef<Promise<void>>(Promise.resolve())
 
   // Charger le panier depuis localStorage (avec fallback si expiré)
   useEffect(() => {
@@ -52,6 +73,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const shouldReopen = reopenAt > 0 && Date.now() - reopenAt < 30 * 60 * 1000
 
     if (cartId) {
+      // Un cart persisté existe : tant que getCart n'a pas répondu, le drawer
+      // ne doit pas afficher « Ton panier est vide » (message faux sur 4G lente).
+      setIsInitializing(true)
       getCart(cartId).then((c) => {
         if (c) {
           setCart(c)
@@ -62,6 +86,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       }).catch(() => {
         localStorage.removeItem('body-start-cart-id')
+      }).finally(() => {
+        setIsInitializing(false)
       })
     }
 
@@ -122,25 +148,53 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       setIsOpen(true)
       toast.success('Produit ajouté au panier !')
+      return true
     } catch {
       toast.error('Erreur lors de l\'ajout au panier')
+      // false → les CTA n'affichent PAS « Ajouté ✓ » (avant : bouton vert de
+      // succès + toast rouge d'erreur simultanés, client persuadé d'avoir
+      // l'article au panier).
+      return false
     } finally {
       setIsLoading(false)
     }
   }, [cart])
 
-  const updateItem = useCallback(async (lineId: string, quantity: number) => {
-    if (!cart) return
-    setIsLoading(true)
-    try {
-      const updatedCart = await updateCartLine(cart.id, [{ id: lineId, quantity }])
-      setCart(updatedCart)
-    } catch {
-      toast.error('Erreur lors de la mise à jour')
-    } finally {
-      setIsLoading(false)
+  // Mise à jour quantité — sérialisée, sans gel global (le drawer gère son
+  // propre état par ligne). Détecte le plafonnement stock (Shopify renvoie la
+  // ligne CLAMPÉE sans forcément d'userError) et ne remplace JAMAIS le panier
+  // local par null (une erreur métier effaçait tout le panier affiché).
+  const updateItem = useCallback((lineId: string, quantity: number): Promise<void> => {
+    const run = async () => {
+      const current = cartRef.current
+      if (!current) return
+      try {
+        const { cart: updated, userErrors } = await updateCartLine(current.id, [
+          { id: lineId, quantity },
+        ])
+        if (updated) {
+          setCart(updated)
+          const line = updated.lines.nodes.find((l) => l.id === lineId)
+          if (line && line.quantity < quantity) {
+            toast('Stock maximum atteint pour ce produit', { icon: '⚠️' })
+          }
+        }
+        if (userErrors.length > 0) {
+          // Messages Shopify potentiellement en anglais → libellé FR générique.
+          toast.error('Impossible de mettre à jour la quantité')
+        }
+      } catch {
+        toast.error('Erreur lors de la mise à jour')
+      }
     }
-  }, [cart])
+    const chained = updateQueueRef.current.then(run, run)
+    updateQueueRef.current = chained
+    return chained
+  }, [])
+
+  // Barrière : résout quand toutes les mutations quantité en file sont parties
+  // ET revenues — à attendre avant la redirection checkout.
+  const flushCartUpdates = useCallback(() => updateQueueRef.current, [])
 
   const removeItem = useCallback(async (lineId: string) => {
     if (!cart) return
@@ -162,8 +216,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const updatedCart = await updateCartAttributes(cart.id, attributes)
       setCart(updatedCart)
-    } catch {
+    } catch (err) {
       toast.error('Erreur lors de la mise à jour')
+      // Re-throw : le toggle Livraison/Retrait doit pouvoir REVENIR en
+      // arrière visuellement (sinon l'UI affiche « Retrait » alors que le
+      // checkout partira en livraison avec des frais de port).
+      throw err
     } finally {
       setIsLoading(false)
     }
@@ -275,8 +333,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider value={{
-      cart, isLoading, isOpen, totalQuantity,
-      openCart, closeCart, addItem, updateItem, removeItem, setCartAttributes,
+      cart, isLoading, isInitializing, isOpen, totalQuantity,
+      openCart, closeCart, addItem, updateItem, flushCartUpdates, removeItem, setCartAttributes,
       applyDiscountCode, removeDiscountCode,
       relayPickup, selectRelayPickup, clearRelayPickup,
     }}>

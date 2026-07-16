@@ -153,12 +153,17 @@ export async function addToCart(
 export async function updateCartLine(
   cartId: string,
   lines: { id: string; quantity: number }[]
-) {
-  const data = await shopifyFetch<{ cartLinesUpdate: { cart: ShopifyCart } }>(
-    UPDATE_CART,
-    { cartId, lines }
-  )
-  return data.cartLinesUpdate.cart
+): Promise<{ cart: ShopifyCart | null; userErrors: { field: string[] | null; message: string }[] }> {
+  const data = await shopifyFetch<{
+    cartLinesUpdate: {
+      cart: ShopifyCart | null
+      userErrors?: { field: string[] | null; message: string }[]
+    }
+  }>(UPDATE_CART, { cartId, lines })
+  return {
+    cart: data.cartLinesUpdate.cart,
+    userErrors: data.cartLinesUpdate.userErrors ?? [],
+  }
 }
 
 export async function removeFromCart(cartId: string, lineIds: string[]) {

@@ -23,9 +23,54 @@ const activeStore = BODY_START_STORES.find((s) => s.isActive)
 const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100
 
 export default function CartDrawer() {
-  const { cart, isOpen, isLoading, closeCart, updateItem, removeItem, setCartAttributes, relayPickup, clearRelayPickup } = useCart()
+  const { cart, isOpen, isLoading, isInitializing, closeCart, updateItem, flushCartUpdates, removeItem, setCartAttributes, relayPickup, clearRelayPickup } = useCart()
 
   const [isClickAndCollect, setIsClickAndCollect] = useState(false)
+
+  // ─── Quantités optimistes + debounce (retour client mobile 2026-07) ───
+  // Avant : chaque tap +/- = une mutation Shopify bloquante (~0,5-1s sur 4G),
+  // tout le panier grisé, les taps rapides avalés. Maintenant : le chiffre
+  // change immédiatement, UNE mutation part 350 ms après le dernier tap
+  // (dernière valeur gagnante), seule la ligne concernée s'estompe.
+  const [pendingQty, setPendingQty] = useState<Record<string, number>>({})
+  const [syncingLines, setSyncingLines] = useState<Record<string, boolean>>({})
+  const qtyTimersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
+
+  const changeQty = (lineId: string, serverQty: number, delta: number) => {
+    const current = pendingQty[lineId] ?? serverQty
+    const next = Math.max(1, current + delta)
+    if (next === current) return
+    setPendingQty((p) => ({ ...p, [lineId]: next }))
+    const existing = qtyTimersRef.current[lineId]
+    if (existing) clearTimeout(existing)
+    qtyTimersRef.current[lineId] = setTimeout(() => {
+      delete qtyTimersRef.current[lineId]
+      setSyncingLines((s) => ({ ...s, [lineId]: true }))
+      void updateItem(lineId, next).finally(() => {
+        setSyncingLines((s) => {
+          const n = { ...s }
+          delete n[lineId]
+          return n
+        })
+        // On ne rend la main au chiffre serveur que si aucun nouveau tap
+        // n'est reparti en debounce entre-temps (sinon flash de l'ancienne valeur).
+        if (!qtyTimersRef.current[lineId]) {
+          setPendingQty((p) => {
+            const n = { ...p }
+            delete n[lineId]
+            return n
+          })
+        }
+      })
+    }, 350)
+  }
+
+  useEffect(() => {
+    const timers = qtyTimersRef.current
+    return () => {
+      Object.values(timers).forEach(clearTimeout)
+    }
+  }, [])
 
   // Réhydratation après reload : le mode retrait vit dans les attributs du
   // cart Shopify (persisté), pas dans ce state local. Sans cette sync, l'UI
@@ -138,24 +183,31 @@ export default function CartDrawer() {
     const newValue = !isClickAndCollect
     setIsClickAndCollect(newValue)
 
-    // Passage en retrait : un point relais éventuel n'a plus de sens
-    // (attribut + adresse de livraison retirés du cart).
-    if (newValue && relayPickup) {
-      await clearRelayPickup()
-    }
+    try {
+      // Passage en retrait : un point relais éventuel n'a plus de sens
+      // (attribut + adresse de livraison retirés du cart).
+      if (newValue && relayPickup) {
+        await clearRelayPickup()
+      }
 
-    if (activeStore) {
-      await setCartAttributes(
-        newValue
-          ? [
-              { key: '__click_and_collect', value: 'true' },
-              { key: 'pickup_location_id', value: activeStore.shopifyLocationId },
-            ]
-          : [
-              { key: '__click_and_collect', value: 'false' },
-              { key: 'pickup_location_id', value: '' },
-            ]
-      )
+      if (activeStore) {
+        await setCartAttributes(
+          newValue
+            ? [
+                { key: '__click_and_collect', value: 'true' },
+                { key: 'pickup_location_id', value: activeStore.shopifyLocationId },
+              ]
+            : [
+                { key: '__click_and_collect', value: 'false' },
+                { key: 'pickup_location_id', value: '' },
+              ]
+        )
+      }
+    } catch {
+      // Échec réseau (setCartAttributes re-throw) : retour à la vérité du
+      // cart — sinon l'UI affiche « Retrait » alors que le checkout partirait
+      // en livraison, avec des frais de port surprise.
+      setIsClickAndCollect(cartClickAndCollect)
     }
   }
 
@@ -201,7 +253,22 @@ export default function CartDrawer() {
         </div>
 
         {/* ─── Contenu ─── */}
-        {isEmpty ? (
+        {isEmpty && isInitializing ? (
+          /* Cart persisté en cours de chargement : squelette — surtout PAS
+             « Ton panier est vide » (message faux qui fait re-remplir en double) */
+          <div className="flex-1 min-h-0 px-8 pt-2 space-y-6" aria-hidden="true">
+            {[0, 1].map((i) => (
+              <div key={i} className="flex gap-5 pb-6 border-b border-spruce/10 animate-pulse">
+                <div className="w-20 h-24 bg-spruce/10 rounded-lg flex-shrink-0" />
+                <div className="flex-1 pt-1 space-y-3">
+                  <div className="h-4 bg-spruce/10 rounded w-3/4" />
+                  <div className="h-3 bg-spruce/10 rounded w-1/3" />
+                  <div className="h-9 bg-spruce/10 rounded-full w-28" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : isEmpty ? (
           /* Panier vide */
           <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 text-center text-ink">
             <p className="font-display font-bold text-lg text-spruce mb-2">Ton panier est vide</p>
@@ -269,6 +336,10 @@ export default function CartDrawer() {
               // Bundle sans featuredImage (volontaire) → repli sur les images
               // des composants (empilées, max 3), sinon placeholder.
               const componentImages = image ? [] : getCartLineComponentImages(item.merchandise)
+              // Quantité affichée = optimiste si des taps sont en attente ;
+              // le prix de la ligne s'estompe tant que le serveur n'a pas confirmé.
+              const displayQty = pendingQty[item.id] ?? item.quantity
+              const lineBusy = pendingQty[item.id] != null || !!syncingLines[item.id]
 
               return (
                 <div
@@ -322,16 +393,34 @@ export default function CartDrawer() {
                           </p>
                         )}
 
-                        {/* Remove link */}
+                        {/* Remove link — purge le debounce quantité de la ligne
+                            (sinon une mutation orpheline partirait après coup) */}
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => {
+                            const t = qtyTimersRef.current[item.id]
+                            if (t) {
+                              clearTimeout(t)
+                              delete qtyTimersRef.current[item.id]
+                            }
+                            setPendingQty((p) => {
+                              const n = { ...p }
+                              delete n[item.id]
+                              return n
+                            })
+                            void removeItem(item.id)
+                          }}
                           aria-label={`Retirer ${product.title} du panier`}
                           className="text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-terracotta mt-1 py-1.5 transition-colors"
                         >
                           Retirer
                         </button>
                       </div>
-                      <span className="font-semibold text-spruce text-sm whitespace-nowrap">
+                      <span
+                        className={cn(
+                          'font-semibold text-spruce text-sm whitespace-nowrap transition-opacity',
+                          lineBusy && 'opacity-50'
+                        )}
+                      >
                         {formatPrice(item.cost.totalAmount)}
                       </span>
                     </div>
@@ -342,18 +431,18 @@ export default function CartDrawer() {
                           padding du pill) + aria-labels (icône seule sinon). */}
                       <div className="inline-flex items-center bg-white border border-spruce/15 rounded-full px-1 py-1">
                         <button
-                          onClick={() => updateItem(item.id, item.quantity - 1)}
-                          disabled={item.quantity <= 1}
+                          onClick={() => changeQty(item.id, item.quantity, -1)}
+                          disabled={displayQty <= 1}
                           aria-label={`Réduire la quantité de ${product.title}`}
                           className="w-10 h-10 flex items-center justify-center rounded-full text-ink-mute hover:bg-spruce/5 disabled:opacity-30 transition-all"
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
                         <span className="w-7 text-center text-[13px] font-bold text-ink tabular-nums" aria-live="polite">
-                          {item.quantity}
+                          {displayQty}
                         </span>
                         <button
-                          onClick={() => updateItem(item.id, item.quantity + 1)}
+                          onClick={() => changeQty(item.id, item.quantity, +1)}
                           aria-label={`Augmenter la quantité de ${product.title}`}
                           className="w-10 h-10 flex items-center justify-center rounded-full text-ink-mute hover:bg-spruce/5 transition-all"
                         >
@@ -389,10 +478,13 @@ export default function CartDrawer() {
             {/* ─── Toggle Livraison / Click & Collect ─── */}
             {activeStore && (
               <div className="flex bg-white p-1 rounded-xl mb-3 sm:mb-5 border border-spruce/10">
+                {/* disabled pendant la mutation : un double-tap rapide lançait
+                    deux flux clearRelayPickup/setCartAttributes entrelacés */}
                 <button
                   onClick={() => isClickAndCollect && toggleClickAndCollect()}
+                  disabled={isLoading}
                   className={cn(
-                    'flex-1 flex items-center justify-center gap-2 py-2.5 text-[13px] font-semibold rounded-lg transition-colors',
+                    'flex-1 flex items-center justify-center gap-2 py-2.5 text-[13px] font-semibold rounded-lg transition-colors disabled:opacity-60',
                     !isClickAndCollect
                       ? 'bg-sage text-spruce'
                       : 'text-ink-mute hover:text-spruce'
@@ -403,8 +495,9 @@ export default function CartDrawer() {
                 </button>
                 <button
                   onClick={() => !isClickAndCollect && toggleClickAndCollect()}
+                  disabled={isLoading}
                   className={cn(
-                    'flex-1 flex items-center justify-center gap-2 py-2.5 text-[13px] font-semibold rounded-lg transition-colors',
+                    'flex-1 flex items-center justify-center gap-2 py-2.5 text-[13px] font-semibold rounded-lg transition-colors disabled:opacity-60',
                     isClickAndCollect
                       ? 'bg-sage text-spruce'
                       : 'text-ink-mute hover:text-spruce'
@@ -447,7 +540,7 @@ export default function CartDrawer() {
             <div className="flex flex-col gap-3">
               <a
                 href={cart.checkoutUrl}
-                onClick={() => {
+                onClick={(e) => {
                   // Marqueur « retour checkout » : si l'utilisateur revient du
                   // checkout Shopify avec « précédent » et que la page se
                   // recharge, CartContext rouvre le panier (retour client 2026-07).
@@ -455,6 +548,23 @@ export default function CartDrawer() {
                     sessionStorage.setItem('bs-reopen-cart', String(Date.now()))
                   } catch {
                     /* navigation privée : tant pis, pas de réouverture */
+                  }
+                  // Quantités encore en debounce ou en vol : on retient la
+                  // navigation le temps de pousser les mutations — sinon le
+                  // checkout Shopify chargerait une quantité périmée.
+                  const pendingIds = Object.keys(qtyTimersRef.current)
+                  const mustFlush = pendingIds.length > 0 || Object.keys(syncingLines).length > 0
+                  if (mustFlush) {
+                    e.preventDefault()
+                    const flushes = pendingIds.map((id) => {
+                      clearTimeout(qtyTimersRef.current[id])
+                      delete qtyTimersRef.current[id]
+                      const q = pendingQty[id]
+                      return q != null ? updateItem(id, q) : Promise.resolve()
+                    })
+                    void Promise.all([...flushes, flushCartUpdates()]).finally(() => {
+                      window.location.href = cart.checkoutUrl
+                    })
                   }
                   // GA4 begin_checkout avant redirection vers le checkout Shopify
                   // (no-op sans consentement ; n'empêche jamais la navigation).

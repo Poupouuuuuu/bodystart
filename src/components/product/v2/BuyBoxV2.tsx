@@ -45,6 +45,12 @@ interface BuyBoxV2Props {
 
 const LOW_STOCK_THRESHOLD = 5
 
+// Décomposition du titre de variante Shopify « Saveur / Format ».
+// Matching EXACT sur chaque segment — l'ancien `title.includes(flavor)`
+// était fragile (« vanille » matchait « vanille-1 », etc.).
+const variantFlavor = (v: ShopifyProductVariant) => v.title.split(' / ')[0]?.trim() || v.title
+const variantSize = (v: ShopifyProductVariant) => v.title.split(' / ')[1]?.trim() ?? ''
+
 /**
  * Buy box V2 — galerie gauche + panneau achat droite.
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Fiche produit.1
@@ -92,31 +98,40 @@ export default function BuyBoxV2({
   const isBundleMode = bundleDetails.length > 0
 
   // Saveurs / formats
-  const flavors = Array.from(new Set(variants.map((v) => v.title.split(' / ')[0]?.trim() || v.title)))
+  const flavors = Array.from(new Set(variants.map(variantFlavor)))
   const defaultSizes = Array.from(
-    new Set(variants.map((v) => v.title.split(' / ')[1]?.trim()).filter(Boolean) as string[])
+    new Set(variants.map(variantSize).filter(Boolean))
   )
   const [selectedFlavor, setSelectedFlavor] = useState<string>(
-    selectedVariant.title.split(' / ')[0]?.trim() || flavors[0]
+    variantFlavor(selectedVariant) || flavors[0]
   )
   const [selectedSize, setSelectedSize] = useState<string>(
-    selectedVariant.title.split(' / ')[1]?.trim() || defaultSizes[0] || ''
+    variantSize(selectedVariant) || defaultSizes[0] || ''
   )
 
   const handleOptionChange = (flavor: string, size: string) => {
-    setSelectedFlavor(flavor)
-    if (size) setSelectedSize(size)
-    const targetTitle = size ? `${flavor} / ${size}` : flavor
-    const foundVariant = variants.find(
-      (v) => v.title === targetTitle || (v.title.includes(flavor) && (!size || v.title.includes(size)))
-    )
-    if (foundVariant) {
-      setSelectedVariant(foundVariant)
-      // Sync image galerie si la variante a une image dediee
-      if (foundVariant.image?.url) {
-        const matchIndex = images.findIndex((img) => img.url === foundVariant.image?.url)
-        if (matchIndex >= 0) setSelectedImageIndex(matchIndex)
-      }
+    // ⚠️ Ne JAMAIS mettre à jour les pastilles avant d'avoir résolu la
+    // variante : l'ancien code posait selectedFlavor/Size d'abord — si la
+    // combinaison saveur × format n'existait pas (ex. Vanilla Ice Cream
+    // seulement en 6.8kg alors qu'on est sur 2.27kg), la pastille s'affichait
+    // sélectionnée mais prix + « Ajouter au panier » restaient sur l'ANCIENNE
+    // saveur → mauvaise saveur commandée.
+    let found = size ? variants.find((v) => variantFlavor(v) === flavor && variantSize(v) === size) : undefined
+    if (!found) {
+      // Combinaison inexistante : on bascule sur un format EXISTANT de la
+      // saveur demandée (achetable de préférence) — comportement standard.
+      const flavorVariants = variants.filter((v) => variantFlavor(v) === flavor)
+      found = flavorVariants.find((v) => v.availableForSale) ?? flavorVariants[0]
+    }
+    if (!found) return // saveur inconnue → on ne touche à rien (zéro désync)
+
+    setSelectedVariant(found)
+    setSelectedFlavor(variantFlavor(found))
+    setSelectedSize(variantSize(found))
+    // Sync image galerie si la variante a une image dediee
+    if (found.image?.url) {
+      const matchIndex = images.findIndex((img) => img.url === found.image?.url)
+      if (matchIndex >= 0) setSelectedImageIndex(matchIndex)
     }
   }
 
@@ -160,9 +175,14 @@ export default function BuyBoxV2({
     try {
       // UN SEUL appel avec la quantité (addItem la supporte nativement) —
       // la boucle historique faisait N aller-retours Shopify + N toasts.
-      await addItem(selectedVariant.id, quantity)
-      setAdded(true)
-      setTimeout(() => setAdded(false), 2000)
+      // « Ajouté ✓ » UNIQUEMENT si l'ajout a réellement réussi : addItem avale
+      // ses erreurs (toast) et renvoie false — avant, le bouton passait au
+      // vert même quand l'appel Shopify échouait (panier vide au checkout).
+      const ok = await addItem(selectedVariant.id, quantity)
+      if (ok) {
+        setAdded(true)
+        setTimeout(() => setAdded(false), 2000)
+      }
     } finally {
       setAdding(false)
     }
@@ -330,7 +350,7 @@ export default function BuyBoxV2({
                   <div className="flex flex-wrap gap-2">
                     {flavors.map((flavor) => {
                       const isAvailable = variants.some(
-                        (v) => v.title.includes(flavor) && v.availableForSale
+                        (v) => variantFlavor(v) === flavor && v.availableForSale
                       )
                       return (
                         <button
@@ -362,9 +382,13 @@ export default function BuyBoxV2({
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {defaultSizes.map((size) => {
+                      // Grisé si la combinaison n'EXISTE pas pour la saveur
+                      // courante ou n'est pas achetable (matching exact).
                       const isAvailable = variants.some(
                         (v) =>
-                          v.title.includes(selectedFlavor) && v.title.includes(size) && v.availableForSale
+                          variantFlavor(v) === selectedFlavor &&
+                          variantSize(v) === size &&
+                          v.availableForSale
                       )
                       return (
                         <button

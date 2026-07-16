@@ -124,6 +124,10 @@ function HeaderInner(_props: HeaderProps) {
 
   useEffect(() => {
     setIsSearchOpen(false)
+    // Le Header vit dans le layout : son state survit aux navigations. Sans
+    // cette ligne, naviguer via le LOGO (seul lien sans onClick de fermeture)
+    // laissait le menu burger déplié par-dessus la nouvelle page.
+    setMobileOpen(false)
   }, [pathname])
 
   return (
@@ -145,8 +149,9 @@ function HeaderInner(_props: HeaderProps) {
         <nav className="container relative">
           <div className="flex items-center justify-between h-16 gap-4">
 
-            {/* Logo */}
-            <Link href="/" className="flex-shrink-0">
+            {/* Logo — ferme le burger même si on est DÉJÀ sur '/' (l'effet
+                [pathname] ne se déclenche pas quand le pathname ne change pas) */}
+            <Link href="/" className="flex-shrink-0" onClick={() => setMobileOpen(false)}>
               {/* PAS de priority : le hero de la home doit rester le SEUL preload
                   prioritaire (2 preloads high se concurrençaient) ; le logo, 10 Ko,
                   arrive de toute façon très tôt. */}
@@ -222,9 +227,13 @@ function HeaderInner(_props: HeaderProps) {
                 </Link>
               )}
 
-              {/* Panier */}
+              {/* Panier — ferme le burger d'abord : sinon le menu restait
+                  déplié DERRIÈRE le drawer et réapparaissait à sa fermeture */}
               <button
-                onClick={openCart}
+                onClick={() => {
+                  setMobileOpen(false)
+                  openCart()
+                }}
                 className="relative flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-semibold transition-colors ml-1 bg-fresh hover:bg-fresh-deep"
                 aria-label={
                   totalQuantity > 0

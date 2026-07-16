@@ -127,6 +127,13 @@ export const UPDATE_CART = `
       cart {
         ...CartFragment
       }
+      # userErrors N'ÉTAIENT PAS requêtés : une quantité plafonnée par le
+      # stock (ou toute erreur métier) passait silencieusement — le « + »
+      # semblait mort, et cart pouvait être null → panier local effacé.
+      userErrors {
+        field
+        message
+      }
     }
   }
 `
