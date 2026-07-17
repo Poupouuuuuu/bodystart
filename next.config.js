@@ -1,4 +1,89 @@
 /** @type {import('next').NextConfig} */
+
+// ─── Content-Security-Policy (Report-Only) ──────────────────────────────────
+// Introduite en Report-Only le 2026-07-17 : NE BLOQUE RIEN. Le navigateur se
+// contente de REMONTER les violations (console + en-tête sur la réponse) pour
+// inventorier finement les tiers réellement chargés avant tout passage en mode
+// bloquant. Tiers audités côté navigateur (2026-07-17) :
+//   - Shopify Storefront API (panier client) ...... connect (env NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN)
+//   - Supabase (auth loyalty côté client) ......... connect (env NEXT_PUBLIC_SUPABASE_URL)
+//   - GA4 post-consentement ....................... script/img/connect (googletagmanager + google-analytics)
+//   - Widget Mondial Relay ........................ jQuery (ajax.googleapis.com) + Leaflet (unpkg.com)
+//                                                   + plugin (widget.mondialrelay.com) + tuiles OSM
+//   - Carte Google Maps (embed /stores) ........... frame (maps.google.com / www.google.com)
+//   - Images .......................................cdn.shopify.com ; visuels : images/plus.unsplash.com
+// Polices : next/font/google = AUTO-HÉBERGÉES → 'self' suffit (0 requête Google Fonts au runtime).
+// Judge.me / Shopify Admin / Resend / Upstash = appels SERVEUR → hors périmètre CSP navigateur.
+// 'unsafe-inline' (script/style) : requis par les scripts d'hydratation inline de Next + le bootstrap
+// gtag. Le durcissement vers une CSP à nonce (strict-dynamic) est un chantier séparé, noté pour + tard.
+function cspHostFrom(urlOrDomain) {
+  if (!urlOrDomain) return ''
+  try {
+    return new URL(urlOrDomain.includes('://') ? urlOrDomain : `https://${urlOrDomain}`).host
+  } catch {
+    return ''
+  }
+}
+
+function buildContentSecurityPolicy() {
+  const shopHost = cspHostFrom(process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN)
+  const supabaseHost = cspHostFrom(process.env.NEXT_PUBLIC_SUPABASE_URL)
+
+  const directives = {
+    'default-src': ["'self'"],
+    'base-uri': ["'self'"],
+    'object-src': ["'none'"],
+    'frame-ancestors': ["'none'"],
+    'form-action': ["'self'"],
+    'script-src': [
+      "'self'",
+      "'unsafe-inline'",
+      'https://www.googletagmanager.com',
+      'https://ajax.googleapis.com',
+      'https://unpkg.com',
+      'https://widget.mondialrelay.com',
+    ],
+    'style-src': ["'self'", "'unsafe-inline'", 'https://unpkg.com'],
+    'font-src': ["'self'", 'data:'],
+    'img-src': [
+      "'self'",
+      'data:',
+      'blob:',
+      'https://cdn.shopify.com',
+      'https://images.unsplash.com',
+      'https://plus.unsplash.com',
+      'https://www.googletagmanager.com',
+      'https://www.google-analytics.com',
+      'https://*.google-analytics.com',
+      'https://widget.mondialrelay.com',
+      'https://unpkg.com',
+      'https://*.tile.openstreetmap.org',
+      'https://maps.gstatic.com',
+      'https://*.googleusercontent.com',
+    ],
+    'connect-src': [
+      "'self'",
+      shopHost && `https://${shopHost}`,
+      supabaseHost && `https://${supabaseHost}`,
+      supabaseHost && `wss://${supabaseHost}`,
+      'https://www.google-analytics.com',
+      'https://*.google-analytics.com',
+      'https://analytics.google.com',
+      'https://www.googletagmanager.com',
+      'https://widget.mondialrelay.com',
+      'https://api.mondialrelay.com',
+    ].filter(Boolean),
+    'frame-src': ["'self'", 'https://maps.google.com', 'https://www.google.com'],
+    'worker-src': ["'self'", 'blob:'],
+    'manifest-src': ["'self'"],
+    'media-src': ["'self'"],
+  }
+
+  return Object.entries(directives)
+    .map(([directive, values]) => `${directive} ${values.join(' ')}`)
+    .join('; ')
+}
+
 const nextConfig = {
   // Ne pas révéler la stack (fingerprinting) — review sécurité 2026-07-03.
   poweredByHeader: false,
@@ -18,12 +103,13 @@ const nextConfig = {
           // Renforce le HSTS par défaut de Vercel avec includeSubDomains.
           // (preload volontairement absent : soumission hstspreload.org = décision à part.)
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
+          // CSP en Report-Only (cf. buildContentSecurityPolicy ci-dessus) :
+          // observe les violations sans rien bloquer. Passage en enforce = étape
+          // ultérieure, après une période d'observation sans faux positifs.
+          { key: 'Content-Security-Policy-Report-Only', value: buildContentSecurityPolicy() },
         ],
       },
     ]
-    // NB : pas de Content-Security-Policy ici — à introduire plus tard en
-    // Report-Only (tiers à inventorier : GA4, cdn.shopify.com, widget Mondial
-    // Relay, Google Maps embed) avant de durcir.
   },
   async redirects() {
     return [
