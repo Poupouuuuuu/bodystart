@@ -16,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/blog`, priority: 0.85, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/stores`, priority: 0.8, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/complements-alimentaires-coignieres`, priority: 0.8, changeFrequency: 'monthly' },
+    { url: `${BASE_URL}/complements-alimentaires-yvelines`, priority: 0.8, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/conseil`, priority: 0.8, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/parrainage`, priority: 0.75, changeFrequency: 'monthly' },
     { url: `${BASE_URL}/about`, priority: 0.7, changeFrequency: 'monthly' },

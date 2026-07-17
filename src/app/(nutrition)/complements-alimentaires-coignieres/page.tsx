@@ -89,6 +89,13 @@ export default function CoignieresLandingPage() {
             <strong className="font-semibold">Click &amp; Collect est gratuit</strong> — ta
             commande t&apos;attend au comptoir, souvent en quelques minutes.
           </p>
+          <p className="text-ink/90 text-[15px] leading-[1.7] mt-4">
+            Tu viens d&apos;une autre commune du 78 ? Voir aussi{' '}
+            <Link href="/complements-alimentaires-yvelines" className="font-semibold text-spruce hover:underline underline-offset-4">
+              compléments alimentaires dans les Yvelines
+            </Link>{' '}
+            (zone desservie et livraison dans tout le département).
+          </p>
         </div>
 
         {/* 3 raisons (extractible) */}

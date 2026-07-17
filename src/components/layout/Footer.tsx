@@ -205,6 +205,11 @@ export default function Footer() {
                     Compléments alimentaires à Coignières
                   </Link>
                 </li>
+                <li className="text-sm">
+                  <Link href="/complements-alimentaires-yvelines" className="text-ink-mute hover:text-spruce transition-colors">
+                    Compléments alimentaires dans les Yvelines
+                  </Link>
+                </li>
                 <li className="flex items-center gap-3 text-sm text-ink-mute">
                   <Clock className="w-4 h-4 text-spruce flex-shrink-0" />
                   <span>11h à 19h (lun–sam)</span>
