@@ -241,7 +241,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
     }
   ],
   "related": [
-    "combien-de-proteines-par-jour",
+    "gainer-prise-de-masse-comment-choisir",
     "creatine-avant-ou-apres-seance",
     "bruleurs-de-graisse-ca-marche"
   ]

@@ -54,7 +54,9 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     guides: [
       { slug: 'whey-ou-isolate-quelle-difference', label: 'Whey ou isolate : quelle différence ?' },
+      { slug: 'quand-prendre-sa-whey', label: 'Quand prendre sa whey ?' },
       { slug: 'proteines-vegetales-musculation', label: 'Protéines végétales : bien les choisir' },
+      { slug: 'gainer-prise-de-masse-comment-choisir', label: 'Gainer : pour qui et comment le choisir ?' },
       { slug: 'combien-de-proteines-par-jour', label: 'Combien de protéines par jour pour prendre du muscle ?' },
       { slug: 'quelle-whey-choisir-debutant', label: 'Quelle whey choisir quand on débute ?' },
     ],
@@ -225,10 +227,10 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       { slug: 'bruleurs', label: 'Brûleurs' },
     ],
     guides: [
+      { slug: 'vitamine-d-combien-quand-pourquoi', label: 'Vitamine D : combien, quand, pourquoi ?' },
       { slug: 'complements-apres-40-ans', label: 'Quels compléments après 40 ans ?' },
       { slug: 'collagene-bienfaits-comment-choisir', label: 'Collagène : à quoi ça sert ?' },
       { slug: 'mieux-dormir-recuperation', label: 'Mieux dormir et récupérer' },
-      { slug: 'complements-debutant-musculation', label: 'Par quoi commencer en musculation ?' },
     ],
   },
 ]

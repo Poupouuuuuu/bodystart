@@ -180,6 +180,7 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
   ],
   "related": [
     "whey-ou-isolate-quelle-difference",
+    "quand-prendre-sa-whey",
     "combien-de-proteines-par-jour",
     "complements-debutant-musculation"
   ]

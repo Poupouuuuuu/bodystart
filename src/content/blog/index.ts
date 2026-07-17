@@ -13,9 +13,15 @@ import { mieuxDormirRecuperation } from './mieux-dormir-recuperation'
 import { proteinesVegetalesMusculation } from './proteines-vegetales-musculation'
 import { bruleursDeGraisseCaMarche } from './bruleurs-de-graisse-ca-marche'
 import { collageneBienfaitsCommentChoisir } from './collagene-bienfaits-comment-choisir'
+import { vitamineDCombienQuandPourquoi } from './vitamine-d-combien-quand-pourquoi'
+import { gainerPriseDeMasseCommentChoisir } from './gainer-prise-de-masse-comment-choisir'
+import { quandPrendreSaWhey } from './quand-prendre-sa-whey'
 
 /** Tous les articles publiés (l'ordre d'affichage est géré par date). */
 export const BLOG_ARTICLES: BlogArticle[] = [
+  vitamineDCombienQuandPourquoi,
+  gainerPriseDeMasseCommentChoisir,
+  quandPrendreSaWhey,
   proteinesVegetalesMusculation,
   bruleursDeGraisseCaMarche,
   collageneBienfaitsCommentChoisir,
