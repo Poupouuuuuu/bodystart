@@ -15,11 +15,12 @@ export const runtime = 'nodejs'
 const PatchSchema = z.object({ active: z.boolean() })
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const gate = await requireAdmin()
   if (!gate.ok) return NextResponse.json({ error: 'forbidden' }, { status: gate.status })
 
-  if (!UUID_RE.test(params.id)) {
+  if (!UUID_RE.test(id)) {
     return NextResponse.json({ error: 'invalid_id' }, { status: 400 })
   }
 
@@ -37,7 +38,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   const { data, error } = await supabase
     .from('ambassadors')
     .update({ active: body.active })
-    .eq('id', params.id)
+    .eq('id', id)
     .select('id, active')
     .maybeSingle()
 

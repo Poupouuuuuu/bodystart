@@ -28,7 +28,7 @@ export interface StaffContext {
  * - Sinon retourne le contexte staff
  */
 export async function requireStaff(): Promise<StaffContext> {
-  const supabase = createLoyaltyServerClient()
+  const supabase = await createLoyaltyServerClient()
 
   // 1. Recupere la session Supabase Auth via cookies
   const {
@@ -67,7 +67,7 @@ export async function requireStaff(): Promise<StaffContext> {
  */
 export async function getStaffFromRequest(): Promise<StaffContext | null> {
   try {
-    const supabase = createLoyaltyServerClient()
+    const supabase = await createLoyaltyServerClient()
     const {
       data: { user },
       error: authError,

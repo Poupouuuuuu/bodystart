@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Montserrat } from 'next/font/google'
-import dynamic from 'next/dynamic'
 import '@/styles/globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { CustomerProvider } from '@/context/CustomerContext'
@@ -8,11 +7,9 @@ import { Toaster } from 'react-hot-toast'
 import { getSiteUrl } from '@/lib/site-url'
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
 import ReferralCapture from '@/components/marketing/ReferralCapture'
-
-// Lazy : invisible au load (montre seulement si pas de consent en localStorage)
-const CookieBanner = dynamic(() => import('@/components/ui/CookieBanner'), { ssr: false })
-// Lazy : la popup s'arme côté client (timer/exit-intent), rien au SSR
-const NewsletterPopup = dynamic(() => import('@/components/marketing/NewsletterPopup'), { ssr: false })
+// CookieBanner + NewsletterPopup : lazy client-only. Next 15 interdit
+// dynamic(ssr:false) dans un Server Component → isolés dans ce wrapper client.
+import DeferredWidgets from '@/components/ui/DeferredWidgets'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -114,8 +111,7 @@ export default function RootLayout({
             {children}
             <ReferralCapture />
             <GoogleAnalytics />
-            <CookieBanner />
-            <NewsletterPopup />
+            <DeferredWidgets />
             <Toaster
               position="top-right"
               toastOptions={{

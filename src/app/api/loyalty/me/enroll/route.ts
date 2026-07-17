@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
 
     // Sync profil Shopify ← cagnotte : on écrit le numéro saisi à l'enrôlement
     // dans le profil client, pour qu'il n'y ait QU'UN seul numéro (best-effort).
-    const token = cookies().get(SHOPIFY_TOKEN_COOKIE)?.value
+    const token = (await cookies()).get(SHOPIFY_TOKEN_COOKIE)?.value
     if (token) await updateCustomerPhoneServer(token, e164)
 
     return NextResponse.json({

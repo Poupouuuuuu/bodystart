@@ -47,7 +47,8 @@ export async function generateStaticParams() {
 }
 
 interface Props {
-  params: { handle: string }
+  // async depuis Next 15 : params est une Promise, à await avant usage.
+  params: Promise<{ handle: string }>
 }
 
 /**
@@ -65,7 +66,8 @@ function extractFormat(metafields?: import('@/lib/shopify/types').ShopifyMetafie
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const product = await getProductByHandle(params.handle)
+    const { handle } = await params
+    const product = await getProductByHandle(handle)
     if (!product) return { title: 'Produit introuvable' }
 
     // Champs SEO dédiés Shopify (product.seo) prioritaires, sinon fallback.
@@ -110,11 +112,12 @@ function extractBenefits(tags: string[]): string[] {
 }
 
 export default async function ProductPage({ params }: Props) {
+  const { handle } = await params
   let product = null
   try {
-    product = await getProductByHandle(params.handle)
+    product = await getProductByHandle(handle)
   } catch (err) {
-    console.error('[ProductPage] Erreur API pour handle:', params.handle, err)
+    console.error('[ProductPage] Erreur API pour handle:', handle, err)
     // PENDANT LE BUILD (prérendu des ~250 fiches) : un hiccup Shopify sur UNE
     // fiche ne doit pas faire échouer tout le deploy → notFound() ; la page
     // sera régénérée saine par l'ISR (≤3 min) après mise en prod.

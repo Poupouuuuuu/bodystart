@@ -63,8 +63,8 @@ function rowToCustomer(row: {
 }
 
 export async function resolveLoyaltyForSession(): Promise<ResolveResult> {
-  // 1. Lit le cookie Shopify
-  const cookieStore = cookies()
+  // 1. Lit le cookie Shopify (cookies() est async depuis Next 15)
+  const cookieStore = await cookies()
   const tokenCookie = cookieStore.get(SHOPIFY_TOKEN_COOKIE)
   if (!tokenCookie?.value) {
     return { state: 'logged_out' }

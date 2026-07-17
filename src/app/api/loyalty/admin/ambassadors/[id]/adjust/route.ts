@@ -24,11 +24,12 @@ const AdjustSchema = z.object({
   reason: z.string().trim().min(1).max(200),
 })
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const gate = await requireAdmin()
   if (!gate.ok) return NextResponse.json({ error: 'forbidden' }, { status: gate.status })
 
-  if (!UUID_RE.test(params.id)) {
+  if (!UUID_RE.test(id)) {
     return NextResponse.json({ error: 'invalid_id' }, { status: 400 })
   }
 
@@ -46,7 +47,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   let result: Awaited<ReturnType<typeof adjustAmbassadorCagnotte>>
   try {
     result = await adjustAmbassadorCagnotte(supabase, {
-      ambassadorId: params.id,
+      ambassadorId: id,
       deltaCents: body.deltaCents,
       reason: body.reason,
     })

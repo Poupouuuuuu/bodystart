@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import {
-  Instagram,
   MapPin,
   Phone,
   Clock,
@@ -10,6 +9,18 @@ import {
   Store,
   Headphones,
 } from 'lucide-react'
+
+// lucide-react 1.x a retiré les icônes de marque (Instagram, etc.) pour raisons
+// de trademark → SVG inline (glyphe Instagram générique, currentColor).
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  )
+}
 import { FREE_SHIPPING_THRESHOLD_CENTS, MONDIAL_RELAY, formatShippingPrice } from '@/lib/shipping'
 
 // Footer — copy spec §3.9 et §3.10
@@ -130,7 +141,7 @@ export default function Footer() {
                   aria-label="Instagram BodyStart"
                   className="w-11 h-11 rounded-full bg-sage flex items-center justify-center text-ink hover:bg-fresh hover:text-white transition-colors"
                 >
-                  <Instagram className="w-5 h-5" />
+                  <InstagramIcon className="w-5 h-5" />
                 </a>
               </div>
             </div>

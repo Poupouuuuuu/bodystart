@@ -14,13 +14,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-export default function StaffLoginPage({
+export default async function StaffLoginPage({
   searchParams,
 }: {
-  searchParams?: { next?: string; reason?: string }
+  searchParams?: Promise<{ next?: string; reason?: string }>
 }) {
-  const next = searchParams?.next ?? '/staff/caisse'
-  const reason = searchParams?.reason
+  const sp = (await searchParams) ?? {}
+  const next = sp.next ?? '/staff/caisse'
+  const reason = sp.reason
 
   return (
     <div className="min-h-screen bg-[#0f1a14] flex items-center justify-center p-6">

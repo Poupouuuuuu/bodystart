@@ -19,11 +19,13 @@ const BTN_PRIMARY =
   'inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-fresh-deep'
 
 interface SearchPageProps {
-  searchParams: { q?: string }
+  // async depuis Next 15 : searchParams est une Promise.
+  searchParams: Promise<{ q?: string }>
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const q = searchParams.q?.trim() ?? ''
+  const { q: rawQ } = await searchParams
+  const q = rawQ?.trim() ?? ''
 
   let results: ShopifyProduct[] = []
   if (q) {

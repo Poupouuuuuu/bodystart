@@ -16,8 +16,10 @@ import { cookies } from 'next/headers'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-export function createLoyaltyServerClient() {
-  const cookieStore = cookies()
+// async depuis Next 15 : cookies() renvoie une Promise. Les 2 appelants
+// (requireStaff, getStaffFromRequest) sont déjà async → simple await ajouté.
+export async function createLoyaltyServerClient() {
+  const cookieStore = await cookies()
   return createServerClient(
     SUPABASE_URL ?? 'https://placeholder.supabase.co',
     SUPABASE_ANON_KEY ?? 'placeholder',

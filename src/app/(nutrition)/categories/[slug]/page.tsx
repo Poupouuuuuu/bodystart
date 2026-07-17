@@ -18,8 +18,9 @@ export function generateStaticParams() {
   return CATEGORY_PAGES.map((c) => ({ slug: c.slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const cat = getCategoryPage(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const cat = getCategoryPage(slug)
   if (!cat) return {}
   return buildPageMetadata({
     path: `/categories/${cat.slug}`,
@@ -37,8 +38,9 @@ async function getCategoryProducts(productType: string): Promise<ShopifyProduct[
   }
 }
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const cat = getCategoryPage(params.slug)
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const cat = getCategoryPage(slug)
   if (!cat) notFound()
 
   const products = await getCategoryProducts(cat.productType)
