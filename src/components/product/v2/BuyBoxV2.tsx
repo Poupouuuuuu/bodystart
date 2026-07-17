@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
-import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck } from 'lucide-react'
+import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck, RotateCcw, Award } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
@@ -506,10 +506,26 @@ export default function BuyBoxV2({
               </span>
             </li>
             <li className="flex items-center gap-2.5">
+              <RotateCcw className="w-4 h-4 text-spruce flex-shrink-0" />
+              <span>Retour sous 14 jours</span>
+            </li>
+            <li className="flex items-center gap-2.5">
               <ShieldCheck className="w-4 h-4 text-spruce flex-shrink-0" />
               <span>Paiement sécurisé (CB, Visa, Mastercard)</span>
             </li>
           </ul>
+
+          {/* Réassurance confiance : le vrai différenciant BodyStart (boutique
+              physique depuis 13 ans, « on consomme ce qu'on vend », conseil)
+              posé AU POINT DE DÉCISION. Sur un site de compléments, la confiance
+              est le 1er frein à l'achat — cet atout était sous-exploité ici. */}
+          <div className="mt-5 flex items-start gap-2.5 rounded-2xl bg-sage/50 px-4 py-3">
+            <Award className="w-4 h-4 text-fresh flex-shrink-0 mt-0.5" />
+            <p className="text-[12.5px] text-spruce leading-[1.5]">
+              <span className="font-semibold">Une vraie boutique à Coignières depuis 13 ans.</span>{' '}
+              On ne vend que ce qu&apos;on consomme — et on te conseille comme au comptoir.
+            </p>
+          </div>
 
           {/* Stock (DA §B.Fiche produit.1 : decision Adam) */}
           {/* Masque pour les bundles : un pack n'a pas d'inventaire propre a

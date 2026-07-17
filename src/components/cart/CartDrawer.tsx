@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, CheckCircle2 } from 'lucide-react'
+import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, CheckCircle2, ShieldCheck, RotateCcw } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
@@ -611,6 +611,19 @@ export default function CartDrawer() {
               >
                 {isClickAndCollect ? 'Valider le retrait' : 'Paiement sécurisé'}
               </a>
+              {/* Réassurance au point de paiement : la confiance est le 1er frein
+                  sur un site de compléments. Compact (1 ligne, wrap sur mobile). */}
+              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-medium text-ink-mute">
+                <span className="inline-flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-spruce" /> Paiement sécurisé
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <RotateCcw className="w-3.5 h-3.5 text-spruce" /> Retour sous 14 j
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Store className="w-3.5 h-3.5 text-spruce" /> Boutique à Coignières
+                </span>
+              </div>
               {/* Porte de sortie au pouce : la seule fermeture était la croix
                   en haut à droite (inatteignable à une main sur grand téléphone,
                   et l'overlay n'existe pas en w-full mobile) */}
