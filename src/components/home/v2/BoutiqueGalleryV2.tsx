@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 /**
  * Galerie boutique — VRAIES photos du magasin (fournies par Adam, 07/2026,
@@ -8,32 +9,47 @@ import { ArrowRight } from 'lucide-react'
  *
  * Objectif (retour consultant + review) : le site disait « voici une boutique
  * de compléments » sans jamais la MONTRER. Cette section montre les rayons
- * pleins et l'allée réelle juste avant la carte pratique StoreCallV2 —
- * le client achète aussi un lieu et des humains.
+ * pleins et l'allée réelle juste avant la carte pratique StoreCallV2.
  *
- * Mobile : piste horizontale scroll-snap (le geste natif) ; desktop : mosaïque.
+ * Layout :
+ *  - mobile : piste horizontale scroll-snap (le geste natif) ;
+ *  - desktop : bento CSS grid 4 colonnes. ⚠️ Les images sont en `fill`
+ *    (position absolue) : la grille DOIT donner une hauteur explicite aux
+ *    rangées (`auto-rows`), sinon les cellules s'effondrent à ~0 px (bug
+ *    corrigé le 16/07 : `grid-rows-2` sans hauteur = mosaïque écrasée).
  */
 const PHOTOS = [
   {
     src: '/boutique/allee.webp',
     alt: "L'allée centrale de la boutique BodyStart Nutrition à Coignières, rayons de compléments alimentaires pleins",
-    // Portrait — pilier gauche de la mosaïque
-    tall: true,
+    // pilier gauche (portrait) sur 2 rangées
+    span: 'md:col-span-1 md:row-span-2',
   },
   {
     src: '/boutique/rayon-proteines.webp',
     alt: 'Le rayon protéines de la boutique BodyStart : whey, isolate et caséine en libre accès',
-    tall: false,
+    span: 'md:col-span-2 md:row-span-1',
   },
   {
     src: '/boutique/comptoir.webp',
     alt: 'Le comptoir de la boutique BodyStart Nutrition avec les barres protéinées',
-    tall: false,
+    // pilier droit (portrait) sur 2 rangées
+    span: 'md:col-span-1 md:row-span-2',
   },
   {
     src: '/boutique/rayon-preworkout.webp',
     alt: 'Le rayon pré-workout, BCAA et créatine de la boutique BodyStart à Coignières',
-    tall: false,
+    span: 'md:col-span-2 md:row-span-1',
+  },
+  {
+    src: '/boutique/collagen-detail.webp',
+    alt: 'Gros plan sur les pots Collagen Complex Eric Favre en rayon à la boutique BodyStart',
+    span: 'md:col-span-2 md:row-span-1',
+  },
+  {
+    src: '/boutique/gainer-detail.webp',
+    alt: 'Sacs de gainer Mutant Mass en rayon à la boutique BodyStart Coignières',
+    span: 'md:col-span-2 md:row-span-1',
   },
 ] as const
 
@@ -63,50 +79,31 @@ export default function BoutiqueGalleryV2() {
           </p>
         </div>
 
-        {/* Mosaïque desktop / piste snap mobile */}
+        {/* Piste snap mobile / bento desktop (auto-rows = hauteur des rangées) */}
         <div
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-12 md:grid-rows-2 md:overflow-visible"
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-4 md:auto-rows-[190px] md:overflow-visible"
           aria-label="Photos de la boutique"
         >
-          {/* Allée (portrait) — pilier gauche sur 2 rangées */}
-          <div className="relative flex-shrink-0 w-[72%] sm:w-[46%] snap-center aspect-[3/4] md:w-auto md:aspect-auto md:col-span-4 md:row-span-2 rounded-2xl overflow-hidden border border-spruce/10">
-            <Image
-              src={PHOTOS[0].src}
-              alt={PHOTOS[0].alt}
-              fill
-              className="object-cover"
-              sizes="(min-width: 768px) 33vw, 72vw"
-            />
-          </div>
-          {/* Rayon protéines (paysage) — large en haut à droite */}
-          <div className="relative flex-shrink-0 w-[72%] sm:w-[46%] snap-center aspect-[3/4] md:w-auto md:aspect-auto md:col-span-8 md:row-span-1 rounded-2xl overflow-hidden border border-spruce/10">
-            <Image
-              src={PHOTOS[1].src}
-              alt={PHOTOS[1].alt}
-              fill
-              className="object-cover"
-              sizes="(min-width: 768px) 66vw, 72vw"
-            />
-          </div>
-          {/* Comptoir + rayon pré-workout — 2 cases en bas à droite */}
-          <div className="relative flex-shrink-0 w-[72%] sm:w-[46%] snap-center aspect-[3/4] md:w-auto md:aspect-auto md:col-span-4 md:row-span-1 rounded-2xl overflow-hidden border border-spruce/10">
-            <Image
-              src={PHOTOS[2].src}
-              alt={PHOTOS[2].alt}
-              fill
-              className="object-cover"
-              sizes="(min-width: 768px) 33vw, 72vw"
-            />
-          </div>
-          <div className="relative flex-shrink-0 w-[72%] sm:w-[46%] snap-center aspect-[3/4] md:w-auto md:aspect-auto md:col-span-4 md:row-span-1 rounded-2xl overflow-hidden border border-spruce/10">
-            <Image
-              src={PHOTOS[3].src}
-              alt={PHOTOS[3].alt}
-              fill
-              className="object-cover"
-              sizes="(min-width: 768px) 33vw, 72vw"
-            />
-          </div>
+          {PHOTOS.map((photo) => (
+            <div
+              key={photo.src}
+              className={cn(
+                'relative flex-shrink-0 w-[72%] sm:w-[46%] snap-center aspect-[3/4] rounded-2xl overflow-hidden border border-spruce/10',
+                // desktop : la taille vient de la grille (largeur auto, hauteur
+                // via row-span × auto-rows) → on annule l'aspect-ratio mobile.
+                'md:w-auto md:aspect-auto',
+                photo.span
+              )}
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                className="object-cover"
+                sizes="(min-width: 768px) 50vw, 72vw"
+              />
+            </div>
+          ))}
         </div>
 
         {/* Chiffres + lien « Pourquoi BodyStart ? » */}
