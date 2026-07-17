@@ -190,6 +190,7 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
   ],
   "related": [
     "quelle-whey-choisir-debutant",
+    "proteines-vegetales-musculation",
     "combien-de-proteines-par-jour"
   ]
 }

@@ -242,6 +242,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
   ],
   "related": [
     "combien-de-proteines-par-jour",
-    "creatine-avant-ou-apres-seance"
+    "creatine-avant-ou-apres-seance",
+    "bruleurs-de-graisse-ca-marche"
   ]
 }
