@@ -22,10 +22,39 @@ import { gaBeginCheckout } from '@/lib/analytics'
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
 const FREE_SHIPPING_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100
 
+// Cross-sell « Complète ta commande » — payload minimal renvoyé par
+// /api/cross-sell. variantId non-null UNIQUEMENT pour les produits mono-variante
+// (ajout rapide sûr) ; null → lien « Choisir » vers la fiche (choix saveur).
+type CrossSellItem = {
+  handle: string
+  title: string
+  image: string | null
+  price: string
+  currency: string
+  variantId: string | null
+}
+
 export default function CartDrawer() {
-  const { cart, isOpen, isLoading, isInitializing, closeCart, updateItem, flushCartUpdates, removeItem, setCartAttributes, relayPickup, clearRelayPickup } = useCart()
+  const { cart, isOpen, isLoading, isInitializing, closeCart, addItem, updateItem, flushCartUpdates, removeItem, setCartAttributes, relayPickup, clearRelayPickup } = useCart()
 
   const [isClickAndCollect, setIsClickAndCollect] = useState(false)
+
+  // ─── Cross-sell (fetch LAZY à la 1re ouverture du panier) ───
+  const [crossSell, setCrossSell] = useState<CrossSellItem[] | null>(null)
+  const [addingCross, setAddingCross] = useState<string | null>(null)
+  const crossSellFetched = useRef(false)
+  useEffect(() => {
+    if (!isOpen || crossSellFetched.current) return
+    crossSellFetched.current = true
+    fetch('/api/cross-sell')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (Array.isArray(j?.items)) setCrossSell(j.items as CrossSellItem[])
+      })
+      .catch(() => {
+        // best-effort : sans réponse, la section reste simplement masquée.
+      })
+  }, [isOpen])
 
   // ─── Quantités optimistes + debounce (retour client mobile 2026-07) ───
   // Avant : chaque tap +/- = une mutation Shopify bloquante (~0,5-1s sur 4G),
@@ -178,6 +207,23 @@ export default function CartDrawer() {
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotalAmount)
   const freeShippingProgress = Math.min(100, (subtotalAmount / FREE_SHIPPING_THRESHOLD) * 100)
   const hasFreeShipping = subtotalAmount >= FREE_SHIPPING_THRESHOLD
+
+  // Cross-sell candidats : best-sellers PAS déjà au panier (max 3 pour ne pas
+  // alourdir le tiroir). Recalculé quand le panier change → un produit ajouté
+  // via le cross-sell disparaît aussitôt de la liste.
+  const cartHandles = new Set(items.map((i) => i.merchandise.product.handle))
+  const crossSellItems = (crossSell ?? []).filter((c) => !cartHandles.has(c.handle)).slice(0, 3)
+
+  async function addCrossSell(item: CrossSellItem) {
+    if (!item.variantId || addingCross) return
+    setAddingCross(item.handle)
+    try {
+      // addItem gère déjà toast + ouverture panier + tracking GA add_to_cart.
+      await addItem(item.variantId, 1)
+    } finally {
+      setAddingCross(null)
+    }
+  }
 
   async function toggleClickAndCollect() {
     const newValue = !isClickAndCollect
@@ -455,6 +501,69 @@ export default function CartDrawer() {
               )
             })}
               </div>
+
+              {/* ─── Cross-sell « Complète ta commande » (panier moyen +) ───
+                  Best-sellers pas déjà au panier. Ajout rapide seulement pour
+                  les mono-variantes ; sinon lien « Choisir » vers la fiche. */}
+              {crossSellItems.length > 0 && (
+                <div className="px-8 pb-6">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+                    Complète ta commande
+                  </p>
+                  <div className="space-y-3">
+                    {crossSellItems.map((item) => (
+                      <div key={item.handle} className="flex items-center gap-3">
+                        <Link
+                          href={`/products/${item.handle}`}
+                          onClick={closeCart}
+                          className="relative w-14 h-14 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-spruce/10 flex items-center justify-center"
+                        >
+                          {item.image ? (
+                            <Image src={item.image} alt={item.title} fill className="object-contain p-1.5" sizes="56px" />
+                          ) : (
+                            <Package className="w-6 h-6 text-spruce/25" />
+                          )}
+                        </Link>
+                        <div className="flex-1 min-w-0">
+                          <Link href={`/products/${item.handle}`} onClick={closeCart}>
+                            <p className="text-[13px] font-semibold text-ink leading-tight line-clamp-2">
+                              {item.title}
+                            </p>
+                          </Link>
+                          <p className="text-[13px] font-bold text-spruce mt-0.5">
+                            {formatPrice({ amount: item.price, currencyCode: item.currency })}
+                          </p>
+                        </div>
+                        {item.variantId ? (
+                          <button
+                            onClick={() => addCrossSell(item)}
+                            disabled={addingCross === item.handle}
+                            aria-label={`Ajouter ${item.title} au panier`}
+                            className="flex-shrink-0 inline-flex items-center gap-1 h-9 px-4 rounded-full border border-spruce/20 text-spruce text-[13px] font-semibold hover:bg-sage disabled:opacity-50 transition-colors"
+                          >
+                            {addingCross === item.handle ? (
+                              '…'
+                            ) : (
+                              <>
+                                <Plus className="w-3.5 h-3.5" /> Ajouter
+                              </>
+                            )}
+                          </button>
+                        ) : (
+                          <Link
+                            href={`/products/${item.handle}`}
+                            onClick={closeCart}
+                            aria-label={`Voir ${item.title}`}
+                            className="flex-shrink-0 inline-flex items-center h-9 px-4 rounded-full border border-spruce/20 text-spruce text-[13px] font-semibold hover:bg-sage transition-colors"
+                          >
+                            Choisir
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* ─── Widget Cagnotte (loyalty) — dans la zone scrollable ─── */}
               <CagnotteCartWidget />
