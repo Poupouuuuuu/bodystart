@@ -221,6 +221,6 @@ export const complementsDebutantMusculation: BlogArticle = {
   "related": [
     "quelle-whey-choisir-debutant",
     "creatine-avant-ou-apres-seance",
-    "eaa-ou-bcaa-lequel-prendre"
+    "complements-apres-40-ans"
   ]
 }

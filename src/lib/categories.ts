@@ -81,6 +81,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     guides: [
       { slug: 'creatine-avant-ou-apres-seance', label: 'Créatine : avant ou après la séance ?' },
+      { slug: 'creatine-pour-les-femmes', label: 'La créatine pour les femmes' },
       { slug: 'complements-debutant-musculation', label: 'Par quoi commencer en musculation ?' },
     ],
   },
@@ -219,7 +220,11 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       { slug: 'proteines', label: 'Protéines' },
       { slug: 'bruleurs', label: 'Brûleurs' },
     ],
-    guides: [{ slug: 'complements-debutant-musculation', label: 'Par quoi commencer en musculation ?' }],
+    guides: [
+      { slug: 'complements-apres-40-ans', label: 'Quels compléments après 40 ans ?' },
+      { slug: 'mieux-dormir-recuperation', label: 'Mieux dormir et récupérer' },
+      { slug: 'complements-debutant-musculation', label: 'Par quoi commencer en musculation ?' },
+    ],
   },
 ]
 

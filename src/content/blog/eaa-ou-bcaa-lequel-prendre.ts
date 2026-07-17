@@ -213,6 +213,7 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
     }
   ],
   "related": [
+    "mieux-dormir-recuperation",
     "combien-de-proteines-par-jour",
     "complements-debutant-musculation"
   ]

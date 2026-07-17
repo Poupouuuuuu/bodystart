@@ -225,6 +225,7 @@ export const creatineAvantOuApresSeance: BlogArticle = {
     }
   ],
   "related": [
+    "creatine-pour-les-femmes",
     "complements-debutant-musculation",
     "combien-de-proteines-par-jour"
   ]
