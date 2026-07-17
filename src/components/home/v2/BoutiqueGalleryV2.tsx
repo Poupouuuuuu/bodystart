@@ -55,7 +55,7 @@ const PHOTOS = [
 
 const FACTS = [
   { value: '13 ans', label: 'de conseil en nutrition' },
-  { value: '7j/7', label: 'ouvert de 11h à 19h' },
+  { value: 'Lun–Sam', label: 'ouvert de 11h à 19h' },
   { value: '+2 600', label: 'clients conseillés' },
 ] as const
 

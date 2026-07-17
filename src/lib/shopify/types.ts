@@ -244,8 +244,18 @@ export const BODY_START_STORES: BodyStartStore[] = [
     address: '8 Rue du Pont des Landes',
     city: '78310 Coignières',
     phone: '07 61 84 75 80',
+    // Ouvert du lundi au samedi, FERMÉ le dimanche (MAJ 2026-07). Détaillé par
+    // jour (nom FR exact) : StoreStatusV2 mappe le jour courant (Europe/Paris)
+    // sur ces entrées pour son statut « ouvert/fermé » en direct. L'entrée
+    // Dimanche 'Fermé' est explicite (le widget filtre open==='Fermé').
     hours: [
-      { day: 'Lundi à Dimanche', open: '11:00', close: '19:00' },
+      { day: 'Lundi', open: '11:00', close: '19:00' },
+      { day: 'Mardi', open: '11:00', close: '19:00' },
+      { day: 'Mercredi', open: '11:00', close: '19:00' },
+      { day: 'Jeudi', open: '11:00', close: '19:00' },
+      { day: 'Vendredi', open: '11:00', close: '19:00' },
+      { day: 'Samedi', open: '11:00', close: '19:00' },
+      { day: 'Dimanche', open: 'Fermé', close: 'Fermé' },
     ],
   },
 ]

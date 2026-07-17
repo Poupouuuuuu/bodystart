@@ -11,33 +11,48 @@ function formatHour(t: string): string {
   return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2, '0')}`
 }
 
+// getDay() : 0 = dimanche … 6 = samedi → nom FR (doit matcher hours[].day).
+const DAY_NAMES = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'] as const
+
 /**
- * Statut d'ouverture temps réel (heure de Paris) + heure de réouverture.
- * - Ouvert → "Ouvert" (sage)
- * - Fermé avant l'ouverture du jour → "Fermé · Ouvre à 11h"
- * - Fermé après la fermeture → "Fermé · Ouvre demain à 11h"
- * (générique : déduit l'heure d'ouverture depuis les créneaux fournis.)
+ * Statut d'ouverture temps réel (heure de Paris) + réouverture.
+ * CONSCIENT DU JOUR (MAJ 2026-07, fermé le dimanche) : on mappe le jour
+ * courant sur hours[].day (nom FR) au lieu d'ignorer le jour. Sans ça, le
+ * widget affichait « Ouvert » un dimanche à 14h (dans la fenêtre 11h-19h).
+ * - Ouvert → "Ouvert"
+ * - Avant l'ouverture d'un jour ouvré → "Fermé · Ouvre à 11h"
+ * - Après fermeture / jour fermé → "Fermé · Ouvre demain|<jour> à 11h"
  */
 function computeStatus(hours: StoreStatusV2Props['hours']): { open: boolean; reopen: string | null } {
   const paris = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Paris' }))
   const cur = paris.getHours() * 60 + paris.getMinutes()
+  const todayIdx = paris.getDay()
 
-  const windows = hours
-    .filter((h) => h.open !== 'Fermé')
-    .map((h) => {
-      const [oh, om] = h.open.split(':').map(Number)
-      const [ch, cm] = h.close.split(':').map(Number)
-      return { open: oh * 60 + om, close: ch * 60 + cm, openStr: h.open }
-    })
+  // Créneau OUVERT (≠ 'Fermé') pour un index de jour donné.
+  const slotFor = (dayIdx: number) =>
+    hours.find((h) => h.day === DAY_NAMES[dayIdx] && h.open !== 'Fermé')
 
-  if (windows.some((w) => cur >= w.open && cur < w.close)) return { open: true, reopen: null }
-  if (windows.length === 0) return { open: false, reopen: null }
+  const today = slotFor(todayIdx)
+  if (today) {
+    const [oh, om] = today.open.split(':').map(Number)
+    const [ch, cm] = today.close.split(':').map(Number)
+    const open = oh * 60 + om
+    const close = ch * 60 + cm
+    if (cur >= open && cur < close) return { open: true, reopen: null }
+    if (cur < open) return { open: false, reopen: `Ouvre à ${formatHour(today.open)}` }
+    // après la fermeture : on tombe dans la recherche du prochain jour ouvert.
+  }
 
-  // Fermé : prochain créneau d'ouverture plus tard aujourd'hui, sinon demain.
-  const laterToday = windows.filter((w) => w.open > cur).sort((a, b) => a.open - b.open)[0]
-  if (laterToday) return { open: false, reopen: `Ouvre à ${formatHour(laterToday.openStr)}` }
-  const earliest = windows.reduce((a, b) => (a.open <= b.open ? a : b))
-  return { open: false, reopen: `Ouvre demain à ${formatHour(earliest.openStr)}` }
+  // Fermé maintenant → prochain jour ouvert (aujourd'hui déjà passé).
+  for (let d = 1; d <= 7; d++) {
+    const idx = (todayIdx + d) % 7
+    const next = slotFor(idx)
+    if (next) {
+      const when = d === 1 ? 'demain' : DAY_NAMES[idx].toLowerCase()
+      return { open: false, reopen: `Ouvre ${when} à ${formatHour(next.open)}` }
+    }
+  }
+  return { open: false, reopen: null }
 }
 
 export default function StoreStatusV2({ hours }: StoreStatusV2Props) {
@@ -49,7 +64,9 @@ export default function StoreStatusV2({ hours }: StoreStatusV2Props) {
     return () => clearInterval(id)
   }, [hours])
 
-  // Avant hydratation : "Ouvert" neutre (7j/7 11h-19h), remplacé au montage.
+  // Avant hydratation : "Ouvert" par défaut, recalculé au montage selon le
+  // jour/heure de Paris (un éventuel flash "Ouvert" un dimanche se corrige
+  // dès le 1er effet, avant peinture perceptible).
   const open = status?.open ?? true
   const label = open ? 'Ouvert' : status?.reopen ? `Fermé · ${status.reopen}` : 'Fermé'
 

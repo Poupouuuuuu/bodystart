@@ -15,14 +15,14 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/complements-alimentaires-coignieres',
   title: 'Boutique de compléments alimentaires à Coignières (78)',
   description:
-    'Whey, créatine, vitamines : une vraie boutique de compléments à Coignières, ouverte 7j/7. Conseil gratuit, Click & Collect, à 10 min de Maurepas et Élancourt.',
+    'Whey, créatine, vitamines : une vraie boutique de compléments à Coignières, ouverte du lundi au samedi. Conseil gratuit, Click & Collect, à 10 min de Maurepas et Élancourt.',
 })
 
 // FAQ locale VISIBLE ci-dessous — reprise mot pour mot dans le schema FAQPage.
 const LOCAL_FAQ = [
   {
     q: 'Où acheter des compléments alimentaires près de Coignières ?',
-    a: 'BodyStart Nutrition est une boutique spécialisée au 8 Rue du Pont des Landes, 78310 Coignières, dans la zone commerciale. On y trouve protéines, créatine, pré-workout, vitamines et brûleurs, avec du conseil gratuit, 7 jours sur 7 de 11h à 19h.',
+    a: 'BodyStart Nutrition est une boutique spécialisée au 8 Rue du Pont des Landes, 78310 Coignières, dans la zone commerciale. On y trouve protéines, créatine, pré-workout, vitamines et brûleurs, avec du conseil gratuit, du lundi au samedi de 11h à 19h (fermé le dimanche).',
   },
   {
     q: 'Le Click & Collect est-il gratuit ?',
@@ -79,7 +79,7 @@ export default function CoignieresLandingPage() {
             Tu cherches de la whey, de la créatine ou des vitamines près de chez toi ?
             BodyStart Nutrition est une boutique physique spécialisée en nutrition
             sportive au <strong className="font-semibold">8 Rue du Pont des Landes à Coignières</strong>,
-            ouverte 7j/7 de 11h à 19h — à moins de 10 minutes de Maurepas, Élancourt et
+            ouverte du lundi au samedi de 11h à 19h — à moins de 10 minutes de Maurepas, Élancourt et
             Plaisir, et facilement accessible depuis Trappes ou Rambouillet par la RN10.
           </p>
           <p className="text-ink/90 text-[16px] leading-[1.7]">
@@ -141,7 +141,7 @@ export default function CoignieresLandingPage() {
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <span>7j/7 · 11h – 19h</span>
+                <span>Lun–Sam · 11h – 19h</span>
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />

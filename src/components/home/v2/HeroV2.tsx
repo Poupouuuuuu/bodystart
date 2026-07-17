@@ -52,7 +52,7 @@ export default function HeroV2() {
             <p className="text-[13px] text-ink-mute font-medium">
               <span className="text-spruce font-semibold">+2 600 clients</span>
               <span className="mx-3 text-ink-mute/40">·</span>
-              <span>Ouvert 7j/7 à Coignières</span>
+              <span>Ouvert du lundi au samedi à Coignières</span>
               <span className="mx-3 text-ink-mute/40">·</span>
               <span>Testé en boutique</span>
             </p>

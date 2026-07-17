@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
             <div style="background: #f0fdf4; border: 2px solid #15803d; border-radius: 4px; padding: 20px; margin-bottom: 24px;">
               <p style="margin: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; color: #15803d; letter-spacing: 1px;">Notre boutique</p>
               <p style="margin: 8px 0 0; color: #111827; font-size: 14px; font-weight: 600;">8 Rue du Pont des Landes, 78310 Coignières</p>
-              <p style="margin: 4px 0 0; color: #6b7280; font-size: 13px;">Ouvert 7j/7 · 11h à 19h</p>
+              <p style="margin: 4px 0 0; color: #6b7280; font-size: 13px;">Ouvert du lundi au samedi · 11h à 19h</p>
             </div>
             <p style="color: #9ca3af; font-size: 13px; margin: 0;">
               Pour toute question urgente : <a href="tel:+33761847580" style="color: #15803d;">07 61 84 75 80</a>

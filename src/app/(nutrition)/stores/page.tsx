@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     path: '/stores',
     title: 'Boutique de compléments à Coignières (78)',
     description:
-      'Ta boutique de protéines, créatine et compléments à Coignières (78310). Conseil gratuit, ouvert 7j/7, Click & Collect. Anciennement BodyFit.',
+      'Ta boutique de protéines, créatine et compléments à Coignières (78310). Conseil gratuit, ouvert du lundi au samedi, Click & Collect. Anciennement BodyFit.',
   }),
   // Title exact demandé (bypass du template '%s | BodyStart' du root layout).
   title: {
@@ -31,7 +31,7 @@ const ADDRESS_LINE = '8 Rue du Pont des Landes, 78310 Coignières'
 const PHONE_DISPLAY = '07 61 84 75 80'
 const PHONE_TEL = '+33761847580'
 const EMAIL = 'bodystartnutrition@gmail.com'
-const HOURS_DISPLAY = '7j/7 · 11h00 – 19h00'
+const HOURS_DISPLAY = 'Du lundi au samedi · 11h – 19h (fermé le dimanche)'
 const MAPS_DIRECTIONS = 'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'
 const MAPS_EMBED =
   'https://maps.google.com/maps?q=48.736836,1.909592&z=17&ie=UTF8&iwloc=&output=embed'
@@ -63,18 +63,13 @@ const STORE_JSONLD = {
     longitude: 1.909592,
   },
   hasMap: MAPS_DIRECTIONS,
+  // Fermé le dimanche (MAJ 2026-07) : Sunday retiré → Google affiche les
+  // bons horaires. Ces jours DOIVENT rester alignés avec la fiche Google
+  // Business Profile (action Adam) et le layout global.
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
-      dayOfWeek: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday',
-      ],
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       opens: '11:00',
       closes: '19:00',
     },
@@ -108,8 +103,8 @@ export default function StoresPage() {
               Nos boutiques
             </h1>
             <p className="text-ink-mute text-[16px] md:text-[18px] leading-[1.6]">
-              Sport &amp; santé, le bon conseil près de chez toi — ouvert 7j/7. Anciennement
-              BodyFit Coignières.
+              Sport &amp; santé, le bon conseil près de chez toi — ouvert du lundi au
+              samedi. Anciennement BodyFit Coignières.
             </p>
           </div>
         </div>

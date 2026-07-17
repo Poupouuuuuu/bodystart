@@ -60,9 +60,10 @@ const localBusinessJsonLd = [
       postalCode: '78310',
       addressCountry: 'FR',
     },
+    // Fermé le dimanche (MAJ 2026-07) — aligné avec /stores et la fiche GBP.
     openingHoursSpecification: {
       '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       opens: '11:00',
       closes: '19:00',
     },

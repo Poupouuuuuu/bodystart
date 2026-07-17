@@ -186,7 +186,7 @@ export default function LivraisonPage() {
             Une question ?
           </h2>
           <p className="text-ink-mute text-[15px] leading-[1.6]">
-            Notre équipe est disponible 7j/7.
+            Notre équipe est disponible du lundi au samedi.
           </p>
           <a
             href="mailto:bodystartnutrition@gmail.com"

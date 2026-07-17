@@ -53,7 +53,7 @@ export default function StoreCallV2() {
               </li>
               <li className="flex items-start gap-3 text-[15px] text-ink">
                 <Clock className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />
-                <span>Lundi – Dimanche · 11h – 19h</span>
+                <span>Du lundi au samedi · 11h – 19h</span>
               </li>
               <li className="flex items-start gap-3 text-[15px] text-ink">
                 <Phone className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />

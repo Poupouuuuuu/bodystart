@@ -71,7 +71,7 @@ const TRUST_BADGES = [
   },
   {
     icon: Headphones,
-    label: 'On répond 7j/7',
+    label: 'On répond 6j/7',
     sub: 'Au téléphone et en boutique',
   },
 ]
@@ -196,7 +196,7 @@ export default function Footer() {
                 </li>
                 <li className="flex items-center gap-3 text-sm text-ink-mute">
                   <Clock className="w-4 h-4 text-spruce flex-shrink-0" />
-                  <span>11h à 19h (7j/7)</span>
+                  <span>11h à 19h (lun–sam)</span>
                 </li>
               </ul>
             </div>

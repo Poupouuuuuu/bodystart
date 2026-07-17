@@ -76,7 +76,7 @@ export default function ConseilForm() {
               Notre boutique
             </p>
             <p className="font-semibold text-ink">8 Rue du Pont des Landes, 78310 Coignières</p>
-            <p className="text-ink-mute text-[14px] mt-1">Ouvert 7j/7 · 11h – 19h</p>
+            <p className="text-ink-mute text-[14px] mt-1">Ouvert du lundi au samedi · 11h – 19h</p>
           </div>
           <a
             href="/"
@@ -334,7 +334,7 @@ export default function ConseilForm() {
           <div className="mt-16 pt-10 border-t border-spruce/10 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               { icon: MapPin, label: 'Adresse', value: '8 Rue du Pont des Landes\n78310 Coignières' },
-              { icon: Clock, label: 'Horaires', value: '7j/7, 11h à 19h' },
+              { icon: Clock, label: 'Horaires', value: 'Lun–Sam, 11h à 19h' },
               { icon: Phone, label: 'Téléphone', value: '07 61 84 75 80', href: 'tel:+33761847580' },
             ].map(({ icon: Icon, label, value, href }) => (
               <div key={label} className="bg-white rounded-2xl border border-spruce/10 p-5 flex items-start gap-4">

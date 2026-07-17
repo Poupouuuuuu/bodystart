@@ -27,7 +27,7 @@ const commitments = [
   {
     Icon: Store,
     title: 'Une vraie boutique',
-    desc: 'Pas un site sans visage : un magasin à Coignières, ouvert 7 jours sur 7, où tu peux toucher les produits, demander un avis et retirer tes commandes en Click & Collect.',
+    desc: 'Pas un site sans visage : un magasin à Coignières, ouvert du lundi au samedi, où tu peux toucher les produits, demander un avis et retirer tes commandes en Click & Collect.',
   },
   {
     Icon: Truck,
@@ -68,7 +68,7 @@ export default function AboutPage() {
             doublée d&apos;un site e-commerce qui livre partout en France. Anciennement
             BodyFit, la boutique a été reprise à 100 % et continue de servir les
             sportifs du secteur — Coignières, Maurepas, Élancourt, Plaisir et tout le
-            sud Yvelines — 7 jours sur 7.
+            sud Yvelines — du lundi au samedi.
           </p>
           <p className="text-ink/90 text-[16px] leading-[1.75] mb-4">
             Notre métier, c&apos;est le conseil. Whey ou isolate, créatine, prise de
@@ -117,7 +117,7 @@ export default function AboutPage() {
             </li>
             <li className="flex items-start gap-3 text-[15px] text-ink">
               <Clock className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />
-              <span>Ouvert 7j/7 · 11h – 19h</span>
+              <span>Ouvert du lundi au samedi · 11h – 19h</span>
             </li>
             <li className="flex items-start gap-3 text-[15px] text-ink">
               <Phone className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />

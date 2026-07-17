@@ -25,7 +25,7 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/pourquoi-bodystart',
   title: 'Pourquoi BodyStart ? 13 ans de conseil nutrition à Coignières',
   description:
-    "13 ans de conseil en nutrition sportive à Coignières (78). Marques sélectionnées, produits testés en boutique, Click & Collect gratuit, ouvert 7j/7.",
+    "13 ans de conseil en nutrition sportive à Coignières (78). Marques sélectionnées, produits testés en boutique, Click & Collect gratuit, ouvert du lundi au samedi.",
 })
 
 // Date FIGÉE (convention du projet : maintenir manuellement à chaque édition).
@@ -44,8 +44,8 @@ const REASONS = [
   },
   {
     icon: Store,
-    title: 'Une vraie boutique, ouverte 7j/7',
-    desc: "8 Rue du Pont des Landes à Coignières, de 11h à 19h tous les jours. Tu touches les produits, tu poses tes questions, tu repars avec — ou tu retires ta commande en Click & Collect en quelques minutes.",
+    title: 'Une vraie boutique, ouverte du lundi au samedi',
+    desc: "8 Rue du Pont des Landes à Coignières, de 11h à 19h du lundi au samedi (fermé le dimanche). Tu touches les produits, tu poses tes questions, tu repars avec — ou tu retires ta commande en Click & Collect en quelques minutes.",
   },
   {
     icon: BadgeCheck,
@@ -75,11 +75,11 @@ const FAQ = [
   },
   {
     q: 'Le conseil est-il vraiment gratuit ?',
-    a: "Oui, sans condition d'achat. Au comptoir 7j/7 de 11h à 19h, ou via le formulaire conseil en ligne — on te répond avec une vraie recommandation personnalisée, pas un copier-coller.",
+    a: "Oui, sans condition d'achat. Au comptoir du lundi au samedi de 11h à 19h, ou via le formulaire conseil en ligne — on te répond avec une vraie recommandation personnalisée, pas un copier-coller.",
   },
   {
     q: 'Où se trouve la boutique ?',
-    a: 'BodyStart Nutrition, 8 Rue du Pont des Landes, 78310 Coignières — à 2 minutes de la N10, parking gratuit. Ouvert du lundi au dimanche, de 11h à 19h.',
+    a: 'BodyStart Nutrition, 8 Rue du Pont des Landes, 78310 Coignières — à 2 minutes de la N10, parking gratuit. Ouvert du lundi au samedi, de 11h à 19h (fermé le dimanche).',
   },
 ] as const
 
@@ -113,7 +113,7 @@ export default function PourquoiBodystartPage() {
           {/* Réponse directe (answer-first) : le paragraphe qui suffit à lui seul */}
           <p className="text-ink text-[17px] md:text-[19px] leading-[1.65] font-medium max-w-[720px]">
             Parce qu&apos;on est une vraie boutique de compléments alimentaires à
-            Coignières (78), ouverte 7j/7, qui conseille des sportifs depuis
+            Coignières (78), ouverte du lundi au samedi, qui conseille des sportifs depuis
             13&nbsp;ans — avec des marques sélectionnées, des produits testés par
             des pratiquants et un conseil personnalisé gratuit, en magasin comme
             en ligne. Tu peux commander sur le site et retirer en boutique en
