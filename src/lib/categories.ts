@@ -228,6 +228,8 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     guides: [
       { slug: 'vitamine-d-combien-quand-pourquoi', label: 'Vitamine D : combien, quand, pourquoi ?' },
+      { slug: 'magnesium-bienfaits-quelle-forme-choisir', label: 'Magnésium : quelle forme choisir ?' },
+      { slug: 'multivitamines-utile-comment-choisir', label: 'Multivitamines : utiles et comment choisir ?' },
       { slug: 'complements-apres-40-ans', label: 'Quels compléments après 40 ans ?' },
       { slug: 'collagene-bienfaits-comment-choisir', label: 'Collagène : à quoi ça sert ?' },
       { slug: 'mieux-dormir-recuperation', label: 'Mieux dormir et récupérer' },

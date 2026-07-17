@@ -153,5 +153,5 @@ export const mieuxDormirRecuperation: BlogArticle = {
     { slug: 'sante', label: 'Santé & bien-être' },
     { slug: 'acides-amines', label: 'Acides aminés' },
   ],
-  related: ['eaa-ou-bcaa-lequel-prendre', 'pre-workout-avec-ou-sans-cafeine'],
+  related: ['magnesium-bienfaits-quelle-forme-choisir', 'eaa-ou-bcaa-lequel-prendre', 'pre-workout-avec-ou-sans-cafeine'],
 }

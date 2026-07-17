@@ -149,5 +149,5 @@ export const complementsApres40Ans: BlogArticle = {
     { slug: 'sante', label: 'Santé & bien-être' },
     { slug: 'proteines', label: 'Protéines' },
   ],
-  related: ['collagene-bienfaits-comment-choisir', 'vitamine-d-combien-quand-pourquoi', 'complements-debutant-musculation'],
+  related: ['magnesium-bienfaits-quelle-forme-choisir', 'multivitamines-utile-comment-choisir', 'collagene-bienfaits-comment-choisir', 'vitamine-d-combien-quand-pourquoi'],
 }
