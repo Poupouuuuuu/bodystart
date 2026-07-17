@@ -2,7 +2,7 @@
 
 > Boutique de compléments alimentaires à Coignières (78) et site e-commerce livrant partout en France. Protéines, créatine, acides aminés, pré-workout, brûleurs, santé : des marques sélectionnées, du conseil d'humain en magasin et le Click & Collect gratuit.
 
-BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Rue du Pont des Landes, 78310 Coignières (anciennement BodyFit), doublée d'un site e-commerce sur bodystart-nutrition.fr. On vend des compléments alimentaires multi-marques (Eric Favre, Nutrimuscle, MuscleTech, Warrior, Dedicated, French Nutrition…) : protéines (whey, isolate, gainer, caséine), créatine, glucides, acides aminés (BCAA, EAA, glutamine), pré-workout, boosters, brûleurs et produits santé (oméga 3, vitamines, magnésium, collagène). Conseil gratuit en boutique, retrait Click & Collect, livraison en France (Mondial Relay 4,90 €, Colissimo 6,90 €, offerte dès 85 €). Ouvert 7j/7, 11h–19h.
+BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Rue du Pont des Landes, 78310 Coignières (anciennement BodyFit), doublée d'un site e-commerce sur bodystart-nutrition.fr. On vend des compléments alimentaires multi-marques (Eric Favre, Nutrimuscle, MuscleTech, Warrior, Dedicated, French Nutrition…) : protéines (whey, isolate, gainer, caséine), créatine, glucides, acides aminés (BCAA, EAA, glutamine), pré-workout, boosters, brûleurs et produits santé (oméga 3, vitamines, magnésium, collagène). Conseil gratuit en boutique, retrait Click & Collect, livraison en France (Mondial Relay 4,90 €, Colissimo 6,90 €, offerte dès 85 €). Ouvert du lundi au samedi, 11h–19h (fermé le dimanche).
 
 ## Pages clés
 
@@ -11,6 +11,7 @@ BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Ru
 - [Packs & économies](https://bodystart-nutrition.fr/packs): packs de compléments à prix groupé (prise de masse, sèche, découverte…).
 - [La boutique — Coignières (78)](https://bodystart-nutrition.fr/stores): adresse, horaires, itinéraire et Click & Collect du magasin de Coignières.
 - [Compléments alimentaires à Coignières](https://bodystart-nutrition.fr/complements-alimentaires-coignieres): où acheter whey, créatine et vitamines près de Coignières, Maurepas, Élancourt et Plaisir.
+- [Compléments alimentaires dans les Yvelines (78)](https://bodystart-nutrition.fr/complements-alimentaires-yvelines): zone desservie dans tout le 78 (Saint-Quentin-en-Yvelines, Plaisir, Rambouillet…), Click & Collect et livraison département.
 - [Conseil gratuit](https://bodystart-nutrition.fr/conseil): demande de conseil personnalisé selon ton objectif, par l'équipe en boutique.
 - [À propos](https://bodystart-nutrition.fr/about): qui est BodyStart (reprise de BodyFit Coignières), nos engagements et notre métier de conseil.
 - [FAQ](https://bodystart-nutrition.fr/faq): réponses aux questions fréquentes (commande, Click & Collect, paiement, produits).
@@ -38,6 +39,17 @@ BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Ru
 - [Pré-workout : avec ou sans caféine ?](https://bodystart-nutrition.fr/blog/pre-workout-avec-ou-sans-cafeine): stim vs pump, sommeil, dosages EFSA.
 - [Prise de masse : compléments et organisation](https://bodystart-nutrition.fr/blog/prise-de-masse-complements-et-organisation): la méthode étape par étape, surplus calorique d'abord.
 - [Compléments : par quoi commencer en musculation ?](https://bodystart-nutrition.fr/blog/complements-debutant-musculation): le duo whey + créatine, et ce qui peut attendre.
+- [Quand prendre sa whey ?](https://bodystart-nutrition.fr/blog/quand-prendre-sa-whey): le total quotidien de protéines prime sur le timing autour de la séance.
+- [Protéines végétales en musculation](https://bodystart-nutrition.fr/blog/proteines-vegetales-musculation): pois, riz, soja et mélanges — bien les choisir quand on ne prend pas de whey.
+- [Gainer : pour qui et comment le choisir ?](https://bodystart-nutrition.fr/blog/gainer-prise-de-masse-comment-choisir): gainer vs whey + glucides, ratio et calories, pour qui c'est utile.
+- [La créatine pour les femmes](https://bodystart-nutrition.fr/blog/creatine-pour-les-femmes): sûre et efficace, elle ne fait pas « gonfler » — les mythes déboulonnés.
+- [Brûleurs de graisse : est-ce que ça marche ?](https://bodystart-nutrition.fr/blog/bruleurs-de-graisse-ca-marche): la vérité honnête — aucun brûleur ne fait maigrir sans déficit calorique.
+- [Vitamine D : combien, quand, pourquoi ?](https://bodystart-nutrition.fr/blog/vitamine-d-combien-quand-pourquoi): à quoi elle sert, la carence hivernale, D3, dosage et moment de prise.
+- [Magnésium : bienfaits et quelle forme choisir](https://bodystart-nutrition.fr/blog/magnesium-bienfaits-quelle-forme-choisir): bisglycinate, citrate, marin ou ZMA — la forme la mieux absorbée et le dosage.
+- [Multivitamines : utiles pour un sportif ?](https://bodystart-nutrition.fr/blog/multivitamines-utile-comment-choisir): filet de sécurité pour combler les déficits, comment lire l'étiquette et choisir.
+- [Collagène : à quoi ça sert, comment choisir ?](https://bodystart-nutrition.fr/blog/collagene-bienfaits-comment-choisir): marin vs bovin, le rôle de la vitamine C dans la formation du collagène.
+- [Quels compléments après 40 ans ?](https://bodystart-nutrition.fr/blog/complements-apres-40-ans): protéines, vitamine D, magnésium et créatine, classés par priorité.
+- [Mieux dormir et récupérer](https://bodystart-nutrition.fr/blog/mieux-dormir-recuperation): l'hygiène de vie d'abord, le rôle du magnésium, sans promesses.
 
 ## Produits phares
 
