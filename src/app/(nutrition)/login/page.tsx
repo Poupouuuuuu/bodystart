@@ -56,10 +56,10 @@ function LoginContent() {
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <Image
-              src="/assets/logos/logo-texte-240.png"
-              alt="BodyStart"
-              width={160}
-              height={48}
+              src="/assets/logos/logo-v2-horizontal.png"
+              alt="BodyStart Nutrition"
+              width={155}
+              height={50}
               className="h-10 w-auto"
             />
           </Link>

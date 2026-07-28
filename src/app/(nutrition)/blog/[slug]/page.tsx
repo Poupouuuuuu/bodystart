@@ -48,9 +48,9 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
     publisher: {
       '@type': 'Organization',
       name: 'BodyStart Nutrition',
-      logo: { '@type': 'ImageObject', url: `${SITE_URL}/assets/logos/logo-nutrition.png` },
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/assets/logos/logo-v2-carre.png` },
     },
-    image: `${SITE_URL}/assets/logos/logo-nutrition.png`,
+    image: `${SITE_URL}/assets/logos/logo-v2-og.png`,
     mainEntityOfPage: url,
   }
 

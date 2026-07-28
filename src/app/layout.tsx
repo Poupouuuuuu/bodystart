@@ -63,7 +63,7 @@ export const metadata: Metadata = {
       "Conseil d'humain, produits propres, livrés dans le 78. On consomme ce qu'on vend.",
     images: [
       {
-        url: '/assets/logos/logo-nutrition.png',
+        url: '/assets/logos/logo-v2-og.png',
         width: 1200,
         height: 630,
         alt: 'BodyStart',
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'BodyStart, compléments sport et santé',
     description: 'Compléments sport et santé, conseillés à Coignières, livrés dans le 78.',
-    images: ['/assets/logos/logo-nutrition.png'],
+    images: ['/assets/logos/logo-v2-og.png'],
   },
   robots: {
     index: true,

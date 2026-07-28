@@ -177,10 +177,10 @@ function HeaderInner(_props: HeaderProps) {
                   prioritaire (2 preloads high se concurrençaient) ; le logo, 10 Ko,
                   arrive de toute façon très tôt. */}
               <Image
-                src="/assets/logos/logo-texte-240.png"
-                alt="BodyStart"
-                width={120}
-                height={40}
+                src="/assets/logos/logo-v2-horizontal.png"
+                alt="BodyStart Nutrition"
+                width={155}
+                height={50}
                 className="h-10 w-auto"
               />
             </Link>

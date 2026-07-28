@@ -18,7 +18,7 @@ const organizationJsonLd = {
   '@type': 'Organization',
   name: 'BodyStart Nutrition',
   url: SITE_URL,
-  logo: `${SITE_URL}/assets/logos/logo-nutrition.png`,
+  logo: `${SITE_URL}/assets/logos/logo-v2-carre.png`,
   description: 'Compléments alimentaires premium pour sportifs. Livraison rapide, Click & Collect en boutique.',
   contactPoint: {
     '@type': 'ContactPoint',
@@ -50,7 +50,7 @@ const localBusinessJsonLd = [
     '@type': 'LocalBusiness',
     '@id': `${SITE_URL}/#boutique-coignieres`,
     name: 'BodyStart Nutrition, Coignières',
-    image: `${SITE_URL}/assets/logos/logo-nutrition.png`,
+    image: `${SITE_URL}/assets/logos/logo-v2-og.png`,
     telephone: '+33761847580',
     url: `${SITE_URL}/stores`,
     address: {

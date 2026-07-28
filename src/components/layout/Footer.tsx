@@ -121,10 +121,10 @@ export default function Footer() {
             <div>
               <Link href="/" className="inline-block mb-5">
                 <Image
-                  src="/assets/logos/logo-texte-240.png"
-                  alt="BodyStart"
-                  width={150}
-                  height={40}
+                  src="/assets/logos/logo-v2-horizontal.png"
+                  alt="BodyStart Nutrition"
+                  width={155}
+                  height={50}
                   className="h-9 w-auto"
                 />
               </Link>

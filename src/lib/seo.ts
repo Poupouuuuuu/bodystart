@@ -27,7 +27,7 @@ export interface PageMetadataInput {
 // Visuel de marque par defaut pour og:image / twitter image quand la page
 // n'en fournit pas. Necessaire car Next.js ecrase l'openGraph parent (pas de
 // merge profond) des qu'une page definit son propre openGraph.
-const DEFAULT_OG_IMAGE = '/assets/logos/logo-nutrition.png'
+const DEFAULT_OG_IMAGE = '/assets/logos/logo-v2-og.png'
 
 export function buildPageMetadata(input: PageMetadataInput): Metadata {
   const { path, title, description, ogImage, ogType = 'website', noIndex = false } = input
