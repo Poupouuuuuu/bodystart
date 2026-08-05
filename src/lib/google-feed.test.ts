@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   buildGoogleFeedXml,
+  googleCategoryFor,
   isValidGtin,
   htmlToText,
   formatGooglePrice,
@@ -8,6 +9,24 @@ import {
   cdata,
   type FeedProduct,
 } from './google-feed'
+
+describe('googleCategoryFor — mapping productType → taxonomie officielle Google', () => {
+  it('compléments (défaut) → 525 Vitamins & Supplements', () => {
+    for (const t of ['Protéines', 'Créatine', 'Santé', 'Glucides', 'Pack', null]) {
+      expect(googleCategoryFor(t)).toBe('525')
+    }
+  })
+  it('Snacks → 2984 Nutrition Bars, Boissons → 5723 Sports & Energy Drinks', () => {
+    expect(googleCategoryFor('Snacks')).toBe('2984')
+    expect(googleCategoryFor('Boissons')).toBe('5723')
+  })
+  it('Accessoires → aucune catégorie (auto-classification Google)', () => {
+    expect(googleCategoryFor('Accessoires')).toBeNull()
+    const { xml } = buildGoogleFeedXml([makeProduct({ productType: 'Accessoires' })], SITE)
+    expect(xml).not.toContain('google_product_category')
+    expect(xml).toContain('<g:product_type><![CDATA[Accessoires]]></g:product_type>')
+  })
+})
 
 function makeProduct(overrides: Partial<FeedProduct> = {}): FeedProduct {
   return {
@@ -83,7 +102,9 @@ describe('buildGoogleFeedXml', () => {
     expect(xml).toContain('<g:price>29.90 EUR</g:price>')
     expect(xml).toContain('<g:gtin>7340224405384</g:gtin>')
     expect(xml).toContain('<g:availability>in_stock</g:availability>')
-    expect(xml).toContain('<g:google_product_category>2984</g:google_product_category>')
+    // 525 = Vitamins & Supplements (l'ancien 2984 était en réalité « Nutrition
+    // Bars » dans la taxonomie officielle — bug corrigé le 2026-08-05).
+    expect(xml).toContain('<g:google_product_category>525</g:google_product_category>')
     expect(xml).toContain('<g:brand><![CDATA[Eric Favre]]></g:brand>')
     expect(xml).not.toContain('identifier_exists') // gtin présent
     expect(xml).toContain('<g:additional_image_link>https://cdn.shopify.com/img-2.jpg</g:additional_image_link>')

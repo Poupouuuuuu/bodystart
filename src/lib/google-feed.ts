@@ -40,10 +40,29 @@ export interface FeedProduct {
 
 export const EXCLUDE_TAG = 'exclu-google'
 
-// Catalogue 100 % compléments alimentaires à ce jour (Protéines, Créatine,
-// Pré-workout, Santé…) → catégorie Google unique. Si un jour des vêtements/
-// accessoires arrivent, ajouter un mapping par productType ici.
-const GOOGLE_CATEGORY_SUPPLEMENTS = '2984' // Health & Beauty > … > Vitamins & Supplements
+// IDs relevés dans la taxonomie OFFICIELLE Google le 2026-08-05
+// (google.com/basepages/producttype/taxonomy-with-ids.en-US.txt) :
+//   525  = Health & Beauty > Health Care > Fitness & Nutrition > Vitamins & Supplements
+//   2984 = Health & Beauty > Health Care > Fitness & Nutrition > Nutrition Bars
+//   5723 = Food, Beverages & Tobacco > Beverages > Sports & Energy Drinks
+// ⚠️ BUG HISTORIQUE corrigé : le feed envoyait 2984 pour TOUT le catalogue en
+// le croyant « Vitamins & Supplements » — 2984 est en réalité « Nutrition
+// Bars » : tous les produits étaient déclarés à Google comme des barres.
+// Accessoires (shaker, entonnoir, serviette…) : AUCUNE catégorie émise — trop
+// hétérogènes pour un mapping par productType, l'auto-classification Google
+// fait mieux qu'une catégorie fausse.
+export function googleCategoryFor(productType: string | null): string | null {
+  switch (productType) {
+    case 'Snacks':
+      return '2984' // Nutrition Bars (barres et cookies protéinés)
+    case 'Boissons':
+      return '5723' // Sports & Energy Drinks
+    case 'Accessoires':
+      return null
+    default:
+      return '525' // Vitamins & Supplements (protéines, créatine, santé…)
+  }
+}
 
 // ─── Échappement XML ───
 
@@ -178,7 +197,10 @@ export function buildGoogleFeedXml(
         // identifier_exists=no UNIQUEMENT si ni gtin ni (brand+mpn)
         ...(!gtin && !sku ? ['<g:identifier_exists>no</g:identifier_exists>'] : []),
         `<g:condition>new</g:condition>`,
-        `<g:google_product_category>${GOOGLE_CATEGORY_SUPPLEMENTS}</g:google_product_category>`,
+        ...(() => {
+          const cat = googleCategoryFor(p.productType)
+          return cat ? [`<g:google_product_category>${cat}</g:google_product_category>`] : []
+        })(),
         ...(p.productType ? [`<g:product_type>${cdata(p.productType)}</g:product_type>`] : []),
       ]
       items.push(`    <item>\n      ${fields.join('\n      ')}\n    </item>`)
