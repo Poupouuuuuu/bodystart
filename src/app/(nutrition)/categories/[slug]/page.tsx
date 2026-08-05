@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowRight, BookOpen, Store } from 'lucide-react'
 import { getProducts } from '@/lib/shopify'
+import { availableFirst } from '@/lib/product-order'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES, getCategoryPage } from '@/lib/categories'
@@ -31,8 +32,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 async function getCategoryProducts(productType: string): Promise<ShopifyProduct[]> {
   try {
+    // Base BEST_SELLING (défaut de getProducts) + épuisés relégués en fin de
+    // grille — même règle que /products (décision Adam 2026-07).
     const res = await getProducts({ query: `product_type:'${productType}'`, first: 50 })
-    return res.nodes
+    return availableFirst(res.nodes)
   } catch {
     return []
   }

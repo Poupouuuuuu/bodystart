@@ -12,6 +12,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { SlidersHorizontal, X, ChevronDown, Search, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { availableFirst } from '@/lib/product-order'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 
@@ -367,11 +368,20 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
         result.sort((a, b) => a.title.localeCompare(b.title))
         break
       case 'newest':
-        result.reverse()
+        // Tri réel par date de création (champ createdAt du fragment). L'ancien
+        // reverse() inversait juste l'ordre du fetch — faux depuis toujours, et
+        // absurde maintenant que le fetch serveur est en BEST_SELLING.
+        result.sort(
+          (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+        )
         break
+      // default ('best') : ordre du fetch serveur = BEST_SELLING Shopify.
     }
 
-    return result
+    // Règle transverse (décision Adam 2026-07) : les épuisés vont en fin de
+    // liste QUEL QUE SOIT le tri — partition stable, l'ordre du tri est
+    // conservé à l'intérieur de chaque groupe.
+    return availableFirst(result)
   }, [products, activeGoal, currentCategory, activeTag, sortKey, priceRange, searchQuery])
 
   const categoryCounts = useMemo(() => {

@@ -16,46 +16,24 @@ export const metadata: Metadata = buildPageMetadata({
   description: 'Découvrez toute la gamme BodyStart Nutrition : protéines, vitamines, créatine, BCAA et plus.',
 })
 
-// Ordre d'affichage metier fixe, base sur le champ natif Shopify `productType`
-// (expose via Storefront API). La Storefront API ne sait pas trier par
-// productType : on recupere donc TOUS les produits en une requete deja
-// triee createdAt desc, puis on trie cote JS. A rang egal, l'ordre
-// createdAt desc est conserve (Array.prototype.sort est stable).
-const CATEGORY_ORDER: Record<string, number> = {
-  'Protéines': 1,
-  'Glucides': 2,
-  'Créatine': 3,
-  'Pré-workout': 4,
-  'Acides aminés': 5,
-  'Brûleur': 6,
-  'Boosters': 7,
-  'Santé': 8,
-  'Snacks': 9,
-  'Boissons': 10,
-  'Accessoires': 11,
-  'Pack': 12,
-}
-const categoryRank = (p: ShopifyProduct): number => CATEGORY_ORDER[p.productType ?? ''] ?? 99
-
 export default async function ProductsPage() {
   let products: ShopifyProduct[] = []
   let collections: ShopifyCollection[] = []
   try {
     const [result, cols] = await Promise.all([
       // first:250 = tout le catalogue (~60 produits) en une seule requete.
-      // sortKey CREATED_AT + reverse => plus recent en premier, ce qui fixe
-      // l'ordre intra-categorie une fois le tri par categorie applique.
-      getProducts({ first: 250, sortKey: 'CREATED_AT', reverse: true }),
+      // BEST_SELLING = classement reel des ventes Shopify (caisse POS incluse,
+      // 99 % du CA) : le tri par defaut « Meilleures ventes » affiche enfin les
+      // vrais best-sellers en tete (decision Adam 2026-07 — avant : createdAt
+      // groupe par categorie, un produit recent squattait le haut de grille).
+      // Le tri client « Nouveautes » repose desormais sur le champ createdAt.
+      getProducts({ first: 250, sortKey: 'BEST_SELLING' }),
       getCollections(50),
     ])
     // Exclut les packs (bundles) de "Tous les produits" : ils ont leur
     // propre page /packs. Filtre par productType "Pack" OU tag "pack".
     // (Scope local a cette page : la home et /packs gardent les packs.)
     products = result.nodes.filter((p) => !isPackProduct(p))
-    // Tri metier par categorie (ordre fixe ci-dessus). Sort stable => a rang
-    // egal, conserve l'ordre createdAt desc issu du fetch. La pagination
-    // "Voir plus" cote client s'applique ensuite, APRES ce tri.
-    products.sort((a, b) => categoryRank(a) - categoryRank(b))
     // Retire aussi la collection "Packs" de la barre de categories pour ne
     // pas laisser un filtre qui mene a une grille vide.
     collections = cols.filter((c) => c.handle !== 'packs')

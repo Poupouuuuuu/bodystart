@@ -7,6 +7,9 @@ export const PRODUCT_CARD_FRAGMENT = `
     vendor
     productType
     availableForSale
+    # createdAt : sert au tri client « Nouveautés » de /products (le fetch
+    # serveur est en BEST_SELLING, l'ordre de création n'y est plus implicite).
+    createdAt
     featuredImage {
       url
       altText

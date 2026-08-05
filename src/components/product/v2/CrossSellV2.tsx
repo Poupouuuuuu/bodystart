@@ -6,6 +6,7 @@ import { Truck } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { isBundle, getBundleComponentImages } from '@/lib/shopify/bundle'
+import { availableFirst } from '@/lib/product-order'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
@@ -26,7 +27,9 @@ const FRANCO_THRESHOLD_CENTS = FREE_SHIPPING_THRESHOLD_CENTS
  */
 export default function CrossSellV2({ products, currentHandle }: CrossSellV2Props) {
   const { cart } = useCart()
-  const items = products.filter((p) => p.handle !== currentHandle).slice(0, 4)
+  // Disponibles d'abord : on ne « recommande » un produit épuisé que s'il
+  // n'y a pas assez de disponibles pour remplir les 4 cartes.
+  const items = availableFirst(products.filter((p) => p.handle !== currentHandle)).slice(0, 4)
   if (items.length === 0) return null
 
   const subtotalCents = cart?.cost?.subtotalAmount?.amount

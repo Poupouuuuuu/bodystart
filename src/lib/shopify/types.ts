@@ -66,6 +66,8 @@ export interface ShopifyProduct {
   // Agrégat Storefront : true si AU MOINS une variante est disponible.
   // false = toutes les variantes épuisées → badge « Épuisé » sur les cartes.
   availableForSale?: boolean
+  // ISO 8601 — présent via PRODUCT_CARD_FRAGMENT (tri « Nouveautés » client).
+  createdAt?: string
   featuredImage: ShopifyImage | null
   images?: {
     nodes: ShopifyImage[]

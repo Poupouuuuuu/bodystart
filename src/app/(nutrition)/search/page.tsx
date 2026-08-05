@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { searchProducts } from '@/lib/shopify'
+import { availableFirst } from '@/lib/product-order'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import SearchBar from '@/components/ui/SearchBar'
 import type { ShopifyProduct } from '@/lib/shopify/types'
@@ -30,7 +31,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   let results: ShopifyProduct[] = []
   if (q) {
     try {
-      results = await searchProducts(q, 48)
+      // Pertinence Shopify conservée, mais épuisés relégués en fin de résultats
+      // (même règle transverse que /products et /categories).
+      results = availableFirst(await searchProducts(q, 48))
     } catch {
       // Shopify non configuré
     }

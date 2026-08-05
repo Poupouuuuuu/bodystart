@@ -1,4 +1,5 @@
 import { cache } from 'react'
+import { availableFirst } from '@/lib/product-order'
 import { shopifyFetch, shopifyAdminFetch } from './client'
 import {
   GET_PRODUCTS,
@@ -80,11 +81,13 @@ export const getProductByHandle = cache(async (handle: string) => {
 
 export const getFeaturedProducts = cache(async (): Promise<ShopifyProduct[]> => {
   // 8 meilleures ventes avec composants de bundle (cf. GET_FEATURED_PRODUCTS).
+  // Épuisés en fin de liste : un best-seller en rupture ne doit pas occuper
+  // les premières cartes de la home (règle transverse boutique).
   try {
     const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>(
       GET_FEATURED_PRODUCTS
     )
-    return data.products.nodes
+    return availableFirst(data.products.nodes)
   } catch {
     // Sans cles API : section vide (graceful)
     return []
