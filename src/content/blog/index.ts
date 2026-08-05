@@ -18,9 +18,11 @@ import { gainerPriseDeMasseCommentChoisir } from './gainer-prise-de-masse-commen
 import { quandPrendreSaWhey } from './quand-prendre-sa-whey'
 import { magnesiumBienfaitsQuelleFormeChoisir } from './magnesium-bienfaits-quelle-forme-choisir'
 import { multivitaminesUtileCommentChoisir } from './multivitamines-utile-comment-choisir'
+import { commentFaireUneSeche } from './comment-faire-une-seche'
 
 /** Tous les articles publiés (l'ordre d'affichage est géré par date). */
 export const BLOG_ARTICLES: BlogArticle[] = [
+  commentFaireUneSeche,
   magnesiumBienfaitsQuelleFormeChoisir,
   multivitaminesUtileCommentChoisir,
   vitamineDCombienQuandPourquoi,

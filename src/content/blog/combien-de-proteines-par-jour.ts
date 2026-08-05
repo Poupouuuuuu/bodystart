@@ -198,6 +198,7 @@ export const combienDeProteinesParJour: BlogArticle = {
   ],
   "related": [
     "whey-ou-isolate-quelle-difference",
-    "prise-de-masse-complements-et-organisation"
+    "prise-de-masse-complements-et-organisation",
+    "comment-faire-une-seche"
   ]
 }

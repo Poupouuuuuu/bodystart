@@ -155,5 +155,5 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
     { handle: 'lipoxicut-bruleur-en-poudre', label: 'Lipoxicut — Brûleur en Poudre' },
   ],
   categories: [{ slug: 'bruleurs', label: 'Brûleurs de graisse' }],
-  related: ['combien-de-proteines-par-jour', 'complements-debutant-musculation'],
+  related: ['comment-faire-une-seche', 'combien-de-proteines-par-jour', 'complements-debutant-musculation'],
 }

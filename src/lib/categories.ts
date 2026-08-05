@@ -156,6 +156,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       { slug: 'sante', label: 'Santé & bien-être' },
     ],
     guides: [
+      { slug: 'comment-faire-une-seche', label: 'Comment faire une sèche : le guide complet' },
       { slug: 'bruleurs-de-graisse-ca-marche', label: 'Brûleurs de graisse : est-ce que ça marche ?' },
       { slug: 'combien-de-proteines-par-jour', label: 'Combien de protéines par jour ?' },
     ],
