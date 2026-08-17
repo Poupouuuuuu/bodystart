@@ -63,9 +63,14 @@ const FACTS = [
 ] as const
 
 export default function BoutiqueGalleryV2() {
+  // border-t : cette section suit le bandeau parrainage, lui aussi blanc. Un
+  // filet vert très clair marque la frontière entre les deux chapitres sans
+  // introduire un 4e fond.
   return (
-    <section className="bg-white">
-      <div className="container py-14 md:py-18">
+    <section className="border-t border-spruce/10 bg-white">
+      {/* Section narrative (photos du magasin) : même respiration large que le
+          bloc conseil. */}
+      <div className="container py-16 md:py-24">
         {/* En-tête */}
         <div className="max-w-[640px] mb-9">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">

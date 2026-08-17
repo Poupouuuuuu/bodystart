@@ -96,6 +96,21 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
   // cohérent avec les cartes mono-variante (la carte reste cliquable ailleurs).
   const canQuickAct = hasMultipleVariants ? !soldOut : !!variant?.availableForSale
 
+  // Badges par ordre d'utilité commerciale décroissante, PLAFONNÉS À 2 (cf. le
+  // bloc de rendu). La promo passe toujours en premier quand elle existe.
+  // `!!discountPct` : la remise peut valoir 0 (arrondi d'un écart < 0,5 %) et
+  // 0 est falsy — on ne veut ni « -0% », ni un littéral 0 rendu dans le JSX.
+  const badges = [
+    ...(discountPct
+      ? [{ label: `-${discountPct}%`, className: 'bg-terracotta text-white' }]
+      : []),
+    ...(isBest ? [{ label: 'Best-seller', className: 'bg-mustard text-mustard-ink' }] : []),
+    ...(showLowStock
+      ? [{ label: `Plus que ${stockAtStore}`, className: 'bg-terracotta/90 text-white' }]
+      : []),
+    ...(isSante ? [{ label: 'Santé', className: 'bg-sage/95 text-spruce' }] : []),
+  ].slice(0, 2)
+
   async function handleAdd(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
@@ -114,11 +129,16 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
   }
 
   return (
-    <div className="rounded-2xl overflow-hidden flex flex-col bg-white border border-spruce/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(45,90,45,0.08)] group">
+    // PREMIUM V2 (2026-08) : la bordure permanente est retirée. Bordure + ombre
+    // + fond blanc est LE trio le plus générique du web — l'élévation seule
+    // (ombre teintée verte) suffit à détacher la carte du fond crème, et la
+    // grille respire beaucoup plus. Le rayon est volontairement plus généreux
+    // (20px) que celui des éléments internes : hiérarchie de rayons.
+    <div className="group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift">
       {/* Zone image avec fond vegetal */}
       <Link
         href={`/products/${product.handle}`}
-        className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden block"
+        className="relative block w-full aspect-[4/5] overflow-hidden bg-cover bg-bottom bg-no-repeat"
         style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
       >
         <div className="absolute inset-0 flex items-end justify-center pb-4">
@@ -128,7 +148,14 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
               alt={product.featuredImage.altText ?? product.title}
               width={200}
               height={200}
-              className={cn("relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105", soldOut && "opacity-60")}
+              // h-[70%] (au lieu de 65) : le produit occupe plus de place, c'est
+              // lui la star. Ombre portée TEINTÉE verte au lieu du drop-shadow-2xl
+              // noir, qui grisait le végétal derrière.
+              className={cn(
+                'relative z-10 h-[70%] w-auto object-contain transition-transform duration-500 ease-out-expo group-hover:scale-[1.07]',
+                '[filter:drop-shadow(0_18px_22px_rgba(45,90,45,0.28))]',
+                soldOut && 'opacity-60 saturate-[0.55]'
+              )}
             />
           ) : (
             <div className="relative z-10 w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-8">
@@ -140,37 +167,30 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
         {/* Gradient fondu blanc en bas (raccord avec la carte) */}
         <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent z-0" />
 
-        {/* Badges discrets - palette DA. Si épuisé : on n'affiche que « Épuisé ». */}
-        <div className="absolute top-3 left-3 z-30 flex flex-col gap-1.5 items-start">
+        {/* Badges — PREMIUM V2 : HIÉRARCHISÉS ET PLAFONNÉS À 2.
+            Avant, un produit pouvait empiler « -20% + Best-seller + Santé +
+            Plus que 3 en stock » : quatre pastilles = effet sapin de Noël, plus
+            aucune ne se lit. On garde la promo (l'argument le plus vendeur) puis
+            UN seul badge secondaire, par ordre d'utilité commerciale.
+            Étiquettes à coins doux (rounded-lg) et non des pilules : plus sobre,
+            moins « composant par défaut ». */}
+        <div className="absolute left-3 top-3 z-30 flex flex-col items-start gap-1.5">
           {soldOut ? (
-            <span className="inline-flex items-center bg-ink text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
+            <span className="inline-flex items-center rounded-lg bg-ink/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-white backdrop-blur-sm">
               Épuisé
             </span>
           ) : (
-            <>
-              {/* !! : discountPct peut valoir 0 (remise < 0,5 % arrondie) — {0 && …}
-                  rendrait le littéral « 0 » dans le JSX. */}
-              {!!discountPct && (
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-terracotta text-white">
-                  -{discountPct}%
-                </span>
-              )}
-              {isBest && (
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-mustard text-mustard-ink">
-                  Best-seller
-                </span>
-              )}
-              {isSante && (
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-sage text-spruce">
-                  Santé
-                </span>
-              )}
-              {showLowStock && (
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-terracotta text-white">
-                  Plus que {stockAtStore} en stock
-                </span>
-              )}
-            </>
+            badges.map((b) => (
+              <span
+                key={b.label}
+                className={cn(
+                  'inline-flex items-center rounded-lg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] backdrop-blur-sm',
+                  b.className
+                )}
+              >
+                {b.label}
+              </span>
+            ))
           )}
         </div>
       </Link>
@@ -184,9 +204,10 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
           </span>
         )}
 
-        {/* Titre - sentence case (pas d'uppercase CSS) */}
+        {/* Titre — Fraunces : un cran plus grand qu'avant, le serif porte le nom
+            du produit. min-h réservé pour aligner les prix d'une même rangée. */}
         <Link href={`/products/${product.handle}`}>
-          <h3 className="font-display font-bold text-spruce text-[15px] leading-snug mb-1.5 line-clamp-2 min-h-[2.5rem] hover:text-fresh-deep transition-colors">
+          <h3 className="mb-1.5 line-clamp-2 min-h-[2.6rem] font-display text-[16px] font-bold leading-[1.25] text-spruce transition-colors hover:text-fresh-deep">
             {product.title}
           </h3>
         </Link>
@@ -201,7 +222,9 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
         {/* Prix + bouton ajout discret (icone +) */}
         <div className="flex items-center justify-between mt-auto pt-2">
           <div className="flex items-baseline gap-2">
-            <span className="font-display font-extrabold text-spruce text-[18px]">
+            {/* Le prix en serif extrabold : c'est LE chiffre de la carte, il doit
+                dominer le titre (19px contre 16px). */}
+            <span className="font-display text-[19px] font-extrabold tracking-tight text-spruce">
               {formatPrice(product.priceRange.minVariantPrice)}
             </span>
             {variant?.compareAtPrice && hasDiscount && (
@@ -222,10 +245,10 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
             className={cn(
               // w-11 = 44px : minimum tactile. flex-shrink-0 : ne pas se faire
               // comprimer par la ligne prix sur les colonnes étroites.
-              'flex items-center justify-center w-11 h-11 flex-shrink-0 rounded-full transition-colors',
+              'flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full transition-all duration-200 ease-out-expo',
               canQuickAct && !adding
-                ? 'bg-fresh text-white hover:bg-fresh-deep'
-                : 'bg-spruce/10 text-spruce/30 cursor-not-allowed'
+                ? 'bg-fresh text-white shadow-soft hover:scale-105 hover:bg-fresh-deep hover:shadow-card active:scale-95'
+                : 'cursor-not-allowed bg-spruce/10 text-spruce/30'
             )}
           >
             {adding ? (

@@ -10,9 +10,20 @@ import { Store, MessageCircle, ArrowRight } from 'lucide-react'
  * Click & Collect en accent secondaire.
  */
 export default function ConseilDifferenciantV2() {
+  // PREMIUM V2 — RYTHME DES SECTIONS : la home enchaînait canvas, canvas,
+  // white, white → deux paires de fonds identiques collées, les chapitres se
+  // fondaient les uns dans les autres. Cette section adopte une TROISIÈME
+  // surface (vert très pâle) : elle se détache à la fois des best-sellers
+  // (crème) et du bandeau parrainage (blanc), et le différenciateur de la
+  // marque gagne son propre plan. Sûr ici : la section ne contient aucune
+  // carte blanche qui disparaîtrait (seul le cadre de secours de l'image).
   return (
-    <section className="bg-canvas">
-      <div className="container py-14 md:py-18">
+    <section className="bg-sage/40">
+      {/* Rythme : les sections NARRATIVES respirent plus large (py-16/24) que
+          les bandeaux compacts (py-12) — un padding identique partout donne une
+          page qui défile « à plat ». Bas légèrement plus généreux que le haut :
+          correction optique classique. */}
+      <div className="container py-16 md:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* Visuel : intérieur de la boutique */}
           <div className="order-2 lg:order-1">
