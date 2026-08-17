@@ -7,6 +7,7 @@ import ConseilDifferenciantV2 from '@/components/home/v2/ConseilDifferenciantV2'
 import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
+import Reveal from '@/components/ui/Reveal'
 import { getFeaturedProducts } from '@/lib/shopify'
 import { buildPageMetadata } from '@/lib/seo'
 
@@ -51,28 +52,44 @@ function SectionFallback({ minHeight = '500px' }: { minHeight?: string }) {
 export default function HomePage() {
   return (
     <>
-      {/* 1. Hero (LCP, rendu immediat) */}
+      {/* 1. Hero (LCP, rendu immediat — jamais enveloppe dans <Reveal>) */}
       <HeroV2 />
 
-      {/* 2. Bandeau reassurance */}
+      {/* 2. Bandeau reassurance — volontairement SANS reveal : il est visible
+             des le chargement sur desktop, l'animer donnerait l'impression que
+             toute la page bouge au premier coup d'oeil. */}
       <BrandValuesV2 />
 
+      {/* PREMIUM V2 : les sections sous la ligne de flottaison montent en
+          douceur a l'entree dans l'ecran. Sans JS ou en prefers-reduced-motion,
+          <Reveal> n'applique aucun masquage (cf. globals.css .reveal). */}
+
       {/* 3. Best-sellers (data Shopify, streame) */}
-      <Suspense fallback={<SectionFallback minHeight="600px" />}>
-        <BestSellersAsync />
-      </Suspense>
+      <Reveal>
+        <Suspense fallback={<SectionFallback minHeight="600px" />}>
+          <BestSellersAsync />
+        </Suspense>
+      </Reveal>
 
       {/* 4. Le conseil qu'aucun site n'a (differenciateur) */}
-      <ConseilDifferenciantV2 />
+      <Reveal>
+        <ConseilDifferenciantV2 />
+      </Reveal>
 
       {/* 6. Bande parrainage (exploite loyalty L4) */}
-      <BandeauParrainageV2 />
+      <Reveal>
+        <BandeauParrainageV2 />
+      </Reveal>
 
       {/* 7a. Galerie boutique (vraies photos du magasin, 07/2026) */}
-      <BoutiqueGalleryV2 />
+      <Reveal>
+        <BoutiqueGalleryV2 />
+      </Reveal>
 
       {/* 7b. Boutique & Click & Collect */}
-      <StoreCallV2 />
+      <Reveal>
+        <StoreCallV2 />
+      </Reveal>
 
       {/* 8. Avis : retire (cf. site-rewrite-copy-v1.md §3.6). A reactiver
              quand on a de vrais avis Google. */}

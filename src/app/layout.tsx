@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Montserrat } from 'next/font/google'
+import { Inter, Fraunces } from 'next/font/google'
 import '@/styles/globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { CustomerProvider } from '@/context/CustomerContext'
@@ -17,10 +17,18 @@ const inter = Inter({
   display: 'swap',
 })
 
-const montserrat = Montserrat({
+// REDESIGN PREMIUM V2 (2026-08) — décision Adam : direction « éditorial
+// chaleureux » (registre Ritual / Huel / Aesop) en remplacement de Montserrat,
+// qui donnait un rendu générique « template ». Fraunces est un serif VARIABLE :
+// - axe wght (variable) → toute la graisse 300-900 sans charger 6 fichiers ;
+// - axe SOFT → arrondit les terminaisons (moins sec, plus chaleureux) ;
+// - axe WONK → active les formes « déviantes » (le caractère artisanal) ;
+// - opsz est un axe optique automatique : Next l'inclut dans la variable font.
+const fraunces = Fraunces({
   subsets: ['latin'],
-  variable: '--font-montserrat',
+  variable: '--font-fraunces',
   display: 'swap',
+  axes: ['SOFT', 'WONK'],
 })
 
 // metadataBase doit etre une URL valide. getSiteUrl() lit NEXT_PUBLIC_SITE_URL
@@ -100,12 +108,39 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr" className={`${inter.variable} ${montserrat.variable}`}>
+    // suppressHydrationWarning : le script du <head> ajoute `js-reveal` sur
+    // <html> AVANT l'hydratation (pour éviter tout flash), donc la classe rendue
+    // côté serveur diffère par construction de celle du client. C'est le patron
+    // officiel pour ce cas (celui de next-themes) ; la suppression est limitée à
+    // CET élément — les écarts d'hydratation des enfants remontent toujours.
+    <html
+      lang="fr"
+      className={`${inter.variable} ${fraunces.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* dns-prefetch suffit pour cdn.shopify.com (images produits below-the-fold) */}
         <link rel="dns-prefetch" href="https://cdn.shopify.com" />
+        {/* PREMIUM V2 — arme les révélations au scroll AVANT le premier paint
+            (sinon le contenu s'afficherait puis disparaîtrait : flash visible).
+            Volontairement inline et synchrone, c'est ~120 octets.
+            Ne s'active pas si la personne a demandé moins de mouvement, et
+            jamais si JS est absent → le contenu reste visible par défaut. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              // FILET DE SÉCURITÉ (indispensable) : le masquage CSS dépend de la
+              // classe js-reveal. Si React n'hydrate jamais (bundle bloqué, erreur
+              // d'hydratation), les sections masquées resteraient invisibles.
+              // On retire donc la classe au bout de 2,5 s si aucun <Reveal> n'a
+              // signalé son montage (data-reveal-ready) → tout redevient visible.
+              "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var d=document.documentElement;d.classList.add('js-reveal');setTimeout(function(){if(!d.dataset.revealReady){d.classList.remove('js-reveal')}},2500)}}catch(e){}",
+          }}
+        />
       </head>
       <body className="min-h-screen flex flex-col">
+        {/* Voile de grain (~3 %) sur toute la page — cf. .grain-overlay */}
+        <div className="grain-overlay" aria-hidden="true" />
         <CustomerProvider>
           <CartProvider>
             {children}

@@ -59,7 +59,27 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
+        // PREMIUM V2 : Fraunces (serif variable) remplace Montserrat sur les
+        // ~240 usages de `font-display` du site — un seul point de changement.
+        // Repli Georgia (serif) et non system-ui : si la webfont tarde, le
+        // rendu reste un serif, pas un sans-serif (pas de saut de style).
+        display: ['var(--font-fraunces)', 'Georgia', 'Times New Roman', 'serif'],
+      },
+      boxShadow: {
+        // Ombres TEINTÉES vert-forêt (spruce #2D5A2D) au lieu du noir neutre :
+        // une ombre noire sur un fond crème « salit » l'image, une ombre teintée
+        // de la couleur d'ambiance se fond dans la page. C'est un des marqueurs
+        // les plus nets entre un rendu générique et un rendu soigné.
+        'soft': '0 1px 2px rgba(45,90,45,0.04), 0 2px 8px rgba(45,90,45,0.04)',
+        'card': '0 2px 4px rgba(45,90,45,0.04), 0 8px 24px -8px rgba(45,90,45,0.10)',
+        'lift': '0 4px 8px rgba(45,90,45,0.05), 0 16px 40px -12px rgba(45,90,45,0.16)',
+        'hero': '0 24px 70px -24px rgba(45,90,45,0.30)',
+      },
+      transitionTimingFunction: {
+        // Sorties « spring-like » (decel forte) : le mouvement démarre vite et
+        // se pose en douceur — perçu comme physique, pas mécanique.
+        'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'out-back': 'cubic-bezier(0.34, 1.4, 0.64, 1)',
       },
       spacing: {
         // L'échelle Tailwind saute de 16 (4rem) à 20 (5rem) : 9 sections V2

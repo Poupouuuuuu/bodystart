@@ -36,9 +36,12 @@
   --color-cream-dark: #F0EBE1;
   --color-cream-border: #E2D9CE;
 
-  /* Typographie */
+  /* Typographie — PREMIUM V2 : Fraunces (serif variable) en display */
   --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Montserrat', system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+
+  /* Courbe de sortie commune (decel forte, perçue comme physique) */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Espacements */
   --section-padding: 5rem 0;
@@ -85,13 +88,22 @@
     }
   }
 
+  /* PREMIUM V2 : le body portait encore la palette V1 (cream-100 + gray-900).
+     Passage aux tokens V2 → une seule vérité de fond/texte sur tout le site. */
   body {
-    @apply bg-cream-100 text-gray-900 font-sans;
+    @apply bg-canvas text-ink font-sans;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display font-bold tracking-tight;
+    /* Fraunces est optique : opsz s'ajuste à la taille rendue (les grands
+       titres gagnent des contrastes fins, les petits restent robustes). */
+    font-optical-sizing: auto;
+    /* SOFT arrondit les terminaisons → chaleur. wght n'est PAS piloté ici :
+       il reste géré par font-weight (font-bold/extrabold des composants). */
+    font-variation-settings: 'SOFT' 40;
+    text-wrap: pretty;
   }
 
   a {
@@ -135,35 +147,38 @@
     @apply text-gray-500 text-lg max-w-2xl;
   }
 
-  /* Boutons — Nature Premium */
+  /* Boutons — RE-MAPPÉS sur la palette V2 (2026-08). Ces classes servent encore
+     les pages non refondues (staff, coaching en standby, /vetements) : plutôt
+     que de les supprimer (risque de casse), on les aligne sur les tokens V2 +
+     ombres teintées + retour physique. Les pages héritent du premium sans être
+     réécrites. Le `uppercase` d'origine est retiré : la DA V2 est en sentence
+     case, et les capitales cassent la chaleur du serif. */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-8 py-3.5
-           bg-brand-500 text-white font-bold text-sm uppercase rounded-full
-           shadow-md hover:shadow-lg hover:bg-brand-600
-           transition-all duration-200 ease-in-out
-           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
+           bg-fresh text-white font-semibold text-[15px] rounded-full
+           shadow-soft hover:shadow-lift hover:bg-fresh-deep
+           transition-all duration-200 ease-out-expo active:scale-[0.975]
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 px-8 py-3.5
-           bg-transparent text-brand-500 font-bold text-sm uppercase rounded-full
-           border-2 border-brand-500
-           hover:bg-brand-50 transition-all duration-200 ease-in-out
-           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+           bg-transparent text-spruce font-semibold text-[15px] rounded-full
+           border border-spruce hover:bg-spruce/5
+           transition-all duration-200 ease-out-expo active:scale-[0.975];
   }
 
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2
-           text-gray-600 font-bold uppercase text-xs rounded-full
-           hover:bg-cream-200 hover:text-gray-900
-           transition-all duration-200;
+           text-ink-mute font-semibold text-[13px] rounded-full
+           hover:bg-sage hover:text-spruce
+           transition-all duration-200 ease-out-expo active:scale-[0.975];
   }
 
-  /* Cards — Nature Premium */
+  /* Cards — ombre teintée vert au lieu du gris générique */
   .card {
-    @apply bg-white rounded-2xl shadow-sm border border-cream-300
-           hover:shadow-md transition-all duration-200;
+    @apply bg-white rounded-2xl shadow-card border border-spruce/10
+           hover:shadow-lift transition-all duration-300 ease-out-expo;
   }
 
   /* Badges */
@@ -201,8 +216,81 @@
   }
 }
 
-/* ─── Utilities ──────────────────────────────────────────── */
+/* ─── PREMIUM V2 — Grain, révélations au scroll, retour physique ─────────
+   Ces 3 briques sont ce qui sépare le plus nettement un rendu « en
+   construction » d'un rendu abouti : de la texture (le plat = sterile), du
+   mouvement à l'arrivée du contenu, et des contrôles qui répondent au doigt. */
+
+/* 1. GRAIN — voile de bruit fixe sur toute la page (~3 %). Casse la platitude
+   du numérique sans salir les couleurs. pointer-events:none → ZÉRO impact
+   fonctionnel ; z-index 70 = au-dessus du header (40), du panier (50) et du
+   bandeau cookies (60) pour un voile homogène. Le SVG est inline (data-URI) :
+   aucune requête réseau. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* 2. RÉVÉLATIONS AU SCROLL — dégradation gracieuse : sans JS (ou en
+   prefers-reduced-motion), `.reveal` n'est jamais masqué, le contenu reste
+   visible et indexable. La classe `js-reveal` n'est posée sur <html> par le
+   script du layout QUE si JS tourne et que le mouvement est accepté ; le fait
+   qu'elle soit posée avant le premier paint évite tout flash. */
+html.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: opacity, transform;
+}
+html.js-reveal .reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.75s var(--ease-out-expo) var(--reveal-delay, 0ms),
+    transform 0.75s var(--ease-out-expo) var(--reveal-delay, 0ms);
+  will-change: auto;
+}
+
+/* 4. ENTRÉE DU HÉROS — cascade au chargement, réservée aux éléments
+   SECONDAIRES (eyebrow, texte, CTA, faits, carte flottante). Le h1 et la photo
+   ne sont jamais masqués : un élément en opacity:0 ne compte pas comme peint,
+   les animer dégraderait la mesure de vitesse d'affichage (LCP).
+   `both` garde l'état initial avant le départ → pas de clignotement.
+   En prefers-reduced-motion, la règle globale ramène la durée à ~0 : le contenu
+   s'affiche d'un coup, sans mouvement. */
+@keyframes heroRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.hero-rise {
+  animation: heroRise 0.7s var(--ease-out-expo) both;
+}
+.hero-rise-1 { animation-delay: 0.08s; }
+.hero-rise-2 { animation-delay: 0.16s; }
+.hero-rise-3 { animation-delay: 0.24s; }
+
 @layer utilities {
+  /* 3. RETOUR PHYSIQUE au clic : le contrôle s'enfonce légèrement. Détail
+     minuscule, effet immédiat sur la sensation de qualité. */
+  .press {
+    @apply transition-all duration-200 ease-out-expo active:scale-[0.975];
+  }
+
+  /* Titre de héros : WONK active les formes « déviantes » de Fraunces (le
+     caractère artisanal). Réservé aux très grands titres — illisible en petit. */
+  .display-hero {
+    font-variation-settings: 'SOFT' 40, 'WONK' 1;
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
