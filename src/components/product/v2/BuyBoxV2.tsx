@@ -454,10 +454,12 @@ export default function BuyBoxV2({
               disabled={!selectedVariant?.availableForSale || adding}
               aria-label={`Ajouter ${title} au panier`}
               className={cn(
-                'flex-1 h-[56px] rounded-full text-white font-semibold text-[15px] flex items-center justify-center gap-2 transition-colors',
+                // Le CTA le plus important du site : ombre teintée + retour
+                // physique au clic, comme les CTA du hero.
+                'flex h-[56px] flex-1 items-center justify-center gap-2 rounded-full text-[15px] font-semibold text-white transition-all duration-200 ease-out-expo',
                 selectedVariant?.availableForSale && !adding
-                  ? 'bg-fresh hover:bg-fresh-deep'
-                  : 'bg-ink-mute/40 cursor-not-allowed'
+                  ? 'bg-fresh shadow-card hover:bg-fresh-deep hover:shadow-lift active:scale-[0.985]'
+                  : 'cursor-not-allowed bg-ink-mute/40'
               )}
             >
               {adding ? (

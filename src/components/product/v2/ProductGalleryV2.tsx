@@ -100,8 +100,12 @@ export default function ProductGalleryV2({
     <>
       <div className="flex flex-col gap-5">
         {/* Image principale avec fond vegetal */}
+        {/* PREMIUM V2 vague 3 : bordure retirée au profit d'une ombre teintée
+            verte (même langage que les cartes produit) et rayon porté à 24px —
+            l'image est le premier vendeur, elle doit avoir la présence du hero
+            plutôt que celle d'un cadre administratif. */}
         <div
-          className="relative w-full aspect-square flex items-center justify-center pointer-events-none group rounded-2xl bg-cover bg-center overflow-hidden border border-spruce/10"
+          className="group pointer-events-none relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-cover bg-center shadow-card"
           style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
         >
           {currentImage ? (
@@ -110,7 +114,7 @@ export default function ProductGalleryV2({
             <button
               type="button"
               aria-label="Agrandir l'image"
-              className="relative w-[85%] h-[85%] motion-safe:animate-float drop-shadow-2xl pointer-events-auto cursor-zoom-in"
+              className="pointer-events-auto relative h-[85%] w-[85%] cursor-zoom-in motion-safe:animate-float"
               onClick={() => setIsLightboxOpen(true)}
               onTouchStart={onTouchStart}
               onTouchEnd={onTouchEnd}
@@ -120,7 +124,10 @@ export default function ProductGalleryV2({
                 src={currentImage.url}
                 alt={currentImage.altText ?? title}
                 fill
-                className="object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.15)] transition-transform duration-500 group-hover:scale-105"
+                // Une SEULE ombre portée, TEINTÉE verte : le cumul précédent
+                // (drop-shadow-2xl sur le bouton + une ombre noire ici) grisait
+                // le fond végétal sous le produit.
+                className="object-contain [filter:drop-shadow(0_22px_28px_rgba(45,90,45,0.30))] transition-transform duration-500 ease-out-expo group-hover:scale-[1.06]"
                 priority={selectedIndex === 0}
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
@@ -136,7 +143,8 @@ export default function ProductGalleryV2({
 
           {discountPct && (
             <div className="absolute top-4 right-4 pointer-events-auto">
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-terracotta text-white shadow">
+              {/* Étiquette à coins doux, comme sur les cartes produit (vague 2). */}
+              <span className="inline-flex items-center rounded-lg bg-terracotta px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white shadow-soft">
                 -{discountPct}%
               </span>
             </div>
@@ -152,10 +160,13 @@ export default function ProductGalleryV2({
                 type="button"
                 onClick={() => handleSelect(i)}
                 className={cn(
-                  'relative w-16 h-16 sm:w-[72px] sm:h-[72px] flex-shrink-0 rounded-xl overflow-hidden cursor-pointer transition-all duration-200 bg-white border',
+                  // Vignettes : plus de bordure permanente. Au repos, une ombre
+                  // douce ; la sélection se signale par un anneau vert franc et
+                  // un léger grossissement (plus lisible qu'un jeu d'opacités).
+                  'relative h-16 w-16 flex-shrink-0 cursor-pointer overflow-hidden rounded-xl bg-white transition-all duration-200 ease-out-expo sm:h-[72px] sm:w-[72px]',
                   selectedIndex === i
-                    ? 'border-spruce ring-1 ring-spruce'
-                    : 'border-spruce/10 opacity-70 hover:opacity-100 hover:border-spruce/30'
+                    ? 'ring-2 ring-spruce shadow-card scale-[1.04]'
+                    : 'shadow-soft opacity-80 hover:opacity-100 hover:shadow-card'
                 )}
                 aria-label={`Voir image ${i + 1}`}
               >
