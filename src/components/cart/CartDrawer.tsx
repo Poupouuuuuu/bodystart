@@ -576,17 +576,25 @@ export default function CartDrawer() {
                   <RelayPickupBlock />
                 </div>
               )}
-            </div>
 
-            {/* ─── Footer récap + checkout (flex-shrink-0, toujours visible).
-                Compact sur mobile (paddings réduits, détail du récap masqué) :
-                seul l'essentiel — mode de livraison, total, CTA — reste fixe. ─── */}
-            {cart && (
-              <div className="flex-shrink-0 px-5 pb-4 pt-4 sm:px-8 sm:pb-6 sm:pt-5 border-t border-spruce/10 bg-canvas shadow-[0_-8px_20px_-12px_rgba(0,0,0,0.08)]">
-
-            {/* ─── Toggle Livraison / Click & Collect ─── */}
-            {activeStore && (
-              <div className="flex bg-white p-1 rounded-xl mb-3 sm:mb-5 border border-spruce/10">
+              {/* ─── Mode de livraison + détail des prix — DANS LA ZONE QUI DÉFILE
+                  (refonte 2026-08, retour Adam : « on ne comprend rien au panier,
+                  la partie scrolling est trop petite »).
+                  MESURÉ AVANT : sur un mobile de 844 px, le pied fixe occupait
+                  321 px — 38 % de l'écran — pour seulement 439 px d'articles,
+                  alors qu'il y avait 807 px de contenu à faire défiler. Résultat :
+                  on ne voyait qu'un article et demi.
+                  Le pied fixe ne garde donc plus que l'ESSENTIEL À LA DÉCISION
+                  (total, bouton, réassurance) ; le choix du mode et le détail des
+                  prix descendent ici, dans l'ordre de lecture naturel :
+                  articles → comment je le reçois → combien ça fait → je paie.
+                  Aucune étape supplémentaire : la friction viendrait de l'étape,
+                  pas de la longueur. ─── */}
+              {cart && (
+                <div className="px-5 pb-6 sm:px-8">
+                  {/* ─── Toggle Livraison / Click & Collect ─── */}
+                  {activeStore && (
+                    <div className="flex bg-white p-1 rounded-xl mb-4 border border-spruce/10">
                 {/* disabled pendant la mutation : un double-tap rapide lançait
                     deux flux clearRelayPickup/setCartAttributes entrelacés */}
                 <button
@@ -618,14 +626,16 @@ export default function CartDrawer() {
               </div>
             )}
 
-            {/* Récap prix — sur mobile, seul le Total reste visible (le détail
-                sous-total/livraison/TVA est sur le checkout Shopify) */}
-            <div className="space-y-3 mb-3 sm:mb-6 bg-white p-3 sm:p-4 rounded-xl border border-spruce/10">
-              <div className="hidden sm:flex justify-between text-[13px] text-ink-mute font-medium">
+            {/* Détail des prix — désormais VISIBLE AUSSI SUR MOBILE. Il était
+                masqué (hidden sm:flex) uniquement parce que le pied fixe n'avait
+                pas la place : le client voyait un total sans explication. La
+                place libérée sert d'abord à ça. */}
+            <div className="space-y-2.5 rounded-xl border border-spruce/10 bg-white p-4">
+              <div className="flex justify-between text-[13px] text-ink-mute font-medium">
                 <span>Sous-total</span>
-                <span className="font-semibold text-ink">{formatPrice(cart.cost.subtotalAmount)}</span>
+                <span className="font-semibold text-ink tabular-nums">{formatPrice(cart.cost.subtotalAmount)}</span>
               </div>
-              <div className="hidden sm:flex justify-between text-[13px] text-ink-mute font-medium">
+              <div className="flex justify-between text-[13px] text-ink-mute font-medium">
                 <span>Livraison</span>
                 <span className="font-semibold text-ink">
                   {isClickAndCollect ? 'Gratuit' : 'Calculée à l\'étape suivante'}
@@ -653,18 +663,29 @@ export default function CartDrawer() {
                 )
               })()}
               {cart.cost.totalTaxAmount && (
-                <div className="hidden sm:flex justify-between text-[13px] text-ink-mute font-medium">
+                <div className="flex justify-between text-[13px] text-ink-mute font-medium">
                   <span>Dont TVA</span>
-                  <span className="font-semibold text-ink">{formatPrice(cart.cost.totalTaxAmount)}</span>
+                  <span className="font-semibold text-ink tabular-nums">{formatPrice(cart.cost.totalTaxAmount)}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center sm:pt-3 sm:border-t border-spruce/10 sm:mt-1">
-                <span className="text-[14px] font-bold text-ink">Total</span>
-                <span className="font-display font-extrabold text-2xl text-spruce">
-                  {formatPrice(cart.cost.totalAmount)}
-                </span>
-              </div>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* ─── PIED FIXE COMPACT (flex-shrink-0) : uniquement ce qui sert à
+                DÉCIDER — le total, le bouton, la réassurance. Tout le reste a
+                migré dans la zone qui défile (cf. plus haut). Le pied passe ainsi
+                d'environ 320 px à environ 180 px sur mobile, et les articles
+                récupèrent cette place. ─── */}
+            {cart && (
+              <div className="flex-shrink-0 border-t border-spruce/10 bg-canvas px-5 pb-4 pt-3.5 shadow-[0_-8px_20px_-12px_rgba(45,90,45,0.12)] sm:px-8 sm:pb-5">
+                <div className="mb-3 flex items-baseline justify-between">
+                  <span className="text-[14px] font-bold text-ink">Total</span>
+                  <span className="font-display text-2xl font-extrabold tabular-nums text-spruce">
+                    {formatPrice(cart.cost.totalAmount)}
+                  </span>
+                </div>
 
             {/* Bouton checkout */}
             <div className="flex flex-col gap-3">
@@ -716,7 +737,7 @@ export default function CartDrawer() {
                     /* tracking best-effort */
                   }
                 }}
-                className="w-full h-14 flex items-center justify-center text-[14px] font-semibold rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep"
+                className="press flex h-14 w-full items-center justify-center rounded-full bg-fresh text-[14px] font-semibold text-white shadow-card hover:bg-fresh-deep hover:shadow-lift"
               >
                 {isClickAndCollect ? 'Valider le retrait' : 'Paiement sécurisé'}
               </a>
