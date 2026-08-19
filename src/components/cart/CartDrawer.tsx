@@ -502,81 +502,6 @@ export default function CartDrawer() {
             })}
               </div>
 
-              {/* ─── Cross-sell « Complète ta commande » (panier moyen +) ───
-                  Best-sellers pas déjà au panier. Ajout rapide seulement pour
-                  les mono-variantes ; sinon lien « Choisir » vers la fiche. */}
-              {crossSellItems.length > 0 && (
-                <div className="px-8 pb-6">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
-                    Complète ta commande
-                  </p>
-                  <div className="space-y-3">
-                    {crossSellItems.map((item) => (
-                      <div key={item.handle} className="flex items-center gap-3">
-                        <Link
-                          href={`/products/${item.handle}`}
-                          onClick={closeCart}
-                          className="relative w-14 h-14 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-spruce/10 flex items-center justify-center"
-                        >
-                          {item.image ? (
-                            <Image src={item.image} alt={item.title} fill className="object-contain p-1.5" sizes="56px" />
-                          ) : (
-                            <Package className="w-6 h-6 text-spruce/25" />
-                          )}
-                        </Link>
-                        <div className="flex-1 min-w-0">
-                          <Link href={`/products/${item.handle}`} onClick={closeCart}>
-                            <p className="text-[13px] font-semibold text-ink leading-tight line-clamp-2">
-                              {item.title}
-                            </p>
-                          </Link>
-                          <p className="text-[13px] font-bold text-spruce mt-0.5">
-                            {formatPrice({ amount: item.price, currencyCode: item.currency })}
-                          </p>
-                        </div>
-                        {item.variantId ? (
-                          <button
-                            onClick={() => addCrossSell(item)}
-                            disabled={addingCross === item.handle}
-                            aria-label={`Ajouter ${item.title} au panier`}
-                            className="flex-shrink-0 inline-flex items-center gap-1 h-9 px-4 rounded-full border border-spruce/20 text-spruce text-[13px] font-semibold hover:bg-sage disabled:opacity-50 transition-colors"
-                          >
-                            {addingCross === item.handle ? (
-                              '…'
-                            ) : (
-                              <>
-                                <Plus className="w-3.5 h-3.5" /> Ajouter
-                              </>
-                            )}
-                          </button>
-                        ) : (
-                          <Link
-                            href={`/products/${item.handle}`}
-                            onClick={closeCart}
-                            aria-label={`Voir ${item.title}`}
-                            className="flex-shrink-0 inline-flex items-center h-9 px-4 rounded-full border border-spruce/20 text-spruce text-[13px] font-semibold hover:bg-sage transition-colors"
-                          >
-                            Choisir
-                          </Link>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* ─── Widget Cagnotte (loyalty) — dans la zone scrollable ─── */}
-              <CagnotteCartWidget />
-
-              {/* Point relais Mondial Relay (livraison uniquement, non bloquant).
-                  Déplacé du pied fixe vers la zone scrollable : sur petit écran
-                  le pied ~400px masquait les articles (retour client 2026-07). */}
-              {!isClickAndCollect && (
-                <div className="px-8">
-                  <RelayPickupBlock />
-                </div>
-              )}
-
               {/* ─── Mode de livraison + détail des prix — DANS LA ZONE QUI DÉFILE
                   (refonte 2026-08, retour Adam : « on ne comprend rien au panier,
                   la partie scrolling est trop petite »).
@@ -671,6 +596,82 @@ export default function CartDrawer() {
                   </div>
                 </div>
               )}
+
+              {/* ─── Cross-sell « Complète ta commande » (panier moyen +) ───
+                  Best-sellers pas déjà au panier. Ajout rapide seulement pour
+                  les mono-variantes ; sinon lien « Choisir » vers la fiche. */}
+              {crossSellItems.length > 0 && (
+                <div className="px-8 pb-6">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+                    Complète ta commande
+                  </p>
+                  <div className="space-y-3">
+                    {crossSellItems.map((item) => (
+                      <div key={item.handle} className="flex items-center gap-3">
+                        <Link
+                          href={`/products/${item.handle}`}
+                          onClick={closeCart}
+                          className="relative w-14 h-14 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-spruce/10 flex items-center justify-center"
+                        >
+                          {item.image ? (
+                            <Image src={item.image} alt={item.title} fill className="object-contain p-1.5" sizes="56px" />
+                          ) : (
+                            <Package className="w-6 h-6 text-spruce/25" />
+                          )}
+                        </Link>
+                        <div className="flex-1 min-w-0">
+                          <Link href={`/products/${item.handle}`} onClick={closeCart}>
+                            <p className="text-[13px] font-semibold text-ink leading-tight line-clamp-2">
+                              {item.title}
+                            </p>
+                          </Link>
+                          <p className="text-[13px] font-bold text-spruce mt-0.5">
+                            {formatPrice({ amount: item.price, currencyCode: item.currency })}
+                          </p>
+                        </div>
+                        {item.variantId ? (
+                          <button
+                            onClick={() => addCrossSell(item)}
+                            disabled={addingCross === item.handle}
+                            aria-label={`Ajouter ${item.title} au panier`}
+                            className="flex-shrink-0 inline-flex items-center gap-1 h-9 px-4 rounded-full border border-spruce/20 text-spruce text-[13px] font-semibold hover:bg-sage disabled:opacity-50 transition-colors"
+                          >
+                            {addingCross === item.handle ? (
+                              '…'
+                            ) : (
+                              <>
+                                <Plus className="w-3.5 h-3.5" /> Ajouter
+                              </>
+                            )}
+                          </button>
+                        ) : (
+                          <Link
+                            href={`/products/${item.handle}`}
+                            onClick={closeCart}
+                            aria-label={`Voir ${item.title}`}
+                            className="flex-shrink-0 inline-flex items-center h-9 px-4 rounded-full border border-spruce/20 text-spruce text-[13px] font-semibold hover:bg-sage transition-colors"
+                          >
+                            Choisir
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ─── Widget Cagnotte (loyalty) — dans la zone scrollable ─── */}
+              <CagnotteCartWidget />
+
+              {/* Point relais Mondial Relay (livraison uniquement, non bloquant).
+                  Déplacé du pied fixe vers la zone scrollable : sur petit écran
+                  le pied ~400px masquait les articles (retour client 2026-07). */}
+              {!isClickAndCollect && (
+                <div className="px-8">
+                  <RelayPickupBlock />
+                </div>
+              )}
+
             </div>
 
             {/* ─── PIED FIXE COMPACT (flex-shrink-0) : uniquement ce qui sert à
