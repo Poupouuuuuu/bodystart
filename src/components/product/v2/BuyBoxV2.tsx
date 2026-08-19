@@ -86,7 +86,11 @@ export default function BuyBoxV2({
   const [adding, setAdding] = useState(false)
   const [added, setAdded] = useState(false)
   const [isStickyVisible, setIsStickyVisible] = useState(false)
-  const { addItem } = useCart()
+  // isCartOpen : la barre d'achat collante doit DISPARAITRE quand le tiroir
+  // panier est ouvert. Sinon elle depasse sous le pied du panier et on voit
+  // deux boutons verts empiles, dont un « Ajouter au panier » alors qu'on est
+  // deja dans le panier (defaut constate sur la prod, anterieur a la refonte).
+  const { addItem, isOpen: isCartOpen } = useCart()
 
   // Mode bundle : on derive les details des composants depuis la variante
   // ACTUELLEMENT selectionnee. Quand BundleSelectorsV2 change la variante,
@@ -202,7 +206,7 @@ export default function BuyBoxV2({
   useEffect(() => {
     const bar = stickyBarRef.current
     if (!bar) return
-    if (isStickyVisible) bar.removeAttribute('inert')
+    if (isStickyVisible && !isCartOpen) bar.removeAttribute('inert')
     else bar.setAttribute('inert', '')
   }, [isStickyVisible])
 
@@ -589,7 +593,7 @@ export default function BuyBoxV2({
         ref={stickyBarRef}
         className={cn(
           'fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-spruce/10 py-3 px-4 md:px-6 z-50 transition-transform duration-300 shadow-[0_-4px_20px_rgba(45,90,45,0.06)]',
-          isStickyVisible ? 'translate-y-0' : 'translate-y-full'
+          isStickyVisible && !isCartOpen ? 'translate-y-0' : 'translate-y-full'
         )}
       >
         <div className="container flex items-center gap-4">
