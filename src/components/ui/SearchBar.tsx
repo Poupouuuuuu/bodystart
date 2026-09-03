@@ -38,7 +38,7 @@ export default function SearchBar({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Rechercher un produit..."
-        className="flex-1 bg-transparent outline-none text-ink placeholder:text-ink-mute text-sm"
+        className="flex-1 bg-transparent outline-none text-ink placeholder:text-ink-mute text-[16px] md:text-sm"
         autoFocus
       />
       {query && (

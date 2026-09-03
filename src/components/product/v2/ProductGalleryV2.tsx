@@ -105,7 +105,7 @@ export default function ProductGalleryV2({
             l'image est le premier vendeur, elle doit avoir la présence du hero
             plutôt que celle d'un cadre administratif. */}
         <div
-          className="group pointer-events-none relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-cover bg-center shadow-card"
+          className="group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-cover bg-center shadow-card"
           style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
         >
           {currentImage ? (
@@ -153,7 +153,9 @@ export default function ProductGalleryV2({
 
         {/* Vignettes */}
         {images.length > 1 && (
-          <div className="flex flex-wrap gap-2.5">
+          {/* MOBILE FIRST : une seule rangee qui defile au doigt (8 vignettes
+              en grille prenaient 2 rangees = 180 px avant le titre et le prix). */}
+          <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
             {images.map((img, i) => (
               <button
                 key={i}

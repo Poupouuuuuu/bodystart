@@ -219,7 +219,7 @@ function HeaderInner(_props: HeaderProps) {
                   setMobileOpen(false)
                   setIsSearchOpen(!isSearchOpen)
                 }}
-                className="flex p-2 rounded-full transition-colors text-ink hover:text-spruce hover:bg-sage"
+                className="flex h-11 w-11 items-center justify-center rounded-full transition-colors text-ink hover:text-spruce hover:bg-sage"
                 aria-label="Rechercher"
                 aria-expanded={isSearchOpen}
               >
@@ -255,7 +255,7 @@ function HeaderInner(_props: HeaderProps) {
                   setMobileOpen(false)
                   openCart()
                 }}
-                className="relative flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-semibold transition-colors ml-1 bg-fresh hover:bg-fresh-deep"
+                className="relative flex h-11 items-center gap-2 px-4 sm:px-5 text-white rounded-full text-sm font-semibold transition-colors ml-1 bg-fresh hover:bg-fresh-deep"
                 aria-label={
                   totalQuantity > 0
                     ? `Ouvrir le panier, ${totalQuantity} article${totalQuantity > 1 ? 's' : ''}`
@@ -273,7 +273,7 @@ function HeaderInner(_props: HeaderProps) {
 
               {/* Burger mobile */}
               <button
-                className="lg:hidden p-2 rounded-full transition-colors ml-1 text-ink hover:bg-sage"
+                className="lg:hidden flex h-11 w-11 items-center justify-center rounded-full transition-colors ml-1 text-ink hover:bg-sage"
                 onClick={() => {
                   setIsSearchOpen(false) // exclusion mutuelle avec la recherche
                   setMobileOpen(!mobileOpen)

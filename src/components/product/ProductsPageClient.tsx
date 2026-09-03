@@ -434,7 +434,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-semibold text-spruce border border-spruce/15 hover:border-spruce/40 transition-colors"
+              className="lg:hidden inline-flex h-11 items-center gap-2 px-4 bg-white rounded-full text-[14px] font-semibold text-spruce border border-spruce/15 hover:border-spruce/40 transition-colors"
             >
               <SlidersHorizontal className="w-4 h-4" />
               Filtres
@@ -464,7 +464,7 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
               <select
                 value={sortKey}
                 onChange={(e) => setSortKey(e.target.value)}
-                className="appearance-none bg-white rounded-full text-[13px] text-ink border border-spruce/15 pl-4 pr-10 py-2 cursor-pointer focus:outline-none focus:border-spruce/40"
+                className="appearance-none h-11 md:h-auto bg-white rounded-full text-[16px] md:text-[13px] text-ink border border-spruce/15 pl-4 pr-10 py-2 cursor-pointer focus:outline-none focus:border-spruce/40"
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.key} value={o.key}>

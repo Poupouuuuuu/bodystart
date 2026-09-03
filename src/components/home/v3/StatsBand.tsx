@@ -21,7 +21,7 @@ const FACTS = [
 export default function StatsBand() {
   return (
     <section className="bg-spruce text-canvas">
-      <div className="container py-14 md:py-20">
+      <div className="container py-12 md:py-20">
         <dl className="grid divide-y divide-white/10 md:grid-cols-3 md:divide-x md:divide-y-0">
           {FACTS.map((f) => {
             const number = (

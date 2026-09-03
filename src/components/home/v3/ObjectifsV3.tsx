@@ -41,9 +41,9 @@ const GOALS = [
 export default function ObjectifsV3() {
   return (
     <section className="bg-white">
-      <div className="container py-20 md:py-28">
+      <div className="container py-14 md:py-28">
         <div className="mb-10 md:mb-14">
-          <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ink-mute">
+          <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-ink-mute">
             Par objectif
           </span>
           <h2 className="mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px]">

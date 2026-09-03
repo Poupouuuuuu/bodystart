@@ -115,10 +115,10 @@ export default function Footer() {
       {/* ─── Contenu Principal ─── */}
       <div className="pt-14 pb-10">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-12">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-12 mb-12">
 
             {/* Colonne 1 : Logo & Marque */}
-            <div>
+            <div className="col-span-2 md:col-span-1">
               <Link href="/" className="inline-block mb-5">
                 <Image
                   src="/assets/logos/logo-v2-horizontal.png"
@@ -185,7 +185,7 @@ export default function Footer() {
             </div>
 
             {/* Colonne 4 : Boutique physique */}
-            <div>
+            <div className="col-span-2 lg:col-span-1">
               <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-5">
                 Notre boutique
               </h4>

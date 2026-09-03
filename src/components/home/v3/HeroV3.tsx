@@ -47,7 +47,7 @@ export default function HeroV3() {
           {/* ─── Titre ─── */}
           <div className="max-w-[920px]">
             <div className="hero-rise mb-6 flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.22em] text-white/85 backdrop-blur-md">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-white/85 backdrop-blur-md">
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-mustard" />
                 Coignières · Yvelines
               </span>

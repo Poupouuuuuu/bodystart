@@ -100,6 +100,9 @@ export const metadata: Metadata = {
 // Vert BodyStart (--fresh) pour la barre d'adresse mobile / PWA.
 export const viewport: Viewport = {
   themeColor: '#3B7A3F',
+  // Mobile first : la page occupe tout l'ecran (encoche, barre iOS) ; les
+  // elements colles en bas ajoutent env(safe-area-inset-bottom).
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({

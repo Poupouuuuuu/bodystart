@@ -291,7 +291,7 @@ export default function CartDrawer() {
           <button
             ref={closeBtnRef}
             onClick={closeCart}
-            className="p-2 -mr-2 rounded-full text-ink-mute hover:text-spruce hover:bg-spruce/5 transition-colors"
+            className="flex h-11 w-11 -mr-3 items-center justify-center rounded-full text-ink-mute hover:text-spruce hover:bg-spruce/5 transition-colors"
             aria-label="Fermer le panier"
           >
             <X className="w-5 h-5" />

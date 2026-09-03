@@ -12,7 +12,7 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react'
 export default function ConseilV3() {
   return (
     <section className="bg-sage/40">
-      <div className="container py-24 md:py-32">
+      <div className="container py-16 md:py-32">
         <div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-20">
           {/* ─── Photo ─── */}
           <div className="relative order-2 lg:order-1">
@@ -38,7 +38,7 @@ export default function ConseilV3() {
 
           {/* ─── Texte ─── */}
           <div className="order-1 lg:order-2">
-            <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ink-mute">
+            <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-ink-mute">
               Le conseil qu&apos;aucun site n&apos;a
             </span>
             <h2 className="mt-5 font-display text-[38px] font-extrabold leading-[1] tracking-tight text-spruce md:text-[52px] lg:text-[60px] [text-wrap:balance]">

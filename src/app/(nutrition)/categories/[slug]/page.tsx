@@ -8,6 +8,7 @@ import type { ShopifyProduct } from '@/lib/shopify/types'
 import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES, getCategoryPage } from '@/lib/categories'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
+import ReadMore from '@/components/ui/ReadMore'
 
 // Pages catégories SEO : 1 URL indexable par famille de produits (les filtres
 // `?cat=` de /products restent du confort client-side, non indexable).
@@ -98,11 +99,16 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <h1 className="font-display text-[32px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
             {cat.h1}
           </h1>
-          {cat.intro.map((paragraph) => (
-            <p key={paragraph.slice(0, 24)} className="text-ink-mute text-[16px] leading-[1.7] mb-4">
-              {paragraph}
-            </p>
-          ))}
+          {/* MOBILE FIRST : l'intro (2-3 paragraphes) repoussait les produits a
+              plus d'un ecran sur telephone -> repliee a ~7 lignes sous md, avec
+              « Lire la suite ». Le texte reste entier dans le DOM (SEO, a11y). */}
+          <ReadMore>
+            {cat.intro.map((paragraph) => (
+              <p key={paragraph.slice(0, 24)} className="text-ink-mute text-[16px] leading-[1.7] mb-4">
+                {paragraph}
+              </p>
+            ))}
+          </ReadMore>
         </div>
 
         {/* Nos choix (maillage produits phares) */}

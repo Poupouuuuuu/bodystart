@@ -100,10 +100,10 @@ export default function BestSellersV3({ products }: BestSellersV3Props) {
 
   return (
     <section className="bg-canvas">
-      <div className="container py-20 md:py-28">
+      <div className="container py-14 md:py-28">
         <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
           <div>
-            <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-ink-mute">
+            <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-ink-mute">
               Les plus pris en boutique
             </span>
             <h2 className="mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px] lg:text-[64px] [text-wrap:balance]">

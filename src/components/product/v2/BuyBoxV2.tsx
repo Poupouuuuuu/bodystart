@@ -193,11 +193,23 @@ export default function BuyBoxV2({
     }
   }
 
-  // Sticky bar visible quand on scroll au-dela du bouton principal
+  // MOBILE FIRST : la barre collante apparait des que le bouton principal
+  // n'est PAS a l'ecran — donc immediatement sur mobile, ou la galerie et les
+  // vignettes repoussaient prix et « Ajouter au panier » a ~1 200 px du haut.
+  // (L'ancien seuil `scrollY > 800` la cachait precisement quand elle servait.)
+  const mainCtaRef = useRef<HTMLButtonElement>(null)
   useEffect(() => {
-    const handleScroll = () => setIsStickyVisible(window.scrollY > 800)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    const el = mainCtaRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      const handleScroll = () => setIsStickyVisible(window.scrollY > 800)
+      window.addEventListener('scroll', handleScroll, { passive: true })
+      return () => window.removeEventListener('scroll', handleScroll)
+    }
+    const io = new IntersectionObserver(([entry]) => setIsStickyVisible(!entry.isIntersecting), {
+      rootMargin: '0px 0px -8px 0px',
+    })
+    io.observe(el)
+    return () => io.disconnect()
   }, [])
 
   // A11y : la sticky bar cachée n'est que translate-y-full (hors écran mais
@@ -454,6 +466,7 @@ export default function BuyBoxV2({
             </div>
 
             <button
+              ref={mainCtaRef}
               onClick={handleAddToCart}
               disabled={!selectedVariant?.availableForSale || adding}
               aria-label={`Ajouter ${title} au panier`}
@@ -592,7 +605,7 @@ export default function BuyBoxV2({
       <div
         ref={stickyBarRef}
         className={cn(
-          'fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-spruce/10 py-3 px-4 md:px-6 z-50 transition-transform duration-300 shadow-[0_-4px_20px_rgba(45,90,45,0.06)]',
+          'fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-spruce/10 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-4 md:px-6 z-50 transition-transform duration-300 shadow-[0_-4px_20px_rgba(45,90,45,0.06)]',
           isStickyVisible && !isCartOpen ? 'translate-y-0' : 'translate-y-full'
         )}
       >
@@ -601,14 +614,16 @@ export default function BuyBoxV2({
             <span className="font-semibold text-ink text-[14px] truncate">{title}</span>
             <span className="text-ink-mute text-[12px]">{selectedVariant.title}</span>
           </div>
-          <span className="hidden md:block font-display font-extrabold text-spruce text-[18px]">
+          {/* Prix visible aussi sur mobile : la barre y est le seul endroit ou
+              prix et CTA sont ensemble au premier ecran. */}
+          <span className="block font-display font-extrabold text-spruce text-[20px] md:text-[18px] tabular-nums whitespace-nowrap">
             {formatPrice(selectedVariant.price)}
           </span>
           <button
             onClick={handleAddToCart}
             disabled={!selectedVariant?.availableForSale || adding}
             className={cn(
-              'w-full md:w-auto h-11 px-7 rounded-full text-white font-semibold text-[14px] flex items-center justify-center gap-2 transition-colors flex-shrink-0',
+              'flex-1 md:flex-none h-12 md:h-11 px-6 md:px-7 rounded-full text-white font-semibold text-[15px] md:text-[14px] flex items-center justify-center gap-2 transition-colors',
               selectedVariant?.availableForSale && !adding
                 ? 'bg-fresh hover:bg-fresh-deep'
                 : 'bg-ink-mute/40 cursor-not-allowed'
