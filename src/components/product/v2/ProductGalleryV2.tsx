@@ -152,9 +152,9 @@ export default function ProductGalleryV2({
         </div>
 
         {/* Vignettes */}
+        {/* MOBILE FIRST : une seule rangee qui defile au doigt (8 vignettes en
+            grille prenaient 2 rangees = 180 px avant le titre et le prix). */}
         {images.length > 1 && (
-          {/* MOBILE FIRST : une seule rangee qui defile au doigt (8 vignettes
-              en grille prenaient 2 rangees = 180 px avant le titre et le prix). */}
           <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
             {images.map((img, i) => (
               <button
