@@ -196,7 +196,7 @@ export default function Footer() {
                 </li>
                 <li className="flex items-center gap-3 text-sm text-ink-mute">
                   <Phone className="w-4 h-4 text-spruce flex-shrink-0" />
-                  <a href="tel:+33761847580" className="hover:text-spruce transition-colors">
+                  <a href="tel:+33761847580" className="inline-flex min-h-[44px] items-center hover:text-spruce transition-colors">
                     07 61 84 75 80
                   </a>
                 </li>
@@ -229,7 +229,7 @@ export default function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-xs text-ink-mute hover:text-spruce transition-colors"
+                  className="inline-flex min-h-[44px] items-center text-xs text-ink-mute hover:text-spruce transition-colors"
                 >
                   {link.label}
                 </Link>

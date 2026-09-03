@@ -376,7 +376,7 @@ export default function BuyBoxV2({
                           disabled={!isAvailable}
                           aria-pressed={selectedFlavor === flavor}
                           className={cn(
-                            'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
+                            'inline-flex min-h-[44px] md:min-h-0 items-center px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
                             selectedFlavor === flavor
                               ? 'border-spruce bg-spruce text-white'
                               : 'border-spruce/20 text-spruce hover:border-spruce/40',
@@ -414,7 +414,7 @@ export default function BuyBoxV2({
                           disabled={!isAvailable}
                           aria-pressed={selectedSize === size}
                           className={cn(
-                            'px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
+                            'inline-flex min-h-[44px] md:min-h-0 items-center px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
                             selectedSize === size
                               ? 'border-spruce bg-spruce text-white'
                               : 'border-spruce/20 text-spruce hover:border-spruce/40',

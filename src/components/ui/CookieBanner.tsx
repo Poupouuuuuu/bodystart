@@ -86,13 +86,13 @@ export default function CookieBanner() {
             </button>
             <button
               onClick={rejectAll}
-              className="text-[13px] font-semibold text-spruce border border-spruce/30 hover:border-spruce hover:bg-spruce/5 transition-colors px-4 py-2 rounded-full"
+              className="inline-flex min-h-[44px] items-center text-[13px] font-semibold text-spruce border border-spruce/30 hover:border-spruce hover:bg-spruce/5 transition-colors px-4 rounded-full"
             >
               Refuser
             </button>
             <button
               onClick={acceptAll}
-              className="text-[13px] font-semibold text-white bg-fresh hover:bg-fresh-deep transition-colors px-4 py-2 rounded-full"
+              className="inline-flex min-h-[44px] items-center text-[13px] font-semibold text-white bg-fresh hover:bg-fresh-deep transition-colors px-4 rounded-full"
             >
               Accepter
             </button>
@@ -109,7 +109,7 @@ export default function CookieBanner() {
         {/* ─── Lien Personnaliser mobile (caché en desktop, deja en ligne) ─── */}
         <button
           onClick={() => setShowCustomize((v) => !v)}
-          className="md:hidden mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-ink-mute hover:text-spruce transition-colors"
+          className="md:hidden inline-flex min-h-[44px] items-center gap-1 text-[13px] font-semibold text-ink-mute hover:text-spruce transition-colors"
           aria-expanded={showCustomize}
         >
           Personnaliser

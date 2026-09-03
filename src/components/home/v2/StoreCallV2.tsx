@@ -57,7 +57,7 @@ export default function StoreCallV2() {
               </li>
               <li className="flex items-start gap-3 text-[15px] text-ink">
                 <Phone className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />
-                <a href="tel:+33761847580" className="hover:text-fresh transition-colors">
+                <a href="tel:+33761847580" className="inline-flex min-h-[44px] items-center hover:text-fresh transition-colors">
                   07 61 84 75 80
                 </a>
               </li>

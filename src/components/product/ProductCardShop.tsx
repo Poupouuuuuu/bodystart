@@ -176,7 +176,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
             moins « composant par défaut ». */}
         <div className="absolute left-3 top-3 z-30 flex flex-col items-start gap-1.5">
           {soldOut ? (
-            <span className="inline-flex items-center rounded-lg bg-ink/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-white backdrop-blur-sm">
+            <span className="inline-flex items-center rounded-lg bg-ink/90 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white backdrop-blur-sm">
               Épuisé
             </span>
           ) : (
@@ -184,7 +184,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
               <span
                 key={b.label}
                 className={cn(
-                  'inline-flex items-center rounded-lg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] backdrop-blur-sm',
+                  'inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] backdrop-blur-sm',
                   b.className
                 )}
               >
@@ -199,7 +199,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
       <div className="p-5 flex flex-col flex-1">
         {/* Libelle categorie reelle (si dispo) */}
         {categoryLabel && (
-          <span className="text-[11px] text-ink-mute font-medium mb-1.5">
+          <span className="text-[12px] text-ink-mute font-medium mb-1.5">
             {categoryLabel}
           </span>
         )}
@@ -214,7 +214,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
 
         {/* Une ligne de benefice court (optionnelle, capitalisee) */}
         {shortBenefit && (
-          <p className="text-[12px] text-ink-mute leading-snug mb-3 line-clamp-1">
+          <p className="text-[13px] text-ink-mute leading-snug mb-3 line-clamp-1">
             {capitalizeFirst(shortBenefit)}
           </p>
         )}

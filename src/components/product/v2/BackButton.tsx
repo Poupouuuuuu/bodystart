@@ -34,7 +34,7 @@ export default function BackButton({ fallbackHref }: BackButtonProps) {
     <button
       type="button"
       onClick={handleBack}
-      className="inline-flex items-center gap-1.5 text-[13px] font-medium text-ink-mute hover:text-spruce transition-colors"
+      className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium text-ink-mute hover:text-spruce transition-colors"
       aria-label="Retour à la page précédente"
     >
       <ArrowLeft className="w-4 h-4" />

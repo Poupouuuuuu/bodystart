@@ -182,7 +182,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             <Link
               key={r.slug}
               href={`/categories/${r.slug}`}
-              className="bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-sage transition-colors"
+              className="inline-flex min-h-[44px] items-center bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 rounded-full hover:bg-sage transition-colors"
             >
               {r.label}
             </Link>

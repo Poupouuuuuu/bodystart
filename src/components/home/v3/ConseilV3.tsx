@@ -62,7 +62,7 @@ export default function ConseilV3() {
               </Link>
               <Link
                 href="/stores"
-                className="group inline-flex items-center gap-2 text-[15px] font-semibold text-spruce transition-colors duration-500 ease-out-expo hover:text-fresh"
+                className="group inline-flex min-h-[44px] items-center gap-2 text-[15px] font-semibold text-spruce transition-colors duration-500 ease-out-expo hover:text-fresh"
               >
                 Passer en boutique
                 <ArrowUpRight

@@ -55,7 +55,7 @@ export default function HeroV3() {
                 href={GOOGLE_LISTING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md transition-colors duration-500 ease-out-expo hover:bg-white/20"
+                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md transition-colors duration-500 ease-out-expo hover:bg-white/20"
               >
                 <Star className="h-3.5 w-3.5 fill-mustard text-mustard" aria-hidden="true" />
                 {note}/5 · {GOOGLE_RATING.count} avis Google
@@ -86,7 +86,7 @@ export default function HeroV3() {
               </Link>
               <Link
                 href="/conseil"
-                className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white/90 transition-colors duration-500 ease-out-expo hover:text-white"
+                className="group inline-flex min-h-[44px] items-center gap-2 text-[15px] font-semibold text-white/90 transition-colors duration-500 ease-out-expo hover:text-white"
               >
                 Demander conseil
                 <ArrowUpRight
@@ -114,7 +114,7 @@ export default function HeroV3() {
                 </p>
                 <Link
                   href="/stores"
-                  className="group mt-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-sage transition-colors duration-500 ease-out-expo hover:text-white"
+                  className="group mt-1 inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-semibold text-sage transition-colors duration-500 ease-out-expo hover:text-white"
                 >
                   Itinéraire &amp; infos
                   <ArrowRight
