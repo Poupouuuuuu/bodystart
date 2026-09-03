@@ -4,7 +4,7 @@
 
 Body Start est une plateforme e-commerce headless multi-univers pour une marque de compléments alimentaires sportifs avec des boutiques physiques en Ile-de-France.
 
-- **Stack** : Next.js 14 (App Router) + TypeScript + Tailwind CSS + Shopify Storefront API + Admin API (GraphQL)
+- **Stack** : Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS + Shopify Storefront API + Admin API (GraphQL)
 - **Phase actuelle** : Phase 1 — Nutrition + Phase 2 Click & Collect + Phase 3 Coaching & Stripe (en cours)
 - **Phases futures** : Vêtements
 - **Langue du site** : Français (FR)
@@ -41,9 +41,9 @@ src/
 ├── components/
 │   ├── layout/             # Header (Suspense-wrapped), Footer
 │   ├── home/               # Sections homepage
-│   ├── product/            # ProductCard, ProductActions, ProductGallery, ProductTabs, HowToUse, RelatedProducts, ClickAndCollect, Reviews
+│   ├── product/            # ProductCardShop (carte catalogue), v2/ (BuyBoxV2, ProductGalleryV2, ReviewsV2…), StarRating
 │   ├── cart/               # CartDrawer (avec toggle Click & Collect)
-│   └── ui/                 # Button, Badge, SearchBar, BackToTop, CookieBanner
+│   └── ui/                 # Button, SearchBar, BackToTop, CookieBanner, Reveal (apparitions au scroll), PhoneField
 ├── context/
 │   ├── CartContext.tsx      # Panier global (+ setCartAttributes pour Click & Collect)
 │   └── CustomerContext.tsx  # Auth client (Shopify Customer API)
@@ -140,19 +140,21 @@ relancé un jour, il faudra rebâtir un outil admin propre (authentifié staff).
 | 4000 0000 0000 9995 | Fonds insuffisants  |
 | 4000 0000 0000 3220 | 3D Secure requis    |
 
-## Design System — Nature Premium
+## Design System — Premium V2 « éditorial chaleureux » (refonte 2026-08)
 
-- **Style** : Nature Premium — ombres douces, coins arrondis, palette terreuse/végétale
-- **Fond principal** : `cream-100` (#F8F4EE) — crème ivoire
-- **Fond secondaire** : `cream-200` (#F0EBE1) — crème foncé
-- **Bordures** : `cream-300` (#E2D9CE) — subtiles
-- **Palette Nutrition** : Vert sauge `brand-500` (#2D5A3D) — classes Tailwind `brand-*`
-- **Palette Coaching** : Cyan `coaching-500` (#2AB0B0) — classes `coaching-*` et `coaching-cyan-*`
-- **Typographie** : Inter (body, var `--font-inter`) + Montserrat (headings, var `--font-montserrat`)
-- **Composants CSS** : `.container`, `.section`, `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.card`, `.badge-*`, `.input`
-- **Boutons CTA** : `rounded-full` (pilule), `shadow-md` au repos, `shadow-lg` au hover
-- **Cards** : `rounded-2xl`, `border border-cream-300`, `shadow-sm` → `shadow-md` au hover
-- **Coins** : `rounded-2xl` partout (16px), `rounded-full` sur boutons et badges
+Source de vérité : `tailwind.config.ts` (palette + ombres) et `src/styles/globals.css`.
+Direction validée par Adam : registre Ritual / Huel / Aesop. **Ne pas réintroduire les tokens V1.**
+
+- **Surfaces** : `bg-canvas` (#FAF8F3, fond de page), `bg-white` (cartes), `bg-sage` (#EEF4EC, 3ᵉ surface / pastilles)
+- **Verts** : `fresh` (#3B7A3F, CTA) → `fresh-deep` au hover ; `spruce` (#2D5A2D, titres, accents). **Règle : jamais de vert en grande surface** (pas de bandeau/hero vert plein)
+- **Textes** : `text-ink` (#2A2A2A), `text-ink-mute` (#6B6B66)
+- **Accents** (1-2 éléments max par section) : `mustard` / `mustard-ink` (best-seller, étoiles), `terracotta` (promo, stock bas, erreur)
+- **Typo** : Inter (corps) + **Fraunces** via `font-display` (serif variable, `SOFT 40` sur tous les titres, `WONK` réservé aux très grands titres via `.display-hero`). Ne jamais piloter `wght` en `font-variation-settings`
+- **Ombres teintées vert** : `shadow-soft` / `shadow-card` / `shadow-lift` / `shadow-hero` — jamais d'ombre noire sur le crème
+- **Cartes** : `rounded-[20px] bg-white shadow-card hover:shadow-lift`, **sans bordure** ; badges `rounded-lg`, plafonnés à 2 par carte
+- **Boutons** : `.btn-primary` / `.btn-secondary` / `.btn-ghost` (pilules) + `.press` (retour tactile)
+- **Mouvement** : `<Reveal>` (IntersectionObserver maison, ~0 ko) pour les sections sous la ligne de flottaison — **jamais sur le h1 du hero ni l'image `priority`** (LCP). Grain `.grain-overlay` monté une fois dans le root layout
+- **Dépréciés** : `brand-*`, `cream-*`, `gray-*` — ne subsistent que sur les pages coaching (standby, hors périmètre V2)
 
 ## Conventions de code
 
