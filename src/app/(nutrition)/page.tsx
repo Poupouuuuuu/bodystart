@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import HeroV2 from '@/components/home/v2/HeroV2'
-import BrandValuesV2 from '@/components/home/v2/BrandValuesV2'
-import BestSellersV2 from '@/components/home/v2/BestSellersV2'
-import ConseilDifferenciantV2 from '@/components/home/v2/ConseilDifferenciantV2'
+import HeroV3 from '@/components/home/v3/HeroV3'
+import MarqueeBand from '@/components/home/v3/MarqueeBand'
+import ObjectifsV3 from '@/components/home/v3/ObjectifsV3'
+import StatsBand from '@/components/home/v3/StatsBand'
+import BestSellersV3 from '@/components/home/v3/BestSellersV3'
+import ConseilV3 from '@/components/home/v3/ConseilV3'
 import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
@@ -41,7 +43,7 @@ async function BestSellersAsync() {
   } catch {
     // Sans cles API, section vide
   }
-  return <BestSellersV2 products={products} />
+  return <BestSellersV3 products={products} />
 }
 
 // Skeleton leger pour eviter le CLS pendant le streaming
@@ -53,12 +55,12 @@ export default function HomePage() {
   return (
     <>
       {/* 1. Hero (LCP, rendu immediat — jamais enveloppe dans <Reveal>) */}
-      <HeroV2 />
+      <HeroV3 />
 
       {/* 2. Bandeau reassurance — volontairement SANS reveal : il est visible
              des le chargement sur desktop, l'animer donnerait l'impression que
              toute la page bouge au premier coup d'oeil. */}
-      <BrandValuesV2 />
+      <MarqueeBand />
 
       {/* PREMIUM V2 : les sections sous la ligne de flottaison montent en
           douceur a l'entree dans l'ecran. Sans JS ou en prefers-reduced-motion,
@@ -66,14 +68,24 @@ export default function HomePage() {
 
       {/* 3. Best-sellers (data Shopify, streame) */}
       <Reveal>
-        <Suspense fallback={<SectionFallback minHeight="600px" />}>
+        <Suspense fallback={<SectionFallback minHeight="760px" />}>
           <BestSellersAsync />
         </Suspense>
       </Reveal>
 
-      {/* 4. Le conseil qu'aucun site n'a (differenciateur) */}
+      {/* 4. Objectifs — liste typographique */}
       <Reveal>
-        <ConseilDifferenciantV2 />
+        <ObjectifsV3 />
+      </Reveal>
+
+      {/* 5. Le conseil qu'aucun site n'a (differenciateur) */}
+      <Reveal>
+        <ConseilV3 />
+      </Reveal>
+
+      {/* 5b. Preuves — chiffres geants sur vert sapin (chapitre) */}
+      <Reveal>
+        <StatsBand />
       </Reveal>
 
       {/* 6. Bande parrainage (exploite loyalty L4) */}

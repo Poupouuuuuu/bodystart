@@ -321,3 +321,20 @@ html.js-reveal .reveal.is-in {
     to { opacity: 1; transform: translateY(0); }
   }
 }
+
+/* ─── HOME V3 : bandeau défilant ───
+   Translation GPU uniquement (transform). La piste contient 2 copies de la
+   liste : -50 % = une boucle exacte, sans couture. Pause au survol, coupé en
+   prefers-reduced-motion. Le `linear` est voulu ici (défilement constant). */
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+.marquee-track {
+  animation: marquee 42s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
