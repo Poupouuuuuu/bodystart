@@ -42,7 +42,7 @@ export default function HeroV3() {
         className="absolute inset-0 bg-[linear-gradient(100deg,rgba(15,22,15,0.6)_0%,rgba(15,22,15,0)_58%)]"
       />
 
-      <div className="container relative pb-12 pt-44 md:pb-16 md:pt-56 lg:pt-64">
+      <div className="container relative pb-10 pt-36 md:pb-14 md:pt-44">
         <div className="grid items-end gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
           {/* ─── Titre ─── */}
           <div className="max-w-[920px]">

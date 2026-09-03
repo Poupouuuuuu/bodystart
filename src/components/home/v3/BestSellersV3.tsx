@@ -39,7 +39,7 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
             style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
           >
             <span className="absolute left-5 top-5 z-10 inline-flex items-center rounded-lg bg-mustard px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-mustard-ink shadow-soft">
-              N°1 en boutique
+              Best-seller
             </span>
             {image ? (
               <div className="relative h-[78%] w-[78%]">
@@ -88,7 +88,15 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
 export default function BestSellersV3({ products }: BestSellersV3Props) {
   const items = products.slice(0, 5)
   if (items.length === 0) return null
-  const [featured, ...rest] = items
+  // La grande tuile met en scène un produit qui la remplit : d'abord un
+  // produit tagué best-seller, sinon le plus cher des 5 (un pot de whey ou de
+  // créatine, pas une barre à 2,90 € perdue dans 600 px de fond végétal —
+  // c'est ce que donnait l'ordre brut de la collection Shopify).
+  const priceOf = (p: ShopifyProduct) => parseFloat(p.variants.nodes[0]?.price.amount ?? '0')
+  const featured =
+    items.find((p) => (p.tags ?? []).some((t) => /best.?seller/i.test(t))) ??
+    [...items].sort((a, b) => priceOf(b) - priceOf(a))[0]
+  const rest = items.filter((p) => p.id !== featured.id).slice(0, 4)
 
   return (
     <section className="bg-canvas">

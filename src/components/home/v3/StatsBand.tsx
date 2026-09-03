@@ -9,7 +9,7 @@ import { GOOGLE_LISTING_URL, GOOGLE_RATING } from '@/lib/store-info'
  */
 const FACTS = [
   { value: '13', unit: 'ans', label: 'de conseil à Coignières' },
-  { value: '+2 600', unit: '', label: 'clients conseillés au comptoir' },
+  { value: '+2 600', unit: '', label: 'clients conseillés au comptoir' },
   {
     value: GOOGLE_RATING.value.toLocaleString('fr-FR'),
     unit: '/5',
@@ -25,7 +25,7 @@ export default function StatsBand() {
         <dl className="grid divide-y divide-white/10 md:grid-cols-3 md:divide-x md:divide-y-0">
           {FACTS.map((f) => {
             const number = (
-              <span className="font-display text-[56px] font-extrabold leading-none tracking-tight tabular-nums md:text-[76px] lg:text-[92px]">
+              <span className="whitespace-nowrap font-display text-[56px] font-extrabold leading-none tracking-tight tabular-nums md:text-[68px] lg:text-[84px]">
                 {f.value}
                 {f.unit && <span className="ml-1 text-[0.42em] font-bold text-sage">{f.unit}</span>}
               </span>
