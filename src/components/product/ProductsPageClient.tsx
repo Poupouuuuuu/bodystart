@@ -426,9 +426,11 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
       <div className="container pb-10">
         {/* ─── Barre de contrôle ─── */}
         <div className="flex items-center justify-between mb-6 gap-4">
-          <p className="text-[13px] text-ink-mute">
-            {Math.min(visibleCount, filtered.length)} sur {filtered.length} produit
-            {filtered.length > 1 ? 's' : ''}
+          {/* Mobile : « 12 sur 110 » sur une ligne (le mot se cassait sur 3 lignes
+              a cote des boutons Filtres / tri). */}
+          <p className="text-[13px] text-ink-mute whitespace-nowrap">
+            {Math.min(visibleCount, filtered.length)} sur {filtered.length}
+            <span className="hidden sm:inline"> produit{filtered.length > 1 ? 's' : ''}</span>
           </p>
 
           <div className="flex items-center gap-2.5">
