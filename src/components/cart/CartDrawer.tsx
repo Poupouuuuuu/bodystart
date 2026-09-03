@@ -375,7 +375,7 @@ export default function CartDrawer() {
               )}
 
               {/* Liste des produits */}
-              <div className="px-8 pt-2 pb-8 space-y-6">
+              <div className="px-8 pt-2 pb-5 space-y-6">
             {items.map((item) => {
               const product = item.merchandise.product
               const image = product.featuredImage
@@ -471,7 +471,11 @@ export default function CartDrawer() {
                       </span>
                     </div>
 
-                    <div className="mt-auto pt-4">
+                    {/* pt-3 SANS mt-auto : `mt-auto` poussait le pill de quantite
+                        au bas de la colonne, creusant une bande vide entre
+                        l'article et le bloc livraison. Il se lit mieux collé
+                        sous « Retirer ». */}
+                    <div className="pt-3">
                       {/* Quantité pill */}
                       {/* Cibles tactiles : w-6 (24px) → w-10 (40px, ~44 avec le
                           padding du pill) + aria-labels (icône seule sinon). */}
