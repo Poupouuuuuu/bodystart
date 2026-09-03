@@ -32,7 +32,7 @@ export default function ConseilV3() {
               <p className="font-display text-[17px] font-bold leading-snug text-spruce">
                 « Si un produit ne sert à rien, on te le dit. »
               </p>
-              <p className="mt-2 text-[12px] text-ink-mute">Adam, au comptoir depuis 13 ans</p>
+              <p className="mt-2 text-[12px] text-ink-mute">Adam, gérant de la boutique</p>
             </div>
           </div>
 
