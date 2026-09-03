@@ -2,8 +2,14 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
-import { AlertTriangle, RotateCcw, Home } from 'lucide-react'
+import { AlertTriangle, RotateCcw } from 'lucide-react'
 
+/**
+ * Erreur racine — PREMIUM V2 (ex-style V1 « brutaliste » : ombres dures
+ * 4px, capitales espacées, rouge vif). Ton direct, palette V2, boutons
+ * partagés. Le digest reste affiché : c'est ce qu'on demande au client
+ * quand il nous écrit.
+ */
 export default function RootError({
   error,
   reset,
@@ -16,41 +22,39 @@ export default function RootError({
   }, [error])
 
   return (
-    <main className="min-h-[70vh] flex items-center justify-center bg-white px-4">
-      <div className="text-center max-w-lg">
-        <div className="w-20 h-20 bg-red-50 border-2 border-red-200 rounded-sm flex items-center justify-center mx-auto mb-8 shadow-[4px_4px_0_theme(colors.red.200)]">
-          <AlertTriangle className="w-10 h-10 text-red-500" />
-        </div>
-
-        <h1 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight text-gray-900 mb-4">
-          Une erreur est survenue
-        </h1>
-        <p className="text-gray-500 font-medium mb-8 leading-relaxed">
-          Quelque chose s&apos;est mal passe. Vous pouvez reessayer ou revenir a l&apos;accueil.
-        </p>
-
-        <div className="flex flex-wrap gap-3 justify-center">
-          <button
-            onClick={reset}
-            className="inline-flex items-center gap-2 px-6 py-4 bg-brand-700 text-white font-black uppercase tracking-widest text-xs rounded-sm border-2 border-transparent shadow-[4px_4px_0_theme(colors.gray.900)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_theme(colors.gray.900)] transition-all"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reessayer
-          </button>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-6 py-4 bg-white text-brand-700 font-black uppercase tracking-widest text-xs rounded-sm border-2 border-brand-700 shadow-[4px_4px_0_theme(colors.gray.900)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_theme(colors.gray.900)] transition-all"
-          >
-            <Home className="w-4 h-4" />
-            Retour a l&apos;accueil
-          </Link>
-        </div>
-
-        {error.digest && (
-          <p className="mt-8 text-[10px] font-black uppercase tracking-widest text-gray-300">
-            Code : {error.digest}
+    <main className="bg-canvas">
+      <div className="container flex min-h-[70vh] items-center py-16 md:py-24">
+        <div className="max-w-[560px]">
+          <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-terracotta/10 text-terracotta">
+            <AlertTriangle className="h-5 w-5" />
+          </div>
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute">
+            Erreur
           </p>
-        )}
+          <h1 className="font-display text-[34px] font-extrabold leading-[1.02] tracking-tight text-spruce md:text-[44px] [text-wrap:balance]">
+            Une erreur est survenue.
+          </h1>
+          <p className="mt-5 text-[17px] leading-[1.65] text-ink-mute">
+            Quelque chose s&apos;est mal passé de notre côté. Vous pouvez réessayer, ou
+            revenir à l&apos;accueil.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <button type="button" onClick={reset} className="btn-primary press">
+              <RotateCcw className="h-4 w-4" />
+              Réessayer
+            </button>
+            <Link href="/" className="btn-secondary press">
+              Retour à l&apos;accueil
+            </Link>
+          </div>
+
+          {error.digest && (
+            <p className="mt-8 text-[12px] text-ink-mute">
+              Référence : <span className="font-medium tabular-nums text-ink">{error.digest}</span>
+            </p>
+          )}
+        </div>
       </div>
     </main>
   )

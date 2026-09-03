@@ -53,7 +53,13 @@ export default async function PacksPage() {
       {/* ─── Liste packs ─── */}
       <section className="py-10 md:py-14">
         <div className="container">
-          {packs.length > 0 ? (
+          {packs.length === 1 ? (
+            /* Un seul pack publié : carte « à la une » pleine largeur plutôt
+               qu'une carte carrée orpheline dans une grille de 3 colonnes. */
+            <div className="max-w-5xl">
+              <PackCardV2 product={packs[0]} featured />
+            </div>
+          ) : packs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {packs.map((product) => (
                 <PackCardV2 key={product.id} product={product} />

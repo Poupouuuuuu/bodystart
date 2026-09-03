@@ -8,6 +8,12 @@ import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
 
 interface PackCardV2Props {
   product: ShopifyProduct
+  /**
+   * Mise en page « à la une » (visuel à gauche, texte à droite) : utilisée
+   * par /packs quand UN seul pack est publié — une carte carrée seule dans
+   * une grille de 3 colonnes faisait une page qui semblait vide.
+   */
+  featured?: boolean
 }
 
 const FRANCO_THRESHOLD = FREE_SHIPPING_THRESHOLD_CENTS / 100 // euros
@@ -55,7 +61,7 @@ function extractShortBenefit(description?: string): string | null {
   return (lastSpace > 60 ? cut.slice(0, lastSpace) : cut) + '…'
 }
 
-export default function PackCardV2({ product }: PackCardV2Props) {
+export default function PackCardV2({ product, featured = false }: PackCardV2Props) {
   const variant = product.variants.nodes[0]
   const soldOut = product.availableForSale === false
   const priceAmount = variant ? parseFloat(variant.price.amount) : 0
@@ -83,12 +89,20 @@ export default function PackCardV2({ product }: PackCardV2Props) {
   return (
     <Link
       href={`/products/${product.handle}`}
-      className="group flex flex-col bg-white rounded-2xl border border-spruce/10 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_10px_36px_rgba(45,90,45,0.08)]"
+      className={cn(
+        'group flex overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift',
+        featured ? 'flex-col md:flex-row' : 'flex-col'
+      )}
     >
       {/* ─── Visuel ─── */}
       {/* Composite partagé : pots des composants empilés sur fond végétal
        * (cf. BundleComposite, réutilisé par la vignette panier). */}
-      <div className="relative w-full aspect-square overflow-hidden">
+      <div
+        className={cn(
+          'relative overflow-hidden',
+          featured ? 'aspect-square w-full md:aspect-auto md:w-[46%] md:flex-shrink-0 md:min-h-[440px]' : 'aspect-square w-full'
+        )}
+      >
         {/* Si épuisé : badge « Épuisé » (anthracite) ; sinon pastille économies. */}
         {soldOut ? (
           <span className="absolute top-3 left-3 z-30 inline-flex items-center bg-ink text-white text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
@@ -105,19 +119,24 @@ export default function PackCardV2({ product }: PackCardV2Props) {
           alt={product.title}
           variant="card"
           fallbackImage={product.featuredImage}
-          sizes="(max-width: 768px) 50vw, 360px"
+          sizes={featured ? '(max-width: 768px) 100vw, 560px' : '(max-width: 768px) 50vw, 360px'}
           className={cn(soldOut && 'opacity-60')}
         />
       </div>
 
       {/* ─── Corps ─── */}
-      <div className="flex flex-col flex-1 p-5 md:p-6">
-        <h3 className="font-display font-bold text-[17px] md:text-[18px] text-ink leading-tight mb-2">
+      <div className={cn('flex flex-1 flex-col', featured ? 'p-6 md:justify-center md:p-10' : 'p-5 md:p-6')}>
+        <h3
+          className={cn(
+            'mb-2 font-display font-bold leading-tight text-ink',
+            featured ? 'text-[24px] md:text-[30px] text-spruce' : 'text-[17px] md:text-[18px]'
+          )}
+        >
           {product.title}
         </h3>
 
         {benefit && (
-          <p className="text-[13.5px] text-ink-mute leading-[1.55] mb-4 line-clamp-2">
+          <p className={cn('mb-4 text-ink-mute', featured ? 'text-[15.5px] leading-[1.6] line-clamp-3' : 'text-[13.5px] leading-[1.55] line-clamp-2')}>
             {benefit}
           </p>
         )}
@@ -131,7 +150,7 @@ export default function PackCardV2({ product }: PackCardV2Props) {
         {/* Prix + CTA — au fond de la carte */}
         <div className="mt-auto">
           <div className="flex items-baseline gap-2 mb-3">
-            <span className="font-display text-[22px] md:text-[24px] font-extrabold text-spruce">
+            <span className={cn('font-display font-extrabold text-spruce', featured ? 'text-[30px] md:text-[34px]' : 'text-[22px] md:text-[24px]')}>
               {formatPrice({ amount: priceAmount.toFixed(2), currencyCode: currency })}
             </span>
             {hasSavings && (

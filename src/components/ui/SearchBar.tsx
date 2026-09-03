@@ -28,24 +28,24 @@ export default function SearchBar({
     <form
       onSubmit={handleSubmit}
       className={[
-        'relative flex items-center bg-white border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100',
+        'relative flex items-center bg-white border border-spruce/15 rounded-2xl px-4 py-3 shadow-soft focus-within:border-fresh focus-within:ring-2 focus-within:ring-fresh/20',
         className,
       ].join(' ')}
     >
-      <Search className="w-5 h-5 text-gray-400 flex-shrink-0 mr-3" />
+      <Search className="w-5 h-5 text-ink-mute flex-shrink-0 mr-3" />
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Rechercher un produit..."
-        className="flex-1 bg-transparent outline-none text-gray-900 placeholder:text-gray-400 text-sm"
+        className="flex-1 bg-transparent outline-none text-ink placeholder:text-ink-mute text-sm"
         autoFocus
       />
       {query && (
         <button
           type="button"
           onClick={() => setQuery('')}
-          className="ml-2 p-1 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+          className="ml-2 p-1 text-ink-mute hover:text-ink transition-colors flex-shrink-0"
           aria-label="Effacer la recherche"
         >
           <X className="w-4 h-4" />

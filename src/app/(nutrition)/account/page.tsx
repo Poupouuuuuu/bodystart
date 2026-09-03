@@ -35,11 +35,11 @@ type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'r
 const STATUS_MAP: Record<string, { label: string; style: string }> = {
   PAID: { label: 'Payé', style: 'bg-green-50 text-green-700 border-green-200' },
   PENDING: { label: 'En attente', style: 'bg-amber-50 text-amber-700 border-amber-200' },
-  REFUNDED: { label: 'Remboursé', style: 'bg-gray-50 text-gray-600 border-gray-200' },
+  REFUNDED: { label: 'Remboursé', style: 'bg-canvas text-ink-mute border-spruce/15' },
   FULFILLED: { label: 'Expédié', style: 'bg-blue-50 text-blue-700 border-blue-200' },
   UNFULFILLED: { label: 'Préparation', style: 'bg-amber-50 text-amber-700 border-amber-200' },
 }
-const getStatus = (s: string) => STATUS_MAP[s] ?? { label: s, style: 'bg-gray-50 text-gray-600 border-gray-200' }
+const getStatus = (s: string) => STATUS_MAP[s] ?? { label: s, style: 'bg-canvas text-ink-mute border-spruce/15' }
 const STATUS_BADGE = 'text-[10px] font-semibold border px-2.5 py-1 rounded-full'
 
 // ═══════════════════════════════════════════════════════════

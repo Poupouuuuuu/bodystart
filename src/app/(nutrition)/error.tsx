@@ -2,8 +2,13 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
-import { AlertTriangle, RotateCcw, Home, ShoppingBag } from 'lucide-react'
+import { AlertTriangle, RotateCcw } from 'lucide-react'
 
+/**
+ * Erreur du groupe nutrition — PREMIUM V2 (même langage que error.tsx
+ * racine). Message spécifique : la cause la plus fréquente ici est un
+ * appel Shopify en échec, on le dit sans jargon.
+ */
 export default function NutritionError({
   error,
   reset,
@@ -16,48 +21,42 @@ export default function NutritionError({
   }, [error])
 
   return (
-    <main className="min-h-[60vh] flex items-center justify-center bg-white px-4">
-      <div className="text-center max-w-lg">
-        <div className="w-20 h-20 bg-red-50 border-2 border-red-200 rounded-sm flex items-center justify-center mx-auto mb-8 shadow-[4px_4px_0_theme(colors.red.200)]">
-          <AlertTriangle className="w-10 h-10 text-red-500" />
-        </div>
-
-        <h1 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight text-gray-900 mb-4">
-          Erreur de chargement
-        </h1>
-        <p className="text-gray-500 font-medium mb-8 leading-relaxed">
-          Impossible de charger cette page. Le probleme peut venir de notre connexion avec Shopify. Reessayez dans quelques instants.
-        </p>
-
-        <div className="flex flex-wrap gap-3 justify-center">
-          <button
-            onClick={reset}
-            className="inline-flex items-center gap-2 px-6 py-4 bg-brand-700 text-white font-black uppercase tracking-widest text-xs rounded-sm border-2 border-transparent shadow-[4px_4px_0_theme(colors.gray.900)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_theme(colors.gray.900)] transition-all"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reessayer
-          </button>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-6 py-4 bg-white text-brand-700 font-black uppercase tracking-widest text-xs rounded-sm border-2 border-brand-700 shadow-[4px_4px_0_theme(colors.gray.900)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_theme(colors.gray.900)] transition-all"
-          >
-            <Home className="w-4 h-4" />
-            Accueil
-          </Link>
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 px-4 py-2 text-gray-600 font-bold uppercase tracking-wider text-xs rounded-sm hover:bg-gray-100 hover:text-gray-900 transition-all"
-          >
-            <ShoppingBag className="w-4 h-4" />
-            Nos produits
-          </Link>
-        </div>
-
-        {error.digest && (
-          <p className="mt-8 text-[10px] font-black uppercase tracking-widest text-gray-300">
-            Code : {error.digest}
+    <main className="bg-canvas">
+      <div className="container flex min-h-[60vh] items-center py-16 md:py-24">
+        <div className="max-w-[560px]">
+          <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-terracotta/10 text-terracotta">
+            <AlertTriangle className="h-5 w-5" />
+          </div>
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute">
+            Erreur de chargement
           </p>
-        )}
+          <h1 className="font-display text-[34px] font-extrabold leading-[1.02] tracking-tight text-spruce md:text-[44px] [text-wrap:balance]">
+            Impossible de charger cette page.
+          </h1>
+          <p className="mt-5 text-[17px] leading-[1.65] text-ink-mute">
+            Le problème vient probablement de notre connexion avec la boutique. Réessayez
+            dans quelques instants — vos articles au panier sont conservés.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <button type="button" onClick={reset} className="btn-primary press">
+              <RotateCcw className="h-4 w-4" />
+              Réessayer
+            </button>
+            <Link href="/" className="btn-secondary press">
+              Accueil
+            </Link>
+            <Link href="/products" className="btn-ghost press">
+              Nos produits
+            </Link>
+          </div>
+
+          {error.digest && (
+            <p className="mt-8 text-[12px] text-ink-mute">
+              Référence : <span className="font-medium tabular-nums text-ink">{error.digest}</span>
+            </p>
+          )}
+        </div>
       </div>
     </main>
   )

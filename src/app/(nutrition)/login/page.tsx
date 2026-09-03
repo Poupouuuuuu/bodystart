@@ -64,7 +64,7 @@ function LoginContent() {
             />
           </Link>
           <h1 className="font-display text-[34px] md:text-[42px] font-extrabold tracking-tight mb-3 leading-[1.05] text-spruce">
-            Bon retour !
+            Bon retour.
           </h1>
           <p className="font-medium text-[15px] text-ink-mute">
             Connecte-toi à ton espace client

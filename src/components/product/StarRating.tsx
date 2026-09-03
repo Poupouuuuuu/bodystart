@@ -27,7 +27,7 @@ export default function StarRating({ rating, count, size = 'md', showCount = tru
           return (
             <svg
               key={star}
-              className={cn(sizes[size], filled || partial ? 'text-yellow-400' : 'text-gray-200')}
+              className={cn(sizes[size], filled || partial ? 'text-mustard' : 'text-spruce/15')}
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -36,7 +36,7 @@ export default function StarRating({ rating, count, size = 'md', showCount = tru
                   <defs>
                     <linearGradient id={`half-${star}`}>
                       <stop offset="50%" stopColor="currentColor" />
-                      <stop offset="50%" stopColor="#e5e7eb" />
+                      <stop offset="50%" stopColor="#DCE5DA" />
                     </linearGradient>
                   </defs>
                   <path
@@ -52,7 +52,7 @@ export default function StarRating({ rating, count, size = 'md', showCount = tru
         })}
       </div>
       {showCount && count !== undefined && count > 0 && (
-        <span className={cn(textSizes[size], 'font-black text-gray-500 uppercase tracking-widest')}>
+        <span className={cn(textSizes[size], 'font-medium text-ink-mute')}>
           ({count} avis)
         </span>
       )}

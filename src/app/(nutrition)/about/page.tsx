@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, Store, Truck, MessageCircle, ShieldCheck, MapPin, Clock, Phone } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 
@@ -39,20 +40,51 @@ const commitments = [
 export default function AboutPage() {
   return (
     <div className="bg-canvas min-h-screen">
-      {/* Hero */}
-      <div className="bg-spruce text-white py-24 md:py-32">
-        <div className="container max-w-3xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/60 mb-5">
-            Notre histoire
-          </p>
-          <h1 className="font-display text-[36px] md:text-[56px] font-extrabold tracking-tight mb-6 leading-[1.05]">
-            La boutique de nutrition sportive de Coignières
-          </h1>
-          <p className="text-white/75 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-            BodyStart Nutrition, c&apos;est la reprise à 100 % de la boutique BodyFit de
-            Coignières (78) — même adresse, même métier, une ambition de plus : faire
-            aussi bien en ligne qu&apos;au comptoir.
-          </p>
+      {/* Hero — PREMIUM V2. L'ancien bandeau était un aplat vert sapin plein
+          écran (texte blanc centré) : le dernier grand bloc sombre du site, en
+          contradiction avec la règle de la palette V2 (« vert JAMAIS en grande
+          surface ») et avec le registre éditorial clair des autres pages.
+          Ici : fond crème, halo sage, titre Fraunces aligné à gauche et la
+          VRAIE devanture en photo — c'est l'argument n°1 de la page. */}
+      <div className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute -top-40 right-[-12%] h-[520px] w-[520px] rounded-full bg-sage/70 blur-3xl"
+          aria-hidden="true"
+        />
+        <div className="container relative py-14 md:py-20">
+          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+            <div>
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute">
+                Notre histoire · Coignières (78)
+              </p>
+              <h1 className="display-hero font-display text-[38px] font-extrabold leading-[1.0] tracking-tight text-spruce md:text-[56px] [text-wrap:balance]">
+                La boutique de nutrition sportive de Coignières
+              </h1>
+              <p className="mt-6 max-w-[560px] text-[17px] leading-[1.6] text-ink-mute md:text-[19px]">
+                BodyStart Nutrition, c&apos;est la reprise à 100 % de la boutique BodyFit de
+                Coignières — même adresse, même métier, une ambition de plus : faire
+                aussi bien en ligne qu&apos;au comptoir.
+              </p>
+            </div>
+
+            <div className="relative">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] shadow-hero">
+                <Image
+                  src="/assets/devanture.webp"
+                  alt="Devanture de la boutique BodyStart Nutrition, 8 rue du Pont des Landes à Coignières"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 640px"
+                  className="object-cover"
+                />
+              </div>
+              {/* Carte qui déborde sur la photo (même geste que le hero de la home). */}
+              <div className="absolute -bottom-5 left-4 rounded-2xl bg-white/90 px-4 py-3 shadow-card backdrop-blur-md md:-left-6">
+                <p className="text-[13px] font-semibold text-ink">Ex-BodyFit, reprise à 100 %</p>
+                <p className="text-[12px] text-ink-mute">Même adresse, même équipe de conseil</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

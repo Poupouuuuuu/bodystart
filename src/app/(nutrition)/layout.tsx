@@ -106,7 +106,7 @@ export default async function NutritionLayout({ children }: { children: React.Re
       <BirthdayBanner />
       {/* Compteur de navigations internes (bouton Retour des fiches produit) */}
       <NavigationTracker />
-      <Suspense fallback={<div className="h-[104px] bg-white border-b border-gray-100" />}>
+      <Suspense fallback={<div className="h-[104px] bg-white border-b border-spruce/10" />}>
         <Header collections={collections} />
       </Suspense>
       <Suspense fallback={null}>

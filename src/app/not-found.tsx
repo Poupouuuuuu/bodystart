@@ -1,73 +1,74 @@
 import Link from 'next/link'
-import { ArrowRight, Home, Search, ShoppingBag } from 'lucide-react'
+import { ArrowRight, Search } from 'lucide-react'
 
+// Raccourcis vers les rayons les plus demandés : une 404 doit remettre le
+// visiteur sur un chemin d'achat, pas juste s'excuser.
 const QUICK_LINKS = [
   { label: 'Protéines', href: '/products?cat=proteines' },
-  { label: 'Vitamines', href: '/products?cat=sante' },
+  { label: 'Vitamines & santé', href: '/products?cat=sante' },
   { label: 'Performance', href: '/products?obj=muscle' },
+  { label: 'Packs', href: '/packs' },
   { label: 'FAQ', href: '/faq' },
 ]
 
+/**
+ * 404 — PREMIUM V2. L'ancienne version était encore dans le style V1
+ * (palette brand-*, gris neutres, tout centré). Ici : composition éditoriale
+ * alignée à gauche, « 404 » massif en Fraunces comme élément graphique,
+ * palette V2, boutons partagés (.btn-*) et pas de « Oups ».
+ */
 export default function NotFound() {
   return (
-    <main className="min-h-[70vh] flex items-center justify-center bg-white px-4">
-      <div className="text-center">
-        {/* Grand 404 décoratif */}
-        <div className="relative inline-flex items-center justify-center mb-6">
-          <span className="font-display font-black text-[10rem] leading-none text-brand-100 select-none">
-            404
-          </span>
-          <span className="absolute top-6 left-1/2 -translate-x-1/2 bg-brand-50 border border-brand-200 text-brand-700 text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap">
-            Page introuvable
-          </span>
-        </div>
+    <main className="bg-canvas">
+      <div className="container flex min-h-[70vh] items-center py-16 md:py-24">
+        <div className="grid w-full items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+          {/* Texte */}
+          <div className="order-2 lg:order-1">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute">
+              Page introuvable
+            </p>
+            <h1 className="font-display text-[34px] font-extrabold leading-[1.02] tracking-tight text-spruce md:text-[48px] [text-wrap:balance]">
+              Cette page n&apos;existe pas, ou plus.
+            </h1>
+            <p className="mt-5 max-w-[46ch] text-[17px] leading-[1.65] text-ink-mute">
+              Le lien est peut-être ancien, ou le produit a changé d&apos;adresse. Tout
+              le catalogue reste à portée de main.
+            </p>
 
-        {/* Titre */}
-        <h1 className="font-display text-3xl font-bold text-gray-900 mb-3">
-          Oups, cette page n&apos;existe pas
-        </h1>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link href="/products" className="btn-primary press">
+                Voir la boutique
+              </Link>
+              <Link href="/" className="btn-secondary press">
+                Retour à l&apos;accueil
+              </Link>
+              <Link href="/search" className="btn-ghost press">
+                <Search className="h-4 w-4" />
+                Rechercher un produit
+              </Link>
+            </div>
 
-        {/* Sous-titre */}
-        <p className="text-gray-500 mb-8 max-w-md mx-auto">
-          La page que vous cherchez a peut-être été déplacée ou n&apos;existe plus.
-        </p>
+            <div className="mt-10 flex flex-wrap gap-2">
+              {QUICK_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-sage px-3 py-1.5 text-[13px] font-semibold text-spruce transition-colors hover:bg-spruce hover:text-white"
+                >
+                  {link.label}
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              ))}
+            </div>
+          </div>
 
-        {/* Boutons d'action */}
-        <div className="flex flex-wrap gap-3 justify-center mb-10">
-          <Link href="/" className="btn-primary inline-flex items-center gap-2">
-            <Home className="w-4 h-4" />
-            Retour à l&apos;accueil
-          </Link>
-
-          <Link
-            href="/search"
-            className="btn-secondary inline-flex items-center gap-2"
-          >
-            <Search className="w-4 h-4" />
-            Rechercher un produit
-          </Link>
-
-          <Link
-            href="/products"
-            className="btn-ghost inline-flex items-center gap-2"
-          >
-            <ShoppingBag className="w-4 h-4" />
-            Nos produits
-          </Link>
-        </div>
-
-        {/* Liens rapides */}
-        <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center">
-          {QUICK_LINKS.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="text-sm text-brand-600 hover:text-brand-800 font-medium inline-flex items-center gap-1 transition-colors"
-            >
-              {link.label}
-              <ArrowRight className="w-3 h-3" />
-            </Link>
-          ))}
+          {/* « 404 » comme élément graphique : Fraunces avec WONK, vert très
+              pâle sur crème. Purement décoratif → aria-hidden. */}
+          <div className="order-1 select-none lg:order-2 lg:justify-self-end" aria-hidden="true">
+            <span className="display-hero block font-display text-[120px] font-extrabold leading-[0.85] tracking-tight text-spruce/[0.12] md:text-[200px] lg:text-[240px]">
+              404
+            </span>
+          </div>
         </div>
       </div>
     </main>
