@@ -1,5 +1,11 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Search } from 'lucide-react'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
+import CartDrawer from '@/components/cart/CartDrawer'
+import { getCollections } from '@/lib/shopify'
+import type { ShopifyCollection } from '@/lib/shopify/types'
 
 // Raccourcis vers les rayons les plus demandés : une 404 doit remettre le
 // visiteur sur un chemin d'achat, pas juste s'excuser.
@@ -16,10 +22,30 @@ const QUICK_LINKS = [
  * (palette brand-*, gris neutres, tout centré). Ici : composition éditoriale
  * alignée à gauche, « 404 » massif en Fraunces comme élément graphique,
  * palette V2, boutons partagés (.btn-*) et pas de « Oups ».
+ *
+ * Header + footer : ce fichier vit à la racine de app/ (seul endroit où Next
+ * intercepte les URL inconnues), donc HORS du layout (nutrition) qui porte la
+ * navigation. Sans ça la 404 s'affichait nue — un cul-de-sac sans logo ni
+ * menu. Les providers (panier, client) sont dans le root layout : on peut
+ * monter le même chrome ici.
  */
-export default function NotFound() {
+export default async function NotFound() {
+  let collections: ShopifyCollection[] = []
+  try {
+    collections = await getCollections(50)
+  } catch {
+    // Shopify indisponible — navigation sans sous-menus
+  }
+
   return (
-    <main className="bg-canvas">
+    <>
+      <Suspense fallback={<div className="h-[104px] bg-white border-b border-spruce/10" />}>
+        <Header collections={collections} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CartDrawer />
+      </Suspense>
+    <main id="main" className="flex-1 bg-canvas">
       <div className="container flex min-h-[70vh] items-center py-16 md:py-24">
         <div className="grid w-full items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           {/* Texte */}
@@ -72,5 +98,9 @@ export default function NotFound() {
         </div>
       </div>
     </main>
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
+    </>
   )
 }

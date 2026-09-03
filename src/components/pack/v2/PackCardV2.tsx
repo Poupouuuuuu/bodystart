@@ -147,8 +147,10 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
           {components ? `${components} produits inclus` : 'Pack complet'}
         </div>
 
-        {/* Prix + CTA — au fond de la carte */}
-        <div className="mt-auto">
+        {/* Prix + CTA — au fond de la carte en grille ; en mode « à la une » le
+            texte est centré verticalement, donc pas de mt-auto (sinon un trou
+            entre « X produits inclus » et le prix). */}
+        <div className={featured ? 'mt-8' : 'mt-auto'}>
           <div className="flex items-baseline gap-2 mb-3">
             <span className={cn('font-display font-extrabold text-spruce', featured ? 'text-[30px] md:text-[34px]' : 'text-[22px] md:text-[24px]')}>
               {formatPrice({ amount: priceAmount.toFixed(2), currencyCode: currency })}
