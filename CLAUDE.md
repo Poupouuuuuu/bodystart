@@ -157,6 +157,13 @@ Direction validée par Adam : registre Ritual / Huel / Aesop. **Ne pas réintrod
 - **Dépréciés** : `brand-*`, `cream-*`, `gray-*` — ne subsistent que sur les pages coaching (standby, hors périmètre V2)
 - **Mobile first (2026-09-05)** : la majorité du trafic est mobile. Règles : zones tactiles **44 px** minimum (`h-11`, `min-h-[44px]`) sur nav, CTA, pastilles, chips, liens de pied de page ; champs de saisie et `select` en **16 px** sous `md` (sinon iOS zoome au focus) ; sur la fiche produit la barre « Ajouter au panier » (avec le prix) suit la visibilité du CTA principal via IntersectionObserver, donc présente dès le premier écran ; galerie 4/3 et vignettes en bande défilante sous `sm` ; intros longues repliées avec `<ReadMore>` ; éléments fixés en bas avec `pb-[max(0.75rem,env(safe-area-inset-bottom))]` (`viewportFit: 'cover'`). Vérifier avec l'audit Playwright 390×844 avant de livrer.
 
+## Performance mobile (règles, 2026-09-05)
+
+Mesure de référence : `scratchpad/probe-median.js` (Playwright, 390×844, 4G lent + CPU ×4, médiane de 5 chargements) — Lighthouse en mode simulé varie de ±10 points d'un run à l'autre, ne jamais conclure sur un seul run.
+- **LCP** : tout grand visuel au-dessus du pli est un `<Image priority>` (jamais un `background-image` CSS : découvert tard, non préchargé). Fiche produit : le fond végétal de la galerie est un `<Image priority fill>`.
+- **JS initial** : pas de `graphql-request` (client Shopify = `fetch`, `lib/shopify/client.ts`) ; `libphonenumber-js` importé dynamiquement au point d'usage ; toasts via `@/lib/toast` (jamais `react-hot-toast` en import direct, sinon le `<ToasterLazy>` ne se monte pas) ; tiroir panier monté à la demande (`CartDrawerLazy`) ; picker Mondial Relay en `next/dynamic`.
+- Le plancher actuel (~3 s de tâche JS au CPU ×4) vient du runtime App Router + React + hydratation : ne s'attaque qu'en réduisant les composants client de la fiche (BuyBoxV2), pas en optimisant des libs.
+
 ## Conventions de code
 
 - Composants en PascalCase, fichiers en PascalCase pour les composants
