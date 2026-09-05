@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Loader2, Plus, Minus, ShieldCheck, Power, Wallet, TrendingUp, Search, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 import { computeCagnotteAdjustment, AMBASSADOR_MANUAL_ADJUST_MAX_CENTS } from '@/lib/loyalty/ambassador'
 
 interface AdminAmb {

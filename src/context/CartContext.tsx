@@ -5,7 +5,7 @@ import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateC
 import type { ShopifyCart } from '@/lib/shopify/types'
 import { RELAY_ATTRIBUTE_KEY, formatRelayAttributeValue, parseRelayAttributeValue, buildRelayDeliveryAddress, type ParcelShop } from '@/lib/mondialRelay'
 import { gaAddToCart } from '@/lib/analytics'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 
 interface CartContextType {
   cart: ShopifyCart | null
@@ -176,7 +176,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           setCart(updated)
           const line = updated.lines.nodes.find((l) => l.id === lineId)
           if (line && line.quantity < quantity) {
-            toast('Stock maximum atteint pour ce produit', { icon: '⚠️' })
+            toast.info('Stock maximum atteint pour ce produit', { icon: '⚠️' })
           }
         }
         if (userErrors.length > 0) {

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import {
   getProductByHandle,
@@ -286,6 +287,10 @@ export default async function ProductPage({ params }: Props) {
       {/* ─── Buy box : galerie + panneau achat ─── */}
       <section className="bg-canvas">
         <div className="container py-10 md:py-14">
+          {/* PERF : Suspense = hydratation selective par ilot (React decoupe le
+              travail au lieu d'une seule tache de ~3 s sur mobile). Le HTML serveur
+              est affiche tel quel, le fallback ne sert jamais. */}
+          <Suspense fallback={null}>
           <BuyBoxV2
             images={images}
             variants={product.variants.nodes}
@@ -300,6 +305,7 @@ export default async function ProductPage({ params }: Props) {
             vendor={product.vendor}
             isBundle={productIsBundle}
           />
+          </Suspense>
         </div>
       </section>
 
@@ -331,11 +337,11 @@ export default async function ProductPage({ params }: Props) {
       />
 
       {/* ─── Avis ─── */}
-      <ReviewsV2 />
+      <Suspense fallback={null}><ReviewsV2 /></Suspense>
 
       {/* ─── Cross-sell + nudge franco ─── */}
       {relatedProducts.length > 0 && (
-        <CrossSellV2 products={relatedProducts} currentHandle={product.handle} />
+        <Suspense fallback={null}><CrossSellV2 products={relatedProducts} currentHandle={product.handle} /></Suspense>
       )}
 
       {/* ─── Precautions d'emploi (statique, legal, identique sur toutes fiches) ─── */}

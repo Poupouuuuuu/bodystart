@@ -7,7 +7,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, CheckCircle2, Shirt, Zap, Shield, Repeat, Footprints, Watch, Dumbbell, Backpack } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 
 const FEATURES = [
   { icon: Shirt, title: 'Tenues de sport', desc: 'Leggings, t-shirts, hoodies \u2014 pens\u00e9s pour bouger librement.' },

@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Wallet, Check, X, Loader2 } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 import { useLoyaltyMe } from '@/hooks/useLoyaltyMe'
 import { useCart } from '@/hooks/useCart'
 

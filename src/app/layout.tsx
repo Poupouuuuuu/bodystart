@@ -3,7 +3,7 @@ import { Inter, Fraunces } from 'next/font/google'
 import '@/styles/globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { CustomerProvider } from '@/context/CustomerContext'
-import { Toaster } from 'react-hot-toast'
+import ToasterLazy from '@/components/ui/ToasterLazy'
 import { getSiteUrl } from '@/lib/site-url'
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
 import ReferralCapture from '@/components/marketing/ReferralCapture'
@@ -150,21 +150,7 @@ export default function RootLayout({
             <ReferralCapture />
             <GoogleAnalytics />
             <DeferredWidgets />
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                style: {
-                  borderRadius: '12px',
-                  fontFamily: 'var(--font-inter)',
-                },
-                success: {
-                  iconTheme: {
-                    primary: '#15803d',
-                    secondary: '#fff',
-                  },
-                },
-              }}
-            />
+            <ToasterLazy />
           </CartProvider>
         </CustomerProvider>
       </body>

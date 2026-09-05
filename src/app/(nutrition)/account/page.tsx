@@ -27,7 +27,7 @@ import { useCustomer } from '@/context/CustomerContext'
 import { updateCustomer, getStoredToken } from '@/lib/shopify/customer'
 import type { AddressInput } from '@/lib/shopify/customer'
 import { formatPrice, cn } from '@/lib/utils'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 
 type Tab = 'overview' | 'orders' | 'order-detail' | 'addresses' | 'profile' | 'reviews' | 'referral' | 'cagnotte' | 'ambassador' | 'admin'
 

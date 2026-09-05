@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 
 /**
  * Capture email "2e boutique" — version DA claire V2.
