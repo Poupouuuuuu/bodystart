@@ -76,7 +76,7 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: "En clair : pour la plupart des gens, le **bisglycinate** est le meilleur compromis absorption / tolérance. Le [Magnésium Bisglycinate](/products/magnesium-bisglycinate-vitamine-b6-taurine) apporte 360 mg de magnésium élément par prise, avec de la vitamine B6 qui **contribue elle aussi à réduire la fatigue**. Regarde toujours le magnésium **élément** (la quantité réellement utile), pas le poids brut du sel de magnésium.",
+          text: "En clair : pour la plupart des gens, le **bisglycinate** est le meilleur compromis absorption / tolérance. Notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme (90 capsules, 16,90 €). Regarde toujours le magnésium **élément** (la quantité réellement utile), pas le poids brut du sel de magnésium.",
         },
       ],
     },
@@ -89,7 +89,7 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: "À qui ça s'adresse ? Aux pratiquants réguliers qui veulent réunir ces trois micronutriments dans un seul produit, souvent pris le soir par habitude. Le [ZMA+](/products/zma) associe magnésium (citrate + bisglycinate), zinc et B6 ; le [ZM-z](/products/zm-z) mise sur un magnésium marin et du zinc bisglycinate. Note bien : le ZMA soutient un fonctionnement normal, il ne « booste » pas la testostérone ni la masse musculaire.",
+          text: "À qui ça s'adresse ? Aux pratiquants réguliers qui veulent réunir ces trois micronutriments dans un seul produit, souvent pris le soir par habitude. Le [Zn Mg B6 Complex de DY Nutrition](/products/zn-mg-b6-complex-60-capsules) réunit magnésium, zinc et B6 dans une seule gélule. Note bien : le ZMA soutient un fonctionnement normal, il ne « booste » pas la testostérone ni la masse musculaire.",
         },
       ],
     },
@@ -113,9 +113,8 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
           type: 'table',
           headers: ['Produit', 'Forme', 'Prix'],
           rows: [
-            ['[Magnésium Bisglycinate](/products/magnesium-bisglycinate-vitamine-b6-taurine)', 'Bisglycinate + B6 + taurine', '27,90 €'],
-            ['[ZMA+](/products/zma)', 'Magnésium + zinc + B6', '21,90 €'],
-            ['[ZM-z](/products/zm-z)', 'Magnésium marin + zinc', '22,90 €'],
+            ['[Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules)', 'Bisglycinate, 90 capsules', '16,90 €'],
+            ['[Zn Mg B6 Complex](/products/zn-mg-b6-complex-60-capsules)', 'Magnésium + zinc + B6 (type ZMA)', '19,90 €'],
           ],
         },
         {
@@ -148,9 +147,8 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
     },
   ],
   products: [
-    { handle: 'magnesium-bisglycinate-vitamine-b6-taurine', label: 'Magnésium Bisglycinate' },
-    { handle: 'zma', label: 'ZMA+' },
-    { handle: 'zm-z', label: 'ZM-z (magnésium marin + zinc)' },
+    { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY' },
+    { handle: 'zn-mg-b6-complex-60-capsules', label: 'Zn Mg B6 Complex (type ZMA)' },
   ],
   categories: [{ slug: 'sante', label: 'Santé & bien-être' }],
   related: ['complements-apres-40-ans', 'mieux-dormir-recuperation', 'vitamine-d-combien-quand-pourquoi'],

@@ -84,9 +84,9 @@ export const quandPrendreSaWhey: BlogArticle = {
               '21,90 €',
             ],
             [
-              '[Sub Zero Whey Isolate](/products/sub-zero-whey-isolate)',
+              '[Iso Fusion Protein](/products/iso-fusion-protein)',
               'Isolate (digestion rapide)',
-              '39,90 €',
+              '36,90 €',
             ],
             [
               '[Whey Protein](/products/whey-protein)',
@@ -97,7 +97,7 @@ export const quandPrendreSaWhey: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La [Whey Native Protimuscle](/products/whey-native-protimuscle) est notre valeur sûre au bon prix ; la [Sub Zero Whey Isolate](/products/sub-zero-whey-isolate) est idéale en post-training ou si tu digères mal le lactose. Compare tout le rayon [protéines](/categories/proteines), et si tu débutes, notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant) t\'aide à trancher.',
+          text: 'La [Whey Native Protimuscle](/products/whey-native-protimuscle) est notre valeur sûre au bon prix ; l’[Iso Fusion Protein](/products/iso-fusion-protein) est idéale en post-training ou si tu digères mal le lactose. Compare tout le rayon [protéines](/categories/proteines), et si tu débutes, notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant) t\'aide à trancher.',
         },
       ],
     },
@@ -126,7 +126,7 @@ export const quandPrendreSaWhey: BlogArticle = {
   ],
   products: [
     { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle' },
-    { handle: 'sub-zero-whey-isolate', label: 'Sub Zero Whey Isolate' },
+    { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein' },
     { handle: 'whey-protein', label: 'Whey Protein' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],

@@ -73,7 +73,7 @@ export const complementsApres40Ans: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Pour le confort digestif, privilégie une forme bien tolérée comme le **bisglycinate**, à l\'inverse de l\'oxyde de magnésium bon marché qui laisse plus souvent des désagréments. Notre [Magnésium Bisglycinate + B6](/products/magnesium-bisglycinate-vitamine-b6-taurine) coche cette case (27,90 €). Le magnésium se prend volontiers le soir, dans le cadre d\'une routine de fin de journée.',
+          text: 'Pour le confort digestif, privilégie une forme bien tolérée comme le **bisglycinate**, à l\'inverse de l\'oxyde de magnésium bon marché qui laisse plus souvent des désagréments. Notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) coche cette case (16,90 €). Le magnésium se prend volontiers le soir, dans le cadre d\'une routine de fin de journée.',
         },
       ],
     },
@@ -143,7 +143,7 @@ export const complementsApres40Ans: BlogArticle = {
   products: [
     { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle' },
     { handle: 'vitamin-d3-k2', label: 'Vitamine D3 + K2' },
-    { handle: 'magnesium-bisglycinate-vitamine-b6-taurine', label: 'Magnésium Bisglycinate + B6' },
+    { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY' },
   ],
   categories: [
     { slug: 'sante', label: 'Santé & bien-être' },

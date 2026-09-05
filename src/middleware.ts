@@ -34,6 +34,14 @@ const ACCOUNT_COACHING_PREFIX = '/account/coaching'
 // rayon le plus proche. Ajouter une ligne par produit archivé.
 const RETIRED_PRODUCTS: Record<string, string> = {
   'final-mass': '/categories/proteines', // gainer Corgenic, arrêté 2026-09-05
+  'sub-zero-whey-isolate': '/categories/proteines', // Corgenic, arrêté 2026-09-05
+  'zma': '/categories/sante', // Eric Favre, arrêté 2026-09-05
+  'spiruline-vegan-bio': '/categories/sante', // Eric Favre, arrêté 2026-09-05
+  'hydrafull-electrolytes': '/categories/sante', // Eric Favre, arrêté 2026-09-05
+  'glutamine-pro-zero': '/categories/acides-amines', // Eric Favre, arrêté 2026-09-05
+  'zm-z': '/categories/sante', // Dedicated, arrêté 2026-09-05
+  'magnesium-bisglycinate-vitamine-b6-taurine': '/categories/sante', // French Nutrition, arrêté 2026-09-05
+  'ashwagandha-ksm-66': '/categories/sante', // Applied Nutrition, arrêté 2026-09-05
 }
 
 function hasSupabaseAuthCookie(req: NextRequest): boolean {

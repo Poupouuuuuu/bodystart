@@ -88,11 +88,6 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
               '38,90 €',
             ],
             [
-              '[Final Mass](/products/final-mass)',
-              'Gainer complet',
-              '69,90 €',
-            ],
-            [
               '[Zoo Mass — Gainer](/products/zoo-mass-gainer)',
               'Gainer haute densité',
               '69,90 €',
@@ -101,7 +96,7 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Le [Mutant Mass](/products/mutant-mass) est un classique très calorique pour les gros besoins ; [Final Mass](/products/final-mass) et [Zoo Mass](/products/zoo-mass-gainer) jouent la carte de la densité. Tu retrouves les gainers et les whey dans le rayon [protéines](/categories/proteines). Pense à ajuster la portion à ton objectif plutôt que de viser le maximum.',
+          text: 'Le [Mutant Mass](/products/mutant-mass) est un classique très calorique pour les gros besoins ; le [Zoo Mass](/products/zoo-mass-gainer) joue la carte de la densité. Tu retrouves les gainers et les whey dans le rayon [protéines](/categories/proteines). Pense à ajuster la portion à ton objectif plutôt que de viser le maximum.',
         },
       ],
     },
@@ -149,7 +144,6 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
   ],
   products: [
     { handle: 'mutant-mass', label: 'Mutant Mass' },
-    { handle: 'final-mass', label: 'Final Mass' },
     { handle: 'zoo-mass-gainer', label: 'Zoo Mass — Gainer' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],

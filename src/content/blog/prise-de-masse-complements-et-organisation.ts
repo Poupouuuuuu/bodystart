@@ -81,7 +81,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Côté produits, [Mutant Mass](/products/mutant-mass) à 38,90 € est la référence accessible de la catégorie, et [Final Mass de Corgenic](/products/final-mass) à 69,90 € couvre un autre budget et un autre format. Les deux reposent sur le même principe : protéines et glucides réunis dans un seul shake. Tu peux comparer les profils sur notre rayon de [protéines en poudre](/categories/proteines)."
+          "text": "Côté produits, [Mutant Mass](/products/mutant-mass) à 38,90 € est la référence accessible de la catégorie. Les deux reposent sur le même principe : protéines et glucides réunis dans un seul shake. Tu peux comparer les profils sur notre rayon de [protéines en poudre](/categories/proteines)."
         }
       ]
     },

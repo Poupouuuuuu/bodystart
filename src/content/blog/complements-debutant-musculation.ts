@@ -74,7 +74,7 @@ export const complementsDebutantMusculation: BlogArticle = {
           "type": "list",
           "items": [
             "**Vitamine D en hiver** : la vitamine D contribue au fonctionnement normal du système immunitaire et au maintien d'une ossature normale. D'octobre à mars, l'ensoleillement en France permet rarement d'en synthétiser assez. Une formule comme la [Vitamin D3+K2 Evolite](/products/vitamin-d3-k2) à 17,90 € couvre ce besoin saisonnier.",
-            "**Magnésium en cas de fatigue** : le magnésium contribue à réduire la fatigue et à un fonctionnement musculaire normal. La forme bisglycinate est appréciée pour sa bonne tolérance digestive — c'est celle du [Magnésium Bisglycinate French Nutrition](/products/magnesium-bisglycinate-vitamine-b6-taurine) à 27,90 €.",
+            "**Magnésium en cas de fatigue** : le magnésium contribue à réduire la fatigue et à un fonctionnement musculaire normal. La forme bisglycinate est appréciée pour sa bonne tolérance digestive — c'est celle du [Magnésium Bisglycinate DY Nutrition](/products/magnesium-bisglycinate-dy-90-capsules) à 16,90 €.",
             "**Oméga 3 si tu manges peu de poisson gras** : l'EPA et le DHA contribuent à une fonction cardiaque normale (effet obtenu avec 250 mg d'EPA et de DHA par jour). Utile si le saumon, le maquereau ou les sardines passent rarement dans ton assiette."
           ]
         },
@@ -134,7 +134,7 @@ export const complementsDebutantMusculation: BlogArticle = {
             [
               "Magnésium (optionnel, si fatigue)",
               "Selon l'étiquette",
-              "Magnésium Bisglycinate French Nutrition — 27,90 €"
+              "Magnésium Bisglycinate DY Nutrition — 16,90 €"
             ]
           ]
         },

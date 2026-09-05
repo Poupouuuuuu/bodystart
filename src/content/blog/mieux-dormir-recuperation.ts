@@ -40,7 +40,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Attention à la nuance réglementaire : on ne dit pas que le magnésium « fait dormir ». On dit qu\'il aide à réduire la fatigue et soutient le système nerveux — ce qui, dans une routine de fin de journée bien menée, accompagne le retour au calme. Pour le confort digestif, choisis une forme bien tolérée comme le **bisglycinate** plutôt que l\'oxyde bon marché : notre [Magnésium Bisglycinate + B6](/products/magnesium-bisglycinate-vitamine-b6-taurine) est pensé pour ça (27,90 €).',
+          text: 'Attention à la nuance réglementaire : on ne dit pas que le magnésium « fait dormir ». On dit qu\'il aide à réduire la fatigue et soutient le système nerveux — ce qui, dans une routine de fin de journée bien menée, accompagne le retour au calme. Pour le confort digestif, choisis une forme bien tolérée comme le **bisglycinate** plutôt que l\'oxyde bon marché : notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme (16,90 €).',
         },
       ],
     },
@@ -53,7 +53,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Le [ZMA+](/products/zma) de notre sélection réunit ces trois éléments (21,90 €). Ne lui prête pas de pouvoirs magiques sur le sommeil : c\'est d\'abord un apport en minéraux et vitamine B6 utile chez le sportif, dans le cadre d\'une routine de récupération.',
+          text: 'Le [Zn Mg B6 Complex de DY Nutrition](/products/zn-mg-b6-complex-60-capsules) de notre sélection réunit ces trois éléments (19,90 €). Ne lui prête pas de pouvoirs magiques sur le sommeil : c\'est d\'abord un apport en minéraux et vitamine B6 utile chez le sportif, dans le cadre d\'une routine de récupération.',
         },
       ],
     },
@@ -145,8 +145,8 @@ export const mieuxDormirRecuperation: BlogArticle = {
     },
   ],
   products: [
-    { handle: 'magnesium-bisglycinate-vitamine-b6-taurine', label: 'Magnésium Bisglycinate + B6' },
-    { handle: 'zma', label: 'ZMA+' },
+    { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY' },
+    { handle: 'zn-mg-b6-complex-60-capsules', label: 'Zn Mg B6 Complex (type ZMA)' },
     { handle: 'glutamine-kyowa-2000', label: 'Glutamine Kyowa 2000' },
   ],
   categories: [

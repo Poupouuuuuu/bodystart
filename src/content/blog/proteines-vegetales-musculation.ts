@@ -97,11 +97,6 @@ export const proteinesVegetalesMusculation: BlogArticle = {
               'Mélange 3 sources',
               '36,90 €',
             ],
-            [
-              '[Spiruline Vegan Bio](/products/spiruline-vegan-bio)',
-              'Complément (bonus)',
-              '9,90 €',
-            ],
           ],
         },
         {
@@ -115,7 +110,7 @@ export const proteinesVegetalesMusculation: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "La [spiruline](/products/spiruline-vegan-bio) est souvent citée à côté des protéines végétales. Attention à ne pas la survendre : c'est une micro-algue riche en protéines et en micronutriments, mais aux doses habituelles elle n'apporte que quelques grammes de protéines — c'est un complément d'appoint intéressant, pas une source principale de protéines.",
+          text: "La spiruline est souvent citée à côté des protéines végétales. Attention à ne pas la survendre : c'est une micro-algue riche en protéines et en micronutriments, mais aux doses habituelles elle n'apporte que quelques grammes de protéines — c'est un complément d'appoint intéressant, pas une source principale de protéines.",
         },
         {
           type: 'p',
@@ -149,7 +144,6 @@ export const proteinesVegetalesMusculation: BlogArticle = {
   products: [
     { handle: 'tri-source-protein-vegan', label: 'Tri Source Protein Vegan' },
     { handle: 'iso-french-vegan', label: 'ISO French Vegan' },
-    { handle: 'spiruline-vegan-bio', label: 'Spiruline Vegan Bio' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],
   related: ['whey-ou-isolate-quelle-difference', 'combien-de-proteines-par-jour'],

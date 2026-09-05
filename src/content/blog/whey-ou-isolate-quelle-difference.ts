@@ -51,7 +51,7 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Côté sélection, deux isolates qui répondent à ce besoin : la [Sub Zero Whey Isolate de Corgenic](/products/sub-zero-whey-isolate) à 39,90 € et l'[ISO Protein Volactive de French Nutrition](/products/iso-french-protein) à 45,90 €."
+          "text": "Côté sélection, deux isolates qui répondent à ce besoin : l'[Iso Fusion Protein d'Eric Favre](/products/iso-fusion-protein) à 36,90 € et l'[ISO Protein Volactive de French Nutrition](/products/iso-french-protein) à 45,90 €."
         }
       ]
     },
@@ -174,8 +174,8 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
       "label": "Whey Native Protimuscle — Nutrimuscle"
     },
     {
-      "handle": "sub-zero-whey-isolate",
-      "label": "Sub Zero Whey Isolate — Corgenic"
+      "handle": "iso-fusion-protein",
+      "label": "Iso Fusion Protein — Eric Favre"
     },
     {
       "handle": "iso-french-protein",

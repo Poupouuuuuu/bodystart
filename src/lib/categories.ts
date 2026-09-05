@@ -44,7 +44,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     featured: [
       { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle — la valeur sûre à 19,95 €' },
-      { handle: 'sub-zero-whey-isolate', label: 'Sub Zero Whey Isolate — l’isolate digestion facile' },
+      { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein — l’isolate digestion facile' },
       { handle: 'mutant-mass', label: 'Mutant Mass — le gainer prise de masse' },
     ],
     related: [
@@ -220,7 +220,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     featured: [
       { handle: 'vitamin-d3-k2', label: 'Vitamine D3 + K2 Evolite' },
-      { handle: 'magnesium-bisglycinate-vitamine-b6-taurine', label: 'Magnésium Bisglycinate French Nutrition' },
+      { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY Nutrition' },
       { handle: 'pure-collagen-marin-liquide', label: 'Collagène Marin Liquide Eric Favre' },
     ],
     related: [

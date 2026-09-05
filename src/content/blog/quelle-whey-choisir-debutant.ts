@@ -118,7 +118,7 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Une isolate est filtrée plus finement : elle titre en général 90 % de protéines ou plus et contient très peu de lactose. C'est sa vraie valeur ajoutée, pas un effet supérieur sur le muscle. Sur le site, l'[Iso Fusion Protein](/products/iso-fusion-protein) d'Eric Favre à 41,90 € et la [Sub Zero Whey Isolate](/products/sub-zero-whey-isolate) de Corgenic à 39,90 € couvrent ce besoin. On a comparé les deux familles en détail dans [whey ou isolate : quelle différence](/blog/whey-ou-isolate-quelle-difference)."
+          "text": "Une isolate est filtrée plus finement : elle titre en général 90 % de protéines ou plus et contient très peu de lactose. C'est sa vraie valeur ajoutée, pas un effet supérieur sur le muscle. Sur le site, l'[Iso Fusion Protein](/products/iso-fusion-protein) d'Eric Favre à 36,90 € et l'[Isolate Native Whey Mix](/products/isolate-native-whey-mix-musclewhey) de Nutrimuscle à 49,90 € couvrent ce besoin. On a comparé les deux familles en détail dans [whey ou isolate : quelle différence](/blog/whey-ou-isolate-quelle-difference)."
         }
       ]
     },
@@ -168,8 +168,8 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
       "label": "Iso Fusion Protein — Eric Favre"
     },
     {
-      "handle": "sub-zero-whey-isolate",
-      "label": "Sub Zero Whey Isolate — Corgenic"
+      "handle": "isolate-native-whey-mix-musclewhey",
+      "label": "Isolate Native Whey Mix — Nutrimuscle"
     }
   ],
   "categories": [
