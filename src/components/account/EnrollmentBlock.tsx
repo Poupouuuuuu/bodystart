@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Loader2, Phone } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 // Import dynamique : PhoneField embarque libphonenumber-js (~116 Ko) — on ne le
 // charge que lorsque le bloc est réellement rendu, hors bundle initial.
 const PhoneField = dynamic(() => import('@/components/ui/PhoneField'), {

@@ -5,7 +5,7 @@ import { Gift, Users, Copy, MessageCircle, Share2, Loader2, Wallet } from 'lucid
 import { useLoyaltyMe } from '@/hooks/useLoyaltyMe'
 import { EnrollmentBlock } from './EnrollmentBlock'
 import { getSiteUrl, getSiteDomain } from '@/lib/site-url'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 
 function buildWhatsAppText(referralCode: string): string {
   const domain = getSiteDomain() || 'notre site'

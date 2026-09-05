@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { BadgeCheck, Copy, Loader2, TrendingUp, Users, Wallet, ArrowDownRight, ArrowUpRight, Ticket } from 'lucide-react'
 import { useAmbassador, type AmbassadorTx } from '@/hooks/useAmbassador'
-import toast from 'react-hot-toast'
+import { toast } from '@/lib/toast'
 
 const euros = (cents: number) =>
   (cents / 100).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €'
