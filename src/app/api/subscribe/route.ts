@@ -6,7 +6,7 @@ import { shopifyAdminFetch } from '@/lib/shopify/client'
 // ============================================================
 // But : créer/abonner le contact dans Shopify (Admin API) avec consentement
 // marketing SUBSCRIBED, pour que l'automatisation « bienvenue » de Shopify Email
-// se déclenche et envoie le code -10 %. On N'ENVOIE aucun email ici (c'est
+// se déclenche et envoie le code -5 % (BIENVENUE5). On N'ENVOIE aucun email ici (c'est
 // Shopify qui s'en charge) et on n'affiche jamais le code côté front.
 
 export const dynamic = 'force-dynamic'
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
         email,
         emailMarketingConsent: consent,
         // popup-10 = tag d'acquisition de la POPUP (déclenche l'automatisation
-        // bienvenue -10 % de Shopify Email). Un inscrit « boutique-b » ne doit
+        // bienvenue -5 % de Shopify Email). Un inscrit « boutique-b » ne doit
         // NI polluer ce segment NI recevoir le code : tags séparés par source.
         tags: extraTag ? ['newsletter', extraTag] : ['newsletter', 'popup-10'],
       },

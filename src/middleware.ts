@@ -28,6 +28,14 @@ const STANDBY_PATHS = ['/coaching', '/vetements']
 // Sous-routes /account/coaching/* en standby : redirect 301 vers /account
 const ACCOUNT_COACHING_PREFIX = '/account/coaching'
 
+// Produits ARRÊTÉS (archivés dans Shopify, plus réapprovisionnés) : l'API
+// Storefront ne les renvoie plus, la fiche tomberait en 404. Pour Google et
+// les anciens liens (Merchant Center, réseaux), on redirige en 301 vers le
+// rayon le plus proche. Ajouter une ligne par produit archivé.
+const RETIRED_PRODUCTS: Record<string, string> = {
+  'final-mass': '/categories/proteines', // gainer Corgenic, arrêté 2026-08-19
+}
+
 function hasSupabaseAuthCookie(req: NextRequest): boolean {
   // @supabase/ssr stocke la session dans 1 ou 2 cookies nommes
   // sb-{projectRef}-auth-token (+ optionnel -code-verifier).
@@ -54,6 +62,18 @@ export function middleware(req: NextRequest) {
     url.pathname = '/products'
     url.search = ''
     return NextResponse.redirect(url, 301)
+  }
+
+  // ─── Redirection 301 des produits arrêtés vers leur rayon ───
+  if (pathname.startsWith('/products/')) {
+    const handle = pathname.slice('/products/'.length).split('/')[0]
+    const target = RETIRED_PRODUCTS[handle]
+    if (target) {
+      const url = req.nextUrl.clone()
+      url.pathname = target
+      url.search = ''
+      return NextResponse.redirect(url, 301)
+    }
   }
 
   // ─── Redirection 301 /account/coaching/* vers /account (standby coaching) ───
@@ -92,6 +112,9 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    // /products/* : uniquement pour les redirections de produits arrêtés
+    // (RETIRED_PRODUCTS) — simple lookup, aucun appel réseau.
+    '/products/:path*',
     '/account/:path*',
     '/coaching/:path*',
     '/coaching',

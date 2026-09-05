@@ -94,7 +94,7 @@ export async function createReferralDiscountCode(opts: {
       // 1 fois par filleul (1re commande) ; usable par plusieurs filleuls.
       appliesOncePerCustomer: true,
       usageLimit: null,
-      // Aucune combinaison → NON cumulable avec BIENVENUE10 ni autre code.
+      // Aucune combinaison → NON cumulable avec BIENVENUE5 ni autre code.
       combinesWith: {
         orderDiscounts: false,
         productDiscounts: false,
@@ -257,7 +257,7 @@ export async function createRedemptionDiscountCode(opts: {
  *     TOUJOURS en entier (jamais tronquée) et respecte le cap 50% du panier.
  *   - endsAt = now + 1h (anti-fuite : Shopify rejette le code après).
  *   - usageLimit = 1, appliesOncePerCustomer = true.
- *   - combinesWith : shipping uniquement → NON cumulable (ni BIENVENUE10, ni
+ *   - combinesWith : shipping uniquement → NON cumulable (ni BIENVENUE5, ni
  *     code -10% ambassadeur, ni autre remise produit/commande).
  *
  * @returns { shopifyDiscountNodeId, discountCode }

@@ -1,6 +1,8 @@
 'use client'
 
-// Popup de capture d'email : -10 % sur la 1re commande.
+// Popup de capture d'email : -5 % sur la 1re commande (code BIENVENUE5 envoyé
+// par l'automatisation Shopify Email ; passé de 10 à 5 % le 2026-08-19 pour
+// laisser les codes influenceurs/ambassadeurs à -10 %).
 // - Déclenchement : ~15 s OU exit-intent (desktop) / remontée rapide (mobile).
 // - UNE fois par visiteur (flag localStorage posé dès l'affichage ou la fermeture).
 // - Pas sur /staff (caisse) ni pour un client connecté.
@@ -140,7 +142,7 @@ export default function NewsletterPopup() {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Offre -10 % sur ta première commande"
+      aria-label="Offre -5 % sur ta première commande"
       className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center sm:p-4 bg-ink/50 backdrop-blur-sm animate-fade-in"
       onClick={close}
     >
@@ -189,7 +191,7 @@ export default function NewsletterPopup() {
                 Offre de bienvenue
               </p>
               <h2 className="font-display text-[26px] sm:text-[28px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-3">
-                -10 % sur ta première commande ?
+                -5 % sur ta première commande ?
               </h2>
               <p className="text-[15px] text-ink-mute leading-relaxed mb-6">
                 Laisse ton email, on t&apos;envoie ton code. Et tu seras au courant des nouveautés
@@ -229,7 +231,7 @@ export default function NewsletterPopup() {
                       <Loader2 className="w-4 h-4 animate-spin" /> Un instant…
                     </>
                   ) : (
-                    'Je récupère mes -10 %'
+                    'Je récupère mes -5 %'
                   )}
                 </button>
               </form>
