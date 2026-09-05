@@ -1,7 +1,7 @@
 'use client'
 
 // Popup de capture d'email : -5 % sur la 1re commande (code BIENVENUE5 envoyé
-// par l'automatisation Shopify Email ; passé de 10 à 5 % le 2026-08-19 pour
+// par l'automatisation Shopify Email ; passé de 10 à 5 % le 2026-09-05 pour
 // laisser les codes influenceurs/ambassadeurs à -10 %).
 // - Déclenchement : ~15 s OU exit-intent (desktop) / remontée rapide (mobile).
 // - UNE fois par visiteur (flag localStorage posé dès l'affichage ou la fermeture).

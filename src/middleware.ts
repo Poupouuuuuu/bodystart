@@ -33,7 +33,7 @@ const ACCOUNT_COACHING_PREFIX = '/account/coaching'
 // les anciens liens (Merchant Center, réseaux), on redirige en 301 vers le
 // rayon le plus proche. Ajouter une ligne par produit archivé.
 const RETIRED_PRODUCTS: Record<string, string> = {
-  'final-mass': '/categories/proteines', // gainer Corgenic, arrêté 2026-08-19
+  'final-mass': '/categories/proteines', // gainer Corgenic, arrêté 2026-09-05
 }
 
 function hasSupabaseAuthCookie(req: NextRequest): boolean {
