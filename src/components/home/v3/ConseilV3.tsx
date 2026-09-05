@@ -23,6 +23,7 @@ export default function ConseilV3() {
                   alt="Les rayons de la boutique BodyStart Nutrition à Coignières"
                   fill
                   sizes="(max-width: 1024px) 100vw, 600px"
+                  quality={68}
                   className="object-cover transition-transform duration-[1200ms] ease-out-expo hover:scale-[1.03]"
                 />
               </div>

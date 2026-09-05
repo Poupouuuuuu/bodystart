@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, Search } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import CartDrawer from '@/components/cart/CartDrawer'
+import CartDrawerLazy from '@/components/cart/CartDrawerLazy'
 import { getCollections } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/shopify/types'
 
@@ -43,7 +43,7 @@ export default async function NotFound() {
         <Header collections={collections} />
       </Suspense>
       <Suspense fallback={null}>
-        <CartDrawer />
+        <CartDrawerLazy />
       </Suspense>
       <main id="main" className="flex-1 bg-canvas">
         <div className="container flex min-h-[70vh] items-center py-16 md:py-24">

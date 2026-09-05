@@ -1,5 +1,4 @@
 import { shopifyFetch } from './client'
-import { normalizeToE164 } from '@/lib/loyalty/phone'
 import {
   CUSTOMER_CREATE,
   CUSTOMER_ACCESS_TOKEN_CREATE,
@@ -181,6 +180,10 @@ export async function updateCustomer(
     if (!raw) {
       delete input.phone
     } else {
+      // PERF : libphonenumber-js (~31 Ko gzip) n'est charge qu'ici, au moment
+      // de la mise a jour du telephone — plus dans le bundle de toutes les
+      // pages via CustomerContext -> customer.ts.
+      const { normalizeToE164 } = await import('@/lib/loyalty/phone')
       const e164 = normalizeToE164(raw)
       if (!e164) {
         return {

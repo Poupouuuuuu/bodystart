@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 export const revalidate = 3600
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import CartDrawer from '@/components/cart/CartDrawer'
+import CartDrawerLazy from '@/components/cart/CartDrawerLazy'
 import BackToTop from '@/components/ui/BackToTop'
 import BirthdayBanner from '@/components/marketing/BirthdayBanner'
 import NavigationTracker from '@/components/layout/NavigationTracker'
@@ -110,7 +110,7 @@ export default async function NutritionLayout({ children }: { children: React.Re
         <Header collections={collections} />
       </Suspense>
       <Suspense fallback={null}>
-        <CartDrawer />
+        <CartDrawerLazy />
       </Suspense>
       <main id="main" className="flex-1">{children}</main>
       <Suspense fallback={null}>
