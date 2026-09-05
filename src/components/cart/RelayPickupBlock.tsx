@@ -9,7 +9,10 @@ import { useState, useCallback } from 'react'
 import { MapPin } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { isMondialRelayEnabled, type ParcelShop } from '@/lib/mondialRelay'
-import MondialRelayPicker from './MondialRelayPicker'
+import dynamic from 'next/dynamic'
+// PERF : le picker (carte Leaflet + widget) pesait ~15 Ko gzip dans le bundle
+// de TOUTES les pages via le tiroir panier du layout. Charge a l'ouverture.
+const MondialRelayPicker = dynamic(() => import('./MondialRelayPicker'), { ssr: false })
 
 export default function RelayPickupBlock() {
   const { relayPickup, selectRelayPickup, clearRelayPickup } = useCart()

@@ -104,10 +104,21 @@ export default function ProductGalleryV2({
             verte (même langage que les cartes produit) et rayon porté à 24px —
             l'image est le premier vendeur, elle doit avoir la présence du hero
             plutôt que celle d'un cadre administratif. */}
-        <div
-          className="group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-cover bg-center shadow-card"
-          style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
-        >
+        {/* PERF : le fond vegetal etait un background CSS -> decouvert apres le
+            CSS, non preload, et c'est LUI le plus grand element peint (LCP) sur
+            mobile. En <Image priority>, il est preload avec le HTML et servi
+            redimensionne (390 px -> ~40 Ko au lieu du 1200 px complet). */}
+        <div className="group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-sage shadow-card">
+          <Image
+            src="/bg-vegetal.webp"
+            alt=""
+            aria-hidden="true"
+            fill
+            priority
+            quality={70}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover"
+          />
           {currentImage ? (
             // <button> (était un div onClick) : le zoom était inatteignable au
             // clavier — important pour lire une étiquette de composition.
