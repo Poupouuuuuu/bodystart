@@ -21,7 +21,7 @@ import CrossSellV2 from '@/components/product/v2/CrossSellV2'
 import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
 import { buildPageMetadata } from '@/lib/seo'
 import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
-import { getProductRating, buildAggregateRating } from '@/lib/reviews'
+import { ratingFromMetafields, buildAggregateRating } from '@/lib/reviews'
 import TrackViewItem from '@/components/analytics/TrackViewItem'
 
 // ISR 3 min (sprint perf 2026-07-04) : la page était en revalidate=0 +
@@ -207,7 +207,7 @@ export default async function ProductPage({ params }: Props) {
 
   // Avis-ready : n'émet aggregateRating QUE si une vraie source d'avis existe
   // (aucune aujourd'hui → rien n'est émis ; cf. src/lib/reviews.ts).
-  const rating = await getProductRating(product.handle)
+  const rating = ratingFromMetafields(product.metafields)
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -304,6 +304,7 @@ export default async function ProductPage({ params }: Props) {
             format={format}
             vendor={product.vendor}
             isBundle={productIsBundle}
+            rating={rating}
           />
           </Suspense>
         </div>

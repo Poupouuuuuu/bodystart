@@ -42,6 +42,12 @@ interface BuyBoxV2Props {
    * interne (image variant-specific, format, etc.).
    */
   isBundle?: boolean
+  /**
+   * Note produit REELLE (metafields reviews.rating / rating_count ecrits par
+   * l'app d'avis, ex. Judge.me). null tant qu'aucune app n'est installee :
+   * on affiche alors la note Google de la boutique.
+   */
+  rating?: { ratingValue: number; reviewCount: number } | null
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -74,6 +80,7 @@ export default function BuyBoxV2({
   format = null,
   vendor = null,
   isBundle = false,
+  rating = null,
 }: BuyBoxV2Props) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   // Pour un bundle, on démarre sur une variante COMPLÈTE (composants tous
@@ -546,7 +553,17 @@ export default function BuyBoxV2({
                 <span className="font-semibold">Une vraie boutique à Coignières depuis 13 ans.</span>{' '}
                 On ne vend que ce qu&apos;on consomme — et on te conseille comme au comptoir.
               </p>
-              {/* Note Google réelle (source unique GOOGLE_RATING, relevée à la main). */}
+              {/* Avis PRODUIT (app d'avis) si disponibles, sinon note Google de la
+                  boutique (source unique GOOGLE_RATING, relevée à la main). */}
+              {rating && rating.reviewCount > 0 ? (
+                <a
+                  href="#avis"
+                  className="mt-1.5 inline-flex items-center gap-1.5 font-semibold underline underline-offset-2 hover:text-fresh-deep transition-colors"
+                >
+                  <Star className="w-3.5 h-3.5 text-mustard fill-current" aria-hidden="true" />
+                  {rating.ratingValue.toLocaleString('fr-FR')}/5 · {rating.reviewCount} avis client{rating.reviewCount > 1 ? 's' : ''}
+                </a>
+              ) : (
               <a
                 href={GOOGLE_LISTING_URL}
                 target="_blank"
@@ -556,6 +573,7 @@ export default function BuyBoxV2({
                 <Star className="w-3.5 h-3.5 text-mustard fill-current" aria-hidden="true" />
                 {GOOGLE_RATING.value.toLocaleString('fr-FR')}/5 sur Google · {GOOGLE_RATING.count} avis
               </a>
+              )}
             </div>
           </div>
 

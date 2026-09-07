@@ -195,7 +195,9 @@ export const GET_PRODUCT_BY_HANDLE = `
         { namespace: "custom", key: "usage" },
         { namespace: "custom", key: "nutrition_facts" },
         { namespace: "custom", key: "format" },
-        { namespace: "custom", key: "allergenes" }
+        { namespace: "custom", key: "allergenes" },
+        { namespace: "reviews", key: "rating" },
+        { namespace: "reviews", key: "rating_count" }
       ]) {
         namespace
         key
