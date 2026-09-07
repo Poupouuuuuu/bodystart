@@ -26,24 +26,26 @@ Codes en vigueur : `RENTREE10` (-10 % sur tout, tous les clients, du 7 au 30 sep
 
 ---
 
-## Email 1 — jeudi 10 septembre, 18h · RENTREE10
+## Email 1 — mercredi 9 ou jeudi 10 septembre, 18h · RENTREE10 (texte final validé le 07/09)
 
-**Objet** : Rentrée : -10 % sur tout le site jusqu'au 30 septembre
-**Aperçu** : Le code RENTREE10, valable tout le mois, sur tout le catalogue.
+**Objet** : Rentrée : −10 % sur tout le site jusqu'au 30 septembre
+**Aperçu** : Le code RENTREE10, valable tout le mois, et les 3 essentiels pour reprendre.
 
 **Titre** : C'est la rentrée. On t'aide à repartir.
 
-La salle a rouvert, les habitudes reviennent, et le placard à compléments est vide. Pour la rentrée, **-10 % sur tout le site jusqu'au 30 septembre** avec le code **RENTREE10**, à saisir au paiement.
+La salle a rouvert, les habitudes reviennent, et le placard à compléments est vide. Pour la rentrée, **−10 % sur tout le site jusqu'au 30 septembre** avec le code **RENTREE10**, à saisir au moment du paiement.
 
-Par où commencer ? Deux valeurs sûres, et c'est tout :
-- **Une whey** pour atteindre ton quota de protéines les jours où l'assiette ne suffit pas. La Whey Native Protimuscle est notre référence au bon prix.
-- **La créatine monohydrate**, le complément le plus étudié au monde, 3 à 5 g par jour, tous les jours.
+**Les 3 essentiels de la rentrée**
+- **Une whey**, pour atteindre ton quota de protéines les jours où l'assiette ne suffit pas. La Whey Native Protimuscle est notre référence au bon prix.
+- **La créatine monohydrate**, le complément le plus étudié au monde : 3 à 5 g par jour, tous les jours, sans cycle.
+- **Un multivitamines ou de la vitamine D3**, parce que les journées raccourcissent et que la fatigue arrive avant l'hiver.
 
 Brûleur, booster, BCAA : inutile pour démarrer. On te le dira aussi au comptoir.
 
-**Bouton** : Profiter des -10 % → https://bodystart-nutrition.fr/products
+**Bouton** : Profiter des −10 % → https://bodystart-nutrition.fr/products
 
-**Sous le bouton** : Code RENTREE10 · valable jusqu'au 30 septembre · livraison offerte dès 85 € · Click & Collect gratuit à Coignières. Tu débutes vraiment ? Le guide complet : https://bodystart-nutrition.fr/blog/complements-debutant-musculation
+**Sous le bouton** : Code RENTREE10 · valable jusqu'au 30 septembre · livraison offerte dès 85 € · Click & Collect gratuit à Coignières.
+Tu débutes vraiment ? Le guide complet : https://bodystart-nutrition.fr/blog/complements-debutant-musculation
 
 ---
 
