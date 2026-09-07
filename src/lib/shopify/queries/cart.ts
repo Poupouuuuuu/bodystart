@@ -2,6 +2,9 @@ const CART_FRAGMENT = `
   fragment CartFragment on Cart {
     id
     checkoutUrl
+    buyerIdentity {
+      email
+    }
     totalQuantity
     lines(first: 50) {
       nodes {
@@ -156,6 +159,23 @@ export const REMOVE_FROM_CART = `
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
         ...CartFragment
+      }
+    }
+  }
+`
+
+// Rattache le panier au client connecté : checkout pré-rempli (email,
+// adresses) et panier identifié côté Shopify (relance « panier abandonné »).
+export const UPDATE_CART_BUYER_IDENTITY = `
+  ${CART_FRAGMENT}
+  mutation UpdateCartBuyerIdentity($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+      cart {
+        ...CartFragment
+      }
+      userErrors {
+        field
+        message
       }
     }
   }

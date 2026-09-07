@@ -21,6 +21,7 @@ import {
   UPDATE_CART_DISCOUNT_CODES,
   ADD_CART_DELIVERY_ADDRESSES,
   REMOVE_CART_DELIVERY_ADDRESSES,
+  UPDATE_CART_BUYER_IDENTITY,
 } from './queries/cart'
 import {
   GET_BLOG_ARTICLES,
@@ -175,6 +176,18 @@ export async function removeFromCart(cartId: string, lineIds: string[]) {
     { cartId, lineIds }
   )
   return data.cartLinesRemove.cart
+}
+
+export async function updateCartBuyerIdentity(
+  cartId: string,
+  buyerIdentity: { customerAccessToken?: string; email?: string }
+) {
+  const data = await shopifyFetch<{
+    cartBuyerIdentityUpdate: { cart: ShopifyCart | null; userErrors: { field: string[] | null; message: string }[] }
+  }>(UPDATE_CART_BUYER_IDENTITY, { cartId, buyerIdentity })
+  const errs = data.cartBuyerIdentityUpdate.userErrors
+  if (errs?.length) throw new Error(errs.map((e) => e.message).join(' | '))
+  return data.cartBuyerIdentityUpdate.cart
 }
 
 export async function getCart(cartId: string) {

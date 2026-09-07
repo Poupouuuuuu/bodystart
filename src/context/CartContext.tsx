@@ -1,7 +1,9 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef, type ReactNode } from 'react'
-import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, addCartDeliveryAddresses, removeCartDeliveryAddresses } from '@/lib/shopify'
+import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, addCartDeliveryAddresses, removeCartDeliveryAddresses, updateCartBuyerIdentity } from '@/lib/shopify'
+import { useCustomer } from '@/context/CustomerContext'
+import { getStoredToken } from '@/lib/shopify/customer'
 import type { ShopifyCart } from '@/lib/shopify/types'
 import { RELAY_ATTRIBUTE_KEY, formatRelayAttributeValue, parseRelayAttributeValue, buildRelayDeliveryAddress, type ParcelShop } from '@/lib/mondialRelay'
 import { gaAddToCart } from '@/lib/analytics'
@@ -49,6 +51,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     cartRef.current = cart
   }, [cart])
+
+  // Panier rattaché au client connecté (2026-09-05). Sans ça, le panier
+  // Storefront est anonyme : le client retape son email au checkout et
+  // Shopify ne peut pas lui envoyer de relance « panier abandonné » (seule
+  // la relance « paiement abandonné », après saisie de l'email, marchait).
+  // Idempotent : on ne rappelle l'API que si l'email du panier diffère.
+  const { customer } = useCustomer()
+  const linkedRef = useRef<string>('')
+  useEffect(() => {
+    const email = customer?.email
+    if (!cart?.id || !email) return
+    if (cart.buyerIdentity?.email === email) return
+    const key = `${cart.id}|${email}`
+    if (linkedRef.current === key) return
+    linkedRef.current = key
+    const token = getStoredToken()
+    updateCartBuyerIdentity(cart.id, token ? { customerAccessToken: token, email } : { email })
+      .then((c) => {
+        if (c) setCart(c)
+      })
+      .catch((err) => {
+        // Non bloquant (token expiré, etc.) : le panier reste utilisable.
+        console.warn('[cart] buyerIdentity non rattachée :', err)
+      })
+  }, [cart?.id, cart?.buyerIdentity?.email, customer?.email])
 
   // File des mutations quantité : deux cartLinesUpdate parallèles peuvent se
   // doubler sur le réseau et la réponse PÉRIMÉE écraserait la plus récente.

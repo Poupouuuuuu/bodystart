@@ -170,6 +170,7 @@ export interface CartDiscountCode {
 export interface ShopifyCart {
   id: string
   checkoutUrl: string
+  buyerIdentity?: { email: string | null } | null
   totalQuantity: number
   lines: {
     nodes: CartItem[]
