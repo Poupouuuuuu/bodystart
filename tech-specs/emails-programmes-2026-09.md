@@ -1,41 +1,70 @@
-# Emails programmés — série rentrée 2026
+# Emails programmés — rentrée 2026
 
-Préparé le 2026-09-05. Quatre campagnes Shopify Email, une toutes les deux semaines, à créer dans **Marketing → Créer une campagne → Shopify Email**, puis **Planifier** (pas « Envoyer »).
+Mis à jour le 2026-09-07. Aucun email n'est encore parti. Tout se crée dans **Marketing → Créer une campagne → Shopify Email**, puis **Planifier** (pas « Envoyer ») pour les dates futures.
+
+## Calendrier complet (septembre → novembre)
+
+| Date | Heure | Email | Fichier |
+|---|---|---|---|
+| Lundi 7 septembre | ce soir | Venomette 1 — teaser « Une surprise arrive demain » | `emails-venomette-2026-09.md` |
+| Mardi 8 septembre | dès que la vidéo est en ligne | Venomette 2 — lancement, code VENO10 + concours | `emails-venomette-2026-09.md` |
+| Jeudi 10 septembre | 18h | **Rentrée — -10 % avec RENTREE10 jusqu'au 30/09** | ci-dessous, email 1 |
+| Lundi 14 septembre | après le tirage | Venomette 3 — gagnant | `emails-venomette-2026-09.md` |
+| Vendredi 25 septembre | 18h | **Rappel — plus que 5 jours pour RENTREE10** | ci-dessous, email 2 |
+| Mardi 6 octobre | 18h | Sèche : ce qui marche vraiment | ci-dessous, email 3 |
+| Mardi 20 octobre | 18h | Récupération et sommeil | ci-dessous, email 4 |
+| Mardi 3 novembre | 18h | Click & Collect + parrainage | ci-dessous, email 5 |
 
 Réglages communs
 - Destinataires : **Clients → Abonnés à l'e-mail marketing** (tous, y compris les contacts importés en juin).
 - Expéditeur : BodyStart Nutrition, contact@bodystart-nutrition.fr.
 - Style : fond `#FAF8F3`, titres `#2D5A2D` (serif), texte `#2A2A2A`, bouton fond `#3B7A3F` texte blanc arrondi, pied de page vert sapin `#2D5A2D` (même habillage que la relance panier).
 - Pied de page : adresse, « Du lundi au samedi, 11h-19h · 07 61 84 75 80 », lien de désabonnement (obligatoire).
-- Toujours « Envoyer un test » sur téléphone avant de planifier.
-- Jour et heure : **mardi 18h** (lecture le soir, après la salle).
+- Tutoiement, comme sur le site. Toujours « Envoyer un test » sur téléphone avant de planifier.
 
-Codes : `BIENVENUE5` (5 %, une fois par client) est le seul code cité. Jamais de nouveau code par email : les remises répétées apprennent à attendre la promo.
+Codes en vigueur : `RENTREE10` (-10 % sur tout, tous les clients, du 7 au 30 septembre 2026 inclus, créé dans Shopify le 07/09), `VENO10` (-10 %, code influenceuse, sans date de fin), `BIENVENUE5` (5 %, première commande via le popup). Après septembre, revenir à des emails de conseil sans code : les remises répétées apprennent à attendre la promo.
 
 ---
 
-## Email 1 — mardi 16 septembre, 18h
+## Email 1 — jeudi 10 septembre, 18h · RENTREE10
 
-**Objet** : La rentrée, par où commencer ?
-**Aperçu** : Deux produits suffisent pour bien démarrer. Le reste, c'est de l'entraînement.
+**Objet** : Rentrée : -10 % sur tout le site jusqu'au 30 septembre
+**Aperçu** : Le code RENTREE10, valable tout le mois, sur tout le catalogue.
 
-**Titre** : Par où commencer ?
+**Titre** : C'est la rentrée. On t'aide à repartir.
 
-Reprise de la salle, bonnes résolutions, et cette question qu'on entend dix fois par jour au comptoir : « je prends quoi ? ». La réponse honnête : pas grand-chose.
+La salle a rouvert, les habitudes reviennent, et le placard à compléments est vide. Pour la rentrée, **-10 % sur tout le site jusqu'au 30 septembre** avec le code **RENTREE10**, à saisir au paiement.
 
-Deux valeurs sûres, et c'est tout :
+Par où commencer ? Deux valeurs sûres, et c'est tout :
 - **Une whey** pour atteindre ton quota de protéines les jours où l'assiette ne suffit pas. La Whey Native Protimuscle est notre référence au bon prix.
 - **La créatine monohydrate**, le complément le plus étudié au monde, 3 à 5 g par jour, tous les jours.
 
-Brûleur, booster, BCAA : inutile pour démarrer. On te le dira aussi en boutique.
+Brûleur, booster, BCAA : inutile pour démarrer. On te le dira aussi au comptoir.
 
-**Bouton** : Voir les deux produits → https://bodystart-nutrition.fr/products?obj=muscle
+**Bouton** : Profiter des -10 % → https://bodystart-nutrition.fr/products
 
-**Sous le bouton** : Tu débutes vraiment ? On a écrit un guide complet : https://bodystart-nutrition.fr/blog/complements-debutant-musculation
+**Sous le bouton** : Code RENTREE10 · valable jusqu'au 30 septembre · livraison offerte dès 85 € · Click & Collect gratuit à Coignières. Tu débutes vraiment ? Le guide complet : https://bodystart-nutrition.fr/blog/complements-debutant-musculation
 
 ---
 
-## Email 2 — mardi 30 septembre, 18h
+## Email 2 — vendredi 25 septembre, 18h · rappel RENTREE10
+
+**Objet** : Plus que 5 jours pour RENTREE10
+**Aperçu** : -10 % sur tout le site, ça s'arrête mercredi 30 septembre.
+
+**Titre** : Dernière ligne droite
+
+Le code **RENTREE10** s'arrête **mercredi 30 septembre à minuit**. Si tu dois refaire le plein de whey, de créatine ou de vitamines avant l'automne, c'est le moment : -10 % sur tout le site, à saisir au paiement.
+
+Un doute sur ce qu'il te faut ? Réponds à cet email, on te répond comme au comptoir.
+
+**Bouton** : Utiliser RENTREE10 → https://bodystart-nutrition.fr/products
+
+**Sous le bouton** : Livraison offerte dès 85 € · retrait gratuit en boutique, 8 rue du Pont des Landes, Coignières.
+
+---
+
+## Email 3 — mardi 6 octobre, 18h · sèche
 
 **Objet** : Sèche : ce qui marche vraiment (et ce qui ne marche pas)
 **Aperçu** : Aucun brûleur ne fait maigrir seul. Voilà ce qu'on conseille vraiment.
@@ -57,7 +86,7 @@ Les compléments viennent après : une isolate (peu de glucides, peu de lipides)
 
 ---
 
-## Email 3 — mardi 14 octobre, 18h
+## Email 4 — mardi 20 octobre, 18h · récupération
 
 **Objet** : Tu dors mal ? Tu récupères mal.
 **Aperçu** : Magnésium, zinc, sommeil : ce que disent vraiment les études.
@@ -76,7 +105,7 @@ Les jours raccourcissent, les séances s'enchaînent, et la fatigue s'installe. 
 
 ---
 
-## Email 4 — mardi 28 octobre, 18h
+## Email 5 — mardi 3 novembre, 18h · Click & Collect + parrainage
 
 **Objet** : Commande en ligne, retire en boutique dans quelques minutes
 **Aperçu** : Click & Collect gratuit, conseil gratuit, et 10 € pour ton pote.
@@ -97,6 +126,6 @@ Et si tu es content de nous : ton code parrain donne **10 € à un pote** sur s
 
 ---
 
-## Après ces quatre envois
+## Après ces envois
 
-Mesurer dans Marketing → Automatisations et campagnes : taux d'ouverture (cible > 35 %), clics (> 3 %), commandes. Si un sujet marche nettement mieux, le décliner. Prochaine série possible : novembre (fêtes, packs cadeaux), janvier (reprise).
+Mesurer dans Marketing → Automatisations et campagnes : taux d'ouverture (cible > 35 %), clics (> 3 %), commandes, et le nombre d'utilisations de RENTREE10 et VENO10 dans Réductions. Si un sujet marche nettement mieux, le décliner. Prochaine série possible : fin novembre (fêtes, packs cadeaux), janvier (reprise).
