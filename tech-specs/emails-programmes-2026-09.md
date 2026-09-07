@@ -21,6 +21,7 @@ Réglages communs
 - Style : fond `#FAF8F3`, titres `#2D5A2D` (serif), texte `#2A2A2A`, bouton fond `#3B7A3F` texte blanc arrondi, pied de page vert sapin `#2D5A2D` (même habillage que la relance panier).
 - Pied de page : adresse, « Du lundi au samedi, 11h-19h · 07 61 84 75 80 », lien de désabonnement (obligatoire).
 - Tutoiement, comme sur le site. Toujours « Envoyer un test » sur téléphone avant de planifier.
+- Ton (retour Adam, 07/09) : on conseille, on ne dénigre jamais une catégorie de produits qu'on vend (brûleurs, boosters, BCAA…), et on ne met pas en avant une seule marque ou un seul produit quand on en propose plusieurs.
 
 Codes en vigueur : `RENTREE10` (-10 % sur tout, tous les clients, du 7 au 30 septembre 2026 inclus, créé dans Shopify le 07/09), `VENO10` (-10 %, code influenceuse, sans date de fin), `BIENVENUE5` (5 %, première commande via le popup). Après septembre, revenir à des emails de conseil sans code : les remises répétées apprennent à attendre la promo.
 
@@ -33,19 +34,19 @@ Codes en vigueur : `RENTREE10` (-10 % sur tout, tous les clients, du 7 au 30 sep
 
 **Titre** : C'est la rentrée. On t'aide à repartir.
 
-La salle a rouvert, les habitudes reviennent, et le placard à compléments est vide. Pour la rentrée, **−10 % sur tout le site jusqu'au 30 septembre** avec le code **RENTREE10**, à saisir au moment du paiement.
+Les vacances sont finies, les habitudes reviennent, et le placard à compléments est vide. Pour la rentrée, **−10 % sur tout le site jusqu'au 30 septembre** avec le code **RENTREE10**, à saisir au moment du paiement.
 
 **Les 3 essentiels de la rentrée**
-- **Une whey**, pour atteindre ton quota de protéines les jours où l'assiette ne suffit pas. La Whey Native Protimuscle est notre référence au bon prix.
+- **Une protéine en poudre**, pour atteindre ton quota de protéines les jours où l'assiette ne suffit pas. Whey, isolate, native ou végétale : on a toutes les gammes et tous les budgets, et on t'aide à choisir.
 - **La créatine monohydrate**, le complément le plus étudié au monde : 3 à 5 g par jour, tous les jours, sans cycle.
 - **Un multivitamines ou de la vitamine D3**, parce que les journées raccourcissent et que la fatigue arrive avant l'hiver.
 
-Brûleur, booster, BCAA : inutile pour démarrer. On te le dira aussi au comptoir.
+Et pour aller plus loin, tout le reste du catalogue est aussi à −10 %. Un doute sur ce qu'il te faut ? Réponds à cet email ou passe au comptoir : le conseil est gratuit.
 
 **Bouton** : Profiter des −10 % → https://bodystart-nutrition.fr/products
 
 **Sous le bouton** : Code RENTREE10 · valable jusqu'au 30 septembre · livraison offerte dès 85 € · Click & Collect gratuit à Coignières.
-Tu débutes vraiment ? Le guide complet : https://bodystart-nutrition.fr/blog/complements-debutant-musculation
+Tu débutes vraiment ? [Le guide complet](https://bodystart-nutrition.fr/blog/complements-debutant-musculation) — lien posé sur les mots, pas l'URL brute.
 
 ---
 
@@ -69,18 +70,18 @@ Un doute sur ce qu'il te faut ? Réponds à cet email, on te répond comme au co
 ## Email 3 — mardi 6 octobre, 18h · sèche
 
 **Objet** : Sèche : ce qui marche vraiment (et ce qui ne marche pas)
-**Aperçu** : Aucun brûleur ne fait maigrir seul. Voilà ce qu'on conseille vraiment.
+**Aperçu** : Déficit, protéines, entraînement : l'ordre qui marche, et les compléments qui aident.
 
 **Titre** : La vérité sur la sèche
 
-Chaque automne, les brûleurs de graisse partent en tête des ventes. Chaque automne, on dit la même chose au comptoir : un brûleur n'a jamais fait perdre un gramme sans déficit calorique.
+Chaque automne, c'est la même question au comptoir : comment sécher sans perdre de muscle ? La réponse tient en trois points, dans l'ordre.
 
 Ce qui marche, dans l'ordre :
 1. Un déficit modéré, 300 à 500 kcal sous ta maintenance.
 2. Des protéines élevées pour garder le muscle (1,6 à 2,2 g par kilo).
 3. La musculation maintenue lourde. Le cardio en appoint.
 
-Les compléments viennent après : une isolate (peu de glucides, peu de lipides), une multivitamine si tu manges moins, et seulement ensuite un brûleur, pour la vigilance à l'entraînement.
+Les compléments qui aident : une isolate (peu de glucides, peu de lipides) pour tenir tes protéines, un multivitamines si tu manges moins, et un brûleur pour l'énergie et la vigilance à l'entraînement, en appui du reste.
 
 **Bouton** : Lire le guide complet de la sèche → https://bodystart-nutrition.fr/blog/comment-faire-une-seche
 
@@ -95,7 +96,7 @@ Les compléments viennent après : une isolate (peu de glucides, peu de lipides)
 
 **Titre** : Récupérer, c'est aussi s'entraîner
 
-Les jours raccourcissent, les séances s'enchaînent, et la fatigue s'installe. Avant de chercher un booster, regarde la récupération.
+Les jours raccourcissent, les séances s'enchaînent, et la fatigue s'installe. Le premier levier, c'est la récupération.
 
 - **Le magnésium** contribue à réduire la fatigue et à une fonction musculaire normale. La forme bisglycinate est la mieux tolérée.
 - **Zinc + magnésium + B6** (formule type ZMA) : un tout-en-un pour les pratiquants réguliers, à prendre le soir.
