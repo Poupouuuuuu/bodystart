@@ -9,6 +9,7 @@ import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
 import BundleGalleryV2 from './BundleGalleryV2'
 import BundleSelectorsV2 from './BundleSelectorsV2'
+import StockAlertForm from './StockAlertForm'
 import { getBundleComponentDetailsFromVariant, pickInitialBundleVariant } from '@/lib/shopify/bundle'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
 
@@ -438,7 +439,7 @@ export default function BuyBoxV2({
             </>
           )}
 
-          {/* Bandeau épuisé (au-dessus du bouton d'achat) */}
+          {/* Bandeau épuisé (au-dessus du bouton d'achat) + alerte retour en stock */}
           {selectedUnavailable && (
             <div className="mt-7 rounded-2xl border border-spruce/15 bg-sage/50 px-5 py-4">
               <p className="text-[14px] font-semibold text-spruce">
@@ -449,6 +450,7 @@ export default function BuyBoxV2({
                   Une autre option est disponible — choisis-la ci-dessus.
                 </p>
               )}
+              <StockAlertForm key={selectedVariant.id} variantId={selectedVariant.id} />
             </div>
           )}
 

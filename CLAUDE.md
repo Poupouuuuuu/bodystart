@@ -35,6 +35,7 @@ src/
 │       ├── contact/        # Formulaire de conseil (Resend + rate limit)
 │       ├── newsletter/     # Inscription newsletter (Resend contacts)
 │       ├── inventory/      # Stock en temps réel par variante/location (Admin API + rate limit)
+│       ├── stock-alert/    # POST « me prévenir quand c'est de retour » (Supabase stock_alerts) + webhook/ inventory_levels/update → email Resend
 │       └── stripe/
 │           ├── checkout/   # POST — crée une Stripe Checkout Session (coaching)
 │           └── webhook/    # POST — gère checkout.completed + subscription.deleted
