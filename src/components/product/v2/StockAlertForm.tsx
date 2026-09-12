@@ -80,7 +80,7 @@ export default function StockAlertForm({ variantId }: StockAlertFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="ton@email.fr"
-          className="flex-1 h-11 rounded-full border border-spruce/20 bg-white px-4 text-[16px] md:text-[14px] text-ink placeholder:text-ink-mute/70 focus:outline-none focus:ring-2 focus:ring-fresh/40"
+          className="h-11 sm:flex-1 rounded-full border border-spruce/20 bg-white px-4 text-[16px] md:text-[14px] text-ink placeholder:text-ink-mute/70 focus:outline-none focus:ring-2 focus:ring-fresh/40"
         />
         <button
           type="submit"
