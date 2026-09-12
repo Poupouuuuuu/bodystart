@@ -6,6 +6,7 @@ import ObjectifsV3 from '@/components/home/v3/ObjectifsV3'
 import StatsBand from '@/components/home/v3/StatsBand'
 import BestSellersV3 from '@/components/home/v3/BestSellersV3'
 import ConseilV3 from '@/components/home/v3/ConseilV3'
+import VuSurInstagramV3 from '@/components/home/v3/VuSurInstagramV3'
 import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
@@ -72,6 +73,10 @@ export default function HomePage() {
           <BestSellersAsync />
         </Suspense>
       </Reveal>
+
+      {/* 3 bis. Vu sur Instagram — vidéos d'influenceurs tournées à la boutique.
+          Masqué tant que src/lib/social-proof.ts est vide (Reveal interne). */}
+      <VuSurInstagramV3 />
 
       {/* 4. Objectifs — liste typographique */}
       <Reveal>
