@@ -6,7 +6,7 @@ Formats par type de page (suffixe global ` | BodyStart Nutrition` ajouté automa
 
 | Type | Format | Exemple |
 |---|---|---|
-| Fiche produit | `[Produit] — [catégorie/bénéfice]` | `Créatine Creapure — 100 % monohydrate micronisée` |
+| Fiche produit | `[Produit] [Marque] : [catégorie/bénéfice]` | `Créatine Creapure : 100 % monohydrate micronisée` |
 | Catégorie | `[Catégorie] : [promesse courte]` | `Protéines : whey, isolate et vegan testées` |
 | Article | `[Question/sujet] : [angle]` | `Créatine avant ou après la séance : ce que dit la science` |
 | Locale | `[Service] à [Ville] ([dépt])` | `Boutique de compléments alimentaires à Coignières (78)` |
@@ -32,7 +32,7 @@ Règles : mot-clé principal au début, ≤ 60 caractères avant suffixe, pas de
 4. « Comment l'utiliser » : dose, timing, durée — en langage simple.
 5. « Pourquoi chez BodyStart » : conseil en boutique, stock réel, Click & Collect Coignières, livraison France.
 6. Description 150-300 mots uniques. Réécrire, jamais copier le fabricant (duplicate = invisible).
-7. Image : alt = « [Produit] [marque] [format] — BodyStart Nutrition ».
+7. Image : alt = « [Produit] [marque] [format], BodyStart Nutrition ».
 8. Maillage : lier 2-3 produits complémentaires + la catégorie parente.
 
 ## Maillage interne

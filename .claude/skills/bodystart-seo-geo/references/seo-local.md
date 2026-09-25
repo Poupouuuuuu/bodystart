@@ -20,7 +20,7 @@ Pour une boutique physique, le pack local Google (carte + 3 fiches) capte plus d
 
 ## NAP et citations locales
 
-- **NAP strictement identique partout** : `BodyStart Nutrition — 8 Rue du Pont des Landes, 78310 Coignières — [tél]`. Toute variation dilue le signal.
+- **NAP strictement identique partout** : `BodyStart Nutrition, 8 Rue du Pont des Landes, 78310 Coignières, 07 61 84 75 80`. Toute variation dilue le signal.
 - Citations à créer/mettre à jour : PagesJaunes, Yelp, annuaire de la mairie de Coignières, CCI Versailles-Yvelines, Apple Plans, Bing Places, Waze. Mettre à jour les anciennes citations BodyFit plutôt qu'en créer de nouvelles.
 - Liens locaux à chercher : clubs de sport et salles de muscu du secteur (partenariats), associations sportives, presse locale (78actu, L'Écho républicain), blogs fitness IDF.
 

@@ -25,9 +25,9 @@ Objectif : faire de bodystart-nutrition.fr LA réponse pour « compléments alim
 Dérouler dans l'ordre, tout est obligatoire :
 
 1. **Données officielles d'abord** : composition ligne par ligne, table VN exacte, allergènes — depuis le site fabricant ou l'étiquette (jamais inventées). Les remplir dans les metafields. Une fiche aux dosages précis (« 3 000 mg de créatine par dose ») est 10× plus citable par une IA qu'un texte vague.
-2. **Title** : `[Nom produit] — [bénéfice/catégorie] | BodyStart Nutrition`, mot-clé principal en premier, ≤ 60 caractères avant le suffixe.
+2. **Title** : `[Nom produit] [Marque] : [bénéfice/catégorie]` (suffixe ` | BodyStart Nutrition` ajouté par le template), mot-clé principal en premier, ≤ 60 caractères avant le suffixe. Jamais de tiret long (règle du gérant, voir skill `bodystart-voix`).
 3. **Meta description** ≤ 155 car. : bénéfice + preuve (dosage, certif) + dispo locale quand pertinent (« en stock à Coignières, livraison France »).
-4. **Description produit** : structure answer-first (voir references/geo.md) — 1re phrase = ce que c'est + pour qui ; puis pourquoi celui-là (dosages, labels) ; puis comment l'utiliser. 150-300 mots UNIQUES (jamais copier le fabricant mot à mot : duplicate content).
+4. **Description produit** : structure answer-first (voir references/geo.md) — 1re phrase = ce que c'est + pour qui ; puis pourquoi celui-là (dosages, labels) ; puis comment l'utiliser. 150-300 mots UNIQUES (jamais copier le fabricant mot à mot : duplicate content). Exception assumée depuis le 25/09/2026 : l'agent `marque-scraper` importe le texte officiel tel quel et pose le metafield `custom.texte_reecrit = false` ; ces fiches sont à réécrire en priorité.
 5. **Organisation Shopify** : productType (catégorie du tri /products), tags filtres, collection « Produits TVA 5,5 % », publication sur les 4 canaux (Boutique en ligne, BodyStart Site, Point de vente, Shop).
 6. **Vérifier le rendu** : JSON-LD Product complet (prix, dispo, marque), image avec alt descriptif.
 
