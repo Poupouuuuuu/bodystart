@@ -35,7 +35,7 @@ function ForgotPasswordContent() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Link href="/" className="inline-flex min-h-[44px] items-center gap-2 mb-6">
             <Image
               src="/assets/logos/logo-v2-horizontal.png"
               alt="BodyStart Nutrition"
@@ -105,7 +105,7 @@ function ForgotPasswordContent() {
 
         {/* Lien retour */}
         <div className="text-center mt-8">
-          <Link href="/login" className="inline-flex items-center gap-2 text-[14px] font-medium transition-colors group text-ink-mute hover:text-spruce">
+          <Link href="/login" className="inline-flex min-h-[44px] items-center gap-2 text-[14px] font-medium transition-colors group text-ink-mute hover:text-spruce">
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             Retour à la connexion
           </Link>

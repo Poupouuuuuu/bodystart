@@ -44,7 +44,7 @@ export default function SearchBar({
         <button
           type="button"
           onClick={() => setQuery('')}
-          className="ml-2 p-1 text-ink-mute hover:text-ink transition-colors flex-shrink-0"
+          className="-my-2.5 -mr-2.5 ml-1 flex h-11 w-11 flex-shrink-0 items-center justify-center text-ink-mute hover:text-ink transition-colors"
           aria-label="Effacer la recherche"
         >
           <X className="w-4 h-4" />

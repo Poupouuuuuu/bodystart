@@ -172,7 +172,7 @@ function HeaderInner(_props: HeaderProps) {
 
             {/* Logo — ferme le burger même si on est DÉJÀ sur '/' (l'effet
                 [pathname] ne se déclenche pas quand le pathname ne change pas) */}
-            <Link href="/" className="flex-shrink-0" onClick={() => setMobileOpen(false)}>
+            <Link href="/" className="flex-shrink-0 flex min-h-[44px] items-center" onClick={() => setMobileOpen(false)}>
               {/* PAS de priority : le hero de la home doit rester le SEUL preload
                   prioritaire (2 preloads high se concurrençaient) ; le logo, 10 Ko,
                   arrive de toute façon très tôt. */}

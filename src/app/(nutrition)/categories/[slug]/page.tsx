@@ -86,9 +86,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         {/* Fil d'ariane */}
         <nav aria-label="Fil d'ariane" className="mb-8 text-[12px] font-semibold text-ink-mute">
           <ol className="flex flex-wrap items-center gap-2">
-            <li><Link href="/" className="hover:text-spruce transition-colors">Accueil</Link></li>
+            <li><Link href="/" className="-mx-2.5 -my-3.5 inline-flex min-h-[44px] items-center px-2.5 hover:text-spruce transition-colors">Accueil</Link></li>
             <li aria-hidden="true">/</li>
-            <li><Link href="/products" className="hover:text-spruce transition-colors">Produits</Link></li>
+            <li><Link href="/products" className="-mx-2.5 -my-3.5 inline-flex min-h-[44px] items-center px-2.5 hover:text-spruce transition-colors">Produits</Link></li>
             <li aria-hidden="true">/</li>
             <li className="text-spruce" aria-current="page">{cat.label}</li>
           </ol>
@@ -163,7 +163,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 <li key={g.slug}>
                   <Link
                     href={`/blog/${g.slug}`}
-                    className="text-[15px] font-semibold text-spruce hover:text-fresh transition-colors"
+                    className="inline-flex min-h-[44px] items-center text-[15px] font-semibold text-spruce hover:text-fresh transition-colors"
                   >
                     {g.label}
                   </Link>
@@ -188,10 +188,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </Link>
           ))}
         </div>
-        <p className="flex items-center gap-2 text-[14px] text-ink-mute">
-          <Store className="w-4 h-4 text-spruce" />
+        {/* Texte courant, pas flex : en flex, la phrase se découpait en colonnes sur mobile.
+            py-3.5 porte la zone tactile du lien à 44 px sans changer la hauteur de ligne. */}
+        <p className="text-[14px] leading-relaxed text-ink-mute">
+          <Store className="mr-2 inline-block h-4 w-4 -translate-y-px align-middle text-spruce" aria-hidden="true" />
           Tout le rayon est aussi en boutique à Coignières (78), avec du conseil gratuit :{' '}
-          <Link href="/stores" className="font-semibold text-spruce hover:underline underline-offset-4">
+          <Link href="/stores" className="py-3.5 font-semibold text-spruce hover:underline underline-offset-4">
             infos et horaires
           </Link>
         </p>

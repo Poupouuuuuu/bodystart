@@ -169,7 +169,7 @@
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 px-4 py-2
            text-ink-mute font-semibold text-[13px] rounded-full
            hover:bg-sage hover:text-spruce
            transition-all duration-200 ease-out-expo active:scale-[0.975];

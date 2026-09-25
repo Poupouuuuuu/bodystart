@@ -119,7 +119,8 @@ export default function Footer() {
 
             {/* Colonne 1 : Logo & Marque */}
             <div className="col-span-2 md:col-span-1">
-              <Link href="/" className="inline-block mb-5">
+              {/* Cible de 44 px ; -mt-1 / mb-4 gardent la même place au logo (36 px). */}
+              <Link href="/" className="inline-flex min-h-[44px] items-center -mt-1 mb-4">
                 <Image
                   src="/assets/logos/logo-v2-horizontal.png"
                   alt="BodyStart Nutrition"
@@ -156,7 +157,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="block py-2.5 text-sm text-ink-mute hover:text-spruce transition-colors"
+                      className="flex min-h-[44px] items-center text-sm text-ink-mute hover:text-spruce transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -175,7 +176,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="block py-2.5 text-sm text-ink-mute hover:text-spruce transition-colors"
+                      className="flex min-h-[44px] items-center text-sm text-ink-mute hover:text-spruce transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -200,13 +201,15 @@ export default function Footer() {
                     07 61 84 75 80
                   </a>
                 </li>
+                {/* Liens SEO : cibles de 44 px ; -my-2 garde l'espacement de la liste
+                    (zones jointives sans chevauchement avec space-y-4). */}
                 <li className="text-sm">
-                  <Link href="/complements-alimentaires-coignieres" className="text-ink-mute hover:text-spruce transition-colors">
+                  <Link href="/complements-alimentaires-coignieres" className="inline-flex min-h-[44px] -my-2 items-center text-ink-mute hover:text-spruce transition-colors">
                     Compléments alimentaires à Coignières
                   </Link>
                 </li>
                 <li className="text-sm">
-                  <Link href="/complements-alimentaires-yvelines" className="text-ink-mute hover:text-spruce transition-colors">
+                  <Link href="/complements-alimentaires-yvelines" className="inline-flex min-h-[44px] -my-2 items-center text-ink-mute hover:text-spruce transition-colors">
                     Compléments alimentaires dans les Yvelines
                   </Link>
                 </li>
@@ -229,7 +232,7 @@ export default function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="inline-flex min-h-[44px] items-center text-xs text-ink-mute hover:text-spruce transition-colors"
+                  className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-xs text-ink-mute hover:text-spruce transition-colors"
                 >
                   {link.label}
                 </Link>

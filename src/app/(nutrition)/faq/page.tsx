@@ -80,7 +80,7 @@ export default function FAQPage() {
       <div className="container py-14 md:py-20 max-w-4xl">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute hover:text-spruce mb-10 transition-colors group"
+          className="inline-flex min-h-[44px] items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute hover:text-spruce -mt-3.5 mb-[26px] transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" /> Retour à l&apos;accueil
         </Link>

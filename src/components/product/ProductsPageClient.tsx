@@ -481,12 +481,12 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
               placeholder="Rechercher un produit…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white rounded-full text-[16px] text-ink border border-spruce/15 pl-10 pr-10 py-2.5 focus:outline-none focus:border-spruce/40 placeholder:text-ink-mute"
+              className="w-full bg-white rounded-full text-[16px] text-ink border border-spruce/15 pl-10 pr-12 py-2.5 focus:outline-none focus:border-spruce/40 placeholder:text-ink-mute"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
+                className="absolute right-0 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center"
                 aria-label="Effacer la recherche"
               >
                 <X className="w-3.5 h-3.5 text-ink-mute" />

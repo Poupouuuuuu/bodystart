@@ -79,7 +79,7 @@ export default async function NotFound() {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-sage px-3 py-1.5 text-[13px] font-semibold text-spruce transition-colors hover:bg-spruce hover:text-white"
+                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-sage px-3 text-[13px] font-semibold text-spruce transition-colors hover:bg-spruce hover:text-white"
                   >
                     {link.label}
                     <ArrowRight className="h-3 w-3" />

@@ -127,7 +127,7 @@ export default function CoignieresLandingPage() {
               <Link
                 key={c.slug}
                 href={`/categories/${c.slug}`}
-                className="bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-sage transition-colors"
+                className="inline-flex min-h-[44px] items-center bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 rounded-full hover:bg-sage transition-colors"
               >
                 {c.label}
               </Link>
@@ -152,7 +152,7 @@ export default function CoignieresLandingPage() {
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <a href="tel:+33761847580" className="hover:text-white/80 transition-colors">07 61 84 75 80</a>
+                <a href="tel:+33761847580" className="-my-2.5 inline-flex min-h-[44px] items-center hover:text-white/80 transition-colors">07 61 84 75 80</a>
               </li>
             </ul>
             <div className="flex flex-col gap-3">

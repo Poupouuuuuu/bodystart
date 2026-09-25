@@ -38,7 +38,7 @@ export default function StatsBand() {
                       href={f.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="transition-opacity duration-500 ease-out-expo hover:opacity-80"
+                      className="inline-flex transition-opacity duration-500 ease-out-expo hover:opacity-80"
                     >
                       {number}
                     </a>

@@ -156,7 +156,7 @@ export default function NewsletterPopup() {
         <button
           onClick={close}
           aria-label="Fermer"
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full flex items-center justify-center text-ink-mute bg-white/80 hover:text-spruce hover:bg-white transition-colors"
+          className="absolute top-3 right-3 z-10 w-11 h-11 rounded-full flex items-center justify-center text-ink-mute bg-white/80 hover:text-spruce hover:bg-white transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -239,9 +239,11 @@ export default function NewsletterPopup() {
               <p className="text-[11px] text-ink-mute/80 leading-relaxed mt-5">
                 En t&apos;inscrivant, tu acceptes de recevoir nos emails. Tu peux te désabonner à
                 tout moment.{' '}
+                {/* Lien au fil du texte : py-4 agrandit la zone tactile à 44 px sans
+                    changer la hauteur de ligne (padding vertical d'un élément inline). */}
                 <Link
                   href="/confidentialite"
-                  className="underline underline-offset-2 hover:text-spruce"
+                  className="py-4 underline underline-offset-2 hover:text-spruce"
                   onClick={close}
                 >
                   En savoir plus
@@ -250,7 +252,7 @@ export default function NewsletterPopup() {
               </p>
               <button
                 onClick={close}
-                className="block mx-auto mt-4 text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-spruce transition-colors"
+                className="mx-auto mt-2 flex w-fit min-h-[44px] items-center px-3 text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-spruce transition-colors"
               >
                 Non merci, plus tard
               </button>

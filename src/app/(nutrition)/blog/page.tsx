@@ -69,7 +69,7 @@ export default function BlogPage() {
               <Link
                 key={c.slug}
                 href={`/categories/${c.slug}`}
-                className="bg-canvas border border-spruce/15 text-spruce text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-sage transition-colors"
+                className="inline-flex min-h-[44px] items-center bg-canvas border border-spruce/15 text-spruce text-[13px] font-semibold px-4 rounded-full hover:bg-sage transition-colors"
               >
                 {c.label}
               </Link>

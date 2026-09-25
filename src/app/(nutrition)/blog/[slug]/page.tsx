@@ -103,9 +103,9 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
         {/* Fil d'ariane */}
         <nav aria-label="Fil d'ariane" className="mb-8 text-[12px] font-semibold text-ink-mute">
           <ol className="flex flex-wrap items-center gap-2">
-            <li><Link href="/" className="hover:text-spruce transition-colors">Accueil</Link></li>
+            <li><Link href="/" className="-mx-2.5 -my-3.5 inline-flex min-h-[44px] items-center px-2.5 hover:text-spruce transition-colors">Accueil</Link></li>
             <li aria-hidden="true">/</li>
-            <li><Link href="/blog" className="hover:text-spruce transition-colors">Blog</Link></li>
+            <li><Link href="/blog" className="-mx-2.5 -my-3.5 inline-flex min-h-[44px] items-center px-2.5 hover:text-spruce transition-colors">Blog</Link></li>
             <li aria-hidden="true">/</li>
             <li className="text-spruce line-clamp-1" aria-current="page">{article.title}</li>
           </ol>
@@ -117,7 +117,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
 
         {/* Auteur + fraîcheur datée (E-E-A-T + GEO) */}
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink-mute mb-7">
-          <Link href={BLOG_AUTHOR.url} className="inline-flex items-center gap-1.5 font-semibold text-spruce hover:text-fresh transition-colors">
+          <Link href={BLOG_AUTHOR.url} className="-my-3 inline-flex min-h-[44px] items-center gap-1.5 font-semibold text-spruce hover:text-fresh transition-colors">
             <UserRound className="w-4 h-4" /> {BLOG_AUTHOR.name}
           </Link>
           <span className="inline-flex items-center gap-1.5">
@@ -189,7 +189,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
             <ul className="space-y-3">
               {relatedArticles.map((r) => (
                 <li key={r.slug}>
-                  <Link href={`/blog/${r.slug}`} className="font-semibold text-[15px] text-spruce hover:text-fresh transition-colors">
+                  <Link href={`/blog/${r.slug}`} className="inline-flex min-h-[44px] items-center font-semibold text-[15px] text-spruce hover:text-fresh transition-colors">
                     {r.title}
                   </Link>
                 </li>
@@ -198,14 +198,16 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
           </section>
         )}
 
-        <p className="flex items-center gap-2 text-[14px] text-ink-mute">
-          <Store className="w-4 h-4 text-spruce" />
+        {/* Texte courant, pas flex : en flex, chaque morceau de phrase devenait une colonne sur mobile.
+            py-3.5 porte la zone tactile des liens à 44 px sans changer la hauteur de ligne. */}
+        <p className="text-[14px] leading-relaxed text-ink-mute">
+          <Store className="mr-2 inline-block h-4 w-4 -translate-y-px align-middle text-spruce" aria-hidden="true" />
           Une question sur ton cas précis ? Passe nous voir à Coignières :{' '}
-          <Link href="/stores" className="font-semibold text-spruce hover:underline underline-offset-4">
+          <Link href="/stores" className="py-3.5 font-semibold text-spruce hover:underline underline-offset-4">
             la boutique
           </Link>{' '}
           ou{' '}
-          <Link href="/conseil" className="font-semibold text-spruce hover:underline underline-offset-4">
+          <Link href="/conseil" className="py-3.5 font-semibold text-spruce hover:underline underline-offset-4">
             demande un conseil gratuit
           </Link>
           .

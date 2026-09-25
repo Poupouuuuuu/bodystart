@@ -79,7 +79,7 @@ function RegisterContent() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Link href="/" className="inline-flex min-h-[44px] items-center gap-2 mb-6">
             <Image
               src="/assets/logos/logo-v2-horizontal.png"
               alt="BodyStart Nutrition"
@@ -171,7 +171,7 @@ function RegisterContent() {
                   type="button"
                   onClick={() => setShowPwd(!showPwd)}
                   aria-label={showPwd ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-colors text-ink-mute hover:text-spruce"
+                  className="absolute right-0.5 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full transition-colors text-ink-mute hover:text-spruce"
                 >
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>

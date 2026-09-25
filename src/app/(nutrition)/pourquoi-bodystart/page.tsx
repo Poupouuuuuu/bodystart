@@ -244,7 +244,7 @@ export default function PourquoiBodystartPage() {
                 key={f.q}
                 className="group bg-white rounded-2xl border border-spruce/10 px-6 py-5"
               >
-                <summary className="cursor-pointer list-none flex items-center justify-between gap-4 font-display font-bold text-[15px] md:text-[16px] text-ink">
+                <summary className="-my-2.5 min-h-[44px] cursor-pointer list-none flex items-center justify-between gap-4 font-display font-bold text-[15px] md:text-[16px] text-ink">
                   {f.q}
                   <span className="text-spruce transition-transform group-open:rotate-45 text-xl leading-none flex-shrink-0" aria-hidden="true">
                     +

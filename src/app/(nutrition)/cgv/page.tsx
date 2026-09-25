@@ -65,7 +65,7 @@ export default function CGVPage() {
       <div className="container py-16 md:py-24 max-w-3xl">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-ink-mute hover:text-spruce mb-10 transition-colors"
+          className="inline-flex min-h-[44px] items-center gap-2 text-sm font-semibold text-ink-mute hover:text-spruce -mt-3 mb-7 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Retour à l&apos;accueil
         </Link>

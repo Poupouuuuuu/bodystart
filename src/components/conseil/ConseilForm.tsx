@@ -347,7 +347,7 @@ export default function ConseilForm() {
                     {label}
                   </p>
                   {href ? (
-                    <a href={href} className="font-semibold text-ink hover:text-spruce transition-colors text-[14px]">
+                    <a href={href} className="inline-flex min-h-[44px] -my-3 items-center font-semibold text-ink hover:text-spruce transition-colors text-[14px]">
                       {value}
                     </a>
                   ) : (

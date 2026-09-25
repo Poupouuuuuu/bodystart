@@ -54,7 +54,7 @@ function LoginContent() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Link href="/" className="inline-flex min-h-[44px] items-center gap-2 mb-6">
             <Image
               src="/assets/logos/logo-v2-horizontal.png"
               alt="BodyStart Nutrition"
@@ -104,7 +104,7 @@ function LoginContent() {
                 <label htmlFor="password" className="block text-[12px] font-semibold text-ink">
                   Mot de passe
                 </label>
-                <Link href="/forgot-password" className="text-[12px] font-medium hover:underline underline-offset-4 transition-colors text-ink-mute hover:text-spruce">
+                <Link href="/forgot-password" className="-my-3.5 -mr-2 inline-flex min-h-[44px] items-center px-2 text-[12px] font-medium hover:underline underline-offset-4 transition-colors text-ink-mute hover:text-spruce">
                   Oublié ?
                 </Link>
               </div>
@@ -122,7 +122,7 @@ function LoginContent() {
                 <button
                   type="button"
                   onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors text-ink-mute hover:text-spruce"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center transition-colors text-ink-mute hover:text-spruce"
                   aria-label={showPwd ? 'Masquer' : 'Afficher'}
                 >
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

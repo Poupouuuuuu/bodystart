@@ -153,7 +153,7 @@ export default function AboutPage() {
             </li>
             <li className="flex items-start gap-3 text-[15px] text-ink">
               <Phone className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />
-              <a href="tel:+33761847580" className="hover:text-fresh transition-colors">07 61 84 75 80</a>
+              <a href="tel:+33761847580" className="-my-2.5 inline-flex min-h-[44px] items-center hover:text-fresh transition-colors">07 61 84 75 80</a>
             </li>
           </ul>
           <div className="flex flex-wrap gap-3">
@@ -178,10 +178,10 @@ export default function AboutPage() {
             Envie de voir ce qu&apos;on propose ? Commence par nos rayons les plus demandés :
           </p>
           <div className="flex flex-wrap justify-center gap-2.5">
-            <Link href="/categories/proteines" className="bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-sage transition-colors">Protéines</Link>
-            <Link href="/categories/creatine" className="bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-sage transition-colors">Créatine</Link>
-            <Link href="/categories/sante" className="bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-sage transition-colors">Santé & bien-être</Link>
-            <Link href="/products" className="bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-sage transition-colors">Tout le catalogue</Link>
+            <Link href="/categories/proteines" className="inline-flex min-h-[44px] items-center bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 rounded-full hover:bg-sage transition-colors">Protéines</Link>
+            <Link href="/categories/creatine" className="inline-flex min-h-[44px] items-center bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 rounded-full hover:bg-sage transition-colors">Créatine</Link>
+            <Link href="/categories/sante" className="inline-flex min-h-[44px] items-center bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 rounded-full hover:bg-sage transition-colors">Santé & bien-être</Link>
+            <Link href="/products" className="inline-flex min-h-[44px] items-center bg-white border border-spruce/15 text-spruce text-[13px] font-semibold px-4 rounded-full hover:bg-sage transition-colors">Tout le catalogue</Link>
           </div>
         </section>
       </div>

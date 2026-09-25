@@ -309,7 +309,7 @@ export default function BuyBoxV2({
           {/* Fournisseur (vendor) — "Packs" pour un bundle */}
           <Link
             href={eyebrowHref}
-            className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3 inline-block hover:text-spruce transition-colors"
+            className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute -mt-3.5 inline-flex min-h-[44px] items-center hover:text-spruce transition-colors"
           >
             {eyebrowLabel}
           </Link>
@@ -560,7 +560,7 @@ export default function BuyBoxV2({
               {rating && rating.reviewCount > 0 ? (
                 <a
                   href="#avis"
-                  className="mt-1.5 inline-flex items-center gap-1.5 font-semibold underline underline-offset-2 hover:text-fresh-deep transition-colors"
+                  className="-mt-1.5 -mb-3 inline-flex min-h-[44px] items-center gap-1.5 font-semibold underline underline-offset-2 hover:text-fresh-deep transition-colors"
                 >
                   <Star className="w-3.5 h-3.5 text-mustard fill-current" aria-hidden="true" />
                   {rating.ratingValue.toLocaleString('fr-FR')}/5 · {rating.reviewCount} avis client{rating.reviewCount > 1 ? 's' : ''}
@@ -570,7 +570,7 @@ export default function BuyBoxV2({
                 href={GOOGLE_LISTING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-1.5 inline-flex items-center gap-1.5 font-semibold underline underline-offset-2 hover:text-fresh-deep transition-colors"
+                className="-mt-1.5 -mb-3 inline-flex min-h-[44px] items-center gap-1.5 font-semibold underline underline-offset-2 hover:text-fresh-deep transition-colors"
               >
                 <Star className="w-3.5 h-3.5 text-mustard fill-current" aria-hidden="true" />
                 {GOOGLE_RATING.value.toLocaleString('fr-FR')}/5 sur Google · {GOOGLE_RATING.count} avis

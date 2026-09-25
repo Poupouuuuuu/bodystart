@@ -51,14 +51,18 @@ export default function HeroV3() {
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-mustard" />
                 Coignières · Yvelines
               </span>
+              {/* Cible tactile de 44 px ; la pastille visible garde ses 36 px et -my-1
+                  laisse la ligne à la même hauteur. */}
               <a
                 href={GOOGLE_LISTING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md transition-colors duration-500 ease-out-expo hover:bg-white/20"
+                className="group -my-1 inline-flex min-h-[44px] items-center"
               >
-                <Star className="h-3.5 w-3.5 fill-mustard text-mustard" aria-hidden="true" />
-                {note}/5 · {GOOGLE_RATING.count} avis Google
+                <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md transition-colors duration-500 ease-out-expo group-hover:bg-white/20">
+                  <Star className="h-3.5 w-3.5 fill-mustard text-mustard" aria-hidden="true" />
+                  {note}/5 · {GOOGLE_RATING.count} avis Google
+                </span>
               </a>
             </div>
 
