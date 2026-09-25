@@ -71,8 +71,8 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Créatine monohydrate pure ou aromatisée, des marques qu'on utilise nous-mêmes. 3 g par jour. Conseil gratuit à Coignières, livraison offerte dès 85 €.",
     h1: 'Créatine monohydrate',
     intro: [
-      "La créatine est le complément le plus étudié de la nutrition sportive : elle améliore les capacités physiques lors de séries successives d'exercices très intenses et de courte durée, exactement ce que tu fais à la salle. La forme de référence est la créatine monohydrate, à 3-5 g par jour, tous les jours, peu importe l'heure.",
-      "Comment choisir ? Toutes nos créatines sont du monohydrate : la différence se joue sur le format (poudre neutre à mélanger, version aromatisée, gélules) et la finesse de mouture (micronisée = se dissout mieux). Pas besoin de phase de charge ni de formule exotique : la régularité fait tout.",
+      "La créatine est l'un des compléments les plus étudiés de la nutrition sportive. Prise à raison de 3 g par jour, elle améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, comme les séries lourdes en musculation. La forme de référence est la créatine monohydrate, à prendre tous les jours, à l'heure qui t'arrange.",
+      "Comment choisir ? Toutes nos créatines sont de la créatine monohydrate en poudre : la différence se joue sur le goût (neutre, à mélanger à ta boisson, ou aromatisée) et la finesse de mouture (micronisée, elle se dissout mieux). L'une des versions aromatisées ajoute aussi bêta-alanine, taurine et vitamines B. Pas besoin de phase de charge : la régularité fait tout. Comme tout complément, elle s'utilise dans le cadre d'une alimentation variée et équilibrée et d'un mode de vie sain. Elle s'adresse aux adultes qui s'entraînent de façon intense.",
     ],
     featured: [
       { handle: 'creatine-100-monohydrate-micronisee', label: 'Créatine 100 % Monohydrate Micronisée French Nutrition' },

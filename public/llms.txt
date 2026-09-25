@@ -20,7 +20,7 @@ BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Ru
 ## Catégories de produits
 
 - [Protéines](https://bodystart-nutrition.fr/categories/proteines): whey, isolate, caséine et gainers. Comment choisir selon ton objectif et ton budget.
-- [Créatine](https://bodystart-nutrition.fr/categories/creatine): créatine monohydrate micronisée, 3-5 g/jour, le complément le plus étudié.
+- [Créatine](https://bodystart-nutrition.fr/categories/creatine): créatine monohydrate, 3 g par jour, l'un des compléments les plus étudiés.
 - [Pré-workout](https://bodystart-nutrition.fr/categories/pre-workout): énergie et focus avec caféine, ou pump sans stimulant pour les séances du soir.
 - [Acides aminés](https://bodystart-nutrition.fr/categories/acides-amines): EAA, BCAA, glutamine, citrulline et bêta-alanine.
 - [Brûleurs](https://bodystart-nutrition.fr/categories/bruleurs): L-carnitine, CLA et formules minceur, en accompagnement d'une sèche structurée.
