@@ -170,6 +170,26 @@ Mesure de référence : `scratchpad/probe-median.js` (Playwright, 390×844, 4G l
 - **JS initial** : pas de `graphql-request` (client Shopify = `fetch`, `lib/shopify/client.ts`) ; `libphonenumber-js` importé dynamiquement au point d'usage ; toasts via `@/lib/toast` (jamais `react-hot-toast` en import direct, sinon le `<ToasterLazy>` ne se monte pas) ; tiroir panier monté à la demande (`CartDrawerLazy`) ; picker Mondial Relay en `next/dynamic`.
 - Le plancher actuel (~3 s de tâche JS au CPU ×4) vient du runtime App Router + React + hydratation : ne s'attaque qu'en réduisant les composants client de la fiche (BuyBoxV2), pas en optimisant des libs.
 
+## Outillage Claude Code (25/09/2026)
+
+Tout est dans `.claude/` (hooks, skills, agents) et documenté dans `.claude/hooks/README.md`.
+
+| Type | Nom | Usage |
+| --- | --- | --- |
+| Hook | `protect-files.js` (PreToolUse) | refuse l'écriture sur `.env*`, `backups/`, migrations commitées |
+| Hook | `no-dash.js` (PostToolUse) | signale « — » / « – » introduits dans du texte client ; `--scan src` pour auditer |
+| Hook | `mark-dirty.js` + `stop-check.js` (Stop) | tsc + vitest related si du code a changé dans le tour |
+| Skill | `bodystart-voix` (Claude seul) | registre, lexique interdit, zéro tiret long, équité catalogue, allégations |
+| Skill | `bodystart-seo-geo` (Claude seul) | SEO / GEO : structure des pages, titles, JSON-LD, local |
+| Skill | `/verif-prod [handle]` | après un push : attend le commit sur Vercel, sonde mobile 390×844, captures `qa-shots/` |
+| Skill | `/fiche-produit <handle…>` | export, données officielles, écriture contrôlée (sauvegarde + vérification), images |
+| Agent | `relecture-fiche` | conformité UE 1924/2006 + voix, verdict Publiable / À corriger |
+| Agent | `marque-scraper` | données officielles de marque telles quelles → `changes.json`, pose `texte_reecrit = false` |
+
+- Les hooks ne sont actifs que s'ils sont branchés dans `.claude/settings.json` (section `hooks`, forme exec `command` + `args`).
+- Metafield produit `custom.texte_reecrit` (booléen, épinglé, filtrable dans l'admin) : `false` = texte de marque repris tel quel, à personnaliser en priorité ; passer à `true` après réécriture. Initialisé à `false` sur tout le catalogue le 25/09/2026.
+- Écritures Shopify par script : app dédiée « BodyStart Scripts » (jeton `SHOPIFY_SCRIPTS_ADMIN_TOKEN`, local uniquement), marche à suivre dans `tech-specs/shopify-app-scripts.md`. Sans ce jeton, `shopify_apply.py --emit` produit les mutations pour le connecteur Shopify MCP. Jamais de `write_products` sur l'app du site.
+
 ## Conventions de code
 
 - Composants en PascalCase, fichiers en PascalCase pour les composants
