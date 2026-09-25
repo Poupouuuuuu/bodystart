@@ -84,9 +84,9 @@ export const quandPrendreSaWhey: BlogArticle = {
               '21,90 €',
             ],
             [
-              '[Iso Fusion Protein](/products/iso-fusion-protein)',
-              'Isolate (digestion rapide)',
-              '36,90 €',
+              '[Iso Zero 100 % Whey](/products/iso-zero-100-whey)',
+              'Isolate',
+              '78,90 €',
             ],
             [
               '[Whey Protein](/products/whey-protein)',
@@ -97,7 +97,7 @@ export const quandPrendreSaWhey: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La [Whey Native Protimuscle](/products/whey-native-protimuscle) est notre valeur sûre au bon prix ; l’[Iso Fusion Protein](/products/iso-fusion-protein) est idéale en post-training ou si tu digères mal le lactose. Compare tout le rayon [protéines](/categories/proteines), et si tu débutes, notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant) t\'aide à trancher.',
+          text: 'La [Whey Native Protimuscle](/products/whey-native-protimuscle) est notre valeur sûre au bon prix ; l’[Iso Zero 100 % Whey](/products/iso-zero-100-whey) est une isolate : 25,4 g de protéines et 0,5 g de sucres par dose de 30 g. Compare tout le rayon [protéines](/categories/proteines), et si tu débutes, notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant) t\'aide à trancher.',
         },
       ],
     },
@@ -126,7 +126,7 @@ export const quandPrendreSaWhey: BlogArticle = {
   ],
   products: [
     { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle' },
-    { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein' },
+    { handle: 'iso-zero-100-whey', label: 'Iso Zero 100 % Whey' },
     { handle: 'whey-protein', label: 'Whey Protein' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],

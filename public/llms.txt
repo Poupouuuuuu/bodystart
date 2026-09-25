@@ -54,18 +54,18 @@ BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Ru
 
 ## Produits phares
 
-- [Whey Native Protimuscle (Nutrimuscle)](https://bodystart-nutrition.fr/products/whey-native-protimuscle): la whey rapport qualité-prix à 19,95 €.
-- [Sub Zero Whey Isolate (Corgenic)](https://bodystart-nutrition.fr/products/sub-zero-whey-isolate): isolate digestion facile, 39,90 €.
+- [Whey Native Protimuscle (Nutrimuscle)](https://bodystart-nutrition.fr/products/whey-native-protimuscle): la whey rapport qualité-prix à 21,90 €.
+- [Shadowhey Isolate (DY Nutrition)](https://bodystart-nutrition.fr/products/shadowhey-isolate-whey-isolate-2-kg): isolate de whey en 2 kg, 84,90 €.
 - [Iso Zero 100 % Whey (Eric Favre)](https://bodystart-nutrition.fr/products/iso-zero-100-whey): l'isolate best-seller de la boutique.
 - [Créatine 100 % Monohydrate Micronisée (French Nutrition)](https://bodystart-nutrition.fr/products/creatine-100-monohydrate-micronisee): la référence à 29,90 €.
-- [One Raw Creatine (Zoomad)](https://bodystart-nutrition.fr/products/one-raw-creatine): monohydrate brute, 29,90 €.
-- [Vapor X5 (MuscleTech)](https://bodystart-nutrition.fr/products/vapor-x5-pre-workout): pré-workout complet avec caféine, 34,90 €.
+- [Micronized Creatine Monohydrate (Dedicated)](https://bodystart-nutrition.fr/products/dedicated-nutrition-micronized-creatine-monohydrate): monohydrate micronisée sans arôme, 36,90 €.
+- [French Pump (French Nutrition)](https://bodystart-nutrition.fr/products/french-pump-pre-workout): pré-workout complet avec caféine, 34,90 €.
 - [Pump Nitric Oxide Booster (Warrior)](https://bodystart-nutrition.fr/products/pump-nitric-oxide-booster): pump sans stimulant pour les séances du soir, 44,90 €.
-- [HIT EAA (DY Nutrition)](https://bodystart-nutrition.fr/products/hit-eaa): les 9 acides aminés essentiels, 24,90 €.
+- [HIT EAA (DY Nutrition)](https://bodystart-nutrition.fr/products/hit-eaa): les 9 acides aminés essentiels, 26,90 €.
 - [Mutant Mass](https://bodystart-nutrition.fr/products/mutant-mass): le gainer prise de masse, 38,90 €.
-- [Crème de Riz (Nutrimuscle)](https://bodystart-nutrition.fr/products/creme-de-riz-bio): glucides digestes pour la prise de masse, 25,95 €.
+- [Crème de Riz (Nutrimuscle)](https://bodystart-nutrition.fr/products/creme-de-riz-bio): glucides digestes pour la prise de masse, 25,90 €.
 - [Vitamine D3 + K2 (Evolite)](https://bodystart-nutrition.fr/products/vitamin-d3-k2): le réflexe hiver, 17,90 €.
-- [Magnésium Bisglycinate (French Nutrition)](https://bodystart-nutrition.fr/products/magnesium-bisglycinate-vitamine-b6-taurine): forme bien assimilée + B6 et taurine, 27,90 €.
+- [Magnésium Bisglycinate (DY Nutrition)](https://bodystart-nutrition.fr/products/magnesium-bisglycinate-dy-90-capsules): 250 mg de magnésium par dose (67 % des VNR), 90 capsules, 16,90 €.
 - [L-Carnitine Pro Zero (Eric Favre)](https://bodystart-nutrition.fr/products/l-carnitine-pro-zero-liquide): le classique de sèche au format liquide, 22,90 €.
 - [Crunch Bar (Warrior)](https://bodystart-nutrition.fr/products/crunch-bar-barre-proteinee): la barre protéinée à 2,90 €.
 

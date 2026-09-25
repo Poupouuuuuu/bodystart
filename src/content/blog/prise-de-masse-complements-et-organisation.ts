@@ -94,7 +94,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Trois options classiques : la [crème de riz Nutrimuscle](/products/creme-de-riz-bio) (25,95 €) et la [crème d'avoine French Nutrition](/products/creme-davoine-avena-sativa) (11,90 €) pour des collations consistantes dans la journée, et [Pure Vitargo](/products/pure-vitargo) (35,90 €) pour des glucides rapides autour de la séance. L'ensemble du rayon est sur notre catégorie [glucides en poudre](/categories/glucides)."
+          "text": "Trois options classiques : la [crème de riz Nutrimuscle](/products/creme-de-riz-bio) (25,90 €) et la [crème de riz Trained by JP](/products/cream-of-rice-creme-de-riz-2-kg) en sac de 2 kg (24,90 €) pour des collations consistantes dans la journée, et le [Cluster Dextrin de Nutrimuscle](/products/cluster-dextrin-dextrine-cyclique-1-2-kg) (39,90 €) pour tes glucides pendant ou autour de la séance. L'ensemble du rayon est sur notre catégorie [glucides en poudre](/categories/glucides)."
         },
         {
           "type": "p",

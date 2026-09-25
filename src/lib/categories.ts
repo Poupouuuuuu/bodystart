@@ -44,7 +44,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     featured: [
       { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle, la valeur sûre à 19,95 €' },
-      { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein, l’isolate digestion facile' },
+      { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein, pois, œuf et lait' },
       { handle: 'mutant-mass', label: 'Mutant Mass, le gainer prise de masse' },
     ],
     related: [
@@ -76,7 +76,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     featured: [
       { handle: 'creatine-100-monohydrate-micronisee', label: 'Créatine 100 % Monohydrate Micronisée French Nutrition' },
-      { handle: 'one-raw-creatine', label: 'One Raw Creatine Zoomad, poudre brute' },
+      { handle: 'dedicated-nutrition-micronized-creatine-monohydrate', label: 'Micronized Creatine Monohydrate Dedicated, sans arôme' },
       { handle: 'clear-pro-creatine', label: 'Clear Pro Creatine Eric Favre, version aromatisée' },
     ],
     related: [
@@ -102,9 +102,8 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, un pré-workout stimulant classique fonctionne très bien. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine. En cas de doute, on t'aide à trancher en boutique.",
     ],
     featured: [
-      { handle: 'vapor-x5-pre-workout', label: 'Vapor X5 MuscleTech, le stimulant complet' },
-      { handle: 'pump-nitric-oxide-booster', label: 'Pump Warrior, congestion sans stimulant' },
-      { handle: 'french-pump-pre-workout', label: 'French Pump, le pré-workout made in France' },
+      { handle: 'french-pump-pre-workout', label: 'French Pump French Nutrition, avec caféine' },
+      { handle: 'pump-nitric-oxide-booster', label: 'Pump Warrior, pré-workout sans stimulant' },
     ],
     related: [
       { slug: 'creatine', label: 'Créatine' },
@@ -125,7 +124,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Si ton apport en protéines est déjà solide, les acides aminés sont un confort, pas une priorité. Si tu dois choisir un seul produit, la recherche récente donne l'avantage aux EAA, qui contiennent les BCAA plus les six autres essentiels. Entraînement à jeun ou alimentation végétarienne : c'est là qu'ils prennent le plus de sens.",
     ],
     featured: [
-      { handle: 'hit-eaa', label: 'HIT EAA DY Nutrition, les essentiels à 24,90 €' },
+      { handle: 'hit-eaa', label: 'HIT EAA DY Nutrition, les essentiels à 26,90 €' },
       { handle: 'yeaah-eaa', label: 'YEAAH EAA Dedicated' },
       { handle: 'l-citrulline', label: 'L-Citrulline Dedicated, le pump à l’unité' },
     ],
@@ -175,7 +174,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Regarde la composition et le format (boisson, gélules) plutôt que les promesses. Si tu hésites, pose-nous la question en boutique : on connaît chaque référence du rayon et on te dira ce qui correspond (ou pas) à ce que tu cherches.",
     ],
     featured: [
-      { handle: 'bois-bande', label: 'Bois Bandé Eric Favre' },
+      { handle: 'alphatest-booster-de-testosterone', label: 'Alphatest MuscleTech, fenugrec, bore et zinc' },
       { handle: 'testorine-booster-boisson', label: 'Testorine, format boisson' },
     ],
     related: [
@@ -198,8 +197,8 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     ],
     featured: [
       { handle: 'creme-de-riz-bio', label: 'Crème de Riz Nutrimuscle' },
-      { handle: 'pure-vitargo', label: 'Pure Vitargo, l’intra-training' },
-      { handle: 'creme-davoine-avena-sativa', label: 'Crème d’Avoine à 11,90 €' },
+      { handle: 'cluster-dextrin-dextrine-cyclique-1-2-kg', label: 'Cluster Dextrin Nutrimuscle, l’intra-training' },
+      { handle: 'cream-of-rice-creme-de-riz-2-kg', label: 'Cream of Rice Trained by JP, sac de 2 kg' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },

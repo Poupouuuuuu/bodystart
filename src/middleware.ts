@@ -31,7 +31,9 @@ const ACCOUNT_COACHING_PREFIX = '/account/coaching'
 // Produits ARRÊTÉS (archivés dans Shopify, plus réapprovisionnés) : l'API
 // Storefront ne les renvoie plus, la fiche tomberait en 404. Pour Google et
 // les anciens liens (Merchant Center, réseaux), on redirige en 301 vers le
-// rayon le plus proche. Ajouter une ligne par produit archivé.
+// produit équivalent s'il existe (même type de produit, publié en ligne),
+// sinon vers le rayon le plus proche. Ajouter une ligne par produit archivé.
+// Si un produit cible est arrêté à son tour, mettre sa ligne à jour.
 const RETIRED_PRODUCTS: Record<string, string> = {
   'final-mass': '/categories/proteines', // gainer Corgenic, arrêté 2026-09-05
   'sub-zero-whey-isolate': '/categories/proteines', // Corgenic, arrêté 2026-09-05
@@ -42,6 +44,15 @@ const RETIRED_PRODUCTS: Record<string, string> = {
   'zm-z': '/categories/sante', // Dedicated, arrêté 2026-09-05
   'magnesium-bisglycinate-vitamine-b6-taurine': '/categories/sante', // French Nutrition, arrêté 2026-09-05
   'ashwagandha-ksm-66': '/categories/sante', // Applied Nutrition, arrêté 2026-09-05
+  // Liens du site remplacés le 2026-09-25 par l'équivalent en ligne :
+  'one-raw-creatine': '/products/dedicated-nutrition-micronized-creatine-monohydrate', // Zoomad
+  'lipoxicut-bruleur-en-poudre': '/products/iron-ultra-fat-burner', // Eric Favre
+  'zoo-mass-gainer': '/products/metabolic-mass-gainer-6-kg', // Zoomad Labs
+  'bois-bande': '/products/alphatest-booster-de-testosterone', // Eric Favre
+  'iso-french-protein': '/products/shadowhey-isolate-whey-isolate-2-kg', // French Nutrition
+  'pure-vitargo': '/products/cluster-dextrin-dextrine-cyclique-1-2-kg', // Vitargo
+  'zoomad-caretaker-map': '/products/zoomad-caretaker-glow', // Zoomad
+  'creme-davoine-avena-sativa': '/categories/glucides', // French Nutrition, aucune crème d'avoine en ligne
 }
 
 function hasSupabaseAuthCookie(req: NextRequest): boolean {

@@ -118,7 +118,7 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Une isolate est filtrée plus finement : elle titre en général 90 % de protéines ou plus et contient très peu de lactose. C'est sa vraie valeur ajoutée, pas un effet supérieur sur le muscle. Sur le site, l'[Iso Fusion Protein](/products/iso-fusion-protein) d'Eric Favre à 36,90 € et l'[Isolate Native Whey Mix](/products/isolate-native-whey-mix-musclewhey) de Nutrimuscle à 49,90 € couvrent ce besoin. On a comparé les deux familles en détail dans [whey ou isolate : quelle différence](/blog/whey-ou-isolate-quelle-difference)."
+          "text": "Une isolate est filtrée plus finement : elle titre en général 90 % de protéines ou plus et contient très peu de lactose. C'est sa vraie valeur ajoutée, pas un effet supérieur sur le muscle. Sur le site, l'[Iso Zero 100 % Whey](/products/iso-zero-100-whey) d'Eric Favre à 78,90 € et la [Shadowhey Isolate](/products/shadowhey-isolate-whey-isolate-2-kg) de DY Nutrition à 84,90 € couvrent ce besoin. On a comparé les deux familles en détail dans [whey ou isolate : quelle différence](/blog/whey-ou-isolate-quelle-difference)."
         }
       ]
     },
@@ -164,12 +164,12 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
       "label": "Whey Native Protimuscle (Nutrimuscle)"
     },
     {
-      "handle": "iso-fusion-protein",
-      "label": "Iso Fusion Protein (Eric Favre)"
+      "handle": "iso-zero-100-whey",
+      "label": "Iso Zero 100 % Whey (Eric Favre)"
     },
     {
-      "handle": "isolate-native-whey-mix-musclewhey",
-      "label": "Isolate Native Whey Mix (Nutrimuscle)"
+      "handle": "shadowhey-isolate-whey-isolate-2-kg",
+      "label": "Shadowhey Isolate (DY Nutrition)"
     }
   ],
   "categories": [

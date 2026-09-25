@@ -38,7 +38,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Le bon réflexe : lire l'étiquette, parce que chaque formule est différente et qu'on ne te donnera jamais un chiffre générique pour un produit précis. Un classique du rayon stimulé comme le [Vapor X5 de MuscleTech](/products/vapor-x5-pre-workout) (34,90 €) affiche sa teneur par dose sur l'étiquette : c'est la première ligne à vérifier avant d'acheter."
+          "text": "Le bon réflexe : lire l'étiquette, parce que chaque formule est différente et qu'on ne te donnera jamais un chiffre générique pour un produit précis. Un pré-workout stimulé comme le [French Pump de French Nutrition](/products/french-pump-pre-workout) (34,90 €) affiche sa teneur en caféine par dose sur l'étiquette (200 mg) : c'est la première ligne à vérifier avant d'acheter."
         }
       ]
     },
@@ -72,7 +72,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Au rayon, tu as deux approches. Les formules complètes prêtes à l'emploi, comme le [French Pump de French Nutrition](/products/french-pump-pre-workout) (34,90 €) ou le [Pump Nitric Oxide Booster de Warrior](/products/pump-nitric-oxide-booster) (44,90 €). Ou les ingrédients à l'unité pour composer ton propre mix : la [L-Citrulline de Dedicated](/products/l-citrulline) (22,90 €) et la [Beta-Alanine de Dedicated](/products/dedicated-nutrition-beta-alanine) (19,90 €)."
+          "text": "Au rayon, tu as deux approches. Les formules complètes prêtes à l'emploi, comme le [Pump de Warrior](/products/pump-nitric-oxide-booster) (44,90 €). Ou les ingrédients à l'unité pour composer ton propre mix : la [L-Citrulline de Dedicated](/products/l-citrulline) (27,90 €) et la [Beta-Alanine de Dedicated](/products/dedicated-nutrition-beta-alanine) (19,90 €)."
         },
         {
           "type": "h3",
@@ -180,12 +180,12 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
   ],
   "products": [
     {
-      "handle": "vapor-x5-pre-workout",
-      "label": "Vapor X5 (MuscleTech)"
+      "handle": "french-pump-pre-workout",
+      "label": "French Pump (French Nutrition, avec caféine)"
     },
     {
       "handle": "pump-nitric-oxide-booster",
-      "label": "Pump Nitric Oxide Booster (Warrior, sans stimulant)"
+      "label": "Pump Warrior (sans stimulant)"
     },
     {
       "handle": "l-citrulline",

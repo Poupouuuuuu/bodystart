@@ -124,7 +124,7 @@ export const combienDeProteinesParJour: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Concrètement, elle devient utile quand ta cible monte à 120-150 g par jour ou plus : enchaîner poulet, œufs et poisson à chaque repas, tout le monde n'y arrive pas. Une whey concentrée comme la [Whey Native Protimuscle de Nutrimuscle](/products/whey-native-protimuscle) (19,95 €) couvre ce besoin au quotidien. Si tu digères mal le lactose ou que tu veux plus de protéines par dose, regarde du côté des isolates comme l'[Iso Fusion Protein d'Eric Favre](/products/iso-fusion-protein) (41,90 €) : en catégorie, une isolate affiche généralement 90 % de protéines ou plus, contre environ 80 % pour une whey classique."
+          "text": "Concrètement, elle devient utile quand ta cible monte à 120-150 g par jour ou plus : enchaîner poulet, œufs et poisson à chaque repas, tout le monde n'y arrive pas. Une whey concentrée comme la [Whey Native Protimuscle de Nutrimuscle](/products/whey-native-protimuscle) (21,90 €) couvre ce besoin au quotidien. Si tu digères mal le lactose ou que tu veux plus de protéines par dose, regarde du côté des isolates comme l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) (78,90 € les 1,5 kg) : en catégorie, une isolate affiche généralement 90 % de protéines ou plus, contre environ 80 % pour une whey classique."
         },
         {
           "type": "p",
@@ -182,8 +182,8 @@ export const combienDeProteinesParJour: BlogArticle = {
       "label": "Whey Native Protimuscle (Nutrimuscle)"
     },
     {
-      "handle": "iso-fusion-protein",
-      "label": "Iso Fusion Protein (Eric Favre)"
+      "handle": "iso-zero-100-whey",
+      "label": "Iso Zero 100 % Whey (Eric Favre)"
     },
     {
       "handle": "crunch-bar-barre-proteinee",

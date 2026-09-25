@@ -51,7 +51,7 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Côté sélection, deux isolates qui répondent à ce besoin : l'[Iso Fusion Protein d'Eric Favre](/products/iso-fusion-protein) à 36,90 € et l'[ISO Protein Volactive de French Nutrition](/products/iso-french-protein) à 45,90 €."
+          "text": "Côté sélection, deux isolates qui répondent à ce besoin : l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) à 78,90 € les 1,5 kg et la [Shadowhey Isolate de DY Nutrition](/products/shadowhey-isolate-whey-isolate-2-kg) à 84,90 € les 2 kg."
         }
       ]
     },
@@ -64,7 +64,7 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Pour te donner des repères dans notre sélection : la [Whey Native Protimuscle de Nutrimuscle](/products/whey-native-protimuscle) démarre à 19,95 €, tandis que les isolates s'échelonnent de 39,90 € à 74,99 € pour l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey), avec l'[Isolate Native Whey Mix Musclewhey de Nutrimuscle](/products/isolate-native-whey-mix-musclewhey) à 49,95 € entre les deux. Les formats varient d'une référence à l'autre : compare toujours le prix ramené à la dose de protéines, pas seulement le prix du pot."
+          "text": "Pour te donner des repères dans notre sélection : la [Whey Native Protimuscle de Nutrimuscle](/products/whey-native-protimuscle) démarre à 21,90 €, tandis que les isolates vont de 34,90 € (500 g) à 84,90 € (2 kg), avec l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) à 78,90 € les 1,5 kg. Les formats varient d'une référence à l'autre : compare toujours le prix ramené à la dose de protéines, pas seulement le prix du pot."
         },
         {
           "type": "p",
@@ -174,12 +174,12 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
       "label": "Whey Native Protimuscle (Nutrimuscle)"
     },
     {
-      "handle": "iso-fusion-protein",
-      "label": "Iso Fusion Protein (Eric Favre)"
+      "handle": "iso-zero-100-whey",
+      "label": "Iso Zero 100 % Whey (Eric Favre)"
     },
     {
-      "handle": "iso-french-protein",
-      "label": "ISO Protein Volactive (French Nutrition)"
+      "handle": "shadowhey-isolate-whey-isolate-2-kg",
+      "label": "Shadowhey Isolate (DY Nutrition)"
     }
   ],
   "categories": [

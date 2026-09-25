@@ -88,15 +88,15 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
               '38,90 €',
             ],
             [
-              '[Zoo Mass - Gainer](/products/zoo-mass-gainer)',
-              'Gainer haute densité',
-              '69,90 €',
+              '[Metabolic Mass DY Nutrition](/products/metabolic-mass-gainer-6-kg)',
+              'Gainer grand format (6 kg)',
+              '79,90 €',
             ],
           ],
         },
         {
           type: 'p',
-          text: 'Le [Mutant Mass](/products/mutant-mass) est un classique très calorique pour les gros besoins ; le [Zoo Mass](/products/zoo-mass-gainer) joue la carte de la densité. Tu retrouves les gainers et les whey dans le rayon [protéines](/categories/proteines). Pense à ajuster la portion à ton objectif plutôt que de viser le maximum.',
+          text: 'Le [Mutant Mass](/products/mutant-mass) est un classique très calorique pour les gros besoins ; le [Metabolic Mass](/products/metabolic-mass-gainer-6-kg) de DY Nutrition mise sur le grand format (6 kg). Tu retrouves les gainers et les whey dans le rayon [protéines](/categories/proteines). Pense à ajuster la portion à ton objectif plutôt que de viser le maximum.',
         },
       ],
     },
@@ -144,7 +144,7 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
   ],
   products: [
     { handle: 'mutant-mass', label: 'Mutant Mass' },
-    { handle: 'zoo-mass-gainer', label: 'Zoo Mass - Gainer' },
+    { handle: 'metabolic-mass-gainer-6-kg', label: 'Metabolic Mass (DY Nutrition)' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],
   related: ['prise-de-masse-complements-et-organisation', 'combien-de-proteines-par-jour'],

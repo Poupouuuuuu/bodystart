@@ -152,14 +152,14 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Côté EAA, on a trois références qui couvrent tous les budgets et tous les goûts. Côté BCAA, une valeur sûre pour la boisson d'entraînement."
+          "text": "Côté EAA, on a trois références qui couvrent tous les goûts. Côté BCAA, une valeur sûre pour la boisson d'entraînement."
         },
         {
           "type": "list",
           "items": [
-            "[HIT EAA DY Nutrition](/products/hit-eaa) à 24,90 € : l'option d'entrée pour des EAA complets au quotidien.",
-            "[YEAAH EAA Dedicated](/products/yeaah-eaa) à 39,90 € : un format premium très apprécié pour son goût.",
-            "[EAA Caretaker MAP Zoomad](/products/zoomad-caretaker-map) à 39,90 € : des acides aminés essentiels pour les pratiquants exigeants.",
+            "[HIT EAA DY Nutrition](/products/hit-eaa) à 26,90 € : l'option d'entrée pour des EAA complets au quotidien.",
+            "[YEAAH EAA Dedicated](/products/yeaah-eaa) à 29,90 € : un format très apprécié pour son goût.",
+            "[EAA Caretaker GLOW Zoomad](/products/zoomad-caretaker-glow) à 29,90 € : 5,8 g d'EAA (les 9 essentiels) et 2,4 g de glutamine par dose.",
             "[BCAA Sensation Dedicated](/products/dedicated-nutrition-bcaa-sensation) à 29,90 € : si tu veux avant tout une boisson d'entraînement agréable à siroter."
           ]
         },

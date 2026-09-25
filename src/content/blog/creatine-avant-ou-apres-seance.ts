@@ -115,14 +115,9 @@ export const creatineAvantOuApresSeance: BlogArticle = {
               "29,90 €"
             ],
             [
-              "[One Raw Creatine Zoomad](/products/one-raw-creatine)",
-              "Poudre",
-              "29,90 €"
-            ],
-            [
               "[Micronized Creatine Monohydrate Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate)",
               "Poudre micronisée",
-              "34,90 €"
+              "36,90 €"
             ],
             [
               "[Creatine Pro Zero Eric Favre](/products/creatine-pro-zero)",
@@ -210,8 +205,8 @@ export const creatineAvantOuApresSeance: BlogArticle = {
       "label": "Créatine 100 % Monohydrate Micronisée (French Nutrition)"
     },
     {
-      "handle": "one-raw-creatine",
-      "label": "One Raw Creatine (Zoomad)"
+      "handle": "dedicated-nutrition-micronized-creatine-monohydrate",
+      "label": "Micronized Creatine Monohydrate (Dedicated)"
     },
     {
       "handle": "clear-pro-creatine",
