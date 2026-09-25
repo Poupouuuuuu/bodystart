@@ -1,16 +1,13 @@
-import { FlaskConical, Activity, Leaf } from 'lucide-react'
+import { Activity, Leaf } from 'lucide-react'
 
 /**
- * "A quoi ca sert" — 3 cartes claires.
+ * "A quoi ca sert" — 2 cartes claires.
+ * 25/09/2026 : carte « Analysé en labo » retirée (aucune preuve d’analyse
+ * indépendante pour chaque marque, décision Adam). Ne pas la remettre sans preuve.
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Fiche produit.3
  *      tech-specs/site-rewrite-copy-v1.md §4.2 (labels reecrits)
  */
 const POINTS = [
-  {
-    icon: FlaskConical,
-    title: 'Analysé en labo',
-    desc: 'Chaque batch passe par un labo indépendant pour vérifier la composition réelle vs ce qui est annoncé.',
-  },
   {
     icon: Activity,
     title: 'Effet recherché',
@@ -36,7 +33,7 @@ export default function AQuoiCaSertV2() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {POINTS.map(({ icon: Icon, title, desc }) => (
             <div
               key={title}

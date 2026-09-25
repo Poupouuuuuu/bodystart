@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, FlaskConical, Dumbbell, Leaf } from 'lucide-react'
+import { ChevronDown, Dumbbell, Leaf } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ShopifyMetafield } from '@/lib/shopify/types'
 import type { ReactNode } from 'react'
@@ -117,11 +117,6 @@ const FALLBACK_NUTRITION: NutritionRow[] = [
 ]
 
 const SCIENCE_CARDS: { icon: ReactNode; title: string; description: string }[] = [
-  {
-    icon: <FlaskConical className="w-5 h-5 text-brand-600" />,
-    title: 'Testé en laboratoire',
-    description: 'Chaque lot est analysé en laboratoire indépendant pour garantir pureté et dosages.',
-  },
   {
     icon: <Dumbbell className="w-5 h-5 text-brand-600" />,
     title: 'Soutien Musculaire',
