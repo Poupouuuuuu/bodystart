@@ -189,17 +189,18 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     slug: 'boosters',
     productType: 'Boosters',
     label: 'Boosters',
-    metaTitle: 'Boosters : vitalité masculine et tonus',
+    metaTitle: 'Boosters : formules à base de plantes et de zinc',
     metaDescription:
-      'Bois bandé et formules vitalité à base de plantes. Le rayon boosters, disponible en boutique à Coignières (78) et en livraison France.',
-    h1: 'Boosters et vitalité',
+      'Fenugrec, tribulus, maca, ashwagandha, zinc : les formules du rayon boosters, en gélules ou en boisson. En boutique à Coignières (78), livraison France.',
+    h1: 'Boosters : formules à base de plantes et de zinc',
     intro: [
-      "Ce rayon regroupe les formules « vitalité » à base de plantes et d'ingrédients traditionnels, comme le bois bandé. Ce sont des produits plaisir et confort, pas des médicaments : on les choisit pour leur composition et on les utilise dans le cadre d'une hygiène de vie globale.",
-      "Comment choisir ? Regarde la composition et le format (boisson, gélules) plutôt que les promesses. Si tu hésites, pose-nous la question en boutique : on connaît chaque référence du rayon et on te dira ce qui correspond (ou pas) à ce que tu cherches.",
+      "Ce rayon regroupe des formules à base de plantes traditionnelles (fenugrec, tribulus, maca, ashwagandha) et de zinc, en gélules ou en boisson. Ce ne sont pas des médicaments : on les choisit pour leur composition et on les utilise dans le cadre d'une hygiène de vie globale.",
+      "Comment choisir ? Regarde la composition et le format (gélules pour une cure, boisson prête à boire) plutôt que les promesses. Attention aux formules avec caféine, comme la Testorine en boisson (100 mg par bouteille). Ces formules s'adressent aux adultes et sont déconseillées aux femmes enceintes ou allaitantes. Si tu hésites, pose-nous la question en boutique : on connaît chaque référence du rayon.",
     ],
     featured: [
       { handle: 'alphatest-booster-de-testosterone', label: 'Alphatest MuscleTech, fenugrec, bore et zinc' },
       { handle: 'testorine-booster-boisson', label: 'Testorine, format boisson' },
+      { handle: 'sex-bomb', label: 'Sex Bomb For Her Applied Nutrition, ashwagandha et maca' },
     ],
     related: [
       { slug: 'sante', label: 'Santé & bien-être' },
@@ -211,13 +212,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     slug: 'glucides',
     productType: 'Glucides',
     label: 'Glucides',
-    metaTitle: 'Glucides : crème de riz, avoine, vitargo',
+    metaTitle: "Glucides : crème de riz, Cluster Dextrin, boissons d'effort",
     metaDescription:
-      'Crème de riz, crème d’avoine, Vitargo et boissons d’effort : les glucides pratiques pour la prise de masse et l’énergie à l’entraînement.',
-    h1: 'Glucides : crème de riz, avoine et boissons d’effort',
+      "Crème de riz, Cluster Dextrin et boissons d'effort : des glucides pratiques pour la prise de masse et l'entraînement. Conseil gratuit à Coignières.",
+    h1: "Glucides : crème de riz, Cluster Dextrin et boissons d'effort",
     intro: [
-      "Les glucides en poudre servent deux objectifs : ajouter des calories propres et digestes en prise de masse (crème de riz, crème d'avoine), et fournir de l'énergie rapide autour de l'entraînement (Vitargo, boissons d'effort). Les glucides contribuent à la récupération d'une fonction musculaire normale après un effort intense.",
-      "Comment choisir ? Pour augmenter tes apports quotidiens sans te forcer, la crème de riz ou d'avoine se mélange à la whey en collation. Pour l'intra ou le post-training des séances longues, un glucide à assimilation rapide type Vitargo fait la différence. Le bon choix dépend surtout de ton volume d'entraînement. On en parle en boutique si besoin.",
+      "Les glucides en poudre servent deux objectifs : ajouter des calories en prise de masse sans manger plus de volume (crème de riz), et apporter des glucides pendant ou autour des séances longues (Cluster Dextrin, boissons d'effort glucidiques).",
+      "Comment choisir ? Pour augmenter tes apports quotidiens, la crème de riz se mélange à la whey ou au lait en collation. Pour les séances longues, une dextrine cyclique comme le Cluster Dextrin se boit pendant l'effort. Le bon choix dépend surtout de ton volume d'entraînement : on en parle en boutique si besoin.",
     ],
     featured: [
       { handle: 'creme-de-riz-bio', label: 'Crème de Riz Nutrimuscle' },
@@ -236,16 +237,16 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     label: 'Santé & bien-être',
     metaTitle: 'Santé : vitamines, magnésium, oméga 3, collagène',
     metaDescription:
-      'Vitamine D, magnésium, ZMA, oméga 3, collagène, spiruline : les fondations santé du sportif. En stock à Coignières, livraison partout en France.',
+      'Vitamine D, magnésium, ZMA, oméga 3, collagène : le rayon santé et bien-être du sportif. En stock à Coignières, livraison partout en France.',
     h1: 'Santé & bien-être : vitamines, minéraux et essentiels',
     intro: [
-      "Avant les compléments de performance, il y a les fondations : la vitamine D contribue au fonctionnement normal du système immunitaire, le magnésium contribue à réduire la fatigue et à une fonction musculaire normale, les oméga 3 (EPA/DHA) contribuent à une fonction cardiaque normale. C'est le rayon qu'on recommande de regarder en premier, surtout l'hiver.",
-      "Comment choisir ? Pars de ton besoin réel : fatigue persistante et entraînement intense → magnésium bisglycinate ou ZMA ; peu d'exposition au soleil d'octobre à mars → vitamine D3 ; peu de poisson gras dans l'assiette → oméga 3 ; articulations et peau → collagène. Un produit à la fois, choisi pour une raison précise.",
+      "Avant les compléments de performance, il y a les fondations : la vitamine D contribue au fonctionnement normal du système immunitaire, le magnésium contribue à réduire la fatigue et à une fonction musculaire normale, les oméga 3 EPA et DHA contribuent à une fonction cardiaque normale (effet obtenu avec 250 mg d'EPA et de DHA par jour). C'est le rayon qu'on recommande de regarder en premier, surtout l'hiver.",
+      "Comment choisir ? Pars de ton besoin réel : coup de fatigue et entraînement intense → magnésium bisglycinate ou ZMA ; peu d'exposition au soleil d'octobre à mars → vitamine D3 ; peu de poisson gras dans l'assiette → oméga 3. Pour le collagène, prends une formule avec vitamine C : la vitamine C contribue à la formation normale de collagène pour assurer la fonction normale des cartilages et de la peau. Un produit à la fois, choisi pour une raison précise, en complément d'une alimentation variée et équilibrée et d'un mode de vie sain.",
     ],
     featured: [
-      { handle: 'vitamin-d3-k2', label: 'Vitamine D3 + K2 Evolite' },
+      { handle: 'vitamin-d3-k2-dy-60-softgels', label: 'Vitamine D3 + K2 DY Nutrition' },
       { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY Nutrition' },
-      { handle: 'pure-collagen-marin-liquide', label: 'Collagène Marin Liquide Eric Favre' },
+      { handle: 'collagen-complex-vitamine-c', label: 'Collagen Complex + Vitamine C Eric Favre' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },

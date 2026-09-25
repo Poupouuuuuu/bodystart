@@ -24,9 +24,9 @@ BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Ru
 - [Pré-workout](https://bodystart-nutrition.fr/categories/pre-workout): énergie et focus avec caféine, ou pump sans stimulant pour les séances du soir.
 - [Acides aminés](https://bodystart-nutrition.fr/categories/acides-amines): EAA, BCAA, glutamine, citrulline et bêta-alanine.
 - [Brûleurs](https://bodystart-nutrition.fr/categories/bruleurs): L-carnitine, CLA et formules minceur, en accompagnement d'une sèche structurée.
-- [Boosters](https://bodystart-nutrition.fr/categories/boosters): bois bandé et formules vitalité à base de plantes.
-- [Glucides](https://bodystart-nutrition.fr/categories/glucides): crème de riz, crème d'avoine, Vitargo et boissons d'effort.
-- [Santé & bien-être](https://bodystart-nutrition.fr/categories/sante): vitamine D, magnésium, ZMA, oméga 3, collagène, spiruline.
+- [Boosters](https://bodystart-nutrition.fr/categories/boosters): formules à base de plantes et de zinc (fenugrec, tribulus, maca, ashwagandha), en gélules ou en boisson.
+- [Glucides](https://bodystart-nutrition.fr/categories/glucides): crème de riz, Cluster Dextrin et boissons d'effort.
+- [Santé & bien-être](https://bodystart-nutrition.fr/categories/sante): vitamine D, magnésium, ZMA, oméga 3, collagène.
 
 ## Guides nutrition (blog)
 
@@ -64,7 +64,7 @@ BodyStart Nutrition est une boutique physique de nutrition sportive située 8 Ru
 - [HIT EAA (DY Nutrition)](https://bodystart-nutrition.fr/products/hit-eaa): les 9 acides aminés essentiels, 26,90 €.
 - [Mutant Mass](https://bodystart-nutrition.fr/products/mutant-mass): le gainer prise de masse, 38,90 €.
 - [Crème de Riz (Nutrimuscle)](https://bodystart-nutrition.fr/products/creme-de-riz-bio): glucides digestes pour la prise de masse, 25,90 €.
-- [Vitamine D3 + K2 (Evolite)](https://bodystart-nutrition.fr/products/vitamin-d3-k2): le réflexe hiver, 17,90 €.
+- [Vitamine D3 + K2 (DY Nutrition)](https://bodystart-nutrition.fr/products/vitamin-d3-k2-dy-60-softgels): le réflexe hiver, 14,90 €.
 - [Magnésium Bisglycinate (DY Nutrition)](https://bodystart-nutrition.fr/products/magnesium-bisglycinate-dy-90-capsules): 250 mg de magnésium par dose (67 % des VNR), 90 capsules, 16,90 €.
 - [L-Carnitine Pro Zero (Eric Favre)](https://bodystart-nutrition.fr/products/l-carnitine-pro-zero-liquide): le classique de sèche au format liquide, 22,90 €.
 - [Crunch Bar (Warrior)](https://bodystart-nutrition.fr/products/crunch-bar-barre-proteinee): la barre protéinée à 2,90 €.

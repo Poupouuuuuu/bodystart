@@ -35,15 +35,15 @@ const ACCOUNT_COACHING_PREFIX = '/account/coaching'
 // sinon vers le rayon le plus proche. Ajouter une ligne par produit archivé.
 // Si un produit cible est arrêté à son tour, mettre sa ligne à jour.
 const RETIRED_PRODUCTS: Record<string, string> = {
-  'final-mass': '/categories/proteines', // gainer Corgenic, arrêté 2026-09-05
-  'sub-zero-whey-isolate': '/categories/proteines', // Corgenic, arrêté 2026-09-05
-  'zma': '/categories/sante', // Eric Favre, arrêté 2026-09-05
-  'spiruline-vegan-bio': '/categories/sante', // Eric Favre, arrêté 2026-09-05
-  'hydrafull-electrolytes': '/categories/sante', // Eric Favre, arrêté 2026-09-05
-  'glutamine-pro-zero': '/categories/acides-amines', // Eric Favre, arrêté 2026-09-05
-  'zm-z': '/categories/sante', // Dedicated, arrêté 2026-09-05
-  'magnesium-bisglycinate-vitamine-b6-taurine': '/categories/sante', // French Nutrition, arrêté 2026-09-05
-  'ashwagandha-ksm-66': '/categories/sante', // Applied Nutrition, arrêté 2026-09-05
+  'final-mass': '/products/game-changer-mass-gainer-3-kg', // gainer Corgenic, arrêté 2026-09-05
+  'sub-zero-whey-isolate': '/products/shadowhey-isolate-whey-isolate-2-kg', // Corgenic, arrêté 2026-09-05
+  'zma': '/products/zn-mg-b6-complex-60-capsules', // Eric Favre, arrêté 2026-09-05
+  'spiruline-vegan-bio': '/categories/sante', // Eric Favre, arrêté 2026-09-05, aucune spiruline en ligne
+  'hydrafull-electrolytes': '/products/naughty-boy-hydration-255-g', // Eric Favre, arrêté 2026-09-05
+  'glutamine-pro-zero': '/products/the-glutamine-300-g', // Eric Favre, arrêté 2026-09-05
+  'zm-z': '/products/zn-mg-b6-complex-60-capsules', // Dedicated, arrêté 2026-09-05
+  'magnesium-bisglycinate-vitamine-b6-taurine': '/products/magnesium-bisglycinate-dy-90-capsules', // French Nutrition, arrêté 2026-09-05
+  'ashwagandha-ksm-66': '/products/ashwagandha-ultimate-ksm-66-60-gelules', // Applied Nutrition, arrêté 2026-09-05
   // Liens du site remplacés le 2026-09-25 par l'équivalent en ligne :
   'one-raw-creatine': '/products/dedicated-nutrition-micronized-creatine-monohydrate', // Zoomad
   'lipoxicut-bruleur-en-poudre': '/products/iron-ultra-fat-burner', // Eric Favre
@@ -52,7 +52,7 @@ const RETIRED_PRODUCTS: Record<string, string> = {
   'iso-french-protein': '/products/shadowhey-isolate-whey-isolate-2-kg', // French Nutrition
   'pure-vitargo': '/products/cluster-dextrin-dextrine-cyclique-1-2-kg', // Vitargo
   'zoomad-caretaker-map': '/products/zoomad-caretaker-glow', // Zoomad
-  'creme-davoine-avena-sativa': '/categories/glucides', // French Nutrition, aucune crème d'avoine en ligne
+  'creme-davoine-avena-sativa': '/products/cream-of-rice-creme-de-riz-2-kg', // French Nutrition, équivalent : crème de riz en sac
 }
 
 function hasSupabaseAuthCookie(req: NextRequest): boolean {

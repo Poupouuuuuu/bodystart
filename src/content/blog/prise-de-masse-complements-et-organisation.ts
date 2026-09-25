@@ -42,7 +42,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
               "1,6 à 2,2 g de protéines par kg et par jour au total"
             ],
             [
-              "Glucides en poudre (riz, avoine, Vitargo)",
+              "Glucides en poudre (riz, avoine, dextrine cyclique)",
               "Densifier les repas et l'autour de séance",
               "Selon ton surplus de 300 à 500 kcal"
             ],
