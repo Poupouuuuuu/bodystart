@@ -135,7 +135,7 @@ export const commentFaireUneSeche: BlogArticle = {
             ['[Iso Zero 100% Whey](/products/iso-zero-100-whey)', 'Quota protéines, quasi zéro glucides/lipides', '74,90 €'],
             ['[L-Carnitine Pro Zero](/products/l-carnitine-pro-zero-liquide)', 'Le classique de sèche, liquide zéro sucre', '22,90 €'],
             ['[CLA 2400](/products/cla-2400)', "L'acide gras populaire en période de régime", '22,90 €'],
-            ['[Iron Ultra Fat Burner](/products/iron-ultra-fat-burner)', 'La formule complète pour pratiquants avancés', '44,90 €'],
+            ['[Iron Ultra](/products/iron-ultra-eric-favre)', 'La formule complète pour pratiquants avancés', '31,90 €'],
           ],
         },
         {
@@ -193,7 +193,7 @@ export const commentFaireUneSeche: BlogArticle = {
     { handle: 'iso-zero-100-whey', label: 'Iso Zero 100% Whey' },
     { handle: 'l-carnitine-pro-zero-liquide', label: 'L-Carnitine Pro Zero' },
     { handle: 'cla-2400', label: 'CLA 2400' },
-    { handle: 'iron-ultra-fat-burner', label: 'Iron Ultra Fat Burner' },
+    { handle: 'iron-ultra-eric-favre', label: 'Iron Ultra (Eric Favre)' },
   ],
   categories: [
     { slug: 'bruleurs', label: 'Brûleurs & minceur' },

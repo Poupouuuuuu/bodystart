@@ -70,7 +70,7 @@ const CATEGORIES: Category[] = [
   ]},
   { key: 'boosters', label: 'Boosters', productTypes: ['Boosters'], subcategories: [
     { key: 'pump', label: 'Pump', tags: ['pump'] },
-    { key: 'testo', label: 'Testo', tags: ['testo'] },
+    { key: 'plantes', label: 'Formules aux plantes', tags: ['testo'] },
   ]},
   { key: 'sante', label: 'Santé & bien-être', productTypes: ['Santé'], subcategories: [
     { key: 'omega', label: 'Oméga', tags: ['omega'] },

@@ -223,7 +223,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     featured: [
       { handle: 'l-carnitine-pro-zero-liquide', label: 'L-Carnitine Pro Zero, le classique liquide' },
       { handle: 'cla-2400', label: 'CLA 2400 Eric Favre' },
-      { handle: 'iron-ultra-fat-burner', label: 'Iron Ultra, la formule complète' },
+      { handle: 'iron-ultra-eric-favre', label: 'Iron Ultra, la formule complète' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },
@@ -248,7 +248,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Regarde la composition et le format (gélules pour une cure, boisson prête à boire) plutôt que les promesses. Attention aux formules avec caféine, comme la Testorine en boisson (100 mg par bouteille). Ces formules s'adressent aux adultes et sont déconseillées aux femmes enceintes ou allaitantes. Si tu hésites, pose-nous la question en boutique : on connaît chaque référence du rayon.",
     ],
     featured: [
-      { handle: 'alphatest-booster-de-testosterone', label: 'Alphatest MuscleTech, fenugrec, bore et zinc' },
+      { handle: 'alphatest-muscletech', label: 'Alphatest MuscleTech, fenugrec, bore et zinc' },
       { handle: 'testorine-booster-boisson', label: 'Testorine, format boisson' },
       { handle: 'sex-bomb', label: 'Sex Bomb For Her Applied Nutrition, ashwagandha et maca' },
     ],

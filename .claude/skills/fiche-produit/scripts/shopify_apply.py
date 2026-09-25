@@ -10,6 +10,7 @@ Entrée : un JSON « changes » = liste d'objets
                    "allergenes": "…", "format": "…", "texte_reecrit": false},  (facultatif)
     "tags_add": ["…"], "tags_remove": ["…"]         (facultatif)
     "productType": "Barres protéinées"                  (facultatif : type = rayon du site)
+    "title": "Nom affiché de la fiche"                   (facultatif)
   }
 
 Modes :
@@ -64,6 +65,8 @@ def current(handle, field):
         return f['tags']
     if field == 'productType':
         return f['productType']
+    if field == 'title':
+        return f['title']
     raise KeyError(field)
 
 
@@ -76,6 +79,8 @@ for c in changes:
         plan.append((h, 'descriptionHtml', current(h, 'descriptionHtml'), c['descriptionHtml']))
     if 'productType' in c:
         plan.append((h, 'productType', current(h, 'productType'), c['productType']))
+    if 'title' in c:
+        plan.append((h, 'title', current(h, 'title'), c['title']))
     for k in ('title', 'description'):
         if k in (c.get('seo') or {}):
             plan.append((h, f'seo.{k}', current(h, f'seo.{k}'), c['seo'][k]))
@@ -173,6 +178,8 @@ for h, field, old, new in plan:
             d['tags'] = new
         elif field == 'productType':
             d['productType'] = new
+        elif field == 'title':
+            d['title'] = new
 
 
 def product_update_alias(i, d):
@@ -183,6 +190,8 @@ def product_update_alias(i, d):
         parts.append(f'tags:{J(d["tags"])}')
     if 'productType' in d:
         parts.append(f'productType:{J(d["productType"])}')
+    if 'title' in d:
+        parts.append(f'title:{J(d["title"])}')
     if 'seo' in d:
         parts.append('seo:{' + ', '.join(f'{k}:{J(v)}' for k, v in d['seo'].items()) + '}')
     return f' u{i}: productUpdate(input:{{{", ".join(parts)}}}) {{ product {{ handle }} userErrors {{ field message }} }}'

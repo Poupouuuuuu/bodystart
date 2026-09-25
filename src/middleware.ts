@@ -46,13 +46,16 @@ const RETIRED_PRODUCTS: Record<string, string> = {
   'ashwagandha-ksm-66': '/products/ashwagandha-ultimate-ksm-66-60-gelules', // Applied Nutrition, arrêté 2026-09-05
   // Liens du site remplacés le 2026-09-25 par l'équivalent en ligne :
   'one-raw-creatine': '/products/dedicated-nutrition-micronized-creatine-monohydrate', // Zoomad
-  'lipoxicut-bruleur-en-poudre': '/products/iron-ultra-fat-burner', // Eric Favre
+  'lipoxicut-bruleur-en-poudre': '/products/iron-ultra-eric-favre', // Eric Favre
   'zoo-mass-gainer': '/products/metabolic-mass-gainer-6-kg', // Zoomad Labs
-  'bois-bande': '/products/alphatest-booster-de-testosterone', // Eric Favre
+  'bois-bande': '/products/alphatest-muscletech', // Eric Favre
   'iso-french-protein': '/products/shadowhey-isolate-whey-isolate-2-kg', // French Nutrition
   'pure-vitargo': '/products/cluster-dextrin-dextrine-cyclique-1-2-kg', // Vitargo
   'zoomad-caretaker-map': '/products/zoomad-caretaker-glow', // Zoomad
   'creme-davoine-avena-sativa': '/products/cream-of-rice-creme-de-riz-2-kg', // French Nutrition, équivalent : crème de riz en sac
+  // Fiches RENOMMÉES le 2026-09-26 (adresse sans allégation), pas arrêtées : ancienne adresse -> nouvelle.
+  'alphatest-booster-de-testosterone': '/products/alphatest-muscletech', // MuscleTech
+  'iron-ultra-fat-burner': '/products/iron-ultra-eric-favre', // Eric Favre
 }
 
 function hasSupabaseAuthCookie(req: NextRequest): boolean {

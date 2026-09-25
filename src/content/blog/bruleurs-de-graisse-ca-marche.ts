@@ -87,7 +87,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
               '19,90 €',
             ],
             [
-              '[Iron Ultra Eric Favre](/products/iron-ultra-fat-burner)',
+              '[Iron Ultra Eric Favre](/products/iron-ultra-eric-favre)',
               'Formule complète (carnitine, thé vert)',
               '31,90 €',
             ],
@@ -95,7 +95,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La [L-Carnitine 2000](/products/l-carnitine-2000) est l\'option la plus simple autour de l\'entraînement ; le [CLA de DY Nutrition](/products/cla-dy-90-softgels) est un acide gras souvent choisi en période de régime ; les formules complètes type [Iron Ultra](/products/iron-ultra-fat-burner) combinent plusieurs ingrédients pour les pratiquants avancés. Tu peux voir tout le rayon [brûleurs de graisse](/categories/bruleurs). Rappel : un produit ne remplace jamais le déficit.',
+          text: 'La [L-Carnitine 2000](/products/l-carnitine-2000) est l\'option la plus simple autour de l\'entraînement ; le [CLA de DY Nutrition](/products/cla-dy-90-softgels) est un acide gras souvent choisi en période de régime ; les formules complètes type [Iron Ultra](/products/iron-ultra-eric-favre) combinent plusieurs ingrédients pour les pratiquants avancés. Tu peux voir tout le rayon [brûleurs de graisse](/categories/bruleurs). Rappel : un produit ne remplace jamais le déficit.',
         },
       ],
     },
@@ -152,7 +152,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
   products: [
     { handle: 'l-carnitine-2000', label: 'L-Carnitine 2000' },
     { handle: 'cla-dy-90-softgels', label: 'CLA (DY Nutrition)' },
-    { handle: 'iron-ultra-fat-burner', label: 'Iron Ultra (Eric Favre)' },
+    { handle: 'iron-ultra-eric-favre', label: 'Iron Ultra (Eric Favre)' },
   ],
   categories: [{ slug: 'bruleurs', label: 'Brûleurs de graisse' }],
   related: ['comment-faire-une-seche', 'combien-de-proteines-par-jour', 'complements-debutant-musculation'],
