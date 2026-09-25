@@ -14,7 +14,9 @@
  *
  * Échappatoire : une ligne contenant « tiret-ok » n'est pas contrôlée.
  *
- * Sortie : exit 0 = rien à dire ; exit 2 + liste sur stderr = Claude doit corriger.
+ * Sortie (forme JSON documentée pour PostToolUse) : si un tiret est trouvé,
+ * { "decision": "block", "reason": "…" } sur stdout et exit 0. L'édition a déjà eu lieu :
+ * Claude reçoit « reason » à côté du résultat de l'outil et doit corriger. Sinon : aucune sortie.
  *
  * Mode audit (sans stdin) : node .claude/hooks/no-dash.js --scan [dossier]
  * Test : node .claude/hooks/no-dash.js --root <dossier-projet> < entree.json
@@ -249,8 +251,9 @@ async function main() {
   }
   const items = findings(root, rel, text, input.tool_name === 'Write' ? null : fragments.filter((f) => typeof f === 'string'))
   if (items.length === 0) return
-  process.stderr.write(report(rel, items))
-  process.exit(2)
+  // PostToolUse : l'outil a déjà tourné, on ne peut rien empêcher. « decision: block »
+  // ajoute « reason » à côté du résultat de l'outil, que Claude lit (doc hooks, 2026-09).
+  process.stdout.write(JSON.stringify({ decision: 'block', reason: report(rel, items).trimEnd() }) + '\n')
 }
 
 main()

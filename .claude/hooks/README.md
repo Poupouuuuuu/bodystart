@@ -13,7 +13,10 @@ Ils sont branchés dans `.claude/settings.json` (section `hooks`), en forme « e
 
 ## Conventions
 
-- Entrée : JSON du hook sur stdin. Sortie : exit 0 = OK, exit 2 + message sur stderr = refus ou retour à Claude.
+- Entrée : JSON du hook sur stdin.
+- Sortie selon l'événement (doc hooks à jour) :
+  - PreToolUse (`protect-files.js`) et Stop (`stop-check.js`) : exit 2 + message sur stderr. Bloque l'outil, ou empêche Claude de s'arrêter ; Claude reçoit le message.
+  - PostToolUse (`no-dash.js`) : l'outil a déjà tourné, rien à bloquer. Sortie JSON `{"decision": "block", "reason": "…"}` sur stdout, exit 0 : la raison est ajoutée à côté du résultat de l'outil et Claude corrige.
 - Un hook ne doit jamais faire échouer la session : toute erreur interne se traduit par un exit 0 silencieux.
 - Tester à la main : `echo '{"tool_name":"Edit","tool_input":{"file_path":".env.local"}}' | node .claude/hooks/protect-files.js` puis `echo $?` (attendu : 2).
 
