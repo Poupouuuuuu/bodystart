@@ -42,6 +42,7 @@ const FOOTER_LINKS = {
     // Pages catégories SEO (liens entrants sitewide — cf. src/lib/categories.ts)
     { label: 'Protéines', href: '/categories/proteines' },
     { label: 'Créatine', href: '/categories/creatine' },
+    { label: 'Barres protéinées', href: '/categories/barres-proteinees' },
     { label: 'Pré-workout', href: '/categories/pre-workout' },
     { label: 'Acides aminés', href: '/categories/acides-amines' },
     { label: 'Santé & bien-être', href: '/categories/sante' },

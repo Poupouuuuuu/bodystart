@@ -194,6 +194,10 @@ export const combienDeProteinesParJour: BlogArticle = {
     {
       "slug": "proteines",
       "label": "Protéines"
+    },
+    {
+      "slug": "barres-proteinees",
+      "label": "Barres protéinées"
     }
   ],
   "related": [

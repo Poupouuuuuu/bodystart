@@ -19,7 +19,7 @@ import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 // ─── Objectifs (bandeau haut) ───
 const GOALS: { key: string; label: string; image: string | null; linkedCategories: string[] }[] = [
   { key: 'all', label: 'Tout voir', image: null, linkedCategories: [] },
-  { key: 'muscle', label: 'Muscle', image: '/Logomuscle.png', linkedCategories: ['proteines', 'creatine', 'acides-amines'] },
+  { key: 'muscle', label: 'Muscle', image: '/Logomuscle.png', linkedCategories: ['proteines', 'creatine', 'barres-proteinees', 'acides-amines'] },
   { key: 'energie', label: 'Énergie', image: '/Logoenergy.png', linkedCategories: ['boosters', 'pre-workout', 'boissons'] },
   { key: 'recuperation', label: 'Récupération', image: '/Logo-recuperation.png', linkedCategories: ['acides-amines', 'sante'] },
   { key: 'sante', label: 'Santé', image: '/Logo-sante-vitalite.png', linkedCategories: ['sante', 'bruleurs'] },
@@ -82,9 +82,8 @@ const CATEGORIES: Category[] = [
     { key: 'mineraux', label: 'Minéraux', tags: ['mineraux'] },
     { key: 'electrolytes', label: 'Électrolytes', tags: ['electrolytes'] },
   ]},
-  { key: 'snacks', label: 'Snacks', productTypes: ['Snacks'], subcategories: [
-    { key: 'barre', label: 'Barres', tags: ['barre'] },
-  ]},
+  { key: 'barres-proteinees', label: 'Barres protéinées', productTypes: ['Barres protéinées'], subcategories: [] },
+  { key: 'snacks', label: 'Snacks', productTypes: ['Snacks'], subcategories: [] },
   { key: 'boissons', label: 'Boissons', productTypes: ['Boissons'], subcategories: [] },
   { key: 'accessoires', label: 'Accessoires', productTypes: ['Accessoires'], subcategories: [] },
 ]

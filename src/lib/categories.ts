@@ -45,7 +45,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Si tu débutes ou que tu cherches le meilleur rapport qualité-prix, une whey concentrée (~70-80 % de protéines) fait parfaitement le travail. Si tu digères mal le lactose ou que tu veux le produit le plus pur en sèche, passe sur une isolate (≥ 90 % de protéines, quasi sans lactose). Et si ton problème est de manger assez en prise de masse, un gainer ajoute des calories pratiques à ta journée.",
     ],
     featured: [
-      { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle, la valeur sûre à 19,95 €' },
+      { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle, la valeur sûre à 21,90 €' },
       { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein, pois, œuf et lait' },
       { handle: 'mutant-mass', label: 'Mutant Mass, le gainer prise de masse' },
     ],
@@ -53,6 +53,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       { slug: 'creatine', label: 'Créatine' },
       { slug: 'glucides', label: 'Glucides' },
       { slug: 'acides-amines', label: 'Acides aminés' },
+      { slug: 'barres-proteinees', label: 'Barres protéinées' },
     ],
     guides: [
       { slug: 'whey-ou-isolate-quelle-difference', label: 'Whey ou isolate : quelle différence ?' },
@@ -110,6 +111,55 @@ export const CATEGORY_PAGES: CategoryPage[] = [
         q: "Micronisée, neutre ou aromatisée : quelle différence ?",
         a:
           "C'est toujours de la créatine monohydrate. Micronisée veut dire moulue plus finement : elle se dissout mieux et laisse moins de dépôt au fond du shaker. Neutre, elle se mélange à n'importe quelle boisson ; aromatisée, elle se boit simplement dans de l'eau. Regarde aussi la composition : une version aromatisée ajoute bêta-alanine, taurine et vitamines B.",
+      },
+    ],
+  },
+  {
+    slug: 'barres-proteinees',
+    productType: 'Barres protéinées',
+    label: 'Barres protéinées',
+    // Créé le 25/09/2026 : Search Console montrait l’accueil sur « barre protéinée » (35 affichages, position 7).
+    metaTitle: 'Barres protéinées : environ 20 g de protéines par barre',
+    metaDescription:
+      'Crunch Bar, Barre Délice, Flapjack : environ 20 g de protéines par barre, dès 2,90 €. Retrait gratuit à Coignières, livraison offerte dès 85 €.',
+    h1: 'Barres protéinées : environ 20 g de protéines par barre',
+    intro: [
+      "Une barre protéinée, c'est l'en-cas pratique quand tu n'as pas de shaker sous la main : autour de 20 g de protéines dans une barre qui se glisse dans un sac de sport ou un tiroir de bureau. On en a trois styles en rayon : la Crunch Bar de Warrior qui croustille, la Barre Délice d'Eric Favre enrobée de chocolat, et le Flapjack de Warrior, moelleux, aux flocons d'avoine.",
+      "Comment choisir ? Regarde d'abord la texture et le goût : c'est ce qui fait qu'on la finit. Puis la source de protéines (lait, collagène, soja, féverole ou gélatine selon la barre) et les édulcorants : les barres au maltitol peuvent avoir des effets laxatifs en cas de consommation excessive. Compte une à deux barres par jour, pas plus. Une barre reste un en-cas : elle ne remplace pas un repas.",
+    ],
+    featured: [
+      { handle: 'crunch-bar-barre-proteinee', label: 'Crunch Bar Warrior, la croustillante' },
+      { handle: 'barre-delice-needs-barre-proteinee', label: 'Barre Délice Eric Favre, 3 goûts' },
+      { handle: 'warrior-raw-protein-flapjack-75-g', label: 'Flapjack Warrior, aux flocons d’avoine' },
+    ],
+    related: [
+      { slug: 'proteines', label: 'Protéines' },
+      { slug: 'creatine', label: 'Créatine' },
+    ],
+    guides: [
+      { slug: 'combien-de-proteines-par-jour', label: 'Combien de protéines par jour ?' },
+      { slug: 'complements-debutant-musculation', label: 'Par quoi commencer en musculation ?' },
+    ],
+    faq: [
+      {
+        q: 'Combien de protéines dans une barre protéinée ?',
+        a:
+          "Autour de 20 g : 20 g pour la Crunch Bar (64 g, goût Salted Caramel), 20 à 21 g pour la Barre Délice (58 g) selon le goût et 20,1 g pour le Flapjack (75 g, goût Double Chocolate). Les valeurs exactes de chaque goût sont sur l'emballage.",
+      },
+      {
+        q: 'Combien de barres protéinées par jour ?',
+        a:
+          'Une à deux, en collation ou après la séance. Les barres au maltitol, comme la Crunch Bar et la Barre Délice, peuvent avoir des effets laxatifs en cas de consommation excessive. Une barre ne remplace pas un repas.',
+      },
+      {
+        q: 'Barre protéinée ou shaker de whey ?',
+        a:
+          'Les deux apportent autour de 20 g de protéines. Le shaker revient moins cher par dose et se boit juste après la séance ; la barre se mange sans rien préparer, pratique en déplacement ou au bureau. Beaucoup gardent la whey à la maison et une barre dans le sac.',
+      },
+      {
+        q: 'Crunch Bar, Barre Délice ou Flapjack : laquelle choisir ?',
+        a:
+          "La Crunch Bar pour le croustillant façon barre chocolatée (2,3 g de sucres pour le goût Salted Caramel). La Barre Délice pour un enrobage chocolat plus fondant, en trois goûts. Le Flapjack pour une barre moelleuse aux flocons d'avoine (7,6 g de fibres pour le goût Double Chocolate). Toutes sont aussi en boutique à Coignières.",
       },
     ],
   },

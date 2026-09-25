@@ -9,6 +9,7 @@ Entrée : un JSON « changes » = liste d'objets
     "metafields": {"composition": "…", "valeurs_nutritionnelles": "…",
                    "allergenes": "…", "format": "…", "texte_reecrit": false},  (facultatif)
     "tags_add": ["…"], "tags_remove": ["…"]         (facultatif)
+    "productType": "Barres protéinées"                  (facultatif : type = rayon du site)
   }
 
 Modes :
@@ -61,6 +62,8 @@ def current(handle, field):
         return v
     if field == 'tags':
         return f['tags']
+    if field == 'productType':
+        return f['productType']
     raise KeyError(field)
 
 
@@ -71,6 +74,8 @@ for c in changes:
     h = c['handle']
     if 'descriptionHtml' in c:
         plan.append((h, 'descriptionHtml', current(h, 'descriptionHtml'), c['descriptionHtml']))
+    if 'productType' in c:
+        plan.append((h, 'productType', current(h, 'productType'), c['productType']))
     for k in ('title', 'description'):
         if k in (c.get('seo') or {}):
             plan.append((h, f'seo.{k}', current(h, f'seo.{k}'), c['seo'][k]))
@@ -122,7 +127,9 @@ def verify(expected):
     bad = []
     for e in expected:
         got = current(e['handle'], e['field'])
-        if got != e['new']:
+        # Shopify trie les tags : on compare sans tenir compte de l'ordre.
+        same = sorted(got) == sorted(e['new']) if e['field'] == 'tags' else got == e['new']
+        if not same:
             bad.append((e['handle'], e['field'], got if not isinstance(got, str) else len(got), e['new'] if not isinstance(e['new'], str) else len(e['new'])))
     print(f'\nVérification : {len(expected)} champ(s) relus, {len(bad)} écart(s).')
     for b in bad:
@@ -164,6 +171,8 @@ for h, field, old, new in plan:
             d.setdefault('seo', {})[field[4:]] = new
         elif field == 'tags':
             d['tags'] = new
+        elif field == 'productType':
+            d['productType'] = new
 
 
 def product_update_alias(i, d):
@@ -172,6 +181,8 @@ def product_update_alias(i, d):
         parts.append(f'descriptionHtml:{J(d["descriptionHtml"])}')
     if 'tags' in d:
         parts.append(f'tags:{J(d["tags"])}')
+    if 'productType' in d:
+        parts.append(f'productType:{J(d["productType"])}')
     if 'seo' in d:
         parts.append('seo:{' + ', '.join(f'{k}:{J(v)}' for k, v in d['seo'].items()) + '}')
     return f' u{i}: productUpdate(input:{{{", ".join(parts)}}}) {{ product {{ handle }} userErrors {{ field message }} }}'

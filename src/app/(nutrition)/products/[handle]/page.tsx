@@ -175,6 +175,9 @@ export default async function ProductPage({ params }: Props) {
   const collectionHandle = product.collections?.nodes?.[0]?.handle ?? null
   const benefits = extractBenefits(product.tags ?? [])
   const format = extractFormat(product.metafields)
+  // Bloc « Précautions d'emploi » (complément alimentaire) : pas pour les aliments
+  // courants (barres, snacks, boissons) ni les accessoires (relecture UE, 25/09/2026).
+  const showPrecautions = !['Barres protéinées', 'Snacks', 'Boissons', 'Accessoires'].includes(product.productType ?? '')
 
   // Détails de livraison (source unique : src/lib/shipping.ts) — résout
   // l'avertissement Search Console « shippingDetails manquant (dans offers) ».
@@ -345,8 +348,8 @@ export default async function ProductPage({ params }: Props) {
         <Suspense fallback={null}><CrossSellV2 products={relatedProducts} currentHandle={product.handle} /></Suspense>
       )}
 
-      {/* ─── Precautions d'emploi (statique, legal, identique sur toutes fiches) ─── */}
-      <PrecautionsEmploiV2 />
+      {/* ─── Précautions d'emploi des compléments alimentaires (statique, légal) ─── */}
+      {showPrecautions && <PrecautionsEmploiV2 />}
     </>
   )
 }

@@ -38,7 +38,7 @@ export default function CompositionV2({ metafields }: CompositionV2Props) {
               Composition
             </p>
             <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight">
-              Ce qu&apos;il y a dans le pot
+              Ingrédients et allergènes
             </h2>
           </div>
 

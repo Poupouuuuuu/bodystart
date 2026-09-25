@@ -16,7 +16,8 @@ describe('googleCategoryFor — mapping productType → taxonomie officielle Goo
       expect(googleCategoryFor(t)).toBe('525')
     }
   })
-  it('Snacks → 2984 Nutrition Bars, Boissons → 5723 Sports & Energy Drinks', () => {
+  it('Barres protéinées et Snacks → 2984 Nutrition Bars, Boissons → 5723 Sports & Energy Drinks', () => {
+    expect(googleCategoryFor('Barres protéinées')).toBe('2984')
     expect(googleCategoryFor('Snacks')).toBe('2984')
     expect(googleCategoryFor('Boissons')).toBe('5723')
   })

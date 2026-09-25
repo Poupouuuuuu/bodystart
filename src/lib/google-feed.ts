@@ -53,8 +53,9 @@ export const EXCLUDE_TAG = 'exclu-google'
 // fait mieux qu'une catégorie fausse.
 export function googleCategoryFor(productType: string | null): string | null {
   switch (productType) {
+    case 'Barres protéinées':
     case 'Snacks':
-      return '2984' // Nutrition Bars (barres et cookies protéinés)
+      return '2984' // Nutrition Bars (barres, cookies et snacks protéinés)
     case 'Boissons':
       return '5723' // Sports & Energy Drinks
     case 'Accessoires':

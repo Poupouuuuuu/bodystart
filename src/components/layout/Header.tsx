@@ -37,12 +37,13 @@ const NAV_CATEGORIES: NavCategory[] = [
 // Rayons du burger mobile — 1 tap vers la catégorie (le burger est LA nav
 // principale sur téléphone : sans ça, « créatine » = ouvrir /products puis
 // manipuler les filtres, ou scroller jusqu'au footer).
-// Source de vérité des 8 slugs SEO : src/lib/categories.ts (import évité
+// Source de vérité des 9 slugs SEO : src/lib/categories.ts (import évité
 // exprès — le registre embarque les intros complètes, trop lourd en client).
 // Accessoires/Boissons n'ont pas de page SEO → filtre /products?cat=.
 const MOBILE_CATEGORY_LINKS: { label: string; href: string }[] = [
   { label: 'Protéines', href: '/categories/proteines' },
   { label: 'Créatine', href: '/categories/creatine' },
+  { label: 'Barres protéinées', href: '/categories/barres-proteinees' },
   { label: 'Pré-workout', href: '/categories/pre-workout' },
   { label: 'Acides aminés', href: '/categories/acides-amines' },
   { label: 'Brûleurs', href: '/categories/bruleurs' },
