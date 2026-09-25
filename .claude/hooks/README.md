@@ -8,6 +8,8 @@ Ils sont branchés dans `.claude/settings.json` (section `hooks`), en forme « e
 | --- | --- | --- |
 | `protect-files.js` | PreToolUse (Edit, Write, MultiEdit, NotebookEdit) | Refuse l'écriture sur `.env*`, `backups/` et les migrations déjà commitées |
 | `no-dash.js` | PostToolUse (Edit, Write, MultiEdit) | Signale les tirets longs « — » et « – » introduits dans du texte client : fichiers de contenu (.md, .json, .html…) et chaînes visibles du code (littéraux, gabarits, texte et attributs JSX), jamais les commentaires. `node .claude/hooks/no-dash.js --scan src` pour auditer tout le dépôt |
+| `mark-dirty.js` | PostToolUse (Edit, Write, MultiEdit, NotebookEdit) | Note le fichier modifié dans un marqueur de session (dossier temporaire), lu par `stop-check.js` |
+| `stop-check.js` | Stop | Si des fichiers de code ont été modifiés pendant le tour : `tsc --noEmit` + `vitest related` sur les sources touchées (suite complète si package.json / tsconfig / vitest.config). Échec = Claude ne s'arrête pas et corrige. Respecte `stop_hook_active` (pas de boucle). Doc ou contenu seuls = rien |
 
 ## Conventions
 
