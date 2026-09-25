@@ -34,7 +34,7 @@ node .claude/skills/verif-prod/scripts/probe-mobile.mjs --product $ARGUMENTS
 
 Sans argument, le script prend la première fiche produit du sitemap. Il produit `qa-shots/<horodatage>/report.md` et une capture pleine page par route (home, catalogue, fiche produit, boutiques, conseil, blog).
 
-Ce qu'il contrôle, par page : HTTP 200, un seul h1, canonical, meta description, absence de débordement horizontal, cibles tactiles de 44 px minimum, champs de saisie à 16 px minimum, JSON-LD valide, erreurs console. Puis la perf de la fiche produit (médiane de 3 chargements, 4G lent + CPU ×4) et le cache ISR (`x-vercel-cache` attendu HIT au second appel).
+Ce qu'il contrôle, par page : HTTP 200, un seul h1, canonical, meta description, absence de débordement horizontal, cibles tactiles de 44 px minimum sur toute la page (après défilement complet, celles du premier écran sont signalées ; les liens au fil d'un paragraphe sont comptés à part), champs de saisie à 16 px minimum, JSON-LD valide, erreurs console. Puis la perf de la fiche produit (médiane de 3 chargements, 4G lent + CPU ×4) et le cache ISR (`x-vercel-cache` attendu HIT au second appel).
 
 Prérequis une seule fois : `npx playwright install chromium`.
 

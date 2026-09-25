@@ -40,20 +40,51 @@ async function auditPage(context, route) {
   page.on('pageerror', (err) => consoleErrors.push(`pageerror: ${String(err).slice(0, 140)}`))
   const res = await page.goto(`${BASE}${route}`, { waitUntil: 'networkidle', timeout: 60_000 }).catch(() => null)
   const status = res ? res.status() : 0
+  // Descend toute la page (déclenche les apparitions au scroll et le chargement différé), puis remonte.
+  await page
+    .evaluate(async () => {
+      for (let y = 0; y < document.documentElement.scrollHeight; y += Math.round(window.innerHeight * 0.8)) {
+        window.scrollTo(0, y)
+        await new Promise((r) => setTimeout(r, 120))
+      }
+      window.scrollTo(0, 0)
+    })
+    .catch(() => {})
+  await page.waitForTimeout(500)
   const info = await page
     .evaluate(() => {
       const vw = window.innerWidth
+      // Page entière, pas seulement le premier écran ; on écarte ce qui n'est pas réellement affiché
+      // (sr-only, masqué, transparent, inerte, tiroir fermé hors canevas).
       const visible = (el) => {
         const r = el.getBoundingClientRect()
-        const s = getComputedStyle(el)
-        return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && s.display !== 'none' && r.top < window.innerHeight && r.bottom > 0
+        if (r.width <= 1 || r.height <= 1) return false
+        if (el.checkVisibility && !el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) return false
+        if (el.closest('[inert],[aria-hidden="true"]')) return false
+        return r.right > 0 && r.left < vw
       }
-      const small = []
-      for (const el of document.querySelectorAll('a, button, [role="button"], input[type="submit"]')) {
+      const targets = new Map()
+      let smallInText = 0
+      for (const el of document.querySelectorAll('a[href], button, [role="button"], [role="switch"], input[type="submit"], summary')) {
         if (!visible(el)) continue
         const r = el.getBoundingClientRect()
-        if (r.height < 44 || r.width < 44) small.push(`${el.tagName.toLowerCase()} « ${(el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 30)} » ${Math.round(r.width)}×${Math.round(r.height)}`)
+        if (r.height >= 44 && r.width >= 44) continue
+        // Lien au fil d'un paragraphe : toléré par WCAG 2.5.8, compté à part.
+        if (getComputedStyle(el).display === 'inline' && el.closest('p')) {
+          smallInText++
+          continue
+        }
+        const label = (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 30)
+        const key = `${el.tagName.toLowerCase()} « ${label} » ${Math.round(r.width)}×${Math.round(r.height)}`
+        const t = targets.get(key) || { key, n: 0, fold: false }
+        t.n++
+        t.fold = t.fold || r.top < window.innerHeight
+        targets.set(key, t)
       }
+      const smallTargets = [...targets.values()].sort((a, b) => Number(b.fold) - Number(a.fold))
+      const small = smallTargets.map((t) => `${t.key}${t.n > 1 ? ` ×${t.n}` : ''}${t.fold ? ' (1er écran)' : ''}`)
+      const smallCount = smallTargets.reduce((s, t) => s + t.n, 0)
+      const smallFold = smallTargets.filter((t) => t.fold).reduce((s, t) => s + t.n, 0)
       const smallInputs = []
       for (const el of document.querySelectorAll('input:not([type=hidden]):not([type=checkbox]):not([type=radio]), select, textarea')) {
         if (!visible(el)) continue
@@ -77,8 +108,11 @@ async function auditPage(context, route) {
         canonical: document.querySelector('link[rel=canonical]')?.getAttribute('href') || null,
         description: document.querySelector('meta[name=description]')?.getAttribute('content')?.length || 0,
         overflow: document.documentElement.scrollWidth > vw + 1,
-        small: small.slice(0, 8),
-        smallCount: small.length,
+        small: small.slice(0, 12),
+        smallCount,
+        smallFold,
+        smallInText,
+        smallDistinct: smallTargets.length,
         smallInputs,
         jsonLdOk,
         jsonLdTypes: [...new Set(jsonLdTypes)],
@@ -95,7 +129,7 @@ async function auditPage(context, route) {
     if (!info.canonical) problems.push('pas de canonical')
     if (info.description < 50) problems.push('meta description absente ou trop courte')
     if (info.overflow) problems.push('débordement horizontal')
-    if (info.smallCount) problems.push(`${info.smallCount} cible(s) < 44 px`)
+    if (info.smallCount) problems.push(`${info.smallCount} cible(s) < 44 px, dont ${info.smallFold} au 1er écran`)
     if (info.smallInputs.length) problems.push(`${info.smallInputs.length} champ(s) < 16 px`)
     if (!info.jsonLdOk) problems.push('JSON-LD invalide')
   } else problems.push('page inexploitable')
@@ -170,12 +204,14 @@ for (const r of results) lines.push(`| ${r.route} | ${r.status} | ${r.problems.l
 lines.push('', `## Perf ${perfRoute} (médiane de ${p.runs} chargements, 4G lent + CPU ×4)`, '')
 lines.push('| TTFB | DOMContentLoaded | load | LCP |', '| --- | --- | --- | --- |', `| ${ms(p.ttfb)} | ${ms(p.dcl)} | ${ms(p.load)} | ${ms(p.lcp)} |`)
 lines.push('', `## ISR ${perfRoute}`, '', `x-vercel-cache : ${cache.first} puis ${cache.second} (HTTP ${cache.status}) ; cache-control : ${cache.cacheControl}`)
-const details = results.filter((r) => r.info && (r.info.small.length || r.info.smallInputs.length || r.consoleErrors.length))
+const details = results.filter((r) => r.info && (r.info.small.length || r.info.smallInText || r.info.smallInputs.length || r.consoleErrors.length))
 if (details.length) {
   lines.push('', '## Détails', '')
   for (const r of details) {
     lines.push(`### ${r.route}`)
     for (const s of r.info.small) lines.push(`- cible < 44 px : ${s}`)
+    if (r.info.small.length < r.info.smallDistinct) lines.push(`- … et d'autres (${r.info.smallCount} au total)`)
+    if (r.info.smallInText) lines.push(`- ${r.info.smallInText} lien(s) < 44 px au fil d'un paragraphe (tolérés WCAG 2.5.8, à juger)`)
     for (const s of r.info.smallInputs) lines.push(`- champ < 16 px : ${s}`)
     for (const s of r.consoleErrors) lines.push(`- console : ${s}`)
     lines.push('')
