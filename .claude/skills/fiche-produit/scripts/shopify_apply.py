@@ -110,7 +110,7 @@ if problems:
     for p in problems:
         print('  -', p)
     sys.exit(1)
-if not plan:
+if not plan and not a.verify:
     print('Rien à écrire.')
     sys.exit(0)
 
