@@ -78,6 +78,16 @@ npm start         # Serveur production
 npm run lint      # ESLint
 ```
 
+## Git et mise en production
+
+- Pousser sur `main` = mise en production : Vercel déploie `main` automatiquement.
+- **Autorisation permanente d'Adam (25/09/2026), pour ce projet uniquement** : Claude peut faire `git push` sur `main` sans demander, à condition que ces trois commandes passent juste avant, sur l'état exact qui est poussé (arbre de travail propre) :
+  - `npm run build`
+  - `npm run lint -- --max-warnings=0` (même seuil que la CI)
+  - `npm test`
+- Si l'une échoue : on corrige ou on s'arrête, pas de push.
+- Cette autorisation ne couvre pas `git push --force` ni la réécriture d'un historique déjà poussé : pour ça, on demande toujours.
+
 ## Variables d'environnement requises
 
 ```env
