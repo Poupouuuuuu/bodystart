@@ -24,7 +24,7 @@ const shippingMethods = [
   {
     Icon: Store,
     name: CLICK_AND_COLLECT.label,
-    delay: `${CLICK_AND_COLLECT.delayLabel} — souvent en quelques minutes`,
+    delay: `${CLICK_AND_COLLECT.delayLabel}, souvent en quelques minutes`,
     price: 'Gratuit',
     details: "Retire ta commande en boutique à Coignières. On te prévient dès que c'est prêt.",
   },

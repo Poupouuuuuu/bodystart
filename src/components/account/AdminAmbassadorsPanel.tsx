@@ -152,9 +152,9 @@ export function AdminAmbassadorsPanel() {
       try {
         const r = await fetch(`/api/loyalty/admin/customers?q=${encodeURIComponent(q)}`, { cache: 'no-store', credentials: 'include' })
         const j = await r.json()
-        if (!r.ok) { setCustError('Recherche indisponible — saisis l’email manuellement ci-dessous.'); setCustResults([]); return }
+        if (!r.ok) { setCustError('Recherche indisponible : saisis l’email manuellement ci-dessous.'); setCustResults([]); return }
         setCustResults(j.customers ?? [])
-      } catch { setCustError('Erreur de recherche — saisis l’email manuellement.'); setCustResults([]) }
+      } catch { setCustError('Erreur de recherche : saisis l’email manuellement.'); setCustResults([]) }
       finally { setCustSearching(false) }
     }, 320)
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
@@ -367,11 +367,11 @@ export function AdminAmbassadorsPanel() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="n-phone" className="block text-[12px] text-ink-mute font-medium mb-1">Téléphone (optionnel — anti-triche)</label>
+                <label htmlFor="n-phone" className="block text-[12px] text-ink-mute font-medium mb-1">Téléphone (optionnel, anti-triche)</label>
                 <input id="n-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={40} placeholder="06 12 34 56 78" className={inputCls} />
               </div>
               <div>
-                <label htmlFor="n-code" className="block text-[12px] text-ink-mute font-medium mb-1">Code (optionnel — sinon prénom)</label>
+                <label htmlFor="n-code" className="block text-[12px] text-ink-mute font-medium mb-1">Code (optionnel, sinon prénom)</label>
                 <input id="n-code" value={code} onChange={(e) => setCode(e.target.value)} maxLength={40} placeholder="COACHJULIE"
                   className="w-full bg-white border border-spruce/15 rounded-xl px-4 py-3 font-mono font-semibold tracking-wider uppercase text-spruce focus:outline-none focus:ring-2 focus:ring-fresh/40" />
               </div>
@@ -449,7 +449,7 @@ export function AdminAmbassadorsPanel() {
                     const preview = cents !== null ? computeCagnotteAdjustment(a.balanceCents, adjSign * cents) : null
                     return (
                       <div className="mt-3 bg-white border border-fresh/30 rounded-xl p-4 space-y-3">
-                        <p className="font-display font-bold text-spruce text-[14px]">Ajuster la cagnotte — {a.name}</p>
+                        <p className="font-display font-bold text-spruce text-[14px]">Ajuster la cagnotte : {a.name}</p>
                         <div className="flex flex-wrap items-end gap-3">
                           <div className="inline-flex rounded-full border border-spruce/15 overflow-hidden">
                             <button type="button" onClick={() => { setAdjSign(-1); setAdjConfirm(false) }}
@@ -498,7 +498,7 @@ export function AdminAmbassadorsPanel() {
                           ) : (
                             <>
                               <span className="text-[12px] font-semibold text-spruce">
-                                Confirmer {adjSign === -1 ? 'la déduction' : 'le crédit'} de {cents ? euros(cents) : '—'} ?
+                                Confirmer {adjSign === -1 ? 'la déduction' : 'le crédit'} de {cents ? euros(cents) : '…'} ?
                               </span>
                               <button type="button" disabled={adjSubmitting} onClick={() => submitAdjust(a)}
                                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-semibold bg-fresh text-white hover:bg-fresh-deep disabled:opacity-60 transition-colors">
@@ -568,7 +568,7 @@ export function AdminAmbassadorsPanel() {
                                   <li key={t.id} className="flex items-baseline justify-between gap-3 text-[12px]">
                                     <span className="flex-1 min-w-0">
                                       <span className="font-semibold text-ink">{TX_LABEL[t.type] ?? t.type}</span>
-                                      {t.notes && <span className="text-ink-mute"> — {t.notes}</span>}
+                                      {t.notes && <span className="text-ink-mute"> · {t.notes}</span>}
                                       <span className="text-ink-mute"> · {dateFr(t.createdAt)}</span>
                                     </span>
                                     <span className={`font-semibold whitespace-nowrap ${t.sign === 1 ? 'text-fresh' : t.sign === -1 ? 'text-terracotta' : 'text-spruce'}`}>

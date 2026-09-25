@@ -55,7 +55,7 @@ const PHOTOS = [
 
 const FACTS = [
   { value: '13 ans', label: 'de conseil en nutrition' },
-  { value: 'Lun–Sam', label: 'ouvert de 11h à 19h' },
+  { value: 'Lun. au sam.', label: 'ouvert de 11h à 19h' },
   { value: '+2 600', label: 'clients conseillés' },
   // Note Google réelle — source unique GOOGLE_RATING (store-info.ts), relevée
   // à la main. Mettre à jour ici si la note/le volume bouge sensiblement.
@@ -82,7 +82,7 @@ export default function BoutiqueGalleryV2() {
           <p className="text-ink-mute text-[17px] leading-[1.65]">
             Des rayons pleins, des produits que tu peux prendre en main, et
             quelqu&apos;un derrière le comptoir qui les utilise vraiment. Ça fait
-            13 ans qu&apos;on conseille des sportifs à Coignières — viens voir,
+            13 ans qu&apos;on conseille des sportifs à Coignières. Viens voir,
             c&apos;est mieux en vrai.
           </p>
         </div>

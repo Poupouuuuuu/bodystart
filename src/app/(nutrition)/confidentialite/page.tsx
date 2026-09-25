@@ -162,7 +162,7 @@ export default function ConfidentialitePage() {
             <ul className="mt-4 space-y-3 list-none">
               {[
                 "Finalité : mesure d'audience et amélioration du site, à l'exclusion de toute publicité ciblée.",
-                "Base légale : votre consentement (article 6.1.a du RGPD), recueilli via le bandeau cookies. Aucun script de mesure n'est chargé tant que vous n'avez pas accepté — aucun cookie ni aucune requête vers Google avant ce choix.",
+                "Base légale : votre consentement (article 6.1.a du RGPD), recueilli via le bandeau cookies. Aucun script de mesure n'est chargé tant que vous n'avez pas accepté : aucun cookie ni aucune requête vers Google avant ce choix.",
                 "Données traitées : un identifiant de mesure pseudonyme, les pages vues et les événements, l'adresse IP étant tronquée par Google.",
                 'Conservation : les données de mesure d’audience sont conservées 14 mois maximum.',
               ].map((item) => (

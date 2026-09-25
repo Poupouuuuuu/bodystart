@@ -103,7 +103,7 @@ export default function BundleSelectorsV2({
         const productTitle = parsed?.productTitle
         const format = productTitle ? formatByProduct.get(productTitle) : undefined
         const showFormat = !!format && !!productTitle && !productsWithWeightAxis.has(productTitle)
-        const label = showFormat ? `${axis.name} — ${format}` : axis.name
+        const label = showFormat ? `${axis.name} · ${format}` : axis.name
         const isLocked = axis.values.length === 1
 
         return (

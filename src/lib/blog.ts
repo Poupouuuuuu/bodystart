@@ -48,7 +48,7 @@ export interface BlogArticle {
 }
 
 export const BLOG_AUTHOR = {
-  name: 'Adam — BodyStart Nutrition',
+  name: 'Adam, BodyStart Nutrition',
   url: '/about',
 } as const
 

@@ -14,7 +14,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
   metaDescription:
     'Compléments pour mieux récupérer et gérer la fatigue : ce qui marche (magnésium, protéines), ce qui compte plus (sommeil, hygiène) et ce qu\'on relativise.',
   excerpt:
-    "Le sommeil est ton premier levier de récupération — aucun complément ne le remplace. À côté, le magnésium contribue à réduire la fatigue et au fonctionnement normal du système nerveux, et un bon apport en protéines soutient le muscle. Le reste, c'est surtout de l'hygiène de vie.",
+    "Le sommeil est ton premier levier de récupération : aucun complément ne le remplace. À côté, le magnésium contribue à réduire la fatigue et au fonctionnement normal du système nerveux, et un bon apport en protéines soutient le muscle. Le reste, c'est surtout de l'hygiène de vie.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -27,7 +27,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Les compléments, eux, jouent un rôle de soutien — utile, mais secondaire. Ils peuvent aider à combler un manque (magnésium, protéines) ou à structurer une routine de fin de journée, à condition que les fondations soient là. On va voir lesquels ont un vrai intérêt, et lesquels sont surcotés.",
+          text: "Les compléments, eux, jouent un rôle de soutien : utile, mais secondaire. Ils peuvent aider à combler un manque (magnésium, protéines) ou à structurer une routine de fin de journée, à condition que les fondations soient là. On va voir lesquels ont un vrai intérêt, et lesquels sont surcotés.",
         },
       ],
     },
@@ -40,7 +40,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Attention à la nuance réglementaire : on ne dit pas que le magnésium « fait dormir ». On dit qu\'il aide à réduire la fatigue et soutient le système nerveux — ce qui, dans une routine de fin de journée bien menée, accompagne le retour au calme. Pour le confort digestif, choisis une forme bien tolérée comme le **bisglycinate** plutôt que l\'oxyde bon marché : notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme (16,90 €).',
+          text: 'Attention à la nuance réglementaire : on ne dit pas que le magnésium « fait dormir ». On dit qu\'il aide à réduire la fatigue et soutient le système nerveux, ce qui, dans une routine de fin de journée bien menée, accompagne le retour au calme. Pour le confort digestif, choisis une forme bien tolérée comme le **bisglycinate** plutôt que l\'oxyde bon marché : notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme (16,90 €).',
         },
       ],
     },
@@ -62,7 +62,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Après le sommeil, le deuxième levier de récupération, c'est l'apport en protéines. Les **protéines contribuent au maintien et au développement de la masse musculaire** : elles fournissent les briques dont le muscle a besoin pour se réparer après une séance. Un apport réparti sur la journée, y compris une source le soir, est une base solide — bien plus que n'importe quel « complément récup » à la mode.",
+          text: "Après le sommeil, le deuxième levier de récupération, c'est l'apport en protéines. Les **protéines contribuent au maintien et au développement de la masse musculaire** : elles fournissent les briques dont le muscle a besoin pour se réparer après une séance. Un apport réparti sur la journée, y compris une source le soir, est une base solide, bien plus que n'importe quel « complément récup » à la mode.",
         },
         {
           type: 'p',

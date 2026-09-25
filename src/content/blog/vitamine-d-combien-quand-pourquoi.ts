@@ -13,7 +13,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
   metaDescription:
     'La vitamine D : à quoi elle sert, pourquoi la carence est fréquente, quel dosage et quand la prendre. D3, gouttes ou softgels : on t\'explique tout.',
   excerpt:
-    "La vitamine D contribue au fonctionnement normal du système immunitaire, au maintien d'une ossature normale et à une fonction musculaire normale. Sous nos latitudes, une supplémentation fait surtout sens d'octobre à mars, quand le soleil manque — sous forme de D3, de préférence avec un repas.",
+    "La vitamine D contribue au fonctionnement normal du système immunitaire, au maintien d'une ossature normale et à une fonction musculaire normale. Sous nos latitudes, une supplémentation fait surtout sens d'octobre à mars, quand le soleil manque, sous forme de D3, de préférence avec un repas.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -26,7 +26,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Autrement dit, elle est au carrefour des os, des muscles et de l'immunité — trois piliers qui parlent à tout le monde, sportif ou non. C'est pour ça qu'on la range parmi les fondations, avant même les compléments de performance.",
+          text: "Autrement dit, elle est au carrefour des os, des muscles et de l'immunité, trois piliers qui parlent à tout le monde, sportif ou non. C'est pour ça qu'on la range parmi les fondations, avant même les compléments de performance.",
         },
         {
           type: 'p',
@@ -65,7 +65,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "La vitamine D est **liposoluble** : elle s'absorbe mieux avec un repas contenant un peu de matières grasses. Le déjeuner ou le dîner sont donc de bons moments. L'heure exacte compte peu ; la régularité, elle, fait tout — une prise quotidienne sur la saison est plus efficace qu'une prise irrégulière.",
+          text: "La vitamine D est **liposoluble** : elle s'absorbe mieux avec un repas contenant un peu de matières grasses. Le déjeuner ou le dîner sont donc de bons moments. L'heure exacte compte peu ; la régularité, elle, fait tout : une prise quotidienne sur la saison est plus efficace qu'une prise irrégulière.",
         },
         {
           type: 'list',
@@ -95,7 +95,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
               '17,90 €',
             ],
             [
-              '[Vitamine D3 — Gouttes](/products/vitamine-d3-gouttes)',
+              '[Vitamine D3 - Gouttes](/products/vitamine-d3-gouttes)',
               'Gouttes (dose ajustable)',
               '12,90 €',
             ],
@@ -132,7 +132,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
   ],
   products: [
     { handle: 'vitamin-d3-k2', label: 'Vitamine D3 + K2' },
-    { handle: 'vitamine-d3-gouttes', label: 'Vitamine D3 — Gouttes' },
+    { handle: 'vitamine-d3-gouttes', label: 'Vitamine D3 - Gouttes' },
   ],
   categories: [{ slug: 'sante', label: 'Santé & bien-être' }],
   related: ['complements-apres-40-ans', 'complements-debutant-musculation'],

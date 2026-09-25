@@ -200,7 +200,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
 
         <p className="flex items-center gap-2 text-[14px] text-ink-mute">
           <Store className="w-4 h-4 text-spruce" />
-          Une question sur ton cas précis ? Passe nous voir à Coignières —{' '}
+          Une question sur ton cas précis ? Passe nous voir à Coignières :{' '}
           <Link href="/stores" className="font-semibold text-spruce hover:underline underline-offset-4">
             la boutique
           </Link>{' '}

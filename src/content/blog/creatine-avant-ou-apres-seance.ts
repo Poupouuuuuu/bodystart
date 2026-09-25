@@ -207,15 +207,15 @@ export const creatineAvantOuApresSeance: BlogArticle = {
   "products": [
     {
       "handle": "creatine-100-monohydrate-micronisee",
-      "label": "Créatine 100 % Monohydrate Micronisée — French Nutrition"
+      "label": "Créatine 100 % Monohydrate Micronisée (French Nutrition)"
     },
     {
       "handle": "one-raw-creatine",
-      "label": "One Raw Creatine — Zoomad"
+      "label": "One Raw Creatine (Zoomad)"
     },
     {
       "handle": "clear-pro-creatine",
-      "label": "Clear Pro Creatine — Eric Favre"
+      "label": "Clear Pro Creatine (Eric Favre)"
     }
   ],
   "categories": [

@@ -110,7 +110,7 @@ export default function HeroV2() {
               {[
                 { value: '13 ans', label: 'de conseil' },
                 { value: '+2 600', label: 'clients conseillés' },
-                { value: 'Lun–Sam', label: '11h – 19h' },
+                { value: 'Lun. au sam.', label: '11h à 19h' },
               ].map((f) => (
                 <div key={f.value} className="flex items-baseline gap-2">
                   <dt className="sr-only">{f.label}</dt>

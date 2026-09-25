@@ -20,7 +20,7 @@ export const quandPrendreSaWhey: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Commençons par l'essentiel : ce qui construit et entretient le muscle, c'est ton **apport total en protéines sur la journée**, réparti sur plusieurs prises. La whey n'est qu'un moyen pratique d'atteindre ce total quand l'alimentation ne suffit pas. Donc le « meilleur moment » pour la prendre, c'est là où il te manque des protéines — pas une heure magique.",
+          text: "Commençons par l'essentiel : ce qui construit et entretient le muscle, c'est ton **apport total en protéines sur la journée**, réparti sur plusieurs prises. La whey n'est qu'un moyen pratique d'atteindre ce total quand l'alimentation ne suffit pas. Donc le « meilleur moment » pour la prendre, c'est là où il te manque des protéines, pas une heure magique.",
         },
         {
           type: 'p',
@@ -37,7 +37,7 @@ export const quandPrendreSaWhey: BlogArticle = {
         },
         {
           type: 'p',
-          text: "En clair, si tu as mangé des protéines dans les heures qui précèdent ou qui suivent ta séance, tu n'as pas à courir vers ton shaker. Le post-training reste un bon moment par **commodité**, pas par urgence physiologique. La whey isolate, à digestion rapide, s'y prête bien — on compare les types dans [whey ou isolate : quelle différence](/blog/whey-ou-isolate-quelle-difference).",
+          text: "En clair, si tu as mangé des protéines dans les heures qui précèdent ou qui suivent ta séance, tu n'as pas à courir vers ton shaker. Le post-training reste un bon moment par **commodité**, pas par urgence physiologique. La whey isolate, à digestion rapide, s'y prête bien. On compare les types dans [whey ou isolate : quelle différence](/blog/whey-ou-isolate-quelle-difference).",
         },
       ],
     },

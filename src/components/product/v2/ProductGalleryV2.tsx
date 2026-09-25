@@ -204,7 +204,7 @@ export default function ProductGalleryV2({
           onClick={() => setIsLightboxOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label={`${title} — vue plein écran`}
+          aria-label={`${title}, vue plein écran`}
         >
           <button
             ref={closeLightboxBtnRef}

@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   // Si un event coaching arrive (subscription d'un client legacy), on le saura
   // dans les logs Vercel et on pourra le traiter à la main.
   console.log(
-    `[Stripe Webhook · STANDBY coaching] Event reçu : ${event.type} · id=${event.id} — aucune action déclenchée.`
+    `[Stripe Webhook · STANDBY coaching] Event reçu : ${event.type} · id=${event.id} : aucune action déclenchée.`
   )
 
   return NextResponse.json({ received: true, standby: true })

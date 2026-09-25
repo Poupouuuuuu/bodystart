@@ -16,7 +16,7 @@ export const commentFaireUneSeche: BlogArticle = {
   metaDescription:
     'Déficit calorique modéré, protéines élevées, musculation maintenue : la méthode complète pour sécher sans perdre de muscle, étape par étape.',
   excerpt:
-    "Une sèche réussie tient en trois piliers : un déficit calorique modéré (300 à 500 kcal sous ta maintenance), un apport en protéines élevé pour préserver le muscle, et une musculation maintenue lourde. Vise une perte de 0,5 à 1 % de ton poids par semaine — les compléments sont une aide, jamais le moteur.",
+    "Une sèche réussie tient en trois piliers : un déficit calorique modéré (300 à 500 kcal sous ta maintenance), un apport en protéines élevé pour préserver le muscle, et une musculation maintenue lourde. Vise une perte de 0,5 à 1 % de ton poids par semaine. Les compléments sont une aide, jamais le moteur.",
   datePublished: '2026-08-05',
   dateModified: '2026-08-05',
   sections: [
@@ -29,7 +29,7 @@ export const commentFaireUneSeche: BlogArticle = {
         },
         {
           type: 'p',
-          text: "La mécanique de base est simple et non négociable : pour perdre du gras, il faut un **déficit calorique** — dépenser plus que ce qu'on mange. Tout le reste (répartition des repas, choix des aliments, compléments, cardio) sert à rendre ce déficit tenable et à protéger le muscle pendant qu'il agit.",
+          text: "La mécanique de base est simple et non négociable : pour perdre du gras, il faut un **déficit calorique** : dépenser plus que ce qu'on mange. Tout le reste (répartition des repas, choix des aliments, compléments, cardio) sert à rendre ce déficit tenable et à protéger le muscle pendant qu'il agit.",
         },
         {
           type: 'p',
@@ -63,11 +63,11 @@ export const commentFaireUneSeche: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "En déficit, le corps peut puiser dans le muscle. Ta meilleure protection : un apport en protéines **élevé** — vise le haut de la fourchette, autour de **2 à 2,2 g par kilo de poids de corps et par jour** (on détaille le calcul dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour)). Les protéines contribuent au maintien et au développement de la masse musculaire — exactement ce qu'on veut défendre en sèche.",
+          text: "En déficit, le corps peut puiser dans le muscle. Ta meilleure protection : un apport en protéines **élevé**. Vise le haut de la fourchette, autour de **2 à 2,2 g par kilo de poids de corps et par jour** (on détaille le calcul dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour)). Les protéines contribuent au maintien et au développement de la masse musculaire, exactement ce qu'on veut défendre en sèche.",
         },
         {
           type: 'p',
-          text: "C'est là qu'une protéine en poudre devient vraiment utile : atteindre 160 g de protéines par jour en mangeant moins de calories n'est pas simple. Une [isolate comme l'Iso Zero](/products/iso-zero-100-whey) apporte ~25 g de protéines par shaker avec très peu de glucides et de lipides — pratique quand chaque calorie compte. Petit budget ? Une [whey classique](/products/whey-native-protimuscle) fait très bien le travail. On compare les deux dans [whey ou isolate](/blog/whey-ou-isolate-quelle-difference).",
+          text: "C'est là qu'une protéine en poudre devient vraiment utile : atteindre 160 g de protéines par jour en mangeant moins de calories n'est pas simple. Une [isolate comme l'Iso Zero](/products/iso-zero-100-whey) apporte ~25 g de protéines par shaker avec très peu de glucides et de lipides, pratique quand chaque calorie compte. Petit budget ? Une [whey classique](/products/whey-native-protimuscle) fait très bien le travail. On compare les deux dans [whey ou isolate](/blog/whey-ou-isolate-quelle-difference).",
         },
       ],
     },
@@ -80,7 +80,7 @@ export const commentFaireUneSeche: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Le cardio est un **outil d'appoint** pour creuser la dépense sans retirer plus d'assiette : 2 à 3 sessions modérées par semaine suffisent largement. Et ne sous-estime pas l'activité quotidienne (marche, escaliers) — c'est souvent le levier de dépense le plus facile à augmenter sans fatigue supplémentaire.",
+          text: "Le cardio est un **outil d'appoint** pour creuser la dépense sans retirer plus d'assiette : 2 à 3 sessions modérées par semaine suffisent largement. Et ne sous-estime pas l'activité quotidienne (marche, escaliers) : c'est souvent le levier de dépense le plus facile à augmenter sans fatigue supplémentaire.",
         },
       ],
     },
@@ -93,7 +93,7 @@ export const commentFaireUneSeche: BlogArticle = {
         },
         {
           type: 'p',
-          text: "À ce rythme, une sèche complète dure généralement **8 à 16 semaines** selon le point de départ et l'objectif. Sur une sèche longue, une semaine de pause à maintenance toutes les 6 à 8 semaines aide à souffler mentalement et physiquement, puis on repart. Et le sommeil n'est pas une option : c'est pendant la nuit que la récupération se joue — une sèche avec 5 h de sommeil par nuit est une sèche sabotée.",
+          text: "À ce rythme, une sèche complète dure généralement **8 à 16 semaines** selon le point de départ et l'objectif. Sur une sèche longue, une semaine de pause à maintenance toutes les 6 à 8 semaines aide à souffler mentalement et physiquement, puis on repart. Et le sommeil n'est pas une option : c'est pendant la nuit que la récupération se joue. Une sèche avec 5 h de sommeil par nuit est une sèche sabotée.",
         },
       ],
     },
@@ -103,10 +103,10 @@ export const commentFaireUneSeche: BlogArticle = {
         {
           type: 'list',
           items: [
-            '**Le déficit trop agressif** : perte de muscle, fatigue, craquages — et reprise derrière.',
+            '**Le déficit trop agressif** : perte de muscle, fatigue, craquages, et reprise derrière.',
             '**Sabrer les protéines avec le reste** : c\'est le seul macronutriment à protéger coûte que coûte.',
             '**Tout miser sur le cardio** en abandonnant les charges : le signal de maintien musculaire disparaît.',
-            '**Compter sur un brûleur « magique »** : aucun complément ne fait perdre de gras sans déficit — on l\'explique en détail dans [notre article honnête sur les brûleurs](/blog/bruleurs-de-graisse-ca-marche).',
+            '**Compter sur un brûleur « magique »** : aucun complément ne fait perdre de gras sans déficit. On l\'explique en détail dans [notre article honnête sur les brûleurs](/blog/bruleurs-de-graisse-ca-marche).',
             '**Les week-ends « off »** : deux jours sans compter peuvent effacer le déficit de toute la semaine.',
             '**Se fier au poids d\'un seul jour** : l\'eau fait fluctuer la balance ; juge sur la moyenne de la semaine et sur le miroir.',
           ],
@@ -123,9 +123,9 @@ export const commentFaireUneSeche: BlogArticle = {
         {
           type: 'list',
           items: [
-            "**Une protéine en poudre** (whey ou isolate) : le plus utile de tous — tenir son quota de protéines avec peu de calories.",
-            "**Une multivitamine** : en déficit, on mange moins, donc moins de micronutriments — un [filet de sécurité pertinent](/blog/multivitamines-utile-comment-choisir) pendant la diète.",
-            "**Les classiques de sèche** (L-carnitine, CLA, formules thermogéniques) : en accompagnement, pour les pratiquants qui veulent tout mettre de leur côté — sans leur prêter de pouvoirs magiques. Les formules à base de caféine aident à maintenir la vigilance quand l'énergie baisse en fin de diète.",
+            "**Une protéine en poudre** (whey ou isolate) : le plus utile de tous, pour tenir son quota de protéines avec peu de calories.",
+            "**Une multivitamine** : en déficit, on mange moins, donc moins de micronutriments. Un [filet de sécurité pertinent](/blog/multivitamines-utile-comment-choisir) pendant la diète.",
+            "**Les classiques de sèche** (L-carnitine, CLA, formules thermogéniques) : en accompagnement, pour les pratiquants qui veulent tout mettre de leur côté, sans leur prêter de pouvoirs magiques. Les formules à base de caféine aident à maintenir la vigilance quand l'énergie baisse en fin de diète.",
           ],
         },
         {
@@ -140,7 +140,7 @@ export const commentFaireUneSeche: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Tu retrouves tout le rayon dans [brûleurs et minceur](/categories/bruleurs) et les protéines dans [le rayon protéines](/categories/proteines). Et si tu ne sais pas par où commencer ta sèche, passe en boutique à Coignières : on regarde ton objectif et on te dit honnêtement ce qui est utile — et ce qui ne l'est pas.",
+          text: "Tu retrouves tout le rayon dans [brûleurs et minceur](/categories/bruleurs) et les protéines dans [le rayon protéines](/categories/proteines). Et si tu ne sais pas par où commencer ta sèche, passe en boutique à Coignières : on regarde ton objectif et on te dit honnêtement ce qui est utile, et ce qui ne l'est pas.",
         },
       ],
     },
@@ -174,7 +174,7 @@ export const commentFaireUneSeche: BlogArticle = {
     },
     {
       q: 'Combien de protéines par jour pendant une sèche ?',
-      a: "Vise le haut de la fourchette : environ 2 à 2,2 g de protéines par kilo de poids de corps et par jour. Les protéines contribuent au maintien de la masse musculaire — c'est ta meilleure protection contre la fonte musculaire en déficit.",
+      a: "Vise le haut de la fourchette : environ 2 à 2,2 g de protéines par kilo de poids de corps et par jour. Les protéines contribuent au maintien de la masse musculaire. C'est ta meilleure protection contre la fonte musculaire en déficit.",
     },
     {
       q: 'Faut-il faire beaucoup de cardio pour sécher ?',

@@ -14,7 +14,7 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
   metaDescription:
     "Une multivitamine comble les petits déficits quand l'alimentation ne suffit pas. Utile ou marketing pour un sportif ? Comment lire l'étiquette et bien choisir.",
   excerpt:
-    "Une multivitamine n'est pas magique : elle sert de filet de sécurité pour combler les petits déficits quand l'assiette ne couvre pas tout — utile surtout en sèche, en régime restrictif ou quand on mange peu varié. Le tout est de choisir une formule bien dosée plutôt qu'un cocktail à rallonge sous-dosé.",
+    "Une multivitamine n'est pas magique : elle sert de filet de sécurité pour combler les petits déficits quand l'assiette ne couvre pas tout, utile surtout en sèche, en régime restrictif ou quand on mange peu varié. Le tout est de choisir une formule bien dosée plutôt qu'un cocktail à rallonge sous-dosé.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -23,11 +23,11 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Une multivitamine réunit dans un seul comprimé une série de vitamines et de minéraux. Son rôle est simple : servir de **filet de sécurité** pour combler les petits déficits quand l'alimentation ne couvre pas tout. Plusieurs de ses nutriments ont des rôles reconnus — par exemple, la **vitamine C et la vitamine D contribuent au fonctionnement normal du système immunitaire**, tandis que les **vitamines du groupe B contribuent à réduire la fatigue** et **à un métabolisme énergétique normal**.",
+          text: "Une multivitamine réunit dans un seul comprimé une série de vitamines et de minéraux. Son rôle est simple : servir de **filet de sécurité** pour combler les petits déficits quand l'alimentation ne couvre pas tout. Plusieurs de ses nutriments ont des rôles reconnus : par exemple, la **vitamine C et la vitamine D contribuent au fonctionnement normal du système immunitaire**, tandis que les **vitamines du groupe B contribuent à réduire la fatigue** et **à un métabolisme énergétique normal**.",
         },
         {
           type: 'p',
-          text: "Ce qu'une multivitamine n'est pas : un substitut à une bonne assiette, ni un produit « qui donne de l'énergie » ou « qui booste l'immunité ». Elle soutient un fonctionnement normal quand un apport manque — rien de plus, rien de moins. Bien comprise, c'est un complément utile ; mal vendue, c'est de la poudre de perlimpinpin.",
+          text: "Ce qu'une multivitamine n'est pas : un substitut à une bonne assiette, ni un produit « qui donne de l'énergie » ou « qui booste l'immunité ». Elle soutient un fonctionnement normal quand un apport manque, rien de plus, rien de moins. Bien comprise, c'est un complément utile ; mal vendue, c'est de la poudre de perlimpinpin.",
         },
       ],
     },
@@ -36,7 +36,7 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Réponse honnête : **ça dépend de ton alimentation**. Si tu manges varié, avec des fruits, des légumes, des protéines et des féculents complets à chaque repas, tu couvres probablement l'essentiel de tes besoins — la multivitamine devient un confort, pas une nécessité.",
+          text: "Réponse honnête : **ça dépend de ton alimentation**. Si tu manges varié, avec des fruits, des légumes, des protéines et des féculents complets à chaque repas, tu couvres probablement l'essentiel de tes besoins : la multivitamine devient un confort, pas une nécessité.",
         },
         {
           type: 'p',
@@ -88,7 +88,7 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: "La multivitamine, elle, joue la **couverture large** : pratique quand tu veux une base simple sans multiplier les pots, ou quand ton alimentation est irrégulière. Les deux approches ne s'opposent pas — beaucoup associent une multivitamine à une vitamine D en hiver. L'important est de partir d'un besoin réel, pas d'accumuler par réflexe.",
+          text: "La multivitamine, elle, joue la **couverture large** : pratique quand tu veux une base simple sans multiplier les pots, ou quand ton alimentation est irrégulière. Les deux approches ne s'opposent pas : beaucoup associent une multivitamine à une vitamine D en hiver. L'important est de partir d'un besoin réel, pas d'accumuler par réflexe.",
         },
       ],
     },
@@ -109,7 +109,7 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Le [Multivitamines & Minéraux](/products/multivitamines-mineraux) couvre large (vitamines + minéraux, dont magnésium et zinc) en une capsule ; la formule [Multivitamines](/products/multivitamines) mise sur des vitamines bien dosées. Tu retrouves ces références et les autres fondations dans le rayon [santé & bien-être](/categories/sante). Et si tu ne sais pas si une multivitamine a sa place dans ta routine, on en parle honnêtement en boutique — parfois la réponse est « travaille d'abord ton assiette ».",
+          text: "Le [Multivitamines & Minéraux](/products/multivitamines-mineraux) couvre large (vitamines + minéraux, dont magnésium et zinc) en une capsule ; la formule [Multivitamines](/products/multivitamines) mise sur des vitamines bien dosées. Tu retrouves ces références et les autres fondations dans le rayon [santé & bien-être](/categories/sante). Et si tu ne sais pas si une multivitamine a sa place dans ta routine, on en parle honnêtement en boutique. Parfois la réponse est « travaille d'abord ton assiette ».",
         },
       ],
     },

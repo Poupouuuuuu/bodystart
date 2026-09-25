@@ -35,7 +35,7 @@ const REASONS = [
   {
     icon: Clock,
     title: '13 ans de conseil, pas 13 mois',
-    desc: "La boutique conseille des sportifs à Coignières depuis 13 ans (d'abord sous le nom BodyFit, reprise à 100 % en 2026). On a vu passer les modes, les bonnes formules et les arnaques — et on te dit la différence.",
+    desc: "La boutique conseille des sportifs à Coignières depuis 13 ans (d'abord sous le nom BodyFit, reprise à 100 % en 2026). On a vu passer les modes, les bonnes formules et les arnaques, et on te dit la différence.",
   },
   {
     icon: MessageCircle,
@@ -45,7 +45,7 @@ const REASONS = [
   {
     icon: Store,
     title: 'Une vraie boutique, ouverte du lundi au samedi',
-    desc: "8 Rue du Pont des Landes à Coignières, de 11h à 19h du lundi au samedi (fermé le dimanche). Tu touches les produits, tu poses tes questions, tu repars avec — ou tu retires ta commande en Click & Collect en quelques minutes.",
+    desc: "8 Rue du Pont des Landes à Coignières, de 11h à 19h du lundi au samedi (fermé le dimanche). Tu touches les produits, tu poses tes questions, tu repars avec, ou tu retires ta commande en Click & Collect en quelques minutes.",
   },
   {
     icon: BadgeCheck,
@@ -55,7 +55,7 @@ const REASONS = [
   {
     icon: FlaskConical,
     title: 'Des produits testés par des pratiquants',
-    desc: "On s'entraîne aussi. Les produits qu'on met en avant, on les a goûtés, dosés et utilisés — les fiches produit donnent les compositions et valeurs nutritionnelles exactes des fabricants.",
+    desc: "On s'entraîne aussi. Les produits qu'on met en avant, on les a goûtés, dosés et utilisés. Les fiches produit donnent les compositions et valeurs nutritionnelles exactes des fabricants.",
   },
   {
     icon: Truck,
@@ -67,7 +67,7 @@ const REASONS = [
 const FAQ = [
   {
     q: 'Pourquoi acheter chez BodyStart plutôt que sur une grande marketplace ?',
-    a: "Parce que tu n'achètes pas qu'un pot : tu repars avec le bon produit pour TON objectif, dosé correctement, choisi parmi des marques qu'on connaît vraiment. En cas de doute ou de souci, tu as un interlocuteur humain à Coignières — pas un chatbot. Et si un produit ne te convient pas, on en parle en boutique.",
+    a: "Parce que tu n'achètes pas qu'un pot : tu repars avec le bon produit pour TON objectif, dosé correctement, choisi parmi des marques qu'on connaît vraiment. En cas de doute ou de souci, tu as un interlocuteur humain à Coignières, pas un chatbot. Et si un produit ne te convient pas, on en parle en boutique.",
   },
   {
     q: 'Les prix sont-ils plus chers qu\'en ligne ?',
@@ -75,11 +75,11 @@ const FAQ = [
   },
   {
     q: 'Le conseil est-il vraiment gratuit ?',
-    a: "Oui, sans condition d'achat. Au comptoir du lundi au samedi de 11h à 19h, ou via le formulaire conseil en ligne — on te répond avec une vraie recommandation personnalisée, pas un copier-coller.",
+    a: "Oui, sans condition d'achat. Au comptoir du lundi au samedi de 11h à 19h, ou via le formulaire conseil en ligne. On te répond avec une vraie recommandation personnalisée, pas un copier-coller.",
   },
   {
     q: 'Où se trouve la boutique ?',
-    a: 'BodyStart Nutrition, 8 Rue du Pont des Landes, 78310 Coignières — à 2 minutes de la N10, parking gratuit. Ouvert du lundi au samedi, de 11h à 19h (fermé le dimanche).',
+    a: 'BodyStart Nutrition, 8 Rue du Pont des Landes, 78310 Coignières, à 2 minutes de la N10, parking gratuit. Ouvert du lundi au samedi, de 11h à 19h (fermé le dimanche).',
   },
 ] as const
 
@@ -114,7 +114,7 @@ export default function PourquoiBodystartPage() {
           <p className="text-ink text-[17px] md:text-[19px] leading-[1.65] font-medium max-w-[720px]">
             Parce qu&apos;on est une vraie boutique de compléments alimentaires à
             Coignières (78), ouverte du lundi au samedi, qui conseille des sportifs depuis
-            13&nbsp;ans — avec des marques sélectionnées, des produits testés par
+            13&nbsp;ans, avec des marques sélectionnées, des produits testés par
             des pratiquants et un conseil personnalisé gratuit, en magasin comme
             en ligne. Tu peux commander sur le site et retirer en boutique en
             quelques minutes.
@@ -169,7 +169,7 @@ export default function PourquoiBodystartPage() {
             <div className="relative aspect-[4/3] md:aspect-[3/4] rounded-2xl overflow-hidden border border-spruce/10">
               <Image
                 src="/boutique/equipe-training.webp"
-                alt="À la salle après l'entraînement — chez BodyStart, on pratique aussi"
+                alt="À la salle après l'entraînement : chez BodyStart, on pratique aussi"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 33vw, 50vw"
@@ -198,8 +198,8 @@ export default function PourquoiBodystartPage() {
               pour ton quota de protéines, et une{' '}
               <Link href="/products/creatine-100-monohydrate-micronisee" className="font-semibold text-spruce underline underline-offset-4 hover:text-fresh-deep">
                 créatine monohydrate
-              </Link>{' '}
-              — le complément le plus étudié. Pour creuser :{' '}
+              </Link>,{' '}
+              le complément le plus étudié. Pour creuser :{' '}
               <Link href="/categories/proteines" className="font-semibold text-spruce underline underline-offset-4 hover:text-fresh-deep">
                 le rayon protéines
               </Link>

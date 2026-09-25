@@ -171,15 +171,15 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
   "products": [
     {
       "handle": "whey-native-protimuscle",
-      "label": "Whey Native Protimuscle — Nutrimuscle"
+      "label": "Whey Native Protimuscle (Nutrimuscle)"
     },
     {
       "handle": "iso-fusion-protein",
-      "label": "Iso Fusion Protein — Eric Favre"
+      "label": "Iso Fusion Protein (Eric Favre)"
     },
     {
       "handle": "iso-french-protein",
-      "label": "ISO Protein Volactive — French Nutrition"
+      "label": "ISO Protein Volactive (French Nutrition)"
     }
   ],
   "categories": [

@@ -8,7 +8,7 @@ export const complementsDebutantMusculation: BlogArticle = {
   "title": "Compléments alimentaires : par quoi commencer en musculation ?",
   "metaTitle": "Compléments alimentaires débutant musculation : le guide",
   "metaDescription": "Débutant en musculation ? Commence par 2 compléments prouvés : whey (20-25 g/dose) et créatine (3-5 g/j). Budget, dosages et conseils pour bien démarrer.",
-  "excerpt": "Pour débuter en musculation, deux compléments suffisent : une whey si tu n'atteins pas tes apports en protéines (1,6 à 2,2 g/kg/j) et de la créatine monohydrate à 3-5 g par jour. Tout le reste vient après — et seulement si ton assiette, ton sommeil et ton entraînement suivent déjà.",
+  "excerpt": "Pour débuter en musculation, deux compléments suffisent : une whey si tu n'atteins pas tes apports en protéines (1,6 à 2,2 g/kg/j) et de la créatine monohydrate à 3-5 g par jour. Tout le reste vient après, et seulement si ton assiette, ton sommeil et ton entraînement suivent déjà.",
   "datePublished": "2026-06-12",
   "dateModified": "2026-06-12",
   "sections": [
@@ -17,7 +17,7 @@ export const complementsDebutantMusculation: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Non, pas tout de suite. Les compléments arrivent en dernier dans la hiérarchie des résultats : d'abord l'alimentation, puis le sommeil, puis l'entraînement. Un complément complète une base solide — il ne la remplace jamais."
+          "text": "Non, pas tout de suite. Les compléments arrivent en dernier dans la hiérarchie des résultats : d'abord l'alimentation, puis le sommeil, puis l'entraînement. Un complément complète une base solide. Il ne la remplace jamais."
         },
         {
           "type": "p",
@@ -39,7 +39,7 @@ export const complementsDebutantMusculation: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Deux compléments suffisent pour démarrer : la whey et la créatine monohydrate. C'est la question qu'on entend le plus au comptoir à Coignières — « par quoi je commence ? » — et la réponse n'a pas bougé depuis des années, parce que ce sont les deux catégories les mieux étudiées en nutrition sportive."
+          "text": "Deux compléments suffisent pour démarrer : la whey et la créatine monohydrate. C'est la question qu'on entend le plus au comptoir à Coignières (« par quoi je commence ? »), et la réponse n'a pas bougé depuis des années, parce que ce sont les deux catégories les mieux étudiées en nutrition sportive."
         },
         {
           "type": "h3",
@@ -47,7 +47,7 @@ export const complementsDebutantMusculation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "La whey est une protéine en poudre issue du lait, dosée à environ **80 % de protéines** pour une whey concentrée classique : une dose de 25 g apporte donc autour de 20 g de protéines. Les protéines contribuent au maintien et au développement de la masse musculaire — si ton assiette n'atteint pas tes 1,6 à 2,2 g/kg/j, un shaker comble l'écart simplement. Pour un premier achat, la [Whey Native Protimuscle](/products/whey-native-protimuscle) à 19,95 € permet de tester sans se ruiner. Et si tu hésites entre les formats, on a détaillé les critères dans notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant)."
+          "text": "La whey est une protéine en poudre issue du lait, dosée à environ **80 % de protéines** pour une whey concentrée classique : une dose de 25 g apporte donc autour de 20 g de protéines. Les protéines contribuent au maintien et au développement de la masse musculaire. Si ton assiette n'atteint pas tes 1,6 à 2,2 g/kg/j, un shaker comble l'écart simplement. Pour un premier achat, la [Whey Native Protimuscle](/products/whey-native-protimuscle) à 19,95 € permet de tester sans se ruiner. Et si tu hésites entre les formats, on a détaillé les critères dans notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant)."
         },
         {
           "type": "h3",
@@ -55,7 +55,7 @@ export const complementsDebutantMusculation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée — exactement le format d'une séance de musculation. La dose de référence : **3 à 5 g par jour**, entraînement ou pas. Pas besoin de phase de charge ni de timing précis. La [Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee) à 29,90 € correspond à ce profil : du monohydrate pur, la forme la plus étudiée. Pour la question du moment de prise, on a tranché dans [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance)."
+          "text": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation. La dose de référence : **3 à 5 g par jour**, entraînement ou pas. Pas besoin de phase de charge ni de timing précis. La [Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee) à 29,90 € correspond à ce profil : du monohydrate pur, la forme la plus étudiée. Pour la question du moment de prise, on a tranché dans [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance)."
         },
         {
           "type": "p",
@@ -68,13 +68,13 @@ export const complementsDebutantMusculation: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Après quelques mois, certains compléments santé peuvent se justifier — mais uniquement en réponse à un besoin identifié, jamais par accumulation."
+          "text": "Après quelques mois, certains compléments santé peuvent se justifier, mais uniquement en réponse à un besoin identifié, jamais par accumulation."
         },
         {
           "type": "list",
           "items": [
             "**Vitamine D en hiver** : la vitamine D contribue au fonctionnement normal du système immunitaire et au maintien d'une ossature normale. D'octobre à mars, l'ensoleillement en France permet rarement d'en synthétiser assez. Une formule comme la [Vitamin D3+K2 Evolite](/products/vitamin-d3-k2) à 17,90 € couvre ce besoin saisonnier.",
-            "**Magnésium en cas de fatigue** : le magnésium contribue à réduire la fatigue et à un fonctionnement musculaire normal. La forme bisglycinate est appréciée pour sa bonne tolérance digestive — c'est celle du [Magnésium Bisglycinate DY Nutrition](/products/magnesium-bisglycinate-dy-90-capsules) à 16,90 €.",
+            "**Magnésium en cas de fatigue** : le magnésium contribue à réduire la fatigue et à un fonctionnement musculaire normal. La forme bisglycinate est appréciée pour sa bonne tolérance digestive. C'est celle du [Magnésium Bisglycinate DY Nutrition](/products/magnesium-bisglycinate-dy-90-capsules) à 16,90 €.",
             "**Oméga 3 si tu manges peu de poisson gras** : l'EPA et le DHA contribuent à une fonction cardiaque normale (effet obtenu avec 250 mg d'EPA et de DHA par jour). Utile si le saumon, le maquereau ou les sardines passent rarement dans ton assiette."
           ]
         },
@@ -94,7 +94,7 @@ export const complementsDebutantMusculation: BlogArticle = {
         {
           "type": "list",
           "items": [
-            "**Les brûleurs** : des formules à base de caféine ou d'extraits de plantes. Aucune poudre ne remplace un déficit calorique — garde ton budget pour les bases.",
+            "**Les brûleurs** : des formules à base de caféine ou d'extraits de plantes. Aucune poudre ne remplace un déficit calorique. Garde ton budget pour les bases.",
             "**Les boosters pre-workout** : de la caféine et des ingrédients de congestion pensés pour les séances difficiles. Au début, ta motivation suffit, et un café avant la séance fait très bien l'affaire.",
             "**Les BCAA** : si tu atteins déjà tes protéines quotidiennes (whey comprise), ils font double emploi. On explique pourquoi dans [EAA ou BCAA : lequel prendre](/blog/eaa-ou-bcaa-lequel-prendre)."
           ]
@@ -119,28 +119,28 @@ export const complementsDebutantMusculation: BlogArticle = {
             [
               "Whey (si protéines insuffisantes)",
               "20-25 g par dose",
-              "Whey Native Protimuscle — 19,95 €"
+              "Whey Native Protimuscle (19,95 €)"
             ],
             [
               "Créatine monohydrate",
               "3-5 g par jour",
-              "Créatine 100 % Monohydrate Micronisée — 29,90 €"
+              "Créatine 100 % Monohydrate Micronisée (29,90 €)"
             ],
             [
               "Vitamine D (optionnel, en hiver)",
               "Selon l'étiquette",
-              "Vitamin D3+K2 Evolite — 17,90 €"
+              "Vitamin D3+K2 Evolite (17,90 €)"
             ],
             [
               "Magnésium (optionnel, si fatigue)",
               "Selon l'étiquette",
-              "Magnésium Bisglycinate DY Nutrition — 16,90 €"
+              "Magnésium Bisglycinate DY Nutrition (16,90 €)"
             ]
           ]
         },
         {
           "type": "p",
-          "text": "Le coût réel est souvent plus bas qu'il n'y paraît : à 3-5 g par jour, un pot de créatine de 300 g dure deux à trois mois. La whey, elle, se consomme au rythme de tes besoins — un jour sans déficit de protéines est un jour sans shaker obligatoire."
+          "text": "Le coût réel est souvent plus bas qu'il n'y paraît : à 3-5 g par jour, un pot de créatine de 300 g dure deux à trois mois. La whey, elle, se consomme au rythme de tes besoins : un jour sans déficit de protéines est un jour sans shaker obligatoire."
         }
       ]
     },
@@ -193,7 +193,7 @@ export const complementsDebutantMusculation: BlogArticle = {
   "products": [
     {
       "handle": "whey-native-protimuscle",
-      "label": "Whey Native Protimuscle — Nutrimuscle"
+      "label": "Whey Native Protimuscle (Nutrimuscle)"
     },
     {
       "handle": "creatine-100-monohydrate-micronisee",
@@ -201,7 +201,7 @@ export const complementsDebutantMusculation: BlogArticle = {
     },
     {
       "handle": "vitamin-d3-k2",
-      "label": "Vitamine D3 + K2 — Evolite"
+      "label": "Vitamine D3 + K2 (Evolite)"
     }
   ],
   "categories": [

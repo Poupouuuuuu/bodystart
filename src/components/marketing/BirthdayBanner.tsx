@@ -54,7 +54,7 @@ export default function BirthdayBanner() {
           {/* Message complet (desktop/tablette) — texte exact demandé */}
           <span className="hidden sm:inline">
             <span aria-hidden="true">🎉</span> Aujourd&apos;hui, c&apos;est l&apos;anniversaire de
-            BodyStart ! −15 % sur tout le site avec le code {chip} — jusqu&apos;à ce soir minuit.
+            BodyStart ! −15 % sur tout le site avec le code {chip}, jusqu&apos;à ce soir minuit.
           </span>
           {/* Version condensée (mobile) — tient sur 2 lignes, même voix */}
           <span className="sm:hidden">

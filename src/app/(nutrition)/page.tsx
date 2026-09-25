@@ -20,14 +20,14 @@ import { buildPageMetadata } from '@/lib/seo'
 export const metadata: Metadata = {
   ...buildPageMetadata({
     path: '/',
-    title: 'BodyStart Nutrition — Compléments alimentaires & nutrition sportive à Coignières (78)',
+    title: 'BodyStart Nutrition : Compléments alimentaires & nutrition sportive à Coignières (78)',
     description:
       "BodyStart, compléments sport et santé à Coignières (78). Conseil d'humain, produits propres et bien dosés, Click & Collect gratuit.",
   }),
   // <title> exact demandé : bypass du template '%s | BodyStart Nutrition'
   // (le og:title / twitter:title gardent ce même libellé via buildPageMetadata).
   title: {
-    absolute: 'BodyStart Nutrition — Compléments alimentaires & nutrition sportive à Coignières (78)',
+    absolute: 'BodyStart Nutrition : Compléments alimentaires & nutrition sportive à Coignières (78)',
   },
 }
 

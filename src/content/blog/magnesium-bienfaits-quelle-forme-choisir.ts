@@ -19,7 +19,7 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
   metaDescription:
     "Le magnésium contribue à réduire la fatigue et à une fonction musculaire normale. Bisglycinate, citrate, marin ou ZMA : on t'aide à choisir la bonne forme.",
   excerpt:
-    "Le magnésium contribue à réduire la fatigue, au fonctionnement normal du système nerveux et à une fonction musculaire normale — trois rôles clés quand on s'entraîne. La forme la mieux tolérée est le bisglycinate ; le ZMA y associe du zinc et de la vitamine B6.",
+    "Le magnésium contribue à réduire la fatigue, au fonctionnement normal du système nerveux et à une fonction musculaire normale, trois rôles clés quand on s'entraîne. La forme la mieux tolérée est le bisglycinate ; le ZMA y associe du zinc et de la vitamine B6.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -32,7 +32,7 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Pour un sportif, ces fonctions parlent tout de suite : muscles qui travaillent, système nerveux sollicité, énergie à produire. C'est pour ça qu'on range le magnésium parmi les **fondations** — au même titre que la vitamine D — plutôt que parmi les compléments de performance.",
+          text: "Pour un sportif, ces fonctions parlent tout de suite : muscles qui travaillent, système nerveux sollicité, énergie à produire. C'est pour ça qu'on range le magnésium parmi les **fondations** (au même titre que la vitamine D) plutôt que parmi les compléments de performance.",
         },
         {
           type: 'p',
@@ -45,7 +45,7 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "D'abord parce que l'alimentation moderne en apporte moins qu'avant : le magnésium se trouve surtout dans les légumes verts, les oléagineux, les légumineuses, le chocolat noir et les céréales complètes — des aliments pas toujours présents en quantité dans l'assiette.",
+          text: "D'abord parce que l'alimentation moderne en apporte moins qu'avant : le magnésium se trouve surtout dans les légumes verts, les oléagineux, les légumineuses, le chocolat noir et les céréales complètes, des aliments pas toujours présents en quantité dans l'assiette.",
         },
         {
           type: 'p',
@@ -62,7 +62,7 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "C'est LA question qui compte, car toutes les formes ne se valent pas — ni pour l'absorption, ni pour le confort digestif. La quantité affichée sur l'étiquette n'est utile que si ton corps l'assimile réellement.",
+          text: "C'est LA question qui compte, car toutes les formes ne se valent pas, ni pour l'absorption, ni pour le confort digestif. La quantité affichée sur l'étiquette n'est utile que si ton corps l'assimile réellement.",
         },
         {
           type: 'table',
@@ -71,7 +71,7 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
             ['Bisglycinate', 'Très bien tolérée, douce pour le ventre', 'Le choix par défaut, surtout si tu as le ventre sensible'],
             ['Citrate', 'Bien absorbée, léger effet sur le transit', 'Bon rapport qualité-prix'],
             ['Marin', 'Source naturelle, riche en minéraux associés', 'Ceux qui préfèrent une origine naturelle (souvent en ZMA)'],
-            ['Oxyde', 'Faible absorption, effet laxatif fréquent', 'À éviter seule — présente car peu chère'],
+            ['Oxyde', 'Faible absorption, effet laxatif fréquent', 'À éviter seule. Présente car peu chère'],
           ],
         },
         {
@@ -98,13 +98,13 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Une prise quotidienne de l'ordre de **300 à 360 mg de magnésium élément** couvre bien le besoin d'un sportif. Le plus important n'est pas l'heure mais la **régularité** : c'est la prise de tous les jours, sur la durée, qui fait la différence — pas une cure d'une semaine de temps en temps.",
+          text: "Une prise quotidienne de l'ordre de **300 à 360 mg de magnésium élément** couvre bien le besoin d'un sportif. Le plus important n'est pas l'heure mais la **régularité** : c'est la prise de tous les jours, sur la durée, qui fait la différence, pas une cure d'une semaine de temps en temps.",
         },
         {
           type: 'list',
           items: [
             'Prends-le au cours d\'un repas pour un meilleur confort digestif.',
-            'Beaucoup le prennent le soir, simplement par habitude — l\'heure exacte importe peu.',
+            'Beaucoup le prennent le soir, simplement par habitude : l\'heure exacte importe peu.',
             'Privilégie le bisglycinate (ou le citrate) plutôt que l\'oxyde.',
             'Vise la régularité sur plusieurs semaines, pas une méga-dose ponctuelle.',
           ],

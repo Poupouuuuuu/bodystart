@@ -447,7 +447,7 @@ export default function BuyBoxV2({
               </p>
               {hasOtherAvailableVariant && (
                 <p className="text-[13px] text-ink-mute mt-1">
-                  Une autre option est disponible — choisis-la ci-dessus.
+                  Une autre option est disponible. Choisis-la ci-dessus.
                 </p>
               )}
               <StockAlertForm key={selectedVariant.id} variantId={selectedVariant.id} />
@@ -553,7 +553,7 @@ export default function BuyBoxV2({
             <div className="text-[12.5px] text-spruce leading-[1.5]">
               <p>
                 <span className="font-semibold">Une vraie boutique à Coignières depuis 13 ans.</span>{' '}
-                On ne vend que ce qu&apos;on consomme — et on te conseille comme au comptoir.
+                On ne vend que ce qu&apos;on consomme, et on te conseille comme au comptoir.
               </p>
               {/* Avis PRODUIT (app d'avis) si disponibles, sinon note Google de la
                   boutique (source unique GOOGLE_RATING, relevée à la main). */}

@@ -30,7 +30,7 @@ const LOCAL_FAQ = [
   },
   {
     q: 'Peut-on se faire conseiller sans rien acheter ?',
-    a: 'Bien sûr. Le conseil est gratuit et sans engagement : tu viens avec ton objectif (prise de masse, sèche, récupération, santé) et on te dit ce qui est utile — et ce qui ne l’est pas. C’est le cœur du métier de la boutique.',
+    a: 'Bien sûr. Le conseil est gratuit et sans engagement : tu viens avec ton objectif (prise de masse, sèche, récupération, santé) et on te dit ce qui est utile, et ce qui ne l’est pas. C’est le cœur du métier de la boutique.',
   },
   {
     q: 'C’est bien l’ancienne boutique BodyFit de Coignières ?',
@@ -79,14 +79,14 @@ export default function CoignieresLandingPage() {
             Tu cherches de la whey, de la créatine ou des vitamines près de chez toi ?
             BodyStart Nutrition est une boutique physique spécialisée en nutrition
             sportive au <strong className="font-semibold">8 Rue du Pont des Landes à Coignières</strong>,
-            ouverte du lundi au samedi de 11h à 19h — à moins de 10 minutes de Maurepas, Élancourt et
+            ouverte du lundi au samedi de 11h à 19h, à moins de 10 minutes de Maurepas, Élancourt et
             Plaisir, et facilement accessible depuis Trappes ou Rambouillet par la RN10.
           </p>
           <p className="text-ink/90 text-[16px] leading-[1.7]">
             La différence avec une commande sur une marketplace ? Tu repars avec le bon
             produit, pas le plus cher : on prend le temps de comprendre ton objectif
             avant de te conseiller. Et si tu préfères commander en ligne, le{' '}
-            <strong className="font-semibold">Click &amp; Collect est gratuit</strong> — ta
+            <strong className="font-semibold">Click &amp; Collect est gratuit</strong> : ta
             commande t&apos;attend au comptoir, souvent en quelques minutes.
           </p>
           <p className="text-ink/90 text-[15px] leading-[1.7] mt-4">
@@ -102,7 +102,7 @@ export default function CoignieresLandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-14">
           {[
             { Icon: MessageCircle, title: 'Conseil gratuit', desc: 'Objectif, budget, niveau : on te guide au comptoir, sans engagement.' },
-            { Icon: ShoppingBag, title: 'Click & Collect', desc: 'Commande en ligne, retire en boutique — souvent prêt en quelques minutes.' },
+            { Icon: ShoppingBag, title: 'Click & Collect', desc: 'Commande en ligne, retire en boutique, souvent prêt en quelques minutes.' },
             { Icon: Truck, title: 'Livraison France', desc: 'Pas dans le 78 ? Mondial Relay 4,90 €, Colissimo 6,90 €, offert dès 85 €.' },
           ].map(({ Icon, title, desc }) => (
             <div key={title} className="bg-white rounded-2xl border border-spruce/10 p-6">
@@ -148,7 +148,7 @@ export default function CoignieresLandingPage() {
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <span>Lun–Sam · 11h – 19h</span>
+                <span>Lun. au sam. · 11h à 19h</span>
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />

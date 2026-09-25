@@ -30,7 +30,7 @@ const STEPS = [
   {
     step: '03',
     title: 'Tu gagnes 5 % à vie',
-    desc: 'À chaque fois qu\'il commande, on te crédite 5 % du montant payé — sans limite de durée. Ta cagnotte grossit toute seule, utilisable dès 20 €.',
+    desc: 'À chaque fois qu\'il commande, on te crédite 5 % du montant payé, sans limite de durée. Ta cagnotte grossit toute seule, utilisable dès 20 €.',
     icon: Gift,
   },
 ]

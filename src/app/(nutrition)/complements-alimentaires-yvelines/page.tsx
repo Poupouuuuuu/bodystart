@@ -57,7 +57,7 @@ const LOCAL_FAQ = [
   },
   {
     q: 'Peut-on faire du Click & Collect depuis une autre ville du 78 ?',
-    a: 'Bien sûr. Tu commandes en ligne depuis Montigny, Plaisir, Rambouillet ou ailleurs dans les Yvelines, tu choisis le retrait en boutique au paiement, et tu récupères ta commande au comptoir à Coignières — souvent prête en quelques minutes, sans montant minimum.',
+    a: 'Bien sûr. Tu commandes en ligne depuis Montigny, Plaisir, Rambouillet ou ailleurs dans les Yvelines, tu choisis le retrait en boutique au paiement, et tu récupères ta commande au comptoir à Coignières, souvent prête en quelques minutes, sans montant minimum.',
   },
   {
     q: 'Vendez-vous les mêmes marques qu’en ligne ?',
@@ -107,13 +107,13 @@ export default function YvelinesLandingPage() {
             sans conseil. BodyStart Nutrition fait le pari inverse : une{' '}
             <strong className="font-semibold">vraie boutique physique</strong> en nutrition
             sportive, au <strong className="font-semibold">8 Rue du Pont des Landes à Coignières</strong>,
-            sur la RN10 — un point central facile d&apos;accès depuis tout l&apos;ouest du 78.
+            sur la RN10, un point central facile d&apos;accès depuis tout l&apos;ouest du 78.
           </p>
           <p className="text-ink/90 text-[16px] leading-[1.7]">
             Whey, créatine, vitamines, pré-workout : tu repars avec le bon produit pour
             ton objectif, pas le plus cher. Et si tu es à l&apos;autre bout du département,
-            tout le catalogue est <strong className="font-semibold">livrable dans tout le 78</strong>{' '}
-            — ou en <strong className="font-semibold">Click &amp; Collect gratuit</strong> si tu
+            tout le catalogue est <strong className="font-semibold">livrable dans tout le 78</strong>,
+            ou en <strong className="font-semibold">Click &amp; Collect gratuit</strong> si tu
             passes près de Coignières.
           </p>
         </div>
@@ -194,7 +194,7 @@ export default function YvelinesLandingPage() {
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <span>Lun–Sam · 11h – 19h</span>
+                <span>Lun. au sam. · 11h à 19h</span>
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />

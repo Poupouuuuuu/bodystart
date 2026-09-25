@@ -45,10 +45,10 @@ export interface ParcelShop {
   countryCode: string
 }
 
-// "[ID] — [Nom], [Adresse], [CP] [Ville]" — format lisible côté admin.
+// "[ID], [Nom], [Adresse], [CP] [Ville]" : format lisible côté admin (attribut « Point Relais »).
 export function formatRelayAttributeValue(shop: ParcelShop): string {
   const addr = shop.address.trim().replace(/\s+/g, ' ')
-  return `${shop.id} — ${shop.name}, ${addr}, ${shop.postalCode} ${shop.city}`
+  return `${shop.id}, ${shop.name}, ${addr}, ${shop.postalCode} ${shop.city}`
 }
 
 // Relecture minimale de l'attribut pour réafficher la confirmation après un
@@ -59,10 +59,15 @@ export function parseRelayAttributeValue(
   value: string | null | undefined
 ): { id: string; name: string; cpVille: string } | null {
   if (!value) return null
-  const sepIndex = value.indexOf(' — ')
+  // Format actuel « ID, Nom, … ». L'ancien format (ID, tiret cadratin, puis le nom) vient des
+  // paniers ouverts avant le 25/09/2026 et reste relu : on prend le séparateur qui arrive en premier.
+  const dash = value.indexOf(' \u2014 ')
+  const comma = value.indexOf(', ')
+  const legacy = dash !== -1 && (comma === -1 || dash < comma)
+  const sepIndex = legacy ? dash : comma
   if (sepIndex === -1) return null
   const id = value.slice(0, sepIndex).trim()
-  const rest = value.slice(sepIndex + 3).trim()
+  const rest = value.slice(sepIndex + (legacy ? 3 : 2)).trim()
   if (!id || !rest) return null
   const parts = rest
     .split(',')

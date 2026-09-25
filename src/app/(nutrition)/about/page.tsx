@@ -18,7 +18,7 @@ const commitments = [
   {
     Icon: MessageCircle,
     title: 'Du conseil d’humain',
-    desc: 'On te répond au comptoir, pas avec un chatbot. Objectif, budget, niveau : on te dit ce qui sert vraiment — et parfois, la réponse est « rien de plus que ton assiette ».',
+    desc: 'On te répond au comptoir, pas avec un chatbot. Objectif, budget, niveau : on te dit ce qui sert vraiment. Et parfois, la réponse est « rien de plus que ton assiette ».',
   },
   {
     Icon: ShieldCheck,
@@ -62,7 +62,7 @@ export default function AboutPage() {
               </h1>
               <p className="mt-6 max-w-[560px] text-[17px] leading-[1.6] text-ink-mute md:text-[19px]">
                 BodyStart Nutrition, c&apos;est la reprise à 100 % de la boutique BodyFit de
-                Coignières — même adresse, même métier, une ambition de plus : faire
+                Coignières. Même adresse, même métier, une ambition de plus : faire
                 aussi bien en ligne qu&apos;au comptoir.
               </p>
             </div>
@@ -99,8 +99,8 @@ export default function AboutPage() {
             située au <strong className="font-semibold">8 Rue du Pont des Landes, 78310 Coignières</strong>,
             doublée d&apos;un site e-commerce qui livre partout en France. Anciennement
             BodyFit, la boutique a été reprise à 100 % et continue de servir les
-            sportifs du secteur — Coignières, Maurepas, Élancourt, Plaisir et tout le
-            sud Yvelines — du lundi au samedi.
+            sportifs du secteur (Coignières, Maurepas, Élancourt, Plaisir et tout le
+            sud Yvelines) du lundi au samedi.
           </p>
           <p className="text-ink/90 text-[16px] leading-[1.75] mb-4">
             Notre métier, c&apos;est le conseil. Whey ou isolate, créatine, prise de
@@ -114,7 +114,7 @@ export default function AboutPage() {
           </p>
           <p className="text-ink/90 text-[16px] leading-[1.75]">
             Un principe simple guide tout le reste : on ne promet jamais ce qu&apos;un
-            produit ne peut pas tenir. Les compléments complètent — l&apos;entraînement
+            produit ne peut pas tenir. Les compléments complètent. L&apos;entraînement
             et l&apos;alimentation font le reste.
           </p>
         </section>
@@ -149,7 +149,7 @@ export default function AboutPage() {
             </li>
             <li className="flex items-start gap-3 text-[15px] text-ink">
               <Clock className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />
-              <span>Ouvert du lundi au samedi · 11h – 19h</span>
+              <span>Ouvert du lundi au samedi · 11h à 19h</span>
             </li>
             <li className="flex items-start gap-3 text-[15px] text-ink">
               <Phone className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />

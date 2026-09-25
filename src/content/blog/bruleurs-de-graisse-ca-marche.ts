@@ -13,7 +13,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
   metaDescription:
     'Les brûleurs de graisse sont-ils efficaces ? La vérité : aucun ne fait maigrir sans déficit calorique. Ce qu\'ils font, pour qui, et notre avis honnête.',
   excerpt:
-    "La vérité d'abord : aucun brûleur ne fait maigrir sans déficit calorique. La L-carnitine, le CLA ou les formules à la caféine s'utilisent en accompagnement d'une sèche déjà structurée — jamais à sa place. On t'explique ce qu'ils font réellement, et quand ils n'ont aucun intérêt.",
+    "La vérité d'abord : aucun brûleur ne fait maigrir sans déficit calorique. La L-carnitine, le CLA ou les formules à la caféine s'utilisent en accompagnement d'une sèche déjà structurée, jamais à sa place. On t'explique ce qu'ils font réellement, et quand ils n'ont aucun intérêt.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -43,7 +43,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Le seul ingrédient de ce rayon avec des allégations autorisées, c'est la **caféine**, présente dans beaucoup de formules « thermogéniques » : elle **contribue à augmenter la vigilance et à améliorer la concentration**. Concrètement, ça peut aider à attaquer une séance avec plus d'énergie quand on s'entraîne en déficit — mais ça ne « brûle » pas la graisse pour autant.",
+          text: "Le seul ingrédient de ce rayon avec des allégations autorisées, c'est la **caféine**, présente dans beaucoup de formules « thermogéniques » : elle **contribue à augmenter la vigilance et à améliorer la concentration**. Concrètement, ça peut aider à attaquer une séance avec plus d'énergie quand on s'entraîne en déficit, mais ça ne « brûle » pas la graisse pour autant.",
         },
         {
           type: 'list',
@@ -51,7 +51,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
             'L-carnitine : rôle dans le transport des acides gras ; pas d\'allégation minceur autorisée.',
             'CLA : acide gras populaire en régime ; pas d\'allégation reconnue.',
             'Caféine (formules thermogéniques) : contribue à la vigilance et à la concentration.',
-            'Draineurs : agissent sur l\'eau, pas sur la masse grasse — à ne pas confondre avec « maigrir ».',
+            'Draineurs : agissent sur l\'eau, pas sur la masse grasse. À ne pas confondre avec « maigrir ».',
           ],
         },
       ],
@@ -61,11 +61,11 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: 'Pour t\'y retrouver, voici les quatre grandes catégories. La **L-carnitine**, le grand classique autour de l\'entraînement, en poudre, en boisson prête ou en shot. Le **CLA**, en capsules, choisi pendant les périodes de régime. Les **formules thermogéniques** à base de caféine et de plantes, pour les pratiquants avancés qui tolèrent bien les stimulants. Et les **draineurs**, qui agissent sur la rétention d\'eau — un axe différent, à ne pas confondre avec la perte de graisse.',
+          text: 'Pour t\'y retrouver, voici les quatre grandes catégories. La **L-carnitine**, le grand classique autour de l\'entraînement, en poudre, en boisson prête ou en shot. Le **CLA**, en capsules, choisi pendant les périodes de régime. Les **formules thermogéniques** à base de caféine et de plantes, pour les pratiquants avancés qui tolèrent bien les stimulants. Et les **draineurs**, qui agissent sur la rétention d\'eau, un axe différent, à ne pas confondre avec la perte de graisse.',
         },
         {
           type: 'p',
-          text: 'Aucune de ces familles n\'est indispensable. Elles se choisissent selon ta préférence et ta tolérance, une fois que les bases sont solides. Si tu débutes une sèche, le plus utile n\'est pas dans ce rayon : c\'est de sécuriser ton apport en protéines pour ne pas perdre de muscle — un point qu\'on détaille dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour).',
+          text: 'Aucune de ces familles n\'est indispensable. Elles se choisissent selon ta préférence et ta tolérance, une fois que les bases sont solides. Si tu débutes une sèche, le plus utile n\'est pas dans ce rayon : c\'est de sécuriser ton apport en protéines pour ne pas perdre de muscle, un point qu\'on détaille dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour).',
         },
       ],
     },
@@ -87,7 +87,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
               '22,90 €',
             ],
             [
-              '[Lipoxicut — Brûleur en Poudre](/products/lipoxicut-bruleur-en-poudre)',
+              '[Lipoxicut - Brûleur en Poudre](/products/lipoxicut-bruleur-en-poudre)',
               'Formule thermogénique',
               '29,90 €',
             ],
@@ -100,7 +100,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
       ],
     },
     {
-      h2: 'Pour qui ça peut avoir un intérêt — et pour qui non',
+      h2: 'Pour qui ça peut avoir un intérêt, et pour qui non',
       blocks: [
         {
           type: 'p',
@@ -108,7 +108,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Il n\'a en revanche aucun intérêt si tu attends de lui qu\'il compense une alimentation non maîtrisée, ou si tu débutes ta démarche : tu dépenserais de l\'argent sans résultat. Et il est à éviter le soir s\'il contient de la caféine, pour ne pas gêner ton sommeil — sujet qu\'on aborde dans [mieux dormir et récupérer](/blog/mieux-dormir-recuperation).',
+          text: 'Il n\'a en revanche aucun intérêt si tu attends de lui qu\'il compense une alimentation non maîtrisée, ou si tu débutes ta démarche : tu dépenserais de l\'argent sans résultat. Et il est à éviter le soir s\'il contient de la caféine, pour ne pas gêner ton sommeil, sujet qu\'on aborde dans [mieux dormir et récupérer](/blog/mieux-dormir-recuperation).',
         },
         {
           type: 'steps',
@@ -122,7 +122,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Tu prépares une sèche ? Passe en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan — et parfois, la réponse est non. Le conseil est gratuit.',
+          text: 'Tu prépares une sèche ? Passe en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non. Le conseil est gratuit.',
         },
       ],
     },
@@ -151,8 +151,8 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
   ],
   products: [
     { handle: 'l-carnitine-2000', label: 'L-Carnitine 2000' },
-    { handle: 'cla-2400', label: 'CLA 2400 — Eric Favre' },
-    { handle: 'lipoxicut-bruleur-en-poudre', label: 'Lipoxicut — Brûleur en Poudre' },
+    { handle: 'cla-2400', label: 'CLA 2400 (Eric Favre)' },
+    { handle: 'lipoxicut-bruleur-en-poudre', label: 'Lipoxicut - Brûleur en Poudre' },
   ],
   categories: [{ slug: 'bruleurs', label: 'Brûleurs de graisse' }],
   related: ['comment-faire-une-seche', 'combien-de-proteines-par-jour', 'complements-debutant-musculation'],

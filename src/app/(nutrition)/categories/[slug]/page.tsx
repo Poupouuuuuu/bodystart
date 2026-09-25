@@ -144,7 +144,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
         ) : (
           <p className="text-ink-mute mb-14">
-            Le rayon se remplit — passe nous voir en boutique ou{' '}
+            Le rayon se remplit. Passe nous voir en boutique ou{' '}
             <Link href="/products" className="font-semibold text-spruce hover:underline underline-offset-4">
               parcours tout le catalogue
             </Link>
@@ -190,7 +190,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         </div>
         <p className="flex items-center gap-2 text-[14px] text-ink-mute">
           <Store className="w-4 h-4 text-spruce" />
-          Tout le rayon est aussi en boutique à Coignières (78), avec du conseil gratuit —{' '}
+          Tout le rayon est aussi en boutique à Coignières (78), avec du conseil gratuit :{' '}
           <Link href="/stores" className="font-semibold text-spruce hover:underline underline-offset-4">
             infos et horaires
           </Link>

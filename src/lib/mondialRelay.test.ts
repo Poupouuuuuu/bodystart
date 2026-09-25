@@ -16,15 +16,15 @@ const shop: ParcelShop = {
 }
 
 describe('formatRelayAttributeValue', () => {
-  it('formate "[ID] — [Nom], [Adresse], [CP] [Ville]"', () => {
+  it('formate "[ID], [Nom], [Adresse], [CP] [Ville]"', () => {
     expect(formatRelayAttributeValue(shop)).toBe(
-      '12345 — Tabac de la Gare, 12 Rue des Lilas, 78310 Coignières'
+      '12345, Tabac de la Gare, 12 Rue des Lilas, 78310 Coignières'
     )
   })
 
   it('normalise les espaces multiples de l’adresse', () => {
     expect(formatRelayAttributeValue({ ...shop, address: '12   Rue   des  Lilas' })).toBe(
-      '12345 — Tabac de la Gare, 12 Rue des Lilas, 78310 Coignières'
+      '12345, Tabac de la Gare, 12 Rue des Lilas, 78310 Coignières'
     )
   })
 })
@@ -40,6 +40,15 @@ describe('parseRelayAttributeValue', () => {
   })
 
   it('gère une adresse contenant des virgules (garde le dernier segment)', () => {
+    const value = '999, Carrefour City, 3, Av. Foch, 75016 Paris'
+    expect(parseRelayAttributeValue(value)).toEqual({
+      id: '999',
+      name: 'Carrefour City',
+      cpVille: '75016 Paris',
+    })
+  })
+
+  it('relit encore l’ancien format « ID — Nom, … » (paniers ouverts avant le 25/09/2026)', () => {
     const value = '999 — Carrefour City, 3, Av. Foch, 75016 Paris'
     expect(parseRelayAttributeValue(value)).toEqual({
       id: '999',

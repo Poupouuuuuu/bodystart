@@ -31,7 +31,7 @@ export default function ReviewsV2() {
             </span>
           </div>
           <p className="text-[15px] text-ink-mute leading-[1.65] mb-7">
-            On n&apos;affiche que de vrais avis Google — pas de verbatims inventés. Tu peux
+            On n&apos;affiche que de vrais avis Google, pas de verbatims inventés. Tu peux
             tous les lire sur notre fiche, et si tu as commandé chez nous, ajouter le tien :
             c&apos;est ce qui aide les suivants à choisir.
           </p>

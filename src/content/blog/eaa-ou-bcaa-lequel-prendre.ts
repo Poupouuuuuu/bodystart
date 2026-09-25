@@ -195,15 +195,15 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
   "products": [
     {
       "handle": "hit-eaa",
-      "label": "HIT EAA — DY Nutrition"
+      "label": "HIT EAA (DY Nutrition)"
     },
     {
       "handle": "yeaah-eaa",
-      "label": "YEAAH EAA — Dedicated"
+      "label": "YEAAH EAA (Dedicated)"
     },
     {
       "handle": "dedicated-nutrition-bcaa-sensation",
-      "label": "BCAA Sensation — Dedicated"
+      "label": "BCAA Sensation (Dedicated)"
     }
   ],
   "categories": [

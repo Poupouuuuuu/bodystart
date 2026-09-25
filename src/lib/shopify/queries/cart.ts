@@ -84,7 +84,7 @@ const CART_FRAGMENT = `
       code
       applicable
     }
-    # Montants réellement déduits par code — affichés dans le récap et le
+    # Montants réellement déduits par code, affichés dans le récap et le
     # widget cagnotte (« Cagnotte appliquée : -X € ») ; sans ça le client ne
     # voyait jamais combien sa remise a déduit.
     discountAllocations {
@@ -143,7 +143,7 @@ export const UPDATE_CART = `
         ...CartFragment
       }
       # userErrors N'ÉTAIENT PAS requêtés : une quantité plafonnée par le
-      # stock (ou toute erreur métier) passait silencieusement — le « + »
+      # stock (ou toute erreur métier) passait silencieusement : le « + »
       # semblait mort, et cart pouvait être null → panier local effacé.
       userErrors {
         field

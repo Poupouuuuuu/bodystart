@@ -48,7 +48,7 @@ export default function ConseilDifferenciantV2() {
             </h2>
             <p className="text-ink-mute text-[17px] leading-[1.65] mb-8 max-w-[520px]">
               On ne référence pas tout ce qui existe. On teste les marques, on lit les
-              étiquettes, on vérifie les dosages — et on ne met en rayon que ce qu&apos;on
+              étiquettes, on vérifie les dosages, et on ne met en rayon que ce qu&apos;on
               prendrait nous-mêmes. Si un produit ne sert à rien, on te le dira.
             </p>
 

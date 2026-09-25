@@ -91,7 +91,7 @@ export function EnrollmentBlock({ onEnrolled }: EnrollmentBlockProps) {
           />
           {profilePhone && (
             <p className="text-[12px] text-ink-mute mt-2">
-              Numéro repris de ton profil — modifie-le si besoin.
+              Numéro repris de ton profil. Modifie-le si besoin.
             </p>
           )}
         </div>

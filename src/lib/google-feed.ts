@@ -213,7 +213,7 @@ export function buildGoogleFeedXml(
   <channel>
     <title>BodyStart Nutrition</title>
     <link>${escapeXml(base)}</link>
-    <description>Compléments alimentaires sport et santé — BodyStart Nutrition, Coignières (78). Whey, créatine, vitamines, accompagnement en boutique.</description>
+    <description>Compléments alimentaires sport et santé. BodyStart Nutrition, Coignières (78). Whey, créatine, vitamines, accompagnement en boutique.</description>
 ${items.join('\n')}
   </channel>
 </rss>

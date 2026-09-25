@@ -13,7 +13,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
   metaDescription:
     'Le collagène en complément : à quoi ça sert vraiment, marin ou bovin, dosage, et pourquoi la vitamine C compte. Notre avis honnête et notre sélection.',
   excerpt:
-    "Le collagène est la protéine structurelle de la peau, des articulations et des os. En complément, c'est un produit d'entretien apprécié ; sur le plan réglementaire, c'est surtout la vitamine C qui contribue à la formation normale de collagène — d'où l'intérêt des formules qui associent les deux.",
+    "Le collagène est la protéine structurelle de la peau, des articulations et des os. En complément, c'est un produit d'entretien apprécié ; sur le plan réglementaire, c'est surtout la vitamine C qui contribue à la formation normale de collagène, d'où l'intérêt des formules qui associent les deux.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -22,7 +22,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Le collagène est la protéine la plus abondante du corps : c'est la « charpente » de la peau, des tendons, des articulations, des os et des vaisseaux. Ton organisme le fabrique naturellement à partir des acides aminés de ton alimentation. Avec l'âge, cette production a tendance à ralentir — d'où l'intérêt que beaucoup lui portent, en particulier après 40 ans.",
+          text: "Le collagène est la protéine la plus abondante du corps : c'est la « charpente » de la peau, des tendons, des articulations, des os et des vaisseaux. Ton organisme le fabrique naturellement à partir des acides aminés de ton alimentation. Avec l'âge, cette production a tendance à ralentir, d'où l'intérêt que beaucoup lui portent, en particulier après 40 ans.",
         },
         {
           type: 'p',
@@ -35,11 +35,11 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Soyons honnêtes et précis, car la réglementation encadre ce qu'on peut dire. Le **collagène en lui-même ne dispose pas d'allégation santé autorisée** en Europe : on ne peut donc pas affirmer qu'il « améliore la peau » ou « soigne les articulations ». Ce qui est reconnu, en revanche, c'est que la **vitamine C contribue à la formation normale de collagène** — celui que ton corps produit.",
+          text: "Soyons honnêtes et précis, car la réglementation encadre ce qu'on peut dire. Le **collagène en lui-même ne dispose pas d'allégation santé autorisée** en Europe : on ne peut donc pas affirmer qu'il « améliore la peau » ou « soigne les articulations ». Ce qui est reconnu, en revanche, c'est que la **vitamine C contribue à la formation normale de collagène**, celui que ton corps produit.",
         },
         {
           type: 'p',
-          text: "C'est exactement pour cette raison que les bonnes formules **associent collagène et vitamine C** : la vitamine C soutient la fabrication naturelle de ton propre collagène. Considère donc le collagène comme un produit plaisir et entretien, à intégrer dans une hygiène de vie globale — pas comme un traitement.",
+          text: "C'est exactement pour cette raison que les bonnes formules **associent collagène et vitamine C** : la vitamine C soutient la fabrication naturelle de ton propre collagène. Considère donc le collagène comme un produit plaisir et entretien, à intégrer dans une hygiène de vie globale, pas comme un traitement.",
         },
       ],
     },
@@ -70,7 +70,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Deux formats pratiques : la poudre à mélanger dans l\'eau ou une boisson, et les versions liquides prêtes à boire. Privilégie une formule qui contient déjà de la vitamine C, ou associe-la à une source de vitamine C — c\'est le point qui a du sens sur le plan réglementaire.',
+          text: 'Deux formats pratiques : la poudre à mélanger dans l\'eau ou une boisson, et les versions liquides prêtes à boire. Privilégie une formule qui contient déjà de la vitamine C, ou associe-la à une source de vitamine C. C\'est le point qui a du sens sur le plan réglementaire.',
         },
       ],
     },
@@ -92,7 +92,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
               '34,90 €',
             ],
             [
-              '[Beauty & Shape — Protéine & Collagène](/products/beauty-shape-proteine-collagene)',
+              '[Beauty & Shape - Protéine & Collagène](/products/beauty-shape-proteine-collagene)',
               'Protéine + collagène',
               '34,90 €',
             ],
@@ -121,7 +121,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
   faq: [
     {
       q: 'Le collagène est-il vraiment efficace pour la peau ?',
-      a: "Le collagène est un produit d'entretien apprécié pour la peau, mais il ne bénéficie pas d'allégation santé autorisée en Europe : on ne peut pas affirmer qu'il « améliore la peau ». Ce qui est reconnu, c'est que la vitamine C contribue à la formation normale de collagène — d'où l'intérêt des formules qui associent collagène et vitamine C.",
+      a: "Le collagène est un produit d'entretien apprécié pour la peau, mais il ne bénéficie pas d'allégation santé autorisée en Europe : on ne peut pas affirmer qu'il « améliore la peau ». Ce qui est reconnu, c'est que la vitamine C contribue à la formation normale de collagène, d'où l'intérêt des formules qui associent collagène et vitamine C.",
     },
     {
       q: 'Quel collagène choisir : marin ou bovin ?',
@@ -143,7 +143,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
   products: [
     { handle: 'collagen-complex-vitamine-c', label: 'Collagen Complex + Vitamine C' },
     { handle: 'pure-collagen-marin-liquide', label: 'Collagène Marin Liquide' },
-    { handle: 'beauty-shape-proteine-collagene', label: 'Beauty & Shape — Protéine & Collagène' },
+    { handle: 'beauty-shape-proteine-collagene', label: 'Beauty & Shape - Protéine & Collagène' },
   ],
   categories: [{ slug: 'sante', label: 'Santé & bien-être' }],
   related: ['complements-apres-40-ans', 'creatine-pour-les-femmes'],

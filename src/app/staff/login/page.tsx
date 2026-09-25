@@ -10,7 +10,7 @@ import type { Metadata } from 'next'
 import { LoginForm } from './LoginForm'
 
 export const metadata: Metadata = {
-  title: 'Connexion staff — BodyStart',
+  title: 'Connexion staff | BodyStart',
   robots: { index: false, follow: false },
 }
 

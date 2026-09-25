@@ -161,15 +161,15 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
   "products": [
     {
       "handle": "whey-native-protimuscle",
-      "label": "Whey Native Protimuscle — Nutrimuscle"
+      "label": "Whey Native Protimuscle (Nutrimuscle)"
     },
     {
       "handle": "iso-fusion-protein",
-      "label": "Iso Fusion Protein — Eric Favre"
+      "label": "Iso Fusion Protein (Eric Favre)"
     },
     {
       "handle": "isolate-native-whey-mix-musclewhey",
-      "label": "Isolate Native Whey Mix — Nutrimuscle"
+      "label": "Isolate Native Whey Mix (Nutrimuscle)"
     }
   ],
   "categories": [

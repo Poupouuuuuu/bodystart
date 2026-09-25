@@ -12,7 +12,7 @@ export const creatinePourLesFemmes: BlogArticle = {
   metaDescription:
     'La créatine est-elle bonne pour les femmes ? Oui : 3 à 5 g/jour, mêmes bénéfices, sans faire « gonfler » ni masculiniser. On démonte les mythes.',
   excerpt:
-    "La créatine est aussi efficace et sûre chez la femme que chez l'homme : 3 à 5 g de monohydrate par jour améliorent la performance sur les efforts intenses et courts. Non, elle ne « fait pas gonfler » et ne masculinise pas — la petite prise de poids du début, c'est de l'eau dans le muscle, pas de la graisse.",
+    "La créatine est aussi efficace et sûre chez la femme que chez l'homme : 3 à 5 g de monohydrate par jour améliorent la performance sur les efforts intenses et courts. Non, elle ne « fait pas gonfler » et ne masculinise pas : la petite prise de poids du début, c'est de l'eau dans le muscle, pas de la graisse.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -21,7 +21,7 @@ export const creatinePourLesFemmes: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Oui, sans réserve. La créatine est l'un des compléments les plus étudiés au monde, et la physiologie sur laquelle elle agit — les réserves d'énergie du muscle — est la même chez la femme et chez l'homme. Le dosage recommandé est identique : **3 à 5 g par jour**, tous les jours. Il n'existe pas de « créatine pour femme » différente : c'est le même produit, la même dose.",
+          text: "Oui, sans réserve. La créatine est l'un des compléments les plus étudiés au monde, et la physiologie sur laquelle elle agit (les réserves d'énergie du muscle) est la même chez la femme et chez l'homme. Le dosage recommandé est identique : **3 à 5 g par jour**, tous les jours. Il n'existe pas de « créatine pour femme » différente : c'est le même produit, la même dose.",
         },
         {
           type: 'p',
@@ -29,7 +29,7 @@ export const creatinePourLesFemmes: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Concrètement, la créatine **améliore les capacités physiques lors de séries successives d\'exercices très intenses et de courte durée** — c\'est l\'allégation officiellement reconnue en Europe. En clair : tes séries de squat, de fentes, de développé, tes efforts répétés en cours de fitness ou de HIIT.',
+          text: 'Concrètement, la créatine **améliore les capacités physiques lors de séries successives d\'exercices très intenses et de courte durée**. C\'est l\'allégation officiellement reconnue en Europe. En clair : tes séries de squat, de fentes, de développé, tes efforts répétés en cours de fitness ou de HIIT.',
         },
       ],
     },
@@ -51,7 +51,7 @@ export const creatinePourLesFemmes: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La créatine n\'est pas un « brûleur » et ne fait pas maigrir : elle n\'agit pas sur la graisse. Son rôle est la performance. C\'est en te permettant de mieux t\'entraîner, séance après séance, qu\'elle soutient indirectement tes objectifs — et l\'entraînement reste le vrai moteur.',
+          text: 'La créatine n\'est pas un « brûleur » et ne fait pas maigrir : elle n\'agit pas sur la graisse. Son rôle est la performance. C\'est en te permettant de mieux t\'entraîner, séance après séance, qu\'elle soutient indirectement tes objectifs, et l\'entraînement reste le vrai moteur.',
         },
       ],
     },
@@ -60,11 +60,11 @@ export const creatinePourLesFemmes: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "C'est LE mythe qui fait hésiter la plupart des femmes, et il mérite une réponse précise. Oui, la créatine peut entraîner une petite prise de poids sur la balance en début de supplémentation — de l'ordre de **1 à 2 kg**. Mais cette eau est stockée **à l'intérieur de la cellule musculaire**, pas sous la peau. Ce n'est donc pas l'effet « gonflé-flou » que certaines redoutent : c'est de l'eau intramusculaire, qui accompagne le volume du muscle, pas de la rétention visible.",
+          text: "C'est LE mythe qui fait hésiter la plupart des femmes, et il mérite une réponse précise. Oui, la créatine peut entraîner une petite prise de poids sur la balance en début de supplémentation, de l'ordre de **1 à 2 kg**. Mais cette eau est stockée **à l'intérieur de la cellule musculaire**, pas sous la peau. Ce n'est donc pas l'effet « gonflé-flou » que certaines redoutent : c'est de l'eau intramusculaire, qui accompagne le volume du muscle, pas de la rétention visible.",
         },
         {
           type: 'p',
-          text: "Et surtout : ce n'est **pas de la graisse**. La balance peut afficher +1 kg, mais la composition corporelle, elle, ne se dégrade pas — au contraire, une meilleure performance à l'entraînement soutient le maintien de la masse musculaire. Beaucoup de nos clientes qui suivent leur poids « au gramme » sont rassurées quand on leur explique ce mécanisme.",
+          text: "Et surtout : ce n'est **pas de la graisse**. La balance peut afficher +1 kg, mais la composition corporelle, elle, ne se dégrade pas. Au contraire, une meilleure performance à l'entraînement soutient le maintien de la masse musculaire. Beaucoup de nos clientes qui suivent leur poids « au gramme » sont rassurées quand on leur explique ce mécanisme.",
         },
         {
           type: 'list',
@@ -95,7 +95,7 @@ export const creatinePourLesFemmes: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Le protocole est simple et identique à celui des hommes : **3 à 5 g de créatine monohydrate par jour**, tous les jours, y compris les jours de repos. Pas besoin de « phase de charge » : au bout de 3 à 4 semaines, tes réserves musculaires sont saturées et le bénéfice est là. Le timing dans la journée n'a quasiment pas d'importance — on a détaillé ce point dans notre article [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance).",
+          text: "Le protocole est simple et identique à celui des hommes : **3 à 5 g de créatine monohydrate par jour**, tous les jours, y compris les jours de repos. Pas besoin de « phase de charge » : au bout de 3 à 4 semaines, tes réserves musculaires sont saturées et le bénéfice est là. Le timing dans la journée n'a quasiment pas d'importance. On a détaillé ce point dans notre article [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance).",
         },
         {
           type: 'p',
@@ -116,7 +116,7 @@ export const creatinePourLesFemmes: BlogArticle = {
               '29,90 €',
             ],
             [
-              '[Beauty & Shape — Protéine & Collagène](/products/beauty-shape-proteine-collagene)',
+              '[Beauty & Shape - Protéine & Collagène](/products/beauty-shape-proteine-collagene)',
               'Protéine + collagène (à combiner)',
               '34,90 €',
             ],
@@ -151,7 +151,7 @@ export const creatinePourLesFemmes: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Si tu débutes et que tu te demandes par quoi commencer, la créatine fait partie du trio de base avec la whey — on l\'explique dans notre guide des [compléments pour débuter en musculation](/blog/complements-debutant-musculation). Et si tu veux qu\'on t\'aide à choisir, passe à la boutique : le conseil est gratuit.',
+          text: 'Si tu débutes et que tu te demandes par quoi commencer, la créatine fait partie du trio de base avec la whey. On l\'explique dans notre guide des [compléments pour débuter en musculation](/blog/complements-debutant-musculation). Et si tu veux qu\'on t\'aide à choisir, passe à la boutique : le conseil est gratuit.',
         },
       ],
     },
@@ -175,13 +175,13 @@ export const creatinePourLesFemmes: BlogArticle = {
     },
     {
       q: 'Quelle créatine choisir quand on est une femme ?',
-      a: 'Une créatine monohydrate, la forme la plus étudiée et la plus sûre — il n\'existe pas de créatine spécifiquement « féminine ». En version neutre à mélanger (comme la Créatine 100 % Monohydrate Micronisée) ou en version aromatisée à boire comme une boisson (comme la Clear Pro Creatine) selon ta préférence de goût.',
+      a: 'Une créatine monohydrate, la forme la plus étudiée et la plus sûre : il n\'existe pas de créatine spécifiquement « féminine ». En version neutre à mélanger (comme la Créatine 100 % Monohydrate Micronisée) ou en version aromatisée à boire comme une boisson (comme la Clear Pro Creatine) selon ta préférence de goût.',
     },
   ],
   products: [
-    { handle: 'creatine-100-monohydrate-micronisee', label: 'Créatine 100 % Monohydrate Micronisée — French Nutrition' },
-    { handle: 'clear-pro-creatine', label: 'Clear Pro Creatine — Eric Favre' },
-    { handle: 'beauty-shape-proteine-collagene', label: 'Beauty & Shape — Protéine & Collagène' },
+    { handle: 'creatine-100-monohydrate-micronisee', label: 'Créatine 100 % Monohydrate Micronisée (French Nutrition)' },
+    { handle: 'clear-pro-creatine', label: 'Clear Pro Creatine (Eric Favre)' },
+    { handle: 'beauty-shape-proteine-collagene', label: 'Beauty & Shape - Protéine & Collagène' },
   ],
   categories: [{ slug: 'creatine', label: 'Créatine' }],
   related: ['creatine-avant-ou-apres-seance', 'complements-debutant-musculation'],

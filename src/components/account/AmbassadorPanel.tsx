@@ -204,7 +204,7 @@ export function AmbassadorPanel() {
           ) : (
             <>
               <label htmlFor="amb-redeem-amount" className="block text-[12px] text-ink-mute font-medium mb-2">
-                Montant à utiliser ({euros(a.minToUseCents)} – {euros(a.usableCents)})
+                Montant à utiliser (entre {euros(a.minToUseCents)} et {euros(a.usableCents)})
               </label>
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">

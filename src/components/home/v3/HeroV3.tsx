@@ -106,7 +106,7 @@ export default function HeroV3() {
                   La boutique
                 </p>
                 <p className="mt-1.5 font-display text-[21px] font-bold leading-tight text-canvas">
-                  Lun–Sam · 11h–19h
+                  Lun. au sam. · 11h à 19h
                 </p>
                 <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-white/70">
                   <MapPin className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />

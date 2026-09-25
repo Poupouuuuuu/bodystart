@@ -61,10 +61,10 @@ export const combienDeProteinesParJour: BlogArticle = {
         {
           "type": "list",
           "items": [
-            "**Petit-déjeuner : 25-30 g** — œufs, skyr, flocons d'avoine",
-            "**Déjeuner : 35-40 g** — poulet ou poisson + féculents",
-            "**Collation : 20-25 g** — shaker de whey ou barre protéinée",
-            "**Dîner : 35-40 g** — viande, poisson ou légumineuses + céréales"
+            "**Petit-déjeuner : 25-30 g** (œufs, skyr, flocons d'avoine)",
+            "**Déjeuner : 35-40 g** (poulet ou poisson + féculents)",
+            "**Collation : 20-25 g** (shaker de whey ou barre protéinée)",
+            "**Dîner : 35-40 g** (viande, poisson ou légumineuses + céréales)"
           ]
         },
         {
@@ -120,7 +120,7 @@ export const combienDeProteinesParJour: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Non. La whey est un **complément, pas un substitut** : elle sert à atteindre ta cible quotidienne quand l'alimentation seule ne suffit pas. Une dose apporte généralement 20 à 25 g de protéines, soit l'équivalent d'environ 80 g de blanc de poulet — en version shaker prêt en 30 secondes."
+          "text": "Non. La whey est un **complément, pas un substitut** : elle sert à atteindre ta cible quotidienne quand l'alimentation seule ne suffit pas. Une dose apporte généralement 20 à 25 g de protéines, soit l'équivalent d'environ 80 g de blanc de poulet, en version shaker prêt en 30 secondes."
         },
         {
           "type": "p",
@@ -137,7 +137,7 @@ export const combienDeProteinesParJour: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Chez une personne en bonne santé, non : les études disponibles ne montrent pas d'atteinte rénale aux apports pratiqués par les sportifs, jusqu'à environ 2,2 g/kg/jour. La prudence s'impose uniquement en cas de pathologie rénale existante — dans ce cas, l'avis de ton médecin prime sur n'importe quel plan alimentaire."
+          "text": "Chez une personne en bonne santé, non : les études disponibles ne montrent pas d'atteinte rénale aux apports pratiqués par les sportifs, jusqu'à environ 2,2 g/kg/jour. La prudence s'impose uniquement en cas de pathologie rénale existante. Dans ce cas, l'avis de ton médecin prime sur n'importe quel plan alimentaire."
         },
         {
           "type": "list",
@@ -149,7 +149,7 @@ export const combienDeProteinesParJour: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Dernier rappel : pense à boire suffisamment et garde une assiette variée. Les protéines ne font pas tout — les glucides et les lipides restent indispensables pour t'entraîner dur et bien récupérer."
+          "text": "Dernier rappel : pense à boire suffisamment et garde une assiette variée. Les protéines ne font pas tout : les glucides et les lipides restent indispensables pour t'entraîner dur et bien récupérer."
         }
       ]
     }
@@ -179,15 +179,15 @@ export const combienDeProteinesParJour: BlogArticle = {
   "products": [
     {
       "handle": "whey-native-protimuscle",
-      "label": "Whey Native Protimuscle — Nutrimuscle"
+      "label": "Whey Native Protimuscle (Nutrimuscle)"
     },
     {
       "handle": "iso-fusion-protein",
-      "label": "Iso Fusion Protein — Eric Favre"
+      "label": "Iso Fusion Protein (Eric Favre)"
     },
     {
       "handle": "crunch-bar-barre-proteinee",
-      "label": "Crunch Bar — la barre protéinée Warrior"
+      "label": "Crunch Bar, la barre protéinée Warrior"
     }
   ],
   "categories": [

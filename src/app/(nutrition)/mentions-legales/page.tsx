@@ -43,7 +43,7 @@ export default function MentionsLegalesPage() {
             </div>
             <div className="bg-canvas rounded-2xl p-6 md:p-8 text-base text-ink space-y-3">
               <p>
-                <strong className="font-semibold text-spruce">Raison sociale :</strong> BODYSTART NUTRITION — SASU au capital de 500 €
+                <strong className="font-semibold text-spruce">Raison sociale :</strong> BODYSTART NUTRITION, SASU au capital de 500 €
               </p>
               <p>
                 <strong className="font-semibold text-spruce">SIREN :</strong> 909 197 469

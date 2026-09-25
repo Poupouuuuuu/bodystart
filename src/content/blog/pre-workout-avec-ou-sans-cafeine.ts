@@ -21,7 +21,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Concrètement, la séance paraît plus facile à démarrer, surtout en fin de journée de travail. La caféine est aussi l'un des ingrédients les plus étudiés en nutrition sportive, notamment sur la perception de l'effort. Mais soyons clairs : elle ne construit pas de muscle. Ce travail-là revient à l'entraînement, aux **protéines** et au sommeil. La caféine modifie ton état d'éveil, rien de plus. Le reste de la formule — citrulline, bêta-alanine, parfois créatine selon les marques — joue sur d'autres tableaux."
+          "text": "Concrètement, la séance paraît plus facile à démarrer, surtout en fin de journée de travail. La caféine est aussi l'un des ingrédients les plus étudiés en nutrition sportive, notamment sur la perception de l'effort. Mais soyons clairs : elle ne construit pas de muscle. Ce travail-là revient à l'entraînement, aux **protéines** et au sommeil. La caféine modifie ton état d'éveil, rien de plus. Le reste de la formule (citrulline, bêta-alanine, parfois créatine selon les marques) joue sur d'autres tableaux."
         }
       ]
     },
@@ -47,7 +47,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Trois profils : ceux qui s'entraînent après 17-18 h, les personnes sensibles à la caféine, et toute personne hypertendue ou suivie pour un problème cardiovasculaire — dans ce dernier cas, demande l'avis de ton médecin avant tout pré-workout stimulé."
+          "text": "Trois profils : ceux qui s'entraînent après 17-18 h, les personnes sensibles à la caféine, et toute personne hypertendue ou suivie pour un problème cardiovasculaire. Dans ce dernier cas, demande l'avis de ton médecin avant tout pré-workout stimulé."
         },
         {
           "type": "p",
@@ -64,7 +64,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "C'est une formule non stimulante construite autour de la **citrulline**, de l'**arginine** et souvent de la **bêta-alanine**, pensée pour la sensation de congestion musculaire (le fameux « pump ») et le confort de séance — sans toucher à ton sommeil."
+          "text": "C'est une formule non stimulante construite autour de la **citrulline**, de l'**arginine** et souvent de la **bêta-alanine**, pensée pour la sensation de congestion musculaire (le fameux « pump ») et le confort de séance, sans toucher à ton sommeil."
         },
         {
           "type": "p",
@@ -181,15 +181,15 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
   "products": [
     {
       "handle": "vapor-x5-pre-workout",
-      "label": "Vapor X5 — MuscleTech"
+      "label": "Vapor X5 (MuscleTech)"
     },
     {
       "handle": "pump-nitric-oxide-booster",
-      "label": "Pump Nitric Oxide Booster — Warrior (sans stimulant)"
+      "label": "Pump Nitric Oxide Booster (Warrior, sans stimulant)"
     },
     {
       "handle": "l-citrulline",
-      "label": "L-Citrulline — Dedicated"
+      "label": "L-Citrulline (Dedicated)"
     }
   ],
   "categories": [

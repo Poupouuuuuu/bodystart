@@ -9,9 +9,9 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
   title: 'Gainer : pour qui, et comment bien le choisir ?',
   metaTitle: 'Gainer : pour qui et comment le choisir ?',
   metaDescription:
-    'Le gainer, c\'est pour qui ? Comment le choisir (ratio, calories, qualité) et l\'utiliser en prise de masse — et pourquoi il n\'est pas fait pour tout le monde.',
+    'Le gainer, c\'est pour qui ? Comment le choisir (ratio, calories, qualité) et l\'utiliser en prise de masse, et pourquoi il n\'est pas fait pour tout le monde.',
   excerpt:
-    "Un gainer, c'est un mélange de protéines et de glucides pensé pour ajouter des calories facilement. Il est utile si tu peines à manger assez en prise de masse (un « hardgainer »), mais inutile — voire contre-productif — si tu prends du gras facilement.",
+    "Un gainer, c'est un mélange de protéines et de glucides pensé pour ajouter des calories facilement. Il est utile si tu peines à manger assez en prise de masse (un « hardgainer »), mais inutile (voire contre-productif) si tu prends du gras facilement.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -33,7 +33,7 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Pour une personne précise : celle qui **peine à manger suffisamment** pour prendre du poids malgré ses efforts. On parle souvent de « hardgainer » — métabolisme rapide, petit appétit, journées chargées. Pour elle, avaler un shaker calorique entre deux repas est bien plus simple que de rajouter une assiette.",
+          text: "Pour une personne précise : celle qui **peine à manger suffisamment** pour prendre du poids malgré ses efforts. On parle souvent de « hardgainer » : métabolisme rapide, petit appétit, journées chargées. Pour elle, avaler un shaker calorique entre deux repas est bien plus simple que de rajouter une assiette.",
         },
         {
           type: 'p',
@@ -54,7 +54,7 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "C'est le vrai débat. Un gainer, c'est surtout de la **praticité** : tout est déjà dosé et mélangé. L'alternative — une whey à laquelle tu ajoutes une source de glucides (flocons d'avoine, crème de riz, banane) — revient souvent **moins cher au calcul** et te laisse contrôler la qualité et le ratio.",
+          text: "C'est le vrai débat. Un gainer, c'est surtout de la **praticité** : tout est déjà dosé et mélangé. L'alternative, une whey à laquelle tu ajoutes une source de glucides (flocons d'avoine, crème de riz, banane), revient souvent **moins cher au calcul** et te laisse contrôler la qualité et le ratio.",
         },
         {
           type: 'p',
@@ -88,7 +88,7 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
               '38,90 €',
             ],
             [
-              '[Zoo Mass — Gainer](/products/zoo-mass-gainer)',
+              '[Zoo Mass - Gainer](/products/zoo-mass-gainer)',
               'Gainer haute densité',
               '69,90 €',
             ],
@@ -115,7 +115,7 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Un doute sur le fait qu\'un gainer soit vraiment adapté à ton cas ? On te le dira honnêtement à la boutique de Coignières — parfois, une whey et une meilleure organisation des repas suffisent.',
+          text: 'Un doute sur le fait qu\'un gainer soit vraiment adapté à ton cas ? On te le dira honnêtement à la boutique de Coignières. Parfois, une whey et une meilleure organisation des repas suffisent.',
         },
       ],
     },
@@ -144,7 +144,7 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
   ],
   products: [
     { handle: 'mutant-mass', label: 'Mutant Mass' },
-    { handle: 'zoo-mass-gainer', label: 'Zoo Mass — Gainer' },
+    { handle: 'zoo-mass-gainer', label: 'Zoo Mass - Gainer' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],
   related: ['prise-de-masse-complements-et-organisation', 'combien-de-proteines-par-jour'],

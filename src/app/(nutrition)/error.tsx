@@ -35,7 +35,7 @@ export default function NutritionError({
           </h1>
           <p className="mt-5 text-[17px] leading-[1.65] text-ink-mute">
             Le problème vient probablement de notre connexion avec la boutique. Réessayez
-            dans quelques instants — vos articles au panier sont conservés.
+            dans quelques instants. Vos articles au panier sont conservés.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

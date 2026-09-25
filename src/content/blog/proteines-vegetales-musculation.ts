@@ -9,7 +9,7 @@ export const proteinesVegetalesMusculation: BlogArticle = {
   title: 'Protéines végétales en musculation : bien les choisir',
   metaTitle: 'Protéines végétales : bien les choisir en musculation',
   metaDescription:
-    'Whey vegan ou protéine végétale : est-ce aussi efficace pour le muscle ? Pois, riz, soja, mélanges multi-sources — comment choisir et bien doser.',
+    'Whey vegan ou protéine végétale : est-ce aussi efficace pour le muscle ? Pois, riz, soja, mélanges multi-sources : comment choisir et bien doser.',
   excerpt:
     "Les protéines végétales (pois, riz, soja…) couvrent tes besoins et soutiennent le muscle sans produit laitier. La clé : privilégier un mélange multi-sources pour un profil d'acides aminés complet, à une dose équivalente à celle d'une whey.",
   datePublished: '2026-07-17',
@@ -20,7 +20,7 @@ export const proteinesVegetalesMusculation: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Oui, à condition de bien la choisir. Ce qui compte pour le muscle, ce n'est pas l'origine de la protéine mais la **quantité** et la **qualité** que tu apportes sur la journée. Les protéines, végétales comme animales, **contribuent au maintien et au développement de la masse musculaire** — c'est une allégation officiellement reconnue. Une protéine végétale bien formulée fait donc parfaitement le travail.",
+          text: "Oui, à condition de bien la choisir. Ce qui compte pour le muscle, ce n'est pas l'origine de la protéine mais la **quantité** et la **qualité** que tu apportes sur la journée. Les protéines, végétales comme animales, **contribuent au maintien et au développement de la masse musculaire**. C'est une allégation officiellement reconnue. Une protéine végétale bien formulée fait donc parfaitement le travail.",
         },
         {
           type: 'p',
@@ -72,7 +72,7 @@ export const proteinesVegetalesMusculation: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Les repères sont les mêmes que pour une whey : une portion apporte généralement 20 à 25 g de protéines, à intégrer dans ton total quotidien. Ce total est le vrai levier — on l'a détaillé dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour). Le timing (autour de l'entraînement, en collation) est secondaire par rapport à l'apport global.",
+          text: "Les repères sont les mêmes que pour une whey : une portion apporte généralement 20 à 25 g de protéines, à intégrer dans ton total quotidien. Ce total est le vrai levier. On l'a détaillé dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour). Le timing (autour de l'entraînement, en collation) est secondaire par rapport à l'apport global.",
         },
         {
           type: 'p',
@@ -110,7 +110,7 @@ export const proteinesVegetalesMusculation: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "La spiruline est souvent citée à côté des protéines végétales. Attention à ne pas la survendre : c'est une micro-algue riche en protéines et en micronutriments, mais aux doses habituelles elle n'apporte que quelques grammes de protéines — c'est un complément d'appoint intéressant, pas une source principale de protéines.",
+          text: "La spiruline est souvent citée à côté des protéines végétales. Attention à ne pas la survendre : c'est une micro-algue riche en protéines et en micronutriments, mais aux doses habituelles elle n'apporte que quelques grammes de protéines. C'est un complément d'appoint intéressant, pas une source principale de protéines.",
         },
         {
           type: 'p',

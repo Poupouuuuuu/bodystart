@@ -31,7 +31,7 @@ const ADDRESS_LINE = '8 Rue du Pont des Landes, 78310 Coignières'
 const PHONE_DISPLAY = '07 61 84 75 80'
 const PHONE_TEL = '+33761847580'
 const EMAIL = 'bodystartnutrition@gmail.com'
-const HOURS_DISPLAY = 'Du lundi au samedi · 11h – 19h (fermé le dimanche)'
+const HOURS_DISPLAY = 'Du lundi au samedi · 11h à 19h (fermé le dimanche)'
 const MAPS_DIRECTIONS = 'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'
 const MAPS_EMBED =
   'https://maps.google.com/maps?q=48.736836,1.909592&z=17&ie=UTF8&iwloc=&output=embed'
@@ -103,7 +103,7 @@ export default function StoresPage() {
               Nos boutiques
             </h1>
             <p className="text-ink-mute text-[16px] md:text-[18px] leading-[1.6]">
-              Sport &amp; santé, le bon conseil près de chez toi — ouvert du lundi au
+              Sport &amp; santé, le bon conseil près de chez toi, ouvert du lundi au
               samedi. Anciennement BodyFit Coignières.
             </p>
           </div>
@@ -119,7 +119,7 @@ export default function StoresPage() {
               <StoreStatusV2 hours={store.hours} />
 
               <h2 className="font-display text-[22px] md:text-[26px] font-extrabold text-spruce leading-[1.15] tracking-tight mt-4">
-                BodyStart Nutrition — Coignières
+                BodyStart Nutrition · Coignières
               </h2>
 
               <ul className="mt-5 space-y-4">
@@ -187,7 +187,7 @@ export default function StoresPage() {
               </h2>
 
               <p className="text-ink-mute text-[15px] leading-[1.6] mt-3">
-                On s&apos;agrandit. Laisse ton email pour être prévenu de l&apos;ouverture — et
+                On s&apos;agrandit. Laisse ton email pour être prévenu de l&apos;ouverture et
                 recevoir une offre de bienvenue.
               </p>
 
@@ -215,7 +215,7 @@ export default function StoresPage() {
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="BodyStart Nutrition — Coignières"
+              title="BodyStart Nutrition · Coignières"
             />
           </div>
 

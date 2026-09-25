@@ -107,7 +107,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Oui. La créatine monohydrate est l'un des compléments les plus étudiés en nutrition sportive. À **3 à 5 g par jour**, la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée — exactement le format d'une séance de musculation."
+          "text": "Oui. La créatine monohydrate est l'un des compléments les plus étudiés en nutrition sportive. À **3 à 5 g par jour**, la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation."
         },
         {
           "type": "p",
@@ -140,7 +140,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Le point 7 est le garde-fou. C'est la pesée hebdomadaire qui te dit si ton surplus est bien calibré, trop timide ou trop agressif — pas tes sensations."
+          "text": "Le point 7 est le garde-fou. C'est la pesée hebdomadaire qui te dit si ton surplus est bien calibré, trop timide ou trop agressif, pas tes sensations."
         }
       ]
     },
@@ -219,11 +219,11 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
   "products": [
     {
       "handle": "mutant-mass",
-      "label": "Mutant Mass — le gainer"
+      "label": "Mutant Mass, le gainer"
     },
     {
       "handle": "creme-de-riz-bio",
-      "label": "Crème de Riz — Nutrimuscle"
+      "label": "Crème de Riz (Nutrimuscle)"
     },
     {
       "handle": "creatine-100-monohydrate-micronisee",

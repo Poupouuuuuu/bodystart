@@ -13,7 +13,7 @@ export const complementsApres40Ans: BlogArticle = {
   metaDescription:
     'Quels compléments après 40 ans ? Protéines, vitamine D, magnésium, créatine : l\'ordre logique pour rester en forme, sans se ruiner ni survendre.',
   excerpt:
-    "Après 40 ans, les priorités changent : les protéines pour préserver le muscle, la vitamine D et le magnésium comme fondations, la créatine pour la force. On te donne l'ordre logique, avec des allégations honnêtes — un complément à la fois, choisi pour une vraie raison.",
+    "Après 40 ans, les priorités changent : les protéines pour préserver le muscle, la vitamine D et le magnésium comme fondations, la créatine pour la force. On te donne l'ordre logique, avec des allégations honnêtes : un complément à la fois, choisi pour une vraie raison.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -22,7 +22,7 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Passé 40 ans, le corps ne s'effondre pas du jour au lendemain — mais quelques tendances de fond s'installent. La masse musculaire a naturellement tendance à diminuer avec l'âge quand on ne l'entretient pas, la récupération demande un peu plus de soin, et le statut en vitamine D est souvent bas, surtout en hiver. Rien d'alarmant : ce sont des raisons de structurer intelligemment son alimentation et, si besoin, sa supplémentation.",
+          text: "Passé 40 ans, le corps ne s'effondre pas du jour au lendemain, mais quelques tendances de fond s'installent. La masse musculaire a naturellement tendance à diminuer avec l'âge quand on ne l'entretient pas, la récupération demande un peu plus de soin, et le statut en vitamine D est souvent bas, surtout en hiver. Rien d'alarmant : ce sont des raisons de structurer intelligemment son alimentation et, si besoin, sa supplémentation.",
         },
         {
           type: 'p',
@@ -39,7 +39,7 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "S'il ne fallait retenir qu'un point, ce serait celui-là. Les **protéines contribuent au maintien de la masse musculaire** : c'est une allégation officiellement reconnue, et c'est exactement l'enjeu après 40 ans. Le muscle, ça s'entretient — par l'entraînement en résistance et par un apport suffisant en protéines.",
+          text: "S'il ne fallait retenir qu'un point, ce serait celui-là. Les **protéines contribuent au maintien de la masse musculaire** : c'est une allégation officiellement reconnue, et c'est exactement l'enjeu après 40 ans. Le muscle, ça s'entretient : par l'entraînement en résistance et par un apport suffisant en protéines.",
         },
         {
           type: 'p',
@@ -69,7 +69,7 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Le magnésium est le deuxième réflexe fondation. Il **contribue à réduire la fatigue, à une fonction musculaire normale et au fonctionnement normal du système nerveux** — des allégations autorisées qui résument bien pourquoi on le conseille souvent aux personnes actives qui se sentent « à plat ».",
+          text: "Le magnésium est le deuxième réflexe fondation. Il **contribue à réduire la fatigue, à une fonction musculaire normale et au fonctionnement normal du système nerveux**, des allégations autorisées qui résument bien pourquoi on le conseille souvent aux personnes actives qui se sentent « à plat ».",
         },
         {
           type: 'p',
@@ -95,7 +95,7 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est populaire pour la peau et les articulations : c'est un produit plaisir et entretien, à choisir pour sa composition. À noter qu'officiellement, c'est la **vitamine C qui contribue à la formation normale de collagène** — d'où l'intérêt des formules qui associent les deux, comme le [Collagen Complex + Vitamine C](/products/collagen-complex-vitamine-c) ou le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide).",
+          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est populaire pour la peau et les articulations : c'est un produit plaisir et entretien, à choisir pour sa composition. À noter qu'officiellement, c'est la **vitamine C qui contribue à la formation normale de collagène**, d'où l'intérêt des formules qui associent les deux, comme le [Collagen Complex + Vitamine C](/products/collagen-complex-vitamine-c) ou le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide).",
         },
         {
           type: 'p',
@@ -113,7 +113,7 @@ export const complementsApres40Ans: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Tu veux qu\'on adapte tout ça à ton cas ? Le conseil est gratuit en boutique à Coignières — on te construit une routine simple, sans te vendre dix produits.',
+          text: 'Tu veux qu\'on adapte tout ça à ton cas ? Le conseil est gratuit en boutique à Coignières : on te construit une routine simple, sans te vendre dix produits.',
         },
       ],
     },
@@ -137,7 +137,7 @@ export const complementsApres40Ans: BlogArticle = {
     },
     {
       q: 'Le collagène est-il efficace pour la peau et les articulations ?',
-      a: 'Le collagène est un produit d\'entretien apprécié pour la peau et les articulations, à choisir pour sa composition. Sur le plan réglementaire, c\'est la vitamine C qui contribue à la formation normale de collagène — d\'où l\'intérêt des formules qui associent collagène et vitamine C.',
+      a: 'Le collagène est un produit d\'entretien apprécié pour la peau et les articulations, à choisir pour sa composition. Sur le plan réglementaire, c\'est la vitamine C qui contribue à la formation normale de collagène, d\'où l\'intérêt des formules qui associent collagène et vitamine C.',
     },
   ],
   products: [

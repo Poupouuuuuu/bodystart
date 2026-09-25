@@ -39,13 +39,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       'Whey, isolate, caséine, gainer : des protéines sélectionnées, en stock à Coignières (78) et livrées partout en France. Conseil gratuit en boutique.',
     h1: 'Protéines en poudre : whey, isolate, caséine et gainers',
     intro: [
-      "Une protéine en poudre sert à une chose simple : atteindre ton quota de protéines du jour quand l'assiette ne suffit pas. Les protéines contribuent au maintien et au développement de la masse musculaire — c'est le complément le plus utile en musculation, et le premier qu'on conseille au comptoir.",
+      "Une protéine en poudre sert à une chose simple : atteindre ton quota de protéines du jour quand l'assiette ne suffit pas. Les protéines contribuent au maintien et au développement de la masse musculaire. C'est le complément le plus utile en musculation, et le premier qu'on conseille au comptoir.",
       "Comment choisir ? Si tu débutes ou que tu cherches le meilleur rapport qualité-prix, une whey concentrée (~70-80 % de protéines) fait parfaitement le travail. Si tu digères mal le lactose ou que tu veux le produit le plus pur en sèche, passe sur une isolate (≥ 90 % de protéines, quasi sans lactose). Et si ton problème est de manger assez en prise de masse, un gainer ajoute des calories pratiques à ta journée.",
     ],
     featured: [
-      { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle — la valeur sûre à 19,95 €' },
-      { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein — l’isolate digestion facile' },
-      { handle: 'mutant-mass', label: 'Mutant Mass — le gainer prise de masse' },
+      { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle, la valeur sûre à 19,95 €' },
+      { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein, l’isolate digestion facile' },
+      { handle: 'mutant-mass', label: 'Mutant Mass, le gainer prise de masse' },
     ],
     related: [
       { slug: 'creatine', label: 'Créatine' },
@@ -70,13 +70,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       'Créatine monohydrate micronisée, en poudre ou gélules. 3 à 5 g/jour, le complément le plus étudié. En stock à Coignières, livraison France.',
     h1: 'Créatine monohydrate',
     intro: [
-      "La créatine est le complément le plus étudié de la nutrition sportive : elle améliore les capacités physiques lors de séries successives d'exercices très intenses et de courte durée — exactement ce que tu fais à la salle. La forme de référence est la créatine monohydrate, à 3-5 g par jour, tous les jours, peu importe l'heure.",
+      "La créatine est le complément le plus étudié de la nutrition sportive : elle améliore les capacités physiques lors de séries successives d'exercices très intenses et de courte durée, exactement ce que tu fais à la salle. La forme de référence est la créatine monohydrate, à 3-5 g par jour, tous les jours, peu importe l'heure.",
       "Comment choisir ? Toutes nos créatines sont du monohydrate : la différence se joue sur le format (poudre neutre à mélanger, version aromatisée, gélules) et la finesse de mouture (micronisée = se dissout mieux). Pas besoin de phase de charge ni de formule exotique : la régularité fait tout.",
     ],
     featured: [
       { handle: 'creatine-100-monohydrate-micronisee', label: 'Créatine 100 % Monohydrate Micronisée French Nutrition' },
-      { handle: 'one-raw-creatine', label: 'One Raw Creatine Zoomad — poudre brute' },
-      { handle: 'clear-pro-creatine', label: 'Clear Pro Creatine Eric Favre — version aromatisée' },
+      { handle: 'one-raw-creatine', label: 'One Raw Creatine Zoomad, poudre brute' },
+      { handle: 'clear-pro-creatine', label: 'Clear Pro Creatine Eric Favre, version aromatisée' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },
@@ -97,13 +97,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       'Pré-workout avec caféine pour l’énergie ou formules pump sans stimulant pour les séances du soir. Conseil en boutique à Coignières, livraison France.',
     h1: 'Pré-workout : énergie, focus et congestion',
     intro: [
-      "Un pré-workout se prend 20 à 30 minutes avant la séance pour attaquer l'entraînement dans les meilleures conditions. Deux familles : les formules avec caféine (la caféine aide à augmenter la vigilance) pour l'énergie et le focus, et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, pour la congestion — idéales si tu t'entraînes le soir.",
+      "Un pré-workout se prend 20 à 30 minutes avant la séance pour attaquer l'entraînement dans les meilleures conditions. Deux familles : les formules avec caféine (la caféine aide à augmenter la vigilance) pour l'énergie et le focus, et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, pour la congestion, idéales si tu t'entraînes le soir.",
       "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, un pré-workout stimulant classique fonctionne très bien. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine. En cas de doute, on t'aide à trancher en boutique.",
     ],
     featured: [
-      { handle: 'vapor-x5-pre-workout', label: 'Vapor X5 MuscleTech — le stimulant complet' },
-      { handle: 'pump-nitric-oxide-booster', label: 'Pump Warrior — congestion sans stimulant' },
-      { handle: 'french-pump-pre-workout', label: 'French Pump — le pré-workout made in France' },
+      { handle: 'vapor-x5-pre-workout', label: 'Vapor X5 MuscleTech, le stimulant complet' },
+      { handle: 'pump-nitric-oxide-booster', label: 'Pump Warrior, congestion sans stimulant' },
+      { handle: 'french-pump-pre-workout', label: 'French Pump, le pré-workout made in France' },
     ],
     related: [
       { slug: 'creatine', label: 'Créatine' },
@@ -124,9 +124,9 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Si ton apport en protéines est déjà solide, les acides aminés sont un confort, pas une priorité. Si tu dois choisir un seul produit, la recherche récente donne l'avantage aux EAA, qui contiennent les BCAA plus les six autres essentiels. Entraînement à jeun ou alimentation végétarienne : c'est là qu'ils prennent le plus de sens.",
     ],
     featured: [
-      { handle: 'hit-eaa', label: 'HIT EAA DY Nutrition — les essentiels à 24,90 €' },
+      { handle: 'hit-eaa', label: 'HIT EAA DY Nutrition, les essentiels à 24,90 €' },
       { handle: 'yeaah-eaa', label: 'YEAAH EAA Dedicated' },
-      { handle: 'l-citrulline', label: 'L-Citrulline Dedicated — le pump à l’unité' },
+      { handle: 'l-citrulline', label: 'L-Citrulline Dedicated, le pump à l’unité' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },
@@ -143,13 +143,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       'L-carnitine, CLA, formules thermogéniques et draineurs pour accompagner une sèche. À utiliser avec un déficit calorique. Conseil en boutique à Coignières.',
     h1: 'Brûleurs et compléments minceur',
     intro: [
-      "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon — L-carnitine, CLA, formules thermogéniques, draineurs — s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
-      "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras populaire en période de régime, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan — et parfois, la réponse est non.",
+      "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon (L-carnitine, CLA, formules thermogéniques, draineurs) s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
+      "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras populaire en période de régime, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non.",
     ],
     featured: [
-      { handle: 'l-carnitine-pro-zero-liquide', label: 'L-Carnitine Pro Zero — le classique liquide' },
+      { handle: 'l-carnitine-pro-zero-liquide', label: 'L-Carnitine Pro Zero, le classique liquide' },
       { handle: 'cla-2400', label: 'CLA 2400 Eric Favre' },
-      { handle: 'iron-ultra-fat-burner', label: 'Iron Ultra — la formule complète' },
+      { handle: 'iron-ultra-fat-burner', label: 'Iron Ultra, la formule complète' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },
@@ -171,11 +171,11 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     h1: 'Boosters et vitalité',
     intro: [
       "Ce rayon regroupe les formules « vitalité » à base de plantes et d'ingrédients traditionnels, comme le bois bandé. Ce sont des produits plaisir et confort, pas des médicaments : on les choisit pour leur composition et on les utilise dans le cadre d'une hygiène de vie globale.",
-      "Comment choisir ? Regarde la composition et le format (boisson, gélules) plutôt que les promesses. Si tu hésites, pose-nous la question en boutique : on connaît chaque référence du rayon et on te dira ce qui correspond — ou pas — à ce que tu cherches.",
+      "Comment choisir ? Regarde la composition et le format (boisson, gélules) plutôt que les promesses. Si tu hésites, pose-nous la question en boutique : on connaît chaque référence du rayon et on te dira ce qui correspond (ou pas) à ce que tu cherches.",
     ],
     featured: [
       { handle: 'bois-bande', label: 'Bois Bandé Eric Favre' },
-      { handle: 'testorine-booster-boisson', label: 'Testorine — format boisson' },
+      { handle: 'testorine-booster-boisson', label: 'Testorine, format boisson' },
     ],
     related: [
       { slug: 'sante', label: 'Santé & bien-être' },
@@ -193,11 +193,11 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     h1: 'Glucides : crème de riz, avoine et boissons d’effort',
     intro: [
       "Les glucides en poudre servent deux objectifs : ajouter des calories propres et digestes en prise de masse (crème de riz, crème d'avoine), et fournir de l'énergie rapide autour de l'entraînement (Vitargo, boissons d'effort). Les glucides contribuent à la récupération d'une fonction musculaire normale après un effort intense.",
-      "Comment choisir ? Pour augmenter tes apports quotidiens sans te forcer, la crème de riz ou d'avoine se mélange à la whey en collation. Pour l'intra ou le post-training des séances longues, un glucide à assimilation rapide type Vitargo fait la différence. Le bon choix dépend surtout de ton volume d'entraînement — on en parle en boutique si besoin.",
+      "Comment choisir ? Pour augmenter tes apports quotidiens sans te forcer, la crème de riz ou d'avoine se mélange à la whey en collation. Pour l'intra ou le post-training des séances longues, un glucide à assimilation rapide type Vitargo fait la différence. Le bon choix dépend surtout de ton volume d'entraînement. On en parle en boutique si besoin.",
     ],
     featured: [
       { handle: 'creme-de-riz-bio', label: 'Crème de Riz Nutrimuscle' },
-      { handle: 'pure-vitargo', label: 'Pure Vitargo — l’intra-training' },
+      { handle: 'pure-vitargo', label: 'Pure Vitargo, l’intra-training' },
       { handle: 'creme-davoine-avena-sativa', label: 'Crème d’Avoine à 11,90 €' },
     ],
     related: [

@@ -5,7 +5,7 @@
 import type { ReactNode } from 'react'
 
 export const metadata = {
-  title: 'Caisse — BodyStart Staff',
+  title: 'Caisse | BodyStart Staff',
   robots: { index: false, follow: false },
 }
 

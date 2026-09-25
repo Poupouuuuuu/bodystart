@@ -75,7 +75,7 @@ export async function createCoachingDiscount(
 
   await shopifyAdminFetch(CREATE_DISCOUNT_CODE, {
     basicCodeDiscount: {
-      title: `Coaching -15% — ${customerEmail}`,
+      title: `Coaching -15% — ${customerEmail}`, // tiret-ok : identifiant technique (admin Shopify, jamais vu du client), relu tel quel par la recherche plus bas
       code,
       startsAt,
       endsAt,
@@ -135,7 +135,7 @@ export async function getCoachingDiscountCode(customerEmail: string): Promise<st
     codeDiscountNodes: {
       nodes: { id: string; codeDiscount: { title: string; status: string } }[]
     }
-  }>(SEARCH_DISCOUNTS, { query: `title:"Coaching -15% — ${customerEmail}"` })
+  }>(SEARCH_DISCOUNTS, { query: `title:"Coaching -15% — ${customerEmail}"` }) // tiret-ok : doit rester identique au titre créé plus haut
 
   const active = data.codeDiscountNodes.nodes.find(
     (n) => n.codeDiscount.status === 'ACTIVE'
