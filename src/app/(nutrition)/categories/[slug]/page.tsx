@@ -77,10 +77,26 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     },
   }
 
+  // FAQPage : MOT POUR MOT la FAQ visible plus bas (règle Google).
+  const faqJsonLd = cat.faq?.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: cat.faq.map(({ q, a }) => ({
+          '@type': 'Question',
+          name: q,
+          acceptedAnswer: { '@type': 'Answer', text: a },
+        })),
+      }
+    : null
+
   return (
     <div className="bg-canvas min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      )}
 
       <div className="container py-12 md:py-16">
         {/* Fil d'ariane */}
@@ -121,7 +137,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <li key={f.handle}>
                 <Link
                   href={`/products/${f.handle}`}
-                  className="inline-flex items-center gap-2 text-[15px] font-semibold text-spruce hover:text-fresh transition-colors"
+                  className="inline-flex min-h-[44px] items-center gap-2 text-[15px] font-semibold text-spruce hover:text-fresh transition-colors"
                 >
                   <ArrowRight className="w-4 h-4 flex-shrink-0" />
                   {f.label}
@@ -150,6 +166,23 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </Link>
             .
           </p>
+        )}
+
+        {/* FAQ visible (= schema FAQPage) */}
+        {cat.faq && cat.faq.length > 0 && (
+          <section className="mb-12 max-w-[760px]">
+            <h2 className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-5">
+              {cat.label} : questions fréquentes
+            </h2>
+            <div className="space-y-4">
+              {cat.faq.map(({ q, a }) => (
+                <div key={q} className="bg-white rounded-xl border border-spruce/10 p-5">
+                  <h3 className="font-display font-bold text-[15px] text-spruce mb-2">{q}</h3>
+                  <p className="text-[14px] leading-[1.7] text-ink/90">{a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         {/* Guides liés (maillage blog) */}

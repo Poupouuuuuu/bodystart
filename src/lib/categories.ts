@@ -27,6 +27,8 @@ export interface CategoryPage {
   related: { slug: string; label: string }[]
   /** Article(s) de blog liés (slugs du registre blog). */
   guides: { slug: string; label: string }[]
+  /** FAQ affichée sous la grille + JSON-LD FAQPage (texte brut, mot pour mot). */
+  faq?: { q: string; a: string }[]
 }
 
 export const CATEGORY_PAGES: CategoryPage[] = [
@@ -69,7 +71,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     metaTitle: 'Créatine monohydrate : pure ou aromatisée, bien la choisir',
     metaDescription:
       "Créatine monohydrate pure ou aromatisée, des marques qu'on utilise nous-mêmes. 3 g par jour. Conseil gratuit à Coignières, livraison offerte dès 85 €.",
-    h1: 'Créatine monohydrate',
+    h1: 'Créatine monohydrate : pure ou aromatisée',
     intro: [
       "La créatine est l'un des compléments les plus étudiés de la nutrition sportive. Prise à raison de 3 g par jour, elle améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, comme les séries lourdes en musculation. La forme de référence est la créatine monohydrate, à prendre tous les jours, à l'heure qui t'arrange.",
       "Comment choisir ? Toutes nos créatines sont de la créatine monohydrate en poudre : la différence se joue sur le goût (neutre, à mélanger à ta boisson, ou aromatisée) et la finesse de mouture (micronisée, elle se dissout mieux). L'une des versions aromatisées ajoute aussi bêta-alanine, taurine et vitamines B. Pas besoin de phase de charge : la régularité fait tout. Comme tout complément, elle s'utilise dans le cadre d'une alimentation variée et équilibrée et d'un mode de vie sain. Elle s'adresse aux adultes qui s'entraînent de façon intense.",
@@ -87,6 +89,28 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       { slug: 'creatine-avant-ou-apres-seance', label: 'Créatine : avant ou après la séance ?' },
       { slug: 'creatine-pour-les-femmes', label: 'La créatine pour les femmes' },
       { slug: 'complements-debutant-musculation', label: 'Par quoi commencer en musculation ?' },
+    ],
+    faq: [
+      {
+        q: "Combien de créatine prendre par jour ?",
+        a:
+          "3 g par jour, tous les jours : c'est la dose à laquelle la réglementation européenne reconnaît l'effet de la créatine sur les séries d'exercices très intenses de courte durée. La dose par mesure varie selon les marques : ne dépasse jamais la dose journalière indiquée sur l'étiquette.",
+      },
+      {
+        q: "À quel moment prendre sa créatine ?",
+        a:
+          "Quand tu veux : ce qui compte, c'est la prise quotidienne, pas l'heure. Le plus simple est de l'associer à un geste que tu fais tous les jours, dans ton shaker de whey ou au petit-déjeuner, y compris les jours de repos.",
+      },
+      {
+        q: "Faut-il faire une phase de charge ?",
+        a:
+          "Non, ce n'est pas nécessaire : l'effet bénéfique de la créatine est obtenu avec 3 g par jour, tous les jours. La phase de charge (plusieurs prises par jour pendant quelques jours) fait dépasser la dose journalière indiquée sur l'étiquette.",
+      },
+      {
+        q: "Micronisée, neutre ou aromatisée : quelle différence ?",
+        a:
+          "C'est toujours de la créatine monohydrate. Micronisée veut dire moulue plus finement : elle se dissout mieux et laisse moins de dépôt au fond du shaker. Neutre, elle se mélange à n'importe quelle boisson ; aromatisée, elle se boit simplement dans de l'eau. Regarde aussi la composition : une version aromatisée ajoute bêta-alanine, taurine et vitamines B.",
+      },
     ],
   },
   {
