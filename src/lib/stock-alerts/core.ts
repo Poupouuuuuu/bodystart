@@ -51,6 +51,48 @@ export function parseInventoryLevelPayload(payload: unknown): InventoryLevelPayl
   return { inventoryItemId, available, locationId }
 }
 
+// ─── Cron de rattrapage (/api/stock-alert/sweep) ─────────────────────────────
+
+/** Découpe un tableau en lots de `size` (Shopify `nodes(ids:)` accepte 250 ids, on reste prudent). */
+export function chunk<T>(items: T[], size: number): T[][] {
+  if (size <= 0) throw new Error('chunk: taille invalide')
+  const out: T[][] = []
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size))
+  return out
+}
+
+/**
+ * Vercel appelle un cron avec « Authorization: Bearer <CRON_SECRET> ».
+ * Sans secret configuré, on refuse tout (fail closed). Comparaison à temps constant.
+ */
+export function isAuthorizedCron(authHeader: string | null | undefined, secret: string | undefined): boolean {
+  if (!secret || secret.length < 16) return false
+  if (typeof authHeader !== 'string') return false
+  const expected = `Bearer ${secret}`
+  if (authHeader.length !== expected.length) return false
+  let diff = 0
+  for (let i = 0; i < expected.length; i++) diff |= authHeader.charCodeAt(i) ^ expected.charCodeAt(i)
+  return diff === 0
+}
+
+export interface VariantAvailabilityNode {
+  id: string
+  availableForSale: boolean
+  product: { status: string } | null
+}
+
+/** Ids des variantes de nouveau achetables (dispo + produit actif). Les nœuds null (variante supprimée) sont ignorés. */
+export function selectBackInStockVariantIds(nodes: Array<VariantAvailabilityNode | null | undefined>): string[] {
+  const out: string[] = []
+  for (const n of nodes) {
+    if (!n || !n.availableForSale) continue
+    if (n.product?.status !== 'ACTIVE') continue
+    if (!VARIANT_GID_RE.test(n.id)) continue
+    out.push(n.id)
+  }
+  return out
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')

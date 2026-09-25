@@ -36,6 +36,8 @@ src/
 │       ├── newsletter/     # Inscription newsletter (Resend contacts)
 │       ├── inventory/      # Stock en temps réel par variante/location (Admin API + rate limit)
 │       ├── stock-alert/    # POST « me prévenir quand c'est de retour » (Supabase stock_alerts) + webhook/ inventory_levels/update → email Resend
+│       │   └── sweep/      # GET cron Vercel quotidien (07:00 UTC) : rattrape les alertes que le webhook a manquées (Bearer CRON_SECRET)
+│       ├── version/        # GET { sha, env } : quel commit sert la prod (skill verif-prod)
 │       └── stripe/
 │           ├── checkout/   # POST — crée une Stripe Checkout Session (coaching)
 │           └── webhook/    # POST — gère checkout.completed + subscription.deleted
@@ -93,6 +95,9 @@ RESEND_AUDIENCE_ID=xxx                    # Audience Resend pour la newsletter (
 
 # Site
 NEXT_PUBLIC_SITE_URL=https://bodystart.com
+
+# Cron Vercel (/api/stock-alert/sweep) — défini sur Vercel uniquement, jamais en local
+CRON_SECRET=xxx                           # ≥ 32 caractères aléatoires ; Vercel l'envoie en Authorization: Bearer
 
 # Upstash Redis (rate limiting — /api/contact, /api/inventory)
 UPSTASH_REDIS_REST_URL=https://xxx.upstash.io

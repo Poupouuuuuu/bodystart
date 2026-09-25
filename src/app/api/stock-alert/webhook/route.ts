@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { verifyShopifyHmac } from '@/lib/loyalty/verify-hmac'
-import { buildBackInStockEmail, parseInventoryLevelPayload } from '@/lib/stock-alerts/core'
+import { parseInventoryLevelPayload } from '@/lib/stock-alerts/core'
+import { MAX_BATCH, sendAlerts, type AlertRow } from '@/lib/stock-alerts/notify'
 
 // ============================================================
 // POST /api/stock-alert/webhook — Shopify `inventory_levels/update`
@@ -17,23 +17,12 @@ import { buildBackInStockEmail, parseInventoryLevelPayload } from '@/lib/stock-a
 // 3. Réclamation atomique des alertes en attente sur cet inventory_item
 //    (UPDATE … WHERE notified_at IS NULL RETURNING) → pas de doublon si deux
 //    webhooks arrivent en même temps.
-// 4. Envoi Resend en lot. En cas d'échec, on remet notified_at à NULL et on
-//    répond 500 : Shopify rejoue le webhook, l'alerte sera renvoyée.
+// 4. Envoi Resend en lot (lib/stock-alerts/notify). En cas d'échec, notified_at
+//    est remis à NULL et on répond 500 : Shopify rejoue le webhook.
+// Filet de sécurité quotidien : /api/stock-alert/sweep (cron Vercel).
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-
-const FROM = process.env.RESEND_FROM ?? 'BodyStart Nutrition <onboarding@resend.dev>'
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart-nutrition.fr'
-const MAX_PER_EVENT = 100 // taille max d'un lot Resend
-
-interface AlertRow {
-  id: string
-  email: string
-  product_handle: string
-  product_title: string
-  variant_title: string | null
-}
 
 export async function POST(req: Request) {
   const secret = process.env.SHOPIFY_WEBHOOK_SECRET
@@ -63,7 +52,7 @@ export async function POST(req: Request) {
     .eq('inventory_item_id', level.inventoryItemId)
     .is('notified_at', null)
     .select('id, email, product_handle, product_title, variant_title')
-    .limit(MAX_PER_EVENT)
+    .limit(MAX_BATCH)
   if (claimError) {
     console.error('[stock-alert/webhook] claim', claimError)
     return NextResponse.json({ error: 'db' }, { status: 500 })
@@ -71,28 +60,11 @@ export async function POST(req: Request) {
   const rows = (claimed ?? []) as AlertRow[]
   if (rows.length === 0) return NextResponse.json({ ok: true, sent: 0 })
 
-  const resend = new Resend(process.env.RESEND_API_KEY)
   try {
-    const batch = rows.map((row) => {
-      const mail = buildBackInStockEmail({
-        productTitle: row.product_title,
-        variantTitle: row.variant_title,
-        productHandle: row.product_handle,
-        siteUrl: SITE_URL,
-      })
-      return { from: FROM, to: row.email, subject: mail.subject, html: mail.html, text: mail.text }
-    })
-    const { error } = await resend.batch.send(batch)
-    if (error) throw new Error(error.message)
+    const sent = await sendAlerts(supabase, rows)
+    return NextResponse.json({ ok: true, sent })
   } catch (err) {
     console.error('[stock-alert/webhook] resend', err)
-    // Libère les alertes pour que le rejeu Shopify les renvoie.
-    await supabase
-      .from('stock_alerts')
-      .update({ notified_at: null })
-      .in('id', rows.map((r) => r.id))
     return NextResponse.json({ error: 'email' }, { status: 500 })
   }
-
-  return NextResponse.json({ ok: true, sent: rows.length })
 }

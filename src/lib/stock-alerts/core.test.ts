@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import {
   buildBackInStockEmail,
+  chunk,
+  isAuthorizedCron,
+  selectBackInStockVariantIds,
   displayVariantTitle,
   gidToNumericId,
   isValidEmail,
@@ -67,5 +70,36 @@ describe('buildBackInStockEmail', () => {
     expect(mail.subject).toBe('De retour en stock : Whey <b>Native</b>')
     expect(mail.html).toContain('Whey &lt;b&gt;Native&lt;/b&gt;')
     expect(mail.html).not.toContain('<b>Native</b>')
+  })
+})
+
+describe('cron de rattrapage (sweep)', () => {
+  it("découpe en lots sans perdre d'élément", () => {
+    expect(chunk([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]])
+    expect(chunk([], 50)).toEqual([])
+    expect(() => chunk([1], 0)).toThrow()
+  })
+
+  it("n'autorise le cron qu'avec le bon Bearer et un secret configuré", () => {
+    const secret = 'abcdefghijklmnopqrstuvwxyz0123456789'
+    expect(isAuthorizedCron(`Bearer ${secret}`, secret)).toBe(true)
+    expect(isAuthorizedCron(`Bearer ${secret}x`, secret)).toBe(false)
+    expect(isAuthorizedCron(`Bearer ${secret.slice(0, -1)}`, secret)).toBe(false)
+    expect(isAuthorizedCron(secret, secret)).toBe(false)
+    expect(isAuthorizedCron(null, secret)).toBe(false)
+    expect(isAuthorizedCron(`Bearer ${secret}`, undefined)).toBe(false)
+    expect(isAuthorizedCron('Bearer court', 'court')).toBe(false)
+  })
+
+  it('ne retient que les variantes disponibles de produits actifs', () => {
+    const ids = selectBackInStockVariantIds([
+      { id: 'gid://shopify/ProductVariant/1', availableForSale: true, product: { status: 'ACTIVE' } },
+      { id: 'gid://shopify/ProductVariant/2', availableForSale: false, product: { status: 'ACTIVE' } },
+      { id: 'gid://shopify/ProductVariant/3', availableForSale: true, product: { status: 'ARCHIVED' } },
+      { id: 'gid://shopify/ProductVariant/4', availableForSale: true, product: null },
+      null,
+      { id: 'gid://shopify/Product/5', availableForSale: true, product: { status: 'ACTIVE' } },
+    ])
+    expect(ids).toEqual(['gid://shopify/ProductVariant/1'])
   })
 })
