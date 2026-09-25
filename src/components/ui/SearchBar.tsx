@@ -11,7 +11,6 @@ interface SearchBarProps {
 
 export default function SearchBar({
   initialQuery = '',
-  placeholder = 'Rechercher un produit&hellip;',
   className = '',
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)

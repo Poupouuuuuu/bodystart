@@ -228,7 +228,7 @@ export default function BuyBoxV2({
     if (!bar) return
     if (isStickyVisible && !isCartOpen) bar.removeAttribute('inert')
     else bar.setAttribute('inert', '')
-  }, [isStickyVisible])
+  }, [isStickyVisible, isCartOpen])
 
   // Stock boutique PAR VARIANTE, fetché côté client (page en ISR → le rendu
   // serveur est caché, mais ce fetch tourne à chaque visite = temps réel).

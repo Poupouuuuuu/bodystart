@@ -2,16 +2,14 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Dumbbell, CalendarDays, TrendingUp, ChevronRight, Clipboard, Tag, ArrowRight, Loader2, ShieldX } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
 import { COACHING_PRODUCTS } from '@/lib/stripe/types'
-import { cn } from '@/lib/utils'
 
 function CoachingContent() {
   const router = useRouter()
   const { customer, isLoading, isLoggedIn } = useCustomer()
-  const searchParams = useSearchParams()
 
   const [discountCode, setDiscountCode] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -25,11 +23,13 @@ function CoachingContent() {
   }, [isLoading, isLoggedIn, router])
 
   // Vérifier le statut coaching via API
+  const customerEmail = customer?.email
   useEffect(() => {
-    if (!customer?.email) return
+    if (!customerEmail) return
+    const email = customerEmail
     async function checkCoachingStatus() {
       try {
-        const res = await fetch(`/api/coaching/status?email=${encodeURIComponent(customer!.email)}`)
+        const res = await fetch(`/api/coaching/status?email=${encodeURIComponent(email)}`)
         const data = await res.json()
         setCoachingActive(data.active === true)
       } catch {
@@ -39,7 +39,7 @@ function CoachingContent() {
       }
     }
     checkCoachingStatus()
-  }, [customer?.email])
+  }, [customerEmail])
 
   // Récupérer le code promo coaching
   useEffect(() => {
@@ -83,7 +83,7 @@ function CoachingContent() {
             Aucun coaching actif
           </h1>
           <p className="text-sm text-gray-500 font-bold mb-8">
-            Vous n'avez pas encore souscrit à une offre coaching. Découvrez nos programmes et commencez votre transformation.
+            Vous n&apos;avez pas encore souscrit à une offre coaching. Découvrez nos programmes et commencez votre transformation.
           </p>
           <Link
             href="/coaching/tarifs"
@@ -96,7 +96,6 @@ function CoachingContent() {
     )
   }
 
-  const abonnement = COACHING_PRODUCTS.find((p) => p.type === 'abonnement')
   const programmes = COACHING_PRODUCTS.filter((p) => p.type === 'programme')
 
   return (

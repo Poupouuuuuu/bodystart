@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { X, Minus, Plus, ArrowRight, Package, Store, Truck, MapPin, Clock, CheckCircle2, ShieldCheck, RotateCcw } from 'lucide-react'
+import { X, Minus, Plus, ArrowRight, Package, Store, Truck, CheckCircle2, ShieldCheck, RotateCcw } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'

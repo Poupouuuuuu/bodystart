@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
 
 export default function CoachingTarifsPage() {
   const router = useRouter()
-  const { isLoggedIn, isLoading: customerLoading } = useCustomer()
+  const { isLoggedIn } = useCustomer()
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -137,7 +137,7 @@ export default function CoachingTarifsPage() {
                 {loadingId === abonnement.id ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> CHARGEMENT...</>
                 ) : (
-                  <>S'ABONNER <ArrowRight className="w-4 h-4" /></>
+                  <>S&apos;ABONNER <ArrowRight className="w-4 h-4" /></>
                 )}
               </button>
             </div>

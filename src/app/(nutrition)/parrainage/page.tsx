@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { Gift, Users, ShoppingBag, ArrowRight, ChevronDown } from 'lucide-react'
+import { Gift, Users, ShoppingBag, ChevronDown } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import ParrainageCta from '@/components/marketing/ParrainageCta'
 
@@ -62,11 +61,6 @@ const FAQ = [
     a: 'Jamais. Une fois créditée, c\'est à toi pour la vie.',
   },
 ]
-
-const BTN_PRIMARY =
-  'inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-fresh-deep'
-const BTN_OUTLINE =
-  'inline-flex items-center justify-center gap-2 border border-spruce text-spruce font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-spruce/5'
 
 export default function ParrainagePage() {
   return (

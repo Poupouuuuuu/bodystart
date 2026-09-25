@@ -51,7 +51,7 @@ describe('verifyShopifyHmac', () => {
   it('rejette si rawBody non-string', () => {
     // @ts-expect-error : runtime guard
     expect(verifyShopifyHmac({ rawBody: null, hmacHeader: 'x', secret: SECRET })).toBe(false)
-    // @ts-expect-error
+    // @ts-expect-error : runtime guard
     expect(verifyShopifyHmac({ rawBody: { a: 1 }, hmacHeader: 'x', secret: SECRET })).toBe(false)
   })
 

@@ -85,6 +85,8 @@ function buildContentSecurityPolicy() {
 }
 
 const nextConfig = {
+  // Racine du projet explicite : un package-lock.json parasite traîne dans le dossier parent.
+  outputFileTracingRoot: __dirname,
   // Ne pas révéler la stack (fingerprinting) — review sécurité 2026-07-03.
   poweredByHeader: false,
   async headers() {

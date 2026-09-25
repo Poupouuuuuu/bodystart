@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Store, MessageCircle, ArrowRight } from 'lucide-react'
+import { Store, MessageCircle } from 'lucide-react'
 
 /**
  * "Le conseil qu'aucun site n'a" — section differenciante.

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import {
   CheckCircle,
@@ -78,12 +79,12 @@ export default function ConseilForm() {
             <p className="font-semibold text-ink">8 Rue du Pont des Landes, 78310 Coignières</p>
             <p className="text-ink-mute text-[14px] mt-1">Ouvert du lundi au samedi · 11h – 19h</p>
           </div>
-          <a
+          <Link
             href="/"
             className="inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[15px] px-7 py-3.5 rounded-full hover:bg-fresh-deep transition-colors"
           >
             Retour à l&apos;accueil
-          </a>
+          </Link>
         </div>
       </div>
     )

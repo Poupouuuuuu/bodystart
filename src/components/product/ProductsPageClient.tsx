@@ -275,13 +275,6 @@ export default function ProductsPageClient({ products, stockByProductId = {} }: 
     }
   }
 
-  const handleGoalClick = (key: string) => {
-    setActiveGoal(key)
-    setActiveCategory(null)
-    setActiveTag(null)
-    syncFiltersToUrl(key, null, null)
-  }
-
   const handleCategoryClick = (key: string) => {
     if (activeCategory === key) {
       toggleSection(key)

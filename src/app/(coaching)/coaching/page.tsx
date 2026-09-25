@@ -31,7 +31,6 @@ export default function CoachingPage() {
   const abonnement = COACHING_PRODUCTS.find((p) => p.type === 'abonnement')
   const programmes = COACHING_PRODUCTS.filter((p) => p.type === 'programme')
   const seance = COACHING_PRODUCTS.find((p) => p.type === 'seance')
-  const pack = COACHING_PRODUCTS.find((p) => p.type === 'pack')
 
   return (
     <div className="bg-gray-950 text-white selection:bg-coaching-cyan-500 selection:text-black">
@@ -59,7 +58,7 @@ export default function CoachingPage() {
             </h1>
 
             <p className="text-gray-400 text-lg md:text-xl font-bold uppercase tracking-widest leading-relaxed mb-12 max-w-2xl">
-              Programmes d'entraînement 100% personnalisés, coaching individuel et suivi premium pour une transformation radicale.
+              Programmes d&apos;entraînement 100% personnalisés, coaching individuel et suivi premium pour une transformation radicale.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -176,7 +175,7 @@ export default function CoachingPage() {
       <div className="container py-24">
         <div className="mb-16 border-l-4 border-coaching-cyan-500 pl-6">
           <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest block mb-2">AVANTAGES EXCLUSIFS</span>
-          <h2 className="font-display text-4xl md:text-5xl font-black text-white uppercase tracking-tighter">PLUS QU'UN COACHING</h2>
+          <h2 className="font-display text-4xl md:text-5xl font-black text-white uppercase tracking-tighter">PLUS QU&apos;UN COACHING</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

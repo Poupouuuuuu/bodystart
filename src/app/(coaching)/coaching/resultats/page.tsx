@@ -17,7 +17,7 @@ export default function CoachingResultatsPage() {
         </h1>
         <div className="bg-gray-900 border-2 border-gray-800 p-8 shadow-[8px_8px_0_theme(colors.black)]">
           <p className="text-xl font-medium text-gray-400 leading-relaxed mb-8">
-            Avant/Après des clients, témoignages vidéos et retours d'expérience. La preuve par l'exemple.
+            Avant/Après des clients, témoignages vidéos et retours d&apos;expérience. La preuve par l&apos;exemple.
             Page en cours de construction.
           </p>
           <div className="h-64 border-2 border-dashed border-gray-800 flex items-center justify-center text-gray-600 font-black uppercase tracking-widest">

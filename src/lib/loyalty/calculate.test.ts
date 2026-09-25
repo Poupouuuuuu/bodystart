@@ -317,9 +317,9 @@ describe('isValidReferralCode', () => {
   it('refuse les inputs non-string', () => {
     // @ts-expect-error : on teste explicitement le runtime guard
     expect(isValidReferralCode(null)).toBe(false)
-    // @ts-expect-error
+    // @ts-expect-error : runtime guard
     expect(isValidReferralCode(undefined)).toBe(false)
-    // @ts-expect-error
+    // @ts-expect-error : runtime guard
     expect(isValidReferralCode(12345)).toBe(false)
   })
 })

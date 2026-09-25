@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 import {
   getCompleteBundleVariants,
   buildBundleAxes,
-  variantOptionValue,
   isBundleOptionAvailable,
   resolveBundleVariantOnChange,
 } from '@/lib/shopify/bundle'

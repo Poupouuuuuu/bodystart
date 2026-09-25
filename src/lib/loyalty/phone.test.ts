@@ -28,9 +28,9 @@ describe('normalizeToE164', () => {
   it('retourne null pour input non-string', () => {
     // @ts-expect-error : runtime guard
     expect(normalizeToE164(null)).toBe(null)
-    // @ts-expect-error
+    // @ts-expect-error : runtime guard
     expect(normalizeToE164(undefined)).toBe(null)
-    // @ts-expect-error
+    // @ts-expect-error : runtime guard
     expect(normalizeToE164(123456)).toBe(null)
   })
 
@@ -53,9 +53,9 @@ describe('isValidE164', () => {
 
   it('refuse les chaines vides ou non-string', () => {
     expect(isValidE164('')).toBe(false)
-    // @ts-expect-error
+    // @ts-expect-error : runtime guard
     expect(isValidE164(null)).toBe(false)
-    // @ts-expect-error
+    // @ts-expect-error : runtime guard
     expect(isValidE164(undefined)).toBe(false)
   })
 })

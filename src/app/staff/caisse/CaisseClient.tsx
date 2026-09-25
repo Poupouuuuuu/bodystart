@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Check, Delete, LogOut, Loader2, X, Tag } from 'lucide-react'
+import { ArrowLeft, Check, Delete, LogOut, Loader2, Tag } from 'lucide-react'
 import { getLoyaltyBrowserClient } from '@/lib/loyalty/supabase-browser'
 import { maxRedeemableCents, REDEEM_MIN_BALANCE_CENTS } from '@/lib/loyalty/calculate'
 
@@ -559,7 +559,6 @@ function CreateStep({
 function SaleStep({
   customer,
   amountCents,
-  setAmountCents,
   useCagnotte,
   toggleUseCagnotte,
   redeemRequestedCents,
