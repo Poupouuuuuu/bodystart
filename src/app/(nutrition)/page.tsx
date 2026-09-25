@@ -20,14 +20,15 @@ import { buildPageMetadata } from '@/lib/seo'
 export const metadata: Metadata = {
   ...buildPageMetadata({
     path: '/',
-    title: 'BodyStart Nutrition : Compléments alimentaires & nutrition sportive à Coignières (78)',
+    title: 'BodyStart Nutrition, anciennement BodyFit Coignières : compléments alimentaires',
     description:
-      "BodyStart, compléments sport et santé à Coignières (78). Conseil d'humain, produits propres et bien dosés, Click & Collect gratuit.",
+      'BodyStart Nutrition, anciennement BodyFit Coignières : compléments sport et santé (78). Conseil gratuit en boutique, Click & Collect gratuit.',
   }),
   // <title> exact demandé : bypass du template '%s | BodyStart Nutrition'
   // (le og:title / twitter:title gardent ce même libellé via buildPageMetadata).
+  // « anciennement BodyFit Coignières » : capte les recherches sur l'ancien nom (demande Adam, 25/09/2026).
   title: {
-    absolute: 'BodyStart Nutrition : Compléments alimentaires & nutrition sportive à Coignières (78)',
+    absolute: 'BodyStart Nutrition, anciennement BodyFit Coignières : compléments alimentaires',
   },
 }
 

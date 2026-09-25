@@ -16,13 +16,14 @@ import { buildPageMetadata } from '@/lib/seo'
 export const metadata: Metadata = {
   ...buildPageMetadata({
     path: '/stores',
-    title: 'Boutique de compléments à Coignières (78)',
+    title: 'Boutique BodyStart, anciennement BodyFit Coignières (78)',
     description:
-      'Ta boutique de protéines, créatine et compléments à Coignières (78310). Conseil gratuit, ouvert du lundi au samedi, Click & Collect. Anciennement BodyFit.',
+      'Protéines, créatine et compléments à Coignières (78310), anciennement BodyFit Coignières. Conseil gratuit, ouvert du lundi au samedi, Click & Collect.',
   }),
   // Title exact demandé (bypass du template '%s | BodyStart' du root layout).
+  // « anciennement BodyFit Coignières » : capte les recherches sur l'ancien nom (demande Adam, 25/09/2026).
   title: {
-    absolute: 'Boutique de compléments alimentaires à Coignières (78) | BodyStart Nutrition',
+    absolute: 'Boutique BodyStart, anciennement BodyFit Coignières (78)',
   },
 }
 
@@ -43,6 +44,7 @@ const STORE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Store',
   name: 'BodyStart Nutrition',
+  alternateName: 'BodyFit Coignières',
   description:
     'Boutique de compléments alimentaires (protéines, créatine, vitamines) à Coignières. Conseil gratuit, Click & Collect.',
   url: `${SITE_URL}/stores`,

@@ -51,6 +51,8 @@ const localBusinessJsonLd = [
     '@type': 'LocalBusiness',
     '@id': `${SITE_URL}/#boutique-coignieres`,
     name: 'BodyStart Nutrition, Coignières',
+    // Ancien nom de la boutique (reprise à 100 % de BodyFit Coignières) : aide Google à relier les deux.
+    alternateName: 'BodyFit Coignières',
     image: `${SITE_URL}/assets/logos/logo-v2-og.png`,
     telephone: '+33761847580',
     url: `${SITE_URL}/stores`,
