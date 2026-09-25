@@ -65,9 +65,10 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     slug: 'creatine',
     productType: 'Créatine',
     label: 'Créatine',
-    metaTitle: 'Créatine monohydrate : le complément le plus prouvé',
+    // Réécrits le 25/09/2026 pour le taux de clic (position 7, 0 clic dans Search Console).
+    metaTitle: 'Créatine monohydrate : pure ou aromatisée, bien la choisir',
     metaDescription:
-      'Créatine monohydrate micronisée, en poudre ou gélules. 3 à 5 g/jour, le complément le plus étudié. En stock à Coignières, livraison France.',
+      "Créatine monohydrate pure ou aromatisée, des marques qu'on utilise nous-mêmes. 3 g par jour. Conseil gratuit à Coignières, livraison offerte dès 85 €.",
     h1: 'Créatine monohydrate',
     intro: [
       "La créatine est le complément le plus étudié de la nutrition sportive : elle améliore les capacités physiques lors de séries successives d'exercices très intenses et de courte durée, exactement ce que tu fais à la salle. La forme de référence est la créatine monohydrate, à 3-5 g par jour, tous les jours, peu importe l'heure.",
