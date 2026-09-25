@@ -1,7 +1,6 @@
 ---
 name: verif-prod
-description: "Vérification de la production bodystart-nutrition.fr après un push sur main : attend que Vercel serve le bon commit, lance la sonde mobile Playwright (390×844, pages clés, règles mobile first, perf médiane, ISR), relit les captures et rend un compte rendu court. À lancer à la main après chaque déploiement."
-disable-model-invocation: true
+description: "Vérification de la production bodystart-nutrition.fr après un push sur main : attend que Vercel serve le bon commit, lance la sonde mobile Playwright (390×844, pages clés, règles mobile first, perf médiane, ISR), relit les captures et rend un compte rendu court. À lancer après chaque push sur main, par Adam ou par Claude."
 argument-hint: "[handle-produit]"
 allowed-tools: Bash, Read, Glob, Grep
 ---
