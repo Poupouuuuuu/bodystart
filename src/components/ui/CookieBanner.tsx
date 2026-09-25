@@ -68,10 +68,13 @@ export default function CookieBanner() {
             </span>
             <p className="text-[13px] text-ink leading-snug">
               On utilise des cookies pour faire tourner le site et mesurer l&apos;audience.
-              {' '}
-              <a href="/cookies" className="underline underline-offset-2 text-spruce hover:text-fresh-deep">
-                En savoir plus
-              </a>
+              {/* Mobile : le lien passe sur la ligne « Personnaliser », en cible de 44 px. */}
+              <span className="hidden md:inline">
+                {' '}
+                <a href="/cookies" className="underline underline-offset-2 text-spruce hover:text-fresh-deep">
+                  En savoir plus
+                </a>
+              </span>
             </p>
           </div>
 
@@ -99,22 +102,30 @@ export default function CookieBanner() {
             <button
               onClick={rejectAll}
               aria-label="Fermer (refuser non-essentiels)"
-              className="md:hidden flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-ink-mute hover:bg-spruce/5 transition-colors"
+              className="md:hidden flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-ink-mute hover:bg-spruce/5 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* ─── Lien Personnaliser mobile (caché en desktop, deja en ligne) ─── */}
-        <button
-          onClick={() => setShowCustomize((v) => !v)}
-          className="md:hidden inline-flex min-h-[44px] items-center gap-1 text-[13px] font-semibold text-ink-mute hover:text-spruce transition-colors"
-          aria-expanded={showCustomize}
-        >
-          Personnaliser
-          <ChevronDown className={cn('w-3.5 h-3.5 transition-transform', showCustomize && 'rotate-180')} />
-        </button>
+        {/* ─── Ligne mobile : Personnaliser + En savoir plus, cibles de 44 px (desktop : déjà en ligne) ─── */}
+        <div className="md:hidden flex items-center gap-5">
+          <button
+            onClick={() => setShowCustomize((v) => !v)}
+            className="inline-flex min-h-[44px] items-center gap-1 text-[13px] font-semibold text-ink-mute hover:text-spruce transition-colors"
+            aria-expanded={showCustomize}
+          >
+            Personnaliser
+            <ChevronDown className={cn('w-3.5 h-3.5 transition-transform', showCustomize && 'rotate-180')} />
+          </button>
+          <a
+            href="/cookies"
+            className="inline-flex min-h-[44px] items-center text-[13px] text-spruce underline underline-offset-2 hover:text-fresh-deep"
+          >
+            En savoir plus
+          </a>
+        </div>
 
         {/* ─── Panneau personnalisation, slide-in compact au-dessus ─── */}
         {showCustomize && (
@@ -140,7 +151,7 @@ export default function CookieBanner() {
             <div className="md:col-span-3 flex justify-end">
               <button
                 onClick={saveCustom}
-                className="text-[13px] font-semibold text-white bg-fresh hover:bg-fresh-deep transition-colors px-5 py-2 rounded-full"
+                className="inline-flex min-h-[44px] items-center text-[13px] font-semibold text-white bg-fresh hover:bg-fresh-deep transition-colors px-5 rounded-full"
               >
                 Enregistrer mes choix
               </button>
@@ -171,19 +182,28 @@ function CategoryRow({
         <p className="text-[12px] font-semibold text-ink leading-tight">{label}</p>
         <p className="text-[11px] text-ink-mute leading-snug mt-0.5">{desc}</p>
       </div>
+      {/* Cible tactile de 44 × 44 px ; les marges négatives laissent l'interrupteur (36 × 20) à sa place. */}
       <button
         type="button"
         disabled={disabled}
         onClick={() => !disabled && onChange?.(!checked)}
         className={cn(
-          'flex-shrink-0 w-9 h-5 rounded-full flex items-center px-0.5 transition-colors',
-          checked ? 'bg-fresh justify-end' : 'bg-spruce/15 justify-start',
+          'flex-shrink-0 w-11 h-11 -my-3 -mr-1 flex items-center justify-center',
           disabled && 'opacity-60 cursor-not-allowed'
         )}
         aria-checked={checked}
+        aria-label={label}
         role="switch"
       >
-        <span className="w-4 h-4 bg-white rounded-full shadow-sm" />
+        <span
+          aria-hidden="true"
+          className={cn(
+            'w-9 h-5 rounded-full flex items-center px-0.5 transition-colors',
+            checked ? 'bg-fresh justify-end' : 'bg-spruce/15 justify-start'
+          )}
+        >
+          <span className="w-4 h-4 bg-white rounded-full shadow-sm" />
+        </span>
       </button>
     </div>
   )

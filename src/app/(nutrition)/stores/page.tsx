@@ -131,20 +131,22 @@ export default function StoresPage() {
                   <Clock className="w-5 h-5 text-spruce flex-shrink-0 mt-0.5" />
                   <span className="text-[15px] text-ink">{HOURS_DISPLAY}</span>
                 </li>
+                {/* Téléphone et email : cibles de 44 px de haut. -my-2 garde le rythme de la
+                    liste (zones qui se touchent sans se chevaucher avec space-y-4) ; mt-1 recentre l'icône. */}
                 <li className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-spruce flex-shrink-0 mt-0.5" />
+                  <Phone className="w-5 h-5 text-spruce flex-shrink-0 mt-1" />
                   <a
                     href={`tel:${PHONE_TEL}`}
-                    className="text-[15px] text-ink hover:text-spruce transition-colors"
+                    className="inline-flex min-h-[44px] -my-2 items-center text-[15px] text-ink hover:text-spruce transition-colors"
                   >
                     {PHONE_DISPLAY}
                   </a>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-spruce flex-shrink-0 mt-0.5" />
+                  <Mail className="w-5 h-5 text-spruce flex-shrink-0 mt-1" />
                   <a
                     href={`mailto:${EMAIL}`}
-                    className="text-[15px] text-ink hover:text-spruce transition-colors break-words"
+                    className="inline-flex min-h-[44px] -my-2 items-center text-[15px] text-ink hover:text-spruce transition-colors break-words"
                   >
                     {EMAIL}
                   </a>
