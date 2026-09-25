@@ -186,7 +186,7 @@ Tout est dans `.claude/` (hooks, skills, agents) et documenté dans `.claude/hoo
 | Agent | `relecture-fiche` | conformité UE 1924/2006 + voix, verdict Publiable / À corriger |
 | Agent | `marque-scraper` | données officielles de marque telles quelles → `changes.json`, pose `texte_reecrit = false` |
 
-- Les hooks ne sont actifs que s'ils sont branchés dans `.claude/settings.json` (section `hooks`, forme exec `command` + `args`).
+- Hooks actifs depuis le 25/09/2026 via `.claude/settings.json` (forme exec : `command: node` + `args`, rechargés à chaud). Pour les couper le temps d'une session : `disableAllHooks: true` dans les réglages.
 - Metafield produit `custom.texte_reecrit` (booléen, épinglé, filtrable dans l'admin) : `false` = texte de marque repris tel quel, à personnaliser en priorité ; passer à `true` après réécriture. Initialisé à `false` sur tout le catalogue le 25/09/2026.
 - Écritures Shopify par script : app dédiée « BodyStart Scripts » (jeton `SHOPIFY_SCRIPTS_ADMIN_TOKEN`, local uniquement), marche à suivre dans `tech-specs/shopify-app-scripts.md`. Sans ce jeton, `shopify_apply.py --emit` produit les mutations pour le connecteur Shopify MCP. Jamais de `write_products` sur l'app du site.
 
