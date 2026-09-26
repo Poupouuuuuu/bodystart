@@ -37,6 +37,10 @@ const fraunces = Fraunces({
 // dans le code : le seul fallback est l'URL Vercel actuellement deployee.
 const SITE_URL = getSiteUrl() || 'https://bodystart.vercel.app'
 
+// Vérification du domaine pour Meta (Business Manager, sécurité de la marque).
+// Valeur publique (elle se lit dans le HTML), rendue seulement si la variable existe.
+const FB_DOMAIN_VERIFICATION = process.env.NEXT_PUBLIC_FB_DOMAIN_VERIFICATION?.trim()
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -94,6 +98,10 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  // <meta name="facebook-domain-verification" content="…"> sur toutes les pages.
+  ...(FB_DOMAIN_VERIFICATION
+    ? { verification: { other: { 'facebook-domain-verification': FB_DOMAIN_VERIFICATION } } }
+    : {}),
 }
 
 // Next 14 : themeColor vit dans l'export viewport (plus dans metadata).
