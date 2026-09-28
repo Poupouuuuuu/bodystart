@@ -213,7 +213,7 @@ Tout est dans `.claude/` (hooks, skills, agents) et documenté dans `.claude/hoo
 
 ## Boutiques physiques
 
-- **Boutique 1** : Body Start Nutrition — 8 Rue du Pont des Landes, 78310 Coignières — 07 61 84 75 80 — 7j/7 11h-19h
+- **Boutique 1** : Body Start Nutrition — 8 Rue du Pont des Landes, 78310 Coignières — 07 61 84 75 80 — du lundi au samedi, 11h-19h sans coupure, fermé le dimanche
   - Location ID Shopify : `gid://shopify/Location/114075795838`
   - Status : Active (`isActive: true`)
 - **Boutique 2** : Ouverture prochaine (emplacement non défini)

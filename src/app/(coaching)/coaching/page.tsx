@@ -12,7 +12,7 @@ const FEATURES = [
   { icon: Dumbbell, title: 'PROGRAMMES SUR-MESURE', desc: 'Entraînements adaptés à votre niveau, vos objectifs et votre équipement disponible.' },
   { icon: Brain, title: 'SUIVI PERSONNALISÉ', desc: 'Un coach dédié qui analyse et ajuste votre programme chaque semaine.' },
   { icon: TrendingUp, title: 'PROGRESSION GARANTIE', desc: 'Méthode éprouvée avec des résultats mesurables dès les premières semaines.' },
-  { icon: Clock, title: 'DISPONIBLE 7J/7', desc: 'Accès à votre espace coach et vos programmes à tout moment, depuis votre mobile.' },
+  { icon: Clock, title: 'ACCESSIBLE À TOUT MOMENT', desc: 'Accès à votre espace coach et vos programmes à tout moment, depuis votre mobile.' },
 ]
 
 const TESTIMONIALS = [

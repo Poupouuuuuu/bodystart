@@ -123,7 +123,7 @@ Les avis actuels (note 4.9/5, Thomas R., Julie M., Karim B.) sont du **placehold
 **Encart boutique** (inchangé sur les infos, naming à corriger) :
 `BodyStart — Coignières`
 `8 Rue du Pont des Landes, 78310 Coignières`
-`Lundi – Dimanche · 11h – 19h`
+`Du lundi au samedi · 11h à 19h (fermé le dimanche)` (horaires corrigés le 29/09/2026)
 `07 61 84 75 80` · `Itinéraire`
 
 **Boutique 2** : garder `Ouverture prochaine` mais alléger le ton :
@@ -151,7 +151,7 @@ CTA : `En savoir plus`
 
 Actuel : `Paiement sécurisé · Livraison 48h offerte dès 85€ · Click & Collect · SAV réactif`
 Nouveau :
-`Paiement sécurisé (CB, Visa, Mastercard)` · `Livraison offerte dès 85€` · `Click & Collect gratuit` · `On répond 7j/7 au téléphone`
+`Paiement sécurisé (CB, Visa, Mastercard)` · `Livraison offerte dès 85€` · `Click & Collect gratuit` · `On répond 6j/7 au téléphone`
 
 > ✅ **RÈGLE LIVRAISON OFFICIELLE (décision 2026-05-23)** — à appliquer partout (home, fiches, page /livraison, footer, bandeau promo) :
 > - **Click & Collect** : gratuit, **souvent prêt en quelques minutes**, on prévient le client dès que c'est prêt. C'est le canal à pousser (avantage local n°1). On abandonne la formulation "sous 2h" (on fait mieux).

@@ -58,7 +58,7 @@ Less is more. Chaque section respire (beaucoup de blanc), une seule idée par bl
 ## B. STRUCTURE & CRO PAR PAGE
 
 ### Home
-1. Hero : promesse claire (H1 "Les bons compléments. Le bon conseil."), sous-titre, CTA vert + CTA conseil, micro-preuve réelle ("+2 600 clients · ouvert 7j/7 · testé en boutique"), grande photo lifestyle.
+1. Hero : promesse claire (H1 "Les bons compléments. Le bon conseil."), sous-titre, CTA vert + CTA conseil, micro-preuve réelle ("+2 600 clients · ouvert du lundi au samedi · testé en boutique"), grande photo lifestyle.
 2. Bandeau réassurance (4 puces : conseil d'humain · ingrédients tracés · testé en boutique · bien dosé).
 3. "Les plus pris en boutique" : 4 best-sellers, badge moutarde, **au moins 1 produit santé** (50/50), ajout rapide.
 4. "Trouve ton objectif" : 4 cartes (Masse & force · Récup & énergie · Santé & bien-être · Vegan) → auto-segmentation.
