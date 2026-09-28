@@ -8,6 +8,7 @@
 //   - Shopify Storefront API (panier client) ...... connect (env NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN)
 //   - Supabase (auth loyalty côté client) ......... connect (env NEXT_PUBLIC_SUPABASE_URL)
 //   - GA4 post-consentement ....................... script/img/connect (googletagmanager + google-analytics)
+//   - Meta Pixel post-consentement publicité ...... script (connect.facebook.net) + img/connect (www.facebook.com)
 //   - Widget Mondial Relay ........................ jQuery (ajax.googleapis.com) + Leaflet (unpkg.com)
 //                                                   + plugin (widget.mondialrelay.com) + tuiles OSM
 //   - Carte Google Maps (embed /stores) ........... frame (maps.google.com / www.google.com)
@@ -39,6 +40,7 @@ function buildContentSecurityPolicy() {
       "'self'",
       "'unsafe-inline'",
       'https://www.googletagmanager.com',
+      'https://connect.facebook.net',
       'https://ajax.googleapis.com',
       'https://unpkg.com',
       'https://widget.mondialrelay.com',
@@ -55,6 +57,7 @@ function buildContentSecurityPolicy() {
       'https://www.googletagmanager.com',
       'https://www.google-analytics.com',
       'https://*.google-analytics.com',
+      'https://www.facebook.com',
       'https://widget.mondialrelay.com',
       'https://unpkg.com',
       'https://*.tile.openstreetmap.org',
@@ -70,6 +73,7 @@ function buildContentSecurityPolicy() {
       'https://*.google-analytics.com',
       'https://analytics.google.com',
       'https://www.googletagmanager.com',
+      'https://www.facebook.com',
       'https://widget.mondialrelay.com',
       'https://api.mondialrelay.com',
     ].filter(Boolean),

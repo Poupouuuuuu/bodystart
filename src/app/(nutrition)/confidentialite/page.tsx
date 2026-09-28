@@ -77,7 +77,7 @@ export default function ConfidentialitePage() {
               Finalités du traitement
             </h2>
             <p className="text-ink leading-relaxed text-base">
-              Vos données sont utilisées pour : le traitement et le suivi des commandes, la gestion de votre compte client, l&apos;envoi de newsletters (avec votre consentement), l&apos;amélioration de nos services et la prévention des fraudes.
+              Vos données sont utilisées pour : le traitement et le suivi des commandes, la gestion de votre compte client, l&apos;envoi de newsletters (avec votre consentement), la mesure d&apos;audience et nos publicités sur Facebook et Instagram (avec votre consentement), l&apos;amélioration de nos services et la prévention des fraudes.
             </p>
           </section>
 
@@ -173,8 +173,8 @@ export default function ConfidentialitePage() {
               ))}
             </ul>
             <p className="mt-6 text-ink leading-relaxed">
-              Vous pouvez retirer votre consentement à tout moment via le bandeau cookies, ou
-              installer le{' '}
+              Vous pouvez retirer votre consentement à tout moment avec le lien « Gérer mes
+              cookies » en bas de chaque page, ou installer le{' '}
               <a
                 href="https://tools.google.com/dlpage/gaoptout"
                 target="_blank"
@@ -190,10 +190,54 @@ export default function ConfidentialitePage() {
 
           <section className="bg-white rounded-2xl border border-spruce/10 p-8">
             <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
+              Publicité (pixel Meta)
+            </h2>
+            <p className="text-ink leading-relaxed text-base">
+              Avec votre consentement, nous utilisons le pixel Meta, fourni par Meta Platforms
+              Ireland Limited (Merrion Road, Dublin 4, Irlande). Il mesure l&apos;efficacité de nos
+              publicités sur Facebook et Instagram et nous permet d&apos;y montrer les produits que
+              vous avez consultés sur notre site.
+            </p>
+            <ul className="mt-4 space-y-3 list-none">
+              {[
+                'Finalité : mesure et personnalisation de nos publicités sur Facebook et Instagram.',
+                "Base légale : votre consentement (article 6.1.a du RGPD et article 82 de la loi Informatique et Libertés), recueilli via le bandeau cookies (choix « Publicité »). Aucun script Meta n'est chargé tant que vous n'avez pas accepté : aucun cookie ni aucune requête vers Meta avant ce choix.",
+                "Données transmises à Meta : un identifiant de navigateur (cookie _fbp, et _fbc si vous arrivez depuis une publicité Meta), les pages vues, les produits consultés et ajoutés au panier (identifiant, nom, prix), votre adresse IP et les informations techniques de votre navigateur.",
+                'Responsabilité : BodyStart et Meta Platforms Ireland sont responsables conjoints de la collecte et de la transmission de ces données. Meta les traite ensuite pour son propre compte, selon sa politique de confidentialité.',
+                'Paiement : sur la page de paiement hébergée par Shopify, le même pixel peut mesurer les commandes, selon les choix faits dans le bandeau cookies de Shopify.',
+                'Conservation : les cookies _fbp et _fbc expirent au bout de 90 jours.',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3 text-ink">
+                  <ChevronRight className="w-4 h-4 text-spruce mt-1 flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-ink leading-relaxed">
+              Vous pouvez retirer votre consentement à tout moment avec le lien « Gérer mes
+              cookies » en bas de chaque page. Meta Platforms Ireland peut transférer ces données
+              à Meta Platforms, Inc. aux États-Unis : ce transfert est encadré par le cadre de
+              protection des données UE-États-Unis (Data Privacy Framework), auquel Meta
+              Platforms, Inc. est certifiée, et par des clauses contractuelles types. Politique
+              de confidentialité de Meta :{' '}
+              <a
+                href="https://www.facebook.com/privacy/policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
+              >
+                facebook.com/privacy/policy
+              </a>
+              .
+            </p>
+          </section>
+
+          <section className="bg-white rounded-2xl border border-spruce/10 p-8">
+            <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
               Cookies
             </h2>
             <p className="text-ink leading-relaxed text-base">
-              Notre site utilise des cookies essentiels au fonctionnement du site (panier, session) et des cookies analytiques (avec votre consentement). Consultez notre{' '}
+              Notre site utilise des cookies essentiels au fonctionnement du site (panier, session) et des cookies de mesure d&apos;audience et de publicité (avec votre consentement). Consultez notre{' '}
               <Link
                 href="/cookies"
                 className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"

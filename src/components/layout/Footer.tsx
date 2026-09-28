@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import CookieSettingsButton from '@/components/ui/CookieSettingsButton'
 import {
   MapPin,
   Phone,
@@ -238,6 +239,7 @@ export default function Footer() {
                   {link.label}
                 </Link>
               ))}
+              <CookieSettingsButton className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-xs text-ink-mute hover:text-spruce transition-colors" />
             </div>
           </div>
 

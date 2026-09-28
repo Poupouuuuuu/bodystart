@@ -272,12 +272,15 @@ export default async function ProductPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      {/* GA4 view_item (no-op sans consentement mesure d'audience) */}
+      {/* GA4 view_item + Meta ViewContent (chacun no-op sans son consentement).
+          variantId = variante affichée par défaut (BuyBoxV2 démarre sur variants[0]). */}
       <TrackViewItem
         itemId={product.handle}
         itemName={product.title}
         price={mainVariant ? parseFloat(mainVariant.price.amount) : undefined}
         brand={product.vendor}
+        variantId={mainVariant?.id}
+        category={product.productType || undefined}
       />
 
       {/* ─── Retour (remplace le fil d'ariane) ─── */}

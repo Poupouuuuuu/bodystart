@@ -7,6 +7,7 @@ import { getStoredToken } from '@/lib/shopify/customer'
 import type { ShopifyCart } from '@/lib/shopify/types'
 import { RELAY_ATTRIBUTE_KEY, formatRelayAttributeValue, parseRelayAttributeValue, buildRelayDeliveryAddress, type ParcelShop } from '@/lib/mondialRelay'
 import { gaAddToCart } from '@/lib/analytics'
+import { metaAddToCart } from '@/lib/meta-pixel'
 import { toast } from '@/lib/toast'
 
 interface CartContextType {
@@ -156,7 +157,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       }
       setCart(updatedCart)
-      // GA4 add_to_cart (no-op sans consentement mesure d'audience).
+      // GA4 add_to_cart et Meta AddToCart (chacun no-op sans son consentement).
       // Détails dérivés de la ligne ajoutée ; n'interrompt jamais l'ajout panier.
       try {
         const line = updatedCart.lines.nodes.find((l) => l.merchandise.id === merchandiseId)
@@ -168,6 +169,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
             price: parseFloat(line.merchandise.price.amount),
             quantity,
             item_variant: variant && variant !== 'Default Title' ? variant : undefined,
+          })
+          // content_ids = ID numérique de la variante (format du catalogue Meta).
+          metaAddToCart({
+            variantId: merchandiseId,
+            name: line.merchandise.product.title,
+            price: parseFloat(line.merchandise.price.amount),
+            quantity,
           })
         }
       } catch {

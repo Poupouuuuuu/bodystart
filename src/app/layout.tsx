@@ -6,6 +6,7 @@ import { CustomerProvider } from '@/context/CustomerContext'
 import ToasterLazy from '@/components/ui/ToasterLazy'
 import { getSiteUrl } from '@/lib/site-url'
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
+import MetaPixel from '@/components/analytics/MetaPixel'
 import ReferralCapture from '@/components/marketing/ReferralCapture'
 // CookieBanner + NewsletterPopup : lazy client-only. Next 15 interdit
 // dynamic(ssr:false) dans un Server Component → isolés dans ce wrapper client.
@@ -157,6 +158,7 @@ export default function RootLayout({
             {children}
             <ReferralCapture />
             <GoogleAnalytics />
+            <MetaPixel />
             <DeferredWidgets />
             <ToasterLazy />
           </CartProvider>

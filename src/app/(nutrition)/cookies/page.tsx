@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, Cookie, Lock, BarChart3 } from 'lucide-react'
+import { ArrowLeft, Cookie, Lock, BarChart3, Megaphone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buildPageMetadata } from '@/lib/seo'
+import CookieSettingsButton from '@/components/ui/CookieSettingsButton'
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/cookies',
@@ -17,7 +18,7 @@ const cookieTypes = [
     icon: Lock,
     description:
       'Indispensables au fonctionnement du site (panier, session, préférences de base). Ils ne peuvent pas être désactivés.',
-    examples: 'body-start-cart-id, body-start-customer-token',
+    examples: 'body-start-cart-id, body-start-customer-token, body-start-cookie-consent (votre choix)',
   },
   {
     name: "Mesure d'audience",
@@ -26,6 +27,15 @@ const cookieTypes = [
     description:
       "Nous aident à comprendre comment vous utilisez le site afin d'en améliorer les performances.",
     examples: 'Google Analytics 4, activé uniquement avec votre consentement',
+  },
+  {
+    name: 'Publicité',
+    required: false,
+    icon: Megaphone,
+    description:
+      "Avec votre accord, le pixel Meta (Meta Platforms Ireland) mesure l'efficacité de nos publicités sur Facebook et Instagram et nous permet d'y montrer les produits que vous avez consultés. Il reçoit les pages vues, les produits consultés et ceux ajoutés au panier.",
+    examples:
+      'Pixel Meta : cookies _fbp (90 jours) et _fbc (90 jours, seulement si vous arrivez depuis une publicité Meta)',
   },
 ]
 
@@ -91,6 +101,21 @@ export default function CookiesPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-spruce/10 p-8 mt-10">
+          <h2 className="font-display text-xl font-extrabold tracking-tight text-spruce mb-3">
+            Modifier vos choix
+          </h2>
+          <p className="text-ink leading-relaxed mb-3">
+            Vous pouvez accepter, refuser ou retirer votre consentement à tout moment, catégorie
+            par catégorie. Le lien « Gérer mes cookies » figure aussi en bas de chaque page.
+          </p>
+          <p className="text-ink leading-relaxed mb-6">
+            La page de paiement, hébergée par Shopify, affiche son propre bandeau cookies : les
+            choix s&apos;y font séparément.
+          </p>
+          <CookieSettingsButton className="btn-primary min-h-[44px]" />
+        </div>
+
+        <div className="bg-white rounded-2xl border border-spruce/10 p-8 mt-6">
           <p className="text-ink">
             Pour en savoir plus ou exercer vos droits :{' '}
             <a
