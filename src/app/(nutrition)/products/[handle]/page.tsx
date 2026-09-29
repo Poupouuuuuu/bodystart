@@ -8,7 +8,8 @@ import {
   getFeaturedProducts,
 } from '@/lib/shopify'
 import { BODY_START_STORES } from '@/lib/shopify/types'
-import { isBundle } from '@/lib/shopify/bundle'
+import { isBundle, pickInitialBundleVariant } from '@/lib/shopify/bundle'
+import { pickDefaultVariant } from '@/lib/product-variant'
 import BackButton from '@/components/product/v2/BackButton'
 import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
 import LeConseilBodyStartV2 from '@/components/product/v2/LeConseilBodyStartV2'
@@ -22,7 +23,6 @@ import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
 import { buildPageMetadata } from '@/lib/seo'
 import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
 import { ratingFromMetafields, buildAggregateRating } from '@/lib/reviews'
-import TrackViewItem from '@/components/analytics/TrackViewItem'
 
 // ISR 3 min (sprint perf 2026-07-04) : la page était en revalidate=0 +
 // force-no-store « pour le stock C&C temps réel » → TTFB ~600 ms mesuré en prod
@@ -159,7 +159,17 @@ export default async function ProductPage({ params }: Props) {
 
   // SEO + JSON-LD (rich snippets)
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app'
-  const mainVariant = product.variants.nodes[0]
+  // Detection bundle (Shopify Bundles app) : si oui, BuyBoxV2 derive les
+  // details des composants de la variante selectionnee en interne (galerie
+  // dynamique + selecteurs par composant). La page passe juste le flag.
+  const productIsBundle = isBundle(product)
+  // Variante d'ouverture, même règle que BuyBoxV2 (première disponible ; pack :
+  // première variante complète) : prix, remise et disponibilité du JSON-LD
+  // collent à ce que la fiche affiche. Avant : variants[0], donc « OutOfStock »
+  // pour YEAAH EAA alors que deux saveurs sur trois étaient en stock.
+  const mainVariant = productIsBundle
+    ? pickInitialBundleVariant(product.variants.nodes)
+    : pickDefaultVariant(product.variants.nodes)
   const hasDiscount =
     mainVariant?.compareAtPrice &&
     parseFloat(mainVariant.compareAtPrice.amount) > parseFloat(mainVariant.price.amount)
@@ -256,11 +266,6 @@ export default async function ProductPage({ params }: Props) {
         ? [product.featuredImage]
         : []
 
-  // Detection bundle (Shopify Bundles app) : si oui, BuyBoxV2 derive les
-  // details des composants de la variante selectionnee en interne (galerie
-  // dynamique + selecteurs par composant). La page passe juste le flag.
-  const productIsBundle = isBundle(product)
-
   return (
     <>
       <script
@@ -272,16 +277,8 @@ export default async function ProductPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      {/* GA4 view_item + Meta ViewContent (chacun no-op sans son consentement).
-          variantId = variante affichée par défaut (BuyBoxV2 démarre sur variants[0]). */}
-      <TrackViewItem
-        itemId={product.handle}
-        itemName={product.title}
-        price={mainVariant ? parseFloat(mainVariant.price.amount) : undefined}
-        brand={product.vendor}
-        variantId={mainVariant?.id}
-        category={product.productType || undefined}
-      />
+      {/* GA4 view_item + Meta ViewContent : envoyés par BuyBoxV2, qui connaît
+          la variante réellement affichée (dont ?variant= des pubs Meta). */}
 
       {/* ─── Retour (remplace le fil d'ariane) ─── */}
       <div className="bg-canvas border-b border-spruce/10">
@@ -301,6 +298,8 @@ export default async function ProductPage({ params }: Props) {
             images={images}
             variants={product.variants.nodes}
             title={product.title}
+            handle={product.handle}
+            productType={product.productType}
             discountPct={discountPct}
             collectionName={collectionName}
             collectionHandle={collectionHandle}

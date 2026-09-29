@@ -10,13 +10,19 @@ import ProductGalleryV2 from './ProductGalleryV2'
 import BundleGalleryV2 from './BundleGalleryV2'
 import BundleSelectorsV2 from './BundleSelectorsV2'
 import StockAlertForm from './StockAlertForm'
-import { getBundleComponentDetailsFromVariant, pickInitialBundleVariant } from '@/lib/shopify/bundle'
+import { getBundleComponentDetailsFromVariant, getCompleteBundleVariants, pickInitialBundleVariant } from '@/lib/shopify/bundle'
+import { initialImageIndex, pickDefaultVariant, variantFromSearch } from '@/lib/product-variant'
+import TrackViewItem from '@/components/analytics/TrackViewItem'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
 
 interface BuyBoxV2Props {
   images: ShopifyImage[]
   variants: ShopifyProductVariant[]
   title: string
+  /** Handle Shopify : identifiant produit pour GA (view_item). */
+  handle: string
+  /** Type de produit Shopify : catégorie pour Meta (ViewContent). */
+  productType?: string | null
   discountPct: number | null
   collectionName: string | null
   collectionHandle: string | null
@@ -73,6 +79,8 @@ export default function BuyBoxV2({
   images,
   variants,
   title,
+  handle,
+  productType = null,
   discountPct,
   collectionHandle,
   activeStore,
@@ -83,13 +91,21 @@ export default function BuyBoxV2({
   isBundle = false,
   rating = null,
 }: BuyBoxV2Props) {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  // Pour un bundle, on démarre sur une variante COMPLÈTE (composants tous
-  // présents) : évite d'afficher un prix / une galerie issus d'une
-  // combinaison cassée (ex Sub Zero chocolate-muffin 810g qui n'existe pas).
-  const [selectedVariant, setSelectedVariant] = useState<ShopifyProductVariant>(() =>
-    isBundle ? pickInitialBundleVariant(variants) : variants[0]
+  // Variante d'ouverture (rendu serveur, donc sans ?variant=) :
+  // - bundle : une variante COMPLÈTE (composants tous présents), pour ne pas
+  //   afficher un prix / une galerie issus d'une combinaison cassée (ex Sub
+  //   Zero chocolate-muffin 810g qui n'existe pas) ;
+  // - sinon la première variante DISPONIBLE (lib/product-variant). La page
+  //   applique la même règle au JSON-LD.
+  // ?variant= est appliqué après l'hydratation (effet plus bas).
+  const [openingVariant] = useState<ShopifyProductVariant>(() =>
+    isBundle ? pickInitialBundleVariant(variants) : pickDefaultVariant(variants) ?? variants[0]
   )
+  const [selectedVariant, setSelectedVariant] = useState<ShopifyProductVariant>(openingVariant)
+  // Galerie : image de la variante d'ouverture quand ce n'est plus la première
+  // variante. C'est aussi l'image préchargée (LCP), cf. ProductGalleryV2.
+  const [openingImageIndex] = useState(() => initialImageIndex(images, variants, openingVariant))
+  const [selectedImageIndex, setSelectedImageIndex] = useState(openingImageIndex)
   const [quantity, setQuantity] = useState(1)
   const [adding, setAdding] = useState(false)
   const [added, setAdded] = useState(false)
@@ -122,6 +138,21 @@ export default function BuyBoxV2({
     variantSize(selectedVariant) || defaultSizes[0] || ''
   )
 
+  // Sélection complète d'une variante : pastilles + image dédiée de la galerie.
+  const applyVariant = useCallback(
+    (v: ShopifyProductVariant) => {
+      setSelectedVariant(v)
+      setSelectedFlavor(variantFlavor(v))
+      setSelectedSize(variantSize(v))
+      // Sync image galerie si la variante a une image dediee
+      if (v.image?.url) {
+        const matchIndex = images.findIndex((img) => img.url === v.image?.url)
+        if (matchIndex >= 0) setSelectedImageIndex(matchIndex)
+      }
+    },
+    [images]
+  )
+
   const handleOptionChange = (flavor: string, size: string) => {
     // ⚠️ Ne JAMAIS mettre à jour les pastilles avant d'avoir résolu la
     // variante : l'ancien code posait selectedFlavor/Size d'abord — si la
@@ -137,16 +168,24 @@ export default function BuyBoxV2({
       found = flavorVariants.find((v) => v.availableForSale) ?? flavorVariants[0]
     }
     if (!found) return // saveur inconnue → on ne touche à rien (zéro désync)
-
-    setSelectedVariant(found)
-    setSelectedFlavor(variantFlavor(found))
-    setSelectedSize(variantSize(found))
-    // Sync image galerie si la variante a une image dediee
-    if (found.image?.url) {
-      const matchIndex = images.findIndex((img) => img.url === found.image?.url)
-      if (matchIndex >= 0) setSelectedImageIndex(matchIndex)
-    }
+    applyVariant(found)
   }
+
+  // Lien avec ?variant=<ID> (pubs dynamiques Meta, canal Facebook & Instagram,
+  // redirection de la boutique myshopify) : la fiche s'ouvre sur CETTE
+  // variante, même épuisée. Lu après l'hydratation pour garder la page en ISR
+  // (pas de searchParams côté serveur). Ensuite seulement, la variante vue
+  // part à GA (view_item) et Meta (ViewContent) : un seul envoi par fiche.
+  const [viewedVariant, setViewedVariant] = useState<ShopifyProductVariant | null>(null)
+  const openingResolved = useRef(false)
+  useEffect(() => {
+    if (openingResolved.current) return
+    openingResolved.current = true
+    const pool = isBundle ? getCompleteBundleVariants(variants) : variants
+    const fromUrl = variantFromSearch(pool, window.location.search)
+    if (fromUrl) applyVariant(fromUrl)
+    setViewedVariant(fromUrl ?? openingVariant)
+  }, [isBundle, variants, applyVariant, openingVariant])
 
   /**
    * Sens inverse galerie → selecteur de saveur (synchro bidirectionnelle).
@@ -284,6 +323,18 @@ export default function BuyBoxV2({
 
   return (
     <>
+      {/* GA4 view_item + Meta ViewContent (chacun no-op sans son consentement) :
+          variante vue à l'ouverture, une fois ?variant= appliqué. */}
+      {viewedVariant && (
+        <TrackViewItem
+          itemId={handle}
+          itemName={title}
+          price={parseFloat(viewedVariant.price.amount)}
+          brand={vendor ?? undefined}
+          variantId={viewedVariant.id}
+          category={productType ?? undefined}
+        />
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-start">
         {/* ─── Galerie ─── */}
         <div className="lg:sticky lg:top-24">
@@ -299,6 +350,7 @@ export default function BuyBoxV2({
               title={title}
               discountPct={discountPct}
               selectedIndex={selectedImageIndex}
+              priorityIndex={openingImageIndex}
               onImageChange={handleImageChange}
             />
           )}

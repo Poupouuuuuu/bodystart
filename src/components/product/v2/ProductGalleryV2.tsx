@@ -11,6 +11,8 @@ interface ProductGalleryV2Props {
   title: string
   discountPct: number | null
   selectedIndex?: number
+  /** Index de l'image affichée au chargement : c'est elle qui est préchargée (LCP). */
+  priorityIndex?: number
   onImageChange?: (index: number) => void
 }
 
@@ -23,6 +25,7 @@ export default function ProductGalleryV2({
   title,
   discountPct,
   selectedIndex: controlledIndex,
+  priorityIndex = 0,
   onImageChange,
 }: ProductGalleryV2Props) {
   const [internalIndex, setInternalIndex] = useState(0)
@@ -139,7 +142,7 @@ export default function ProductGalleryV2({
                 // (drop-shadow-2xl sur le bouton + une ombre noire ici) grisait
                 // le fond végétal sous le produit.
                 className="object-contain [filter:drop-shadow(0_22px_28px_rgba(45,90,45,0.30))] transition-transform duration-500 ease-out-expo group-hover:scale-[1.06]"
-                priority={selectedIndex === 0}
+                priority={selectedIndex === priorityIndex}
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

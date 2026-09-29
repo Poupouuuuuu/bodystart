@@ -1,6 +1,7 @@
 'use client'
 
-// Émet GA4 view_item et Meta ViewContent au montage de la fiche produit.
+// Émet GA4 view_item et Meta ViewContent pour la variante vue à l'ouverture
+// de la fiche. Monté par BuyBoxV2 une fois ?variant= (pubs Meta) appliqué.
 // Chacun est un no-op tant que sa catégorie de cookies n'est pas acceptée.
 // Arrivée depuis une pub : si la personne accepte la publicité sur la fiche
 // même, ViewContent part à ce moment-là (une seule fois par fiche affichée).
