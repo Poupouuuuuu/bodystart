@@ -48,14 +48,14 @@ const sections = [
   },
   {
     title: '10. Litiges',
-    content: `En cas de litige, vous pouvez contacter notre service client à bodystartnutrition@gmail.com. À défaut de résolution amiable, vous pouvez saisir la plateforme européenne de règlement en ligne des litiges : ec.europa.eu/consumers/odr. Le droit français est applicable.`,
+    content: `En cas de litige, vous pouvez contacter notre service client à bodystartnutrition@gmail.com. À défaut de résolution amiable, vous pouvez recourir gratuitement à un médiateur de la consommation (article 11). Le droit français est applicable.`,
   },
   {
     title: '11. Médiateur de la consommation',
     // ⚠️ Adam doit adhérer à un médiateur agréé (CM2C, AME Conso, MEDICYS…) puis
     // remplacer la phrase « procédure d'adhésion en cours » par ses coordonnées
     // complètes (nom + adresse postale + site web). Obligation L612-1.
-    content: `Conformément à l'article L612-1 du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable du litige. La procédure d'adhésion de BODYSTART NUTRITION auprès d'un médiateur de la consommation agréé est en cours ; ses coordonnées seront publiées sur cette page dès l'adhésion effective. Dans l'intervalle, le consommateur peut recourir à la plateforme européenne de règlement en ligne des litiges : ec.europa.eu/consumers/odr.`,
+    content: `Conformément à l'article L612-1 du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable du litige. La procédure d'adhésion de BODYSTART NUTRITION auprès d'un médiateur de la consommation agréé est en cours ; ses coordonnées seront publiées sur cette page dès l'adhésion effective.`,
   },
 ]
 
@@ -85,7 +85,7 @@ export default function CGVPage() {
               refléter le dernier vrai changement, pas le jour de la visite. À mettre à
               jour manuellement à chaque édition des CGV. */}
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute border-t border-spruce/10 pt-4">
-            Dernière mise à jour : 3 juillet 2026
+            Dernière mise à jour : 29 septembre 2026
           </p>
         </div>
 
