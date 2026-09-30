@@ -81,17 +81,17 @@ export const quandPrendreSaWhey: BlogArticle = {
             [
               '[Whey Native Protimuscle](/products/whey-native-protimuscle)',
               'Whey native (valeur sûre)',
-              '21,90 €',
+              '{{prix:whey-native-protimuscle|21,90 €}}',
             ],
             [
               '[Iso Zero 100 % Whey](/products/iso-zero-100-whey)',
               'Isolate',
-              '78,90 €',
+              '{{prix:iso-zero-100-whey|78,90 €}}',
             ],
             [
               '[Whey Protein](/products/whey-protein)',
               'Whey concentrée',
-              '39,90 €',
+              '{{prix:whey-protein|39,90 €}}',
             ],
           ],
         },

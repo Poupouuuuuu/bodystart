@@ -13,7 +13,7 @@ export const proteinesVegetalesMusculation: BlogArticle = {
   excerpt:
     "Les protéines végétales (pois, riz, soja…) couvrent tes besoins et soutiennent le muscle sans produit laitier. La clé : privilégier un mélange multi-sources pour un profil d'acides aminés complet, à une dose équivalente à celle d'une whey.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-09-30',
   sections: [
     {
       h2: 'Une protéine végétale, ça vaut une whey pour prendre du muscle ?',
@@ -90,12 +90,12 @@ export const proteinesVegetalesMusculation: BlogArticle = {
             [
               '[ISO French Vegan](/products/iso-french-vegan)',
               'Isolat végétal',
-              '35,90 €',
+              '{{prix:iso-french-vegan|25,90 €}}',
             ],
             [
               '[Tri Source Protein Vegan](/products/tri-source-protein-vegan)',
               'Mélange 3 sources',
-              '36,90 €',
+              '{{prix:tri-source-protein-vegan|25,90 €}}',
             ],
           ],
         },

@@ -15,7 +15,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
   excerpt:
     "Le collagène est la protéine structurelle de la peau, des articulations et des os. En complément, c'est un produit d'entretien apprécié ; sur le plan réglementaire, c'est surtout la vitamine C qui contribue à la formation normale de collagène, d'où l'intérêt des formules qui associent les deux.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-09-30',
   sections: [
     {
       h2: 'Le collagène, c\'est quoi exactement ?',
@@ -84,17 +84,17 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
             [
               '[Collagen Complex + Vitamine C](/products/collagen-complex-vitamine-c)',
               'Poudre (collagène + vit. C)',
-              '29,90 €',
+              '{{prix:collagen-complex-vitamine-c|29,90 €}}',
             ],
             [
               '[Collagène Marin Liquide](/products/pure-collagen-marin-liquide)',
               'Liquide prêt à boire',
-              '34,90 €',
+              '{{prix:pure-collagen-marin-liquide|34,90 €}}',
             ],
             [
               '[Beauty & Shape - Protéine & Collagène](/products/beauty-shape-proteine-collagene)',
               'Protéine + collagène',
-              '34,90 €',
+              '{{prix:beauty-shape-proteine-collagene|22,90 €}}',
             ],
           ],
         },

@@ -6,6 +6,7 @@ import { buildPageMetadata } from '@/lib/seo'
 import { BLOG_ARTICLES } from '@/content/blog'
 import { BLOG_AUTHOR, formatArticleDate } from '@/lib/blog'
 import ArticleRenderer from '@/components/blog/ArticleRenderer'
+import { withLivePrices } from '@/lib/blog-prices'
 
 export const revalidate = 3600
 
@@ -28,8 +29,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const article = BLOG_ARTICLES.find((a) => a.slug === slug)
-  if (!article) notFound()
+  const source = BLOG_ARTICLES.find((a) => a.slug === slug)
+  if (!source) notFound()
+  // Jetons {{prix:handle|repli}} → prix Shopify du moment (texte, tableaux, FAQ
+  // et donc schema FAQPage identique au visible). Cf. src/lib/blog-prices.ts.
+  const article = await withLivePrices(source)
 
   const url = `${SITE_URL}/blog/${article.slug}`
   const relatedArticles = article.related

@@ -18,7 +18,7 @@ export const commentFaireUneSeche: BlogArticle = {
   excerpt:
     "Une sèche réussie tient en trois piliers : un déficit calorique modéré (300 à 500 kcal sous ta maintenance), un apport en protéines élevé pour préserver le muscle, et une musculation maintenue lourde. Vise une perte de 0,5 à 1 % de ton poids par semaine. Les compléments sont une aide, jamais le moteur.",
   datePublished: '2026-08-05',
-  dateModified: '2026-08-05',
+  dateModified: '2026-09-30',
   sections: [
     {
       h2: "Une sèche, c'est quoi exactement ?",
@@ -132,10 +132,10 @@ export const commentFaireUneSeche: BlogArticle = {
           type: 'table',
           headers: ['Produit', 'Rôle dans la sèche', 'Prix'],
           rows: [
-            ['[Iso Zero 100% Whey](/products/iso-zero-100-whey)', 'Quota protéines, quasi zéro glucides/lipides', '74,90 €'],
-            ['[L-Carnitine Pro Zero](/products/l-carnitine-pro-zero-liquide)', 'Le classique de sèche, liquide zéro sucre', '22,90 €'],
-            ['[CLA 2400](/products/cla-2400)', "L'acide gras populaire en période de régime", '22,90 €'],
-            ['[Iron Ultra](/products/iron-ultra-eric-favre)', 'La formule complète pour pratiquants avancés', '31,90 €'],
+            ['[Iso Zero 100% Whey](/products/iso-zero-100-whey)', 'Quota protéines, quasi zéro glucides/lipides', '{{prix:iso-zero-100-whey|78,90 €}}'],
+            ['[L-Carnitine Pro Zero](/products/l-carnitine-pro-zero-liquide)', 'Le classique de sèche, liquide zéro sucre', '{{prix:l-carnitine-pro-zero-liquide|22,90 €}}'],
+            ['[CLA 2400](/products/cla-2400)', "L'acide gras populaire en période de régime", '{{prix:cla-2400|22,90 €}}'],
+            ['[Iron Ultra](/products/iron-ultra-eric-favre)', 'La formule complète pour pratiquants avancés', '{{prix:iron-ultra-eric-favre|31,90 €}}'],
           ],
         },
         {

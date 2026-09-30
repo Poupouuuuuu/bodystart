@@ -4,6 +4,10 @@
  * Les articles vivent dans src/content/blog/ sous forme de données typées
  * (pas de CMS, pas de MDX) : blocs structurés rendus par ArticleRenderer.
  * Inline autorisé dans les textes : **gras** et [libellé](/route-interne).
+ * Prix d'un produit : jamais en dur, toujours {{prix:handle|12,90 €}} (résolu au
+ * rendu avec le prix Shopify du moment, cf. src/lib/blog-prices.ts ; le test
+ * src/content/blog/prix.test.ts le vérifie). Les montants génériques (budget,
+ * fourchettes) restent en texte libre.
  *
  * SEO/GEO : chaque article est answer-first (excerpt = réponse en 2 phrases),
  * H2 = questions naturelles, FAQ visible en fin de page (= schema FAQPage mot

@@ -15,7 +15,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
   excerpt:
     "La vitamine D contribue au fonctionnement normal du système immunitaire, au maintien d'une ossature normale et à une fonction musculaire normale. Sous nos latitudes, une supplémentation fait surtout sens d'octobre à mars, quand le soleil manque, sous forme de D3, de préférence avec un repas.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-09-30',
   sections: [
     {
       h2: 'À quoi sert vraiment la vitamine D ?',
@@ -92,12 +92,12 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
             [
               '[Vitamine D3 + K2](/products/vitamin-d3-k2)',
               'Softgels (duo D3-K2)',
-              '17,90 €',
+              '{{prix:vitamin-d3-k2|17,90 €}}',
             ],
             [
               '[Vitamine D3 - Gouttes](/products/vitamine-d3-gouttes)',
               'Gouttes (dose ajustable)',
-              '12,90 €',
+              '{{prix:vitamine-d3-gouttes|9,90 €}}',
             ],
           ],
         },

@@ -73,7 +73,7 @@ export const complementsApres40Ans: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Pour le confort digestif, privilégie une forme bien tolérée comme le **bisglycinate**, à l\'inverse de l\'oxyde de magnésium bon marché qui laisse plus souvent des désagréments. Notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) coche cette case (16,90 €). Le magnésium se prend volontiers le soir, dans le cadre d\'une routine de fin de journée.',
+          text: 'Pour le confort digestif, privilégie une forme bien tolérée comme le **bisglycinate**, à l\'inverse de l\'oxyde de magnésium bon marché qui laisse plus souvent des désagréments. Notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) coche cette case ({{prix:magnesium-bisglycinate-dy-90-capsules|16,90 €}}). Le magnésium se prend volontiers le soir, dans le cadre d\'une routine de fin de journée.',
         },
       ],
     },

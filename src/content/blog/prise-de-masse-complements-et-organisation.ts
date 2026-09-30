@@ -81,7 +81,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Côté produits, [Mutant Mass](/products/mutant-mass) à 38,90 € est la référence accessible de la catégorie. Les deux reposent sur le même principe : protéines et glucides réunis dans un seul shake. Tu peux comparer les profils sur notre rayon de [protéines en poudre](/categories/proteines)."
+          "text": "Côté produits, [Mutant Mass](/products/mutant-mass) à {{prix:mutant-mass|38,90 €}} est la référence accessible de la catégorie. Les deux reposent sur le même principe : protéines et glucides réunis dans un seul shake. Tu peux comparer les profils sur notre rayon de [protéines en poudre](/categories/proteines)."
         }
       ]
     },
@@ -94,7 +94,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Trois options classiques : la [crème de riz Nutrimuscle](/products/creme-de-riz-bio) (25,90 €) et la [crème de riz Trained by JP](/products/cream-of-rice-creme-de-riz-2-kg) en sac de 2 kg (24,90 €) pour des collations consistantes dans la journée, et le [Cluster Dextrin de Nutrimuscle](/products/cluster-dextrin-dextrine-cyclique-1-2-kg) (39,90 €) pour tes glucides pendant ou autour de la séance. L'ensemble du rayon est sur notre catégorie [glucides en poudre](/categories/glucides)."
+          "text": "Trois options classiques : la [crème de riz Nutrimuscle](/products/creme-de-riz-bio) ({{prix:creme-de-riz-bio|25,90 €}}) et la [crème de riz Trained by JP](/products/cream-of-rice-creme-de-riz-2-kg) en sac de 2 kg ({{prix:cream-of-rice-creme-de-riz-2-kg|24,90 €}}) pour des collations consistantes dans la journée, et le [Cluster Dextrin de Nutrimuscle](/products/cluster-dextrin-dextrine-cyclique-1-2-kg) ({{prix:cluster-dextrin-dextrine-cyclique-1-2-kg|39,90 €}}) pour tes glucides pendant ou autour de la séance. L'ensemble du rayon est sur notre catégorie [glucides en poudre](/categories/glucides)."
         },
         {
           "type": "p",
@@ -115,7 +115,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Si tu cherches la forme la plus documentée, notre [Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee) (29,90 €) va à l'essentiel : du monohydrate, sans superflu."
+          "text": "Si tu cherches la forme la plus documentée, notre [Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee) ({{prix:creatine-100-monohydrate-micronisee|29,90 €}}) va à l'essentiel : du monohydrate, sans superflu."
         }
       ]
     },

@@ -69,7 +69,7 @@ export const combienDeProteinesParJour: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Pour la collation, une barre comme la [Crunch Bar de Warrior](/products/crunch-bar-barre-proteinee) (2,90 €) dépanne quand tu n'as ni le temps ni l'envie de cuisiner. Mais la base reste l'assiette : les compléments viennent en plus, pas à la place."
+          "text": "Pour la collation, une barre comme la [Crunch Bar de Warrior](/products/crunch-bar-barre-proteinee) ({{prix:crunch-bar-barre-proteinee|2,90 €}}) dépanne quand tu n'as ni le temps ni l'envie de cuisiner. Mais la base reste l'assiette : les compléments viennent en plus, pas à la place."
         }
       ]
     },
@@ -124,7 +124,7 @@ export const combienDeProteinesParJour: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Concrètement, elle devient utile quand ta cible monte à 120-150 g par jour ou plus : enchaîner poulet, œufs et poisson à chaque repas, tout le monde n'y arrive pas. Une whey concentrée comme la [Whey Native Protimuscle de Nutrimuscle](/products/whey-native-protimuscle) (21,90 €) couvre ce besoin au quotidien. Si tu digères mal le lactose ou que tu veux plus de protéines par dose, regarde du côté des isolates comme l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) (78,90 € les 1,5 kg) : en catégorie, une isolate affiche généralement 90 % de protéines ou plus, contre environ 80 % pour une whey classique."
+          "text": "Concrètement, elle devient utile quand ta cible monte à 120-150 g par jour ou plus : enchaîner poulet, œufs et poisson à chaque repas, tout le monde n'y arrive pas. Une whey concentrée comme la [Whey Native Protimuscle de Nutrimuscle](/products/whey-native-protimuscle) ({{prix:whey-native-protimuscle|21,90 €}}) couvre ce besoin au quotidien. Si tu digères mal le lactose ou que tu veux plus de protéines par dose, regarde du côté des isolates comme l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) ({{prix:iso-zero-100-whey|78,90 €}} les 1,5 kg) : en catégorie, une isolate affiche généralement 90 % de protéines ou plus, contre environ 80 % pour une whey classique."
         },
         {
           "type": "p",

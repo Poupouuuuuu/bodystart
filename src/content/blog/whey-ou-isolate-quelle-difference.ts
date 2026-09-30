@@ -51,7 +51,7 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Côté sélection, deux isolates qui répondent à ce besoin : l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) à 78,90 € les 1,5 kg et la [Shadowhey Isolate de DY Nutrition](/products/shadowhey-isolate-whey-isolate-2-kg) à 84,90 € les 2 kg."
+          "text": "Côté sélection, deux isolates qui répondent à ce besoin : l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) à {{prix:iso-zero-100-whey|78,90 €}} les 1,5 kg et la [Shadowhey Isolate de DY Nutrition](/products/shadowhey-isolate-whey-isolate-2-kg) à {{prix:shadowhey-isolate-whey-isolate-2-kg|84,90 €}} les 2 kg."
         }
       ]
     },
@@ -64,7 +64,7 @@ export const wheyOuIsolateQuelleDifference: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Pour te donner des repères dans notre sélection : la [Whey Native Protimuscle de Nutrimuscle](/products/whey-native-protimuscle) démarre à 21,90 €, tandis que les isolates vont de 34,90 € (500 g) à 84,90 € (2 kg), avec l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) à 78,90 € les 1,5 kg. Les formats varient d'une référence à l'autre : compare toujours le prix ramené à la dose de protéines, pas seulement le prix du pot."
+          "text": "Pour te donner des repères dans notre sélection : la [Whey Native Protimuscle de Nutrimuscle](/products/whey-native-protimuscle) démarre à {{prix:whey-native-protimuscle|21,90 €}}, tandis que les isolates vont de 34,90 € (500 g) à 84,90 € (2 kg), avec l'[Iso Zero 100 % Whey d'Eric Favre](/products/iso-zero-100-whey) à {{prix:iso-zero-100-whey|78,90 €}} les 1,5 kg. Les formats varient d'une référence à l'autre : compare toujours le prix ramené à la dose de protéines, pas seulement le prix du pot."
         },
         {
           "type": "p",

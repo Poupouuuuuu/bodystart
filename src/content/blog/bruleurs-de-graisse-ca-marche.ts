@@ -79,17 +79,17 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
             [
               '[L-Carnitine 2000](/products/l-carnitine-2000)',
               'Carnitine (le classique)',
-              '22,90 €',
+              '{{prix:l-carnitine-2000|22,90 €}}',
             ],
             [
               '[CLA DY Nutrition](/products/cla-dy-90-softgels)',
               'CLA (période de régime)',
-              '19,90 €',
+              '{{prix:cla-dy-90-softgels|19,90 €}}',
             ],
             [
               '[Iron Ultra Eric Favre](/products/iron-ultra-eric-favre)',
               'Formule complète (carnitine, thé vert)',
-              '31,90 €',
+              '{{prix:iron-ultra-eric-favre|31,90 €}}',
             ],
           ],
         },

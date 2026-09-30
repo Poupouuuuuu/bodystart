@@ -10,7 +10,7 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
   "metaDescription": "Une whey concentrée à 20-25 g de protéines par dose suffit pour débuter. Critères de choix, erreurs à éviter, dosage : on te guide simplement.",
   "excerpt": "Pour débuter, une whey concentrée simple avec 20 à 25 g de protéines par dose suffit largement. Choisis-la sur le pourcentage de protéines, la digestion, le goût et le prix par portion, pas sur le marketing.",
   "datePublished": "2026-06-12",
-  "dateModified": "2026-06-12",
+  "dateModified": "2026-09-30",
   "sections": [
     {
       "h2": "Quelle whey choisir quand on débute ?",
@@ -21,7 +21,7 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "C'est la question qu'on entend le plus au comptoir de la boutique à Coignières, et la réponse déçoit parfois : la meilleure whey pour débuter, c'est la plus simple. Les protéines contribuent au maintien et au développement de la masse musculaire. C'est tout ce qu'on demande à une whey. Une concentrée titre en général autour de 80 % de protéines : largement assez pour commencer. La [Whey Native Protimuscle](/products/whey-native-protimuscle) de Nutrimuscle, à 19,95 €, coche ces cases : une whey native, une approche simple, un prix d'entrée accessible."
+          "text": "C'est la question qu'on entend le plus au comptoir de la boutique à Coignières, et la réponse déçoit parfois : la meilleure whey pour débuter, c'est la plus simple. Les protéines contribuent au maintien et au développement de la masse musculaire. C'est tout ce qu'on demande à une whey. Une concentrée titre en général autour de 80 % de protéines : largement assez pour commencer. La [Whey Native Protimuscle](/products/whey-native-protimuscle) de Nutrimuscle, à {{prix:whey-native-protimuscle|21,90 €}}, coche ces cases : une whey native, une approche simple, un prix d'entrée accessible."
         }
       ]
     },
@@ -118,7 +118,7 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Une isolate est filtrée plus finement : elle titre en général 90 % de protéines ou plus et contient très peu de lactose. C'est sa vraie valeur ajoutée, pas un effet supérieur sur le muscle. Sur le site, l'[Iso Zero 100 % Whey](/products/iso-zero-100-whey) d'Eric Favre à 78,90 € et la [Shadowhey Isolate](/products/shadowhey-isolate-whey-isolate-2-kg) de DY Nutrition à 84,90 € couvrent ce besoin. On a comparé les deux familles en détail dans [whey ou isolate : quelle différence](/blog/whey-ou-isolate-quelle-difference)."
+          "text": "Une isolate est filtrée plus finement : elle titre en général 90 % de protéines ou plus et contient très peu de lactose. C'est sa vraie valeur ajoutée, pas un effet supérieur sur le muscle. Sur le site, l'[Iso Zero 100 % Whey](/products/iso-zero-100-whey) d'Eric Favre à {{prix:iso-zero-100-whey|78,90 €}} et la [Shadowhey Isolate](/products/shadowhey-isolate-whey-isolate-2-kg) de DY Nutrition à {{prix:shadowhey-isolate-whey-isolate-2-kg|84,90 €}} couvrent ce besoin. On a comparé les deux familles en détail dans [whey ou isolate : quelle différence](/blog/whey-ou-isolate-quelle-difference)."
         }
       ]
     },
@@ -127,7 +127,7 @@ export const quelleWheyChoisirDebutant: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Raisonne en prix par portion, pas en prix du pot. Une whey sérieuse pour débuter démarre autour de 20 €, comme la Whey Native Protimuscle à 19,95 €, quand une isolate se situe plutôt autour de 40 €."
+          "text": "Raisonne en prix par portion, pas en prix du pot. Une whey sérieuse pour débuter démarre autour de 20 €, comme la Whey Native Protimuscle à {{prix:whey-native-protimuscle|21,90 €}}, quand une isolate se situe plutôt autour de 40 €."
         },
         {
           "type": "p",

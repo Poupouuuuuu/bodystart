@@ -14,7 +14,7 @@ export const creatinePourLesFemmes: BlogArticle = {
   excerpt:
     "La créatine est aussi efficace et sûre chez la femme que chez l'homme : 3 à 5 g de monohydrate par jour améliorent la performance sur les efforts intenses et courts. Non, elle ne « fait pas gonfler » et ne masculinise pas : la petite prise de poids du début, c'est de l'eau dans le muscle, pas de la graisse.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-09-30',
   sections: [
     {
       h2: 'La créatine, est-ce que c\'est vraiment pour les femmes ?',
@@ -108,17 +108,17 @@ export const creatinePourLesFemmes: BlogArticle = {
             [
               '[Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee)',
               'Poudre neutre micronisée',
-              '29,90 €',
+              '{{prix:creatine-100-monohydrate-micronisee|29,90 €}}',
             ],
             [
               '[Clear Pro Creatine Eric Favre](/products/clear-pro-creatine)',
               'Poudre aromatisée',
-              '29,90 €',
+              '{{prix:clear-pro-creatine|29,90 €}}',
             ],
             [
               '[Beauty & Shape - Protéine & Collagène](/products/beauty-shape-proteine-collagene)',
               'Protéine + collagène (à combiner)',
-              '34,90 €',
+              '{{prix:beauty-shape-proteine-collagene|22,90 €}}',
             ],
           ],
         },

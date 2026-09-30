@@ -16,7 +16,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
   excerpt:
     "Le sommeil est ton premier levier de récupération : aucun complément ne le remplace. À côté, le magnésium contribue à réduire la fatigue et au fonctionnement normal du système nerveux, et un bon apport en protéines soutient le muscle. Le reste, c'est surtout de l'hygiène de vie.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-09-30',
   sections: [
     {
       h2: 'Le sommeil : ta meilleure récupération, et elle est gratuite',
@@ -40,7 +40,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Attention à la nuance réglementaire : on ne dit pas que le magnésium « fait dormir ». On dit qu\'il aide à réduire la fatigue et soutient le système nerveux, ce qui, dans une routine de fin de journée bien menée, accompagne le retour au calme. Pour le confort digestif, choisis une forme bien tolérée comme le **bisglycinate** plutôt que l\'oxyde bon marché : notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme (16,90 €).',
+          text: 'Attention à la nuance réglementaire : on ne dit pas que le magnésium « fait dormir ». On dit qu\'il aide à réduire la fatigue et soutient le système nerveux, ce qui, dans une routine de fin de journée bien menée, accompagne le retour au calme. Pour le confort digestif, choisis une forme bien tolérée comme le **bisglycinate** plutôt que l\'oxyde bon marché : notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme ({{prix:magnesium-bisglycinate-dy-90-capsules|16,90 €}}).',
         },
       ],
     },
@@ -53,7 +53,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Le [Zn Mg B6 Complex de DY Nutrition](/products/zn-mg-b6-complex-60-capsules) de notre sélection réunit ces trois éléments (19,90 €). Ne lui prête pas de pouvoirs magiques sur le sommeil : c\'est d\'abord un apport en minéraux et vitamine B6 utile chez le sportif, dans le cadre d\'une routine de récupération.',
+          text: 'Le [Zn Mg B6 Complex de DY Nutrition](/products/zn-mg-b6-complex-60-capsules) de notre sélection réunit ces trois éléments ({{prix:zn-mg-b6-complex-60-capsules|19,90 €}}). Ne lui prête pas de pouvoirs magiques sur le sommeil : c\'est d\'abord un apport en minéraux et vitamine B6 utile chez le sportif, dans le cadre d\'une routine de récupération.',
         },
       ],
     },
@@ -66,7 +66,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Les acides aminés viennent ensuite, en soutien. Les EAA (acides aminés essentiels) et la glutamine sont utilisés de façon ciblée par certains pratiquants autour de l\'entraînement. La [Glutamine Kyowa 2000](/products/glutamine-kyowa-2000) (19,90 €) est un classique du rayon récupération, et on compare EAA et BCAA dans notre article [EAA ou BCAA : lequel prendre ?](/blog/eaa-ou-bcaa-lequel-prendre). Retiens l\'ordre : sommeil et protéines d\'abord, acides aminés en confort.',
+          text: 'Les acides aminés viennent ensuite, en soutien. Les EAA (acides aminés essentiels) et la glutamine sont utilisés de façon ciblée par certains pratiquants autour de l\'entraînement. La [Glutamine Kyowa 2000](/products/glutamine-kyowa-2000) ({{prix:glutamine-kyowa-2000|22,90 €}}) est un classique du rayon récupération, et on compare EAA et BCAA dans notre article [EAA ou BCAA : lequel prendre ?](/blog/eaa-ou-bcaa-lequel-prendre). Retiens l\'ordre : sommeil et protéines d\'abord, acides aminés en confort.',
         },
         {
           type: 'list',

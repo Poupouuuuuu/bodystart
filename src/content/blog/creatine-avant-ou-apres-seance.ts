@@ -112,22 +112,22 @@ export const creatineAvantOuApresSeance: BlogArticle = {
             [
               "[Créatine 100 % Monohydrate Micronisée French Nutrition](/products/creatine-100-monohydrate-micronisee)",
               "Poudre micronisée",
-              "29,90 €"
+              "{{prix:creatine-100-monohydrate-micronisee|29,90 €}}"
             ],
             [
               "[Micronized Creatine Monohydrate Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate)",
               "Poudre micronisée",
-              "36,90 €"
+              "{{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}}"
             ],
             [
               "[Creatine Pro Zero Eric Favre](/products/creatine-pro-zero)",
               "Poudre",
-              "29,90 €"
+              "{{prix:creatine-pro-zero|29,90 €}}"
             ],
             [
               "[Clear Pro Creatine Eric Favre](/products/clear-pro-creatine)",
               "Poudre",
-              "29,90 €"
+              "{{prix:clear-pro-creatine|29,90 €}}"
             ]
           ]
         },

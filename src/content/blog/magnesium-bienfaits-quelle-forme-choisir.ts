@@ -76,7 +76,7 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: "En clair : pour la plupart des gens, le **bisglycinate** est le meilleur compromis absorption / tolérance. Notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme (90 capsules, 16,90 €). Regarde toujours le magnésium **élément** (la quantité réellement utile), pas le poids brut du sel de magnésium.",
+          text: "En clair : pour la plupart des gens, le **bisglycinate** est le meilleur compromis absorption / tolérance. Notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme (90 capsules, {{prix:magnesium-bisglycinate-dy-90-capsules|16,90 €}}). Regarde toujours le magnésium **élément** (la quantité réellement utile), pas le poids brut du sel de magnésium.",
         },
       ],
     },
@@ -113,8 +113,8 @@ export const magnesiumBienfaitsQuelleFormeChoisir: BlogArticle = {
           type: 'table',
           headers: ['Produit', 'Forme', 'Prix'],
           rows: [
-            ['[Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules)', 'Bisglycinate, 90 capsules', '16,90 €'],
-            ['[Zn Mg B6 Complex](/products/zn-mg-b6-complex-60-capsules)', 'Magnésium + zinc + B6 (type ZMA)', '19,90 €'],
+            ['[Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules)', 'Bisglycinate, 90 capsules', '{{prix:magnesium-bisglycinate-dy-90-capsules|16,90 €}}'],
+            ['[Zn Mg B6 Complex](/products/zn-mg-b6-complex-60-capsules)', 'Magnésium + zinc + B6 (type ZMA)', '{{prix:zn-mg-b6-complex-60-capsules|19,90 €}}'],
           ],
         },
         {

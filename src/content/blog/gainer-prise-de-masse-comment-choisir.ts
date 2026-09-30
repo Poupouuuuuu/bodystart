@@ -85,12 +85,12 @@ export const gainerPriseDeMasseCommentChoisir: BlogArticle = {
             [
               '[Mutant Mass](/products/mutant-mass)',
               'Gainer très calorique',
-              '38,90 €',
+              '{{prix:mutant-mass|38,90 €}}',
             ],
             [
               '[Metabolic Mass DY Nutrition](/products/metabolic-mass-gainer-6-kg)',
               'Gainer grand format (6 kg)',
-              '79,90 €',
+              '{{prix:metabolic-mass-gainer-6-kg|79,90 €}}',
             ],
           ],
         },

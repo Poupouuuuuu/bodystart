@@ -103,8 +103,8 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
           type: 'table',
           headers: ['Produit', 'Format', 'Prix'],
           rows: [
-            ['[Multivitamines & Minéraux](/products/multivitamines-mineraux)', '22 nutriments, 1 capsule/jour', '19,90 €'],
-            ['[Multivitamines](/products/multivitamines)', '12 vitamines hautement dosées', '14,90 €'],
+            ['[Multivitamines & Minéraux](/products/multivitamines-mineraux)', '22 nutriments, 1 capsule/jour', '{{prix:multivitamines-mineraux|19,90 €}}'],
+            ['[Multivitamines](/products/multivitamines)', '12 vitamines hautement dosées', '{{prix:multivitamines|14,90 €}}'],
           ],
         },
         {
