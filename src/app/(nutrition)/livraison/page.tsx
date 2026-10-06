@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { Truck, Store, Package, MapPinHouse } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
+import { frenchSpacing } from '@/lib/typo'
+import { getRefundPolicy } from '@/lib/shopify/policies'
+import PolicyBlocks from '@/components/legal/PolicyBlocks'
 import {
   CLICK_AND_COLLECT,
   COLISSIMO,
@@ -20,6 +23,11 @@ export const metadata: Metadata = buildPageMetadata({
   title: 'Livraison & Retours',
   description: `Click & Collect gratuit. Mondial Relay ${MR_PRICE} et Colissimo ${COLIS_PRICE}, offerts dès ${FRANCO}. Livraison locale le soir même autour de Coignières\u00a0: ${LOCAL_PRICE}.`,
 })
+
+// La section retours affiche la « Politique de remboursement » de Shopify :
+// régénération au plus toutes les 15 min, dernière version valide gardée si
+// Shopify ne répond pas ou renvoie un texte vide (comme /cgv).
+export const revalidate = 900
 
 // Tarifs et délais : source unique src/lib/shipping.ts (alignée sur les rates Shopify).
 const shippingMethods = [
@@ -61,7 +69,9 @@ const HERO_HIGHLIGHTS = [
   { Icon: Store, label: 'Click & Collect', sub: 'Sous 2h' },
 ]
 
-export default function LivraisonPage() {
+export default async function LivraisonPage() {
+  const refund = await getRefundPolicy()
+
   return (
     <div className="bg-canvas min-h-screen">
       {/* Hero */}
@@ -136,58 +146,28 @@ export default function LivraisonPage() {
           </div>
         </section>
 
-        {/* Retours */}
+        {/* Retours : « Politique de remboursement » lue dans Shopify (source unique) */}
         <section className="mb-16 md:mb-20">
           <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-8">
             Politique de retour
           </h2>
-          <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-10 space-y-6 text-ink text-[15px] leading-relaxed">
-            <div className="flex items-start gap-4">
-              <div className="w-6 h-6 rounded-full bg-sage text-spruce font-semibold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                1
-              </div>
-              <p>
-                <strong className="font-semibold text-spruce">14 jours</strong> pour changer
-                d&apos;avis (droit de rétractation légal).
+          <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-10 space-y-6">
+            {refund.updatedLine && (
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute">
+                {frenchSpacing(refund.updatedLine)}
               </p>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-6 h-6 rounded-full bg-sage text-spruce font-semibold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                2
+            )}
+            {refund.intro.length > 0 && (
+              <PolicyBlocks blocks={refund.intro} leadHeadings linkEmails className="space-y-6" />
+            )}
+            {refund.sections.map(({ title, blocks }, i) => (
+              <div key={i}>
+                <h3 className="font-display text-[17px] font-extrabold tracking-tight text-spruce mb-2">
+                  {frenchSpacing(title)}
+                </h3>
+                <PolicyBlocks blocks={blocks} leadHeadings linkEmails />
               </div>
-              <p>
-                Les produits doivent être{' '}
-                <strong className="font-semibold text-spruce">
-                  non ouverts et dans leur emballage d&apos;origine
-                </strong>{' '}
-                pour garantir leur intégrité.
-              </p>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-6 h-6 rounded-full bg-sage text-spruce font-semibold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                3
-              </div>
-              <p>
-                Pour initier un retour, contactez-nous à{' '}
-                <a
-                  href="mailto:bodystartnutrition@gmail.com"
-                  className="text-spruce font-semibold hover:underline underline-offset-4 break-words"
-                >
-                  bodystartnutrition@gmail.com
-                </a>{' '}
-                avec votre numéro de commande.
-              </p>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-6 h-6 rounded-full bg-sage text-spruce font-semibold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                4
-              </div>
-              <p>
-                Le remboursement est effectué sous{' '}
-                <strong className="font-semibold text-spruce">14 jours</strong> après réception
-                et validation du retour dans nos locaux.
-              </p>
-            </div>
+            ))}
           </div>
         </section>
 

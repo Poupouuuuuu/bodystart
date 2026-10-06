@@ -1,11 +1,10 @@
-import { Fragment, type ReactNode } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ScrollText } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import { frenchSpacing } from '@/lib/typo'
 import { getTermsOfSale } from '@/lib/shopify/policies'
-import type { InlineRun, PolicyBlock } from '@/lib/legal/parsePolicyHtml'
+import PolicyBlocks from '@/components/legal/PolicyBlocks'
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/cgv',
@@ -19,58 +18,6 @@ export const metadata: Metadata = buildPageMetadata({
 // texte vide, getTermsOfSale lève une erreur et Next.js garde la dernière
 // version valide. La date « Dernière mise à jour » fait partie du texte Shopify.
 export const revalidate = 900
-
-function Runs({ runs }: { runs: InlineRun[] }) {
-  return (
-    <>
-      {runs.map((r, i) => {
-        if (r.br) return <br key={i} />
-        let node: ReactNode = frenchSpacing(r.text)
-        if (r.em) node = <em>{node}</em>
-        if (r.strong) node = <strong className="font-semibold">{node}</strong>
-        if (r.href) {
-          const external = /^https?:/i.test(r.href)
-          node = (
-            <a
-              href={r.href}
-              {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              className="text-fresh underline underline-offset-2 break-words hover:text-fresh-deep transition-colors"
-            >
-              {node}
-            </a>
-          )
-        }
-        return <Fragment key={i}>{node}</Fragment>
-      })}
-    </>
-  )
-}
-
-function ListBlock({ block }: { block: Extract<PolicyBlock, { type: 'ul' | 'ol' }> }) {
-  const className = `${block.type === 'ul' ? 'list-disc' : 'list-decimal'} pl-5 space-y-1.5 text-ink leading-relaxed text-base`
-  const items = block.items.map((runs, j) => (
-    <li key={j}>
-      <Runs runs={runs} />
-    </li>
-  ))
-  return block.type === 'ul' ? <ul className={className}>{items}</ul> : <ol className={className}>{items}</ol>
-}
-
-function Blocks({ blocks }: { blocks: PolicyBlock[] }) {
-  return (
-    <div className="space-y-4">
-      {blocks.map((b, i) =>
-        b.type === 'p' ? (
-          <p key={i} className="text-ink leading-relaxed text-base">
-            <Runs runs={b.runs} />
-          </p>
-        ) : (
-          <ListBlock key={i} block={b} />
-        )
-      )}
-    </div>
-  )
-}
 
 export default async function CGVPage() {
   const { updatedLine, intro, sections } = await getTermsOfSale()
@@ -103,7 +50,7 @@ export default async function CGVPage() {
           )}
           {intro.length > 0 && (
             <div className="mt-6">
-              <Blocks blocks={intro} />
+              <PolicyBlocks blocks={intro} />
             </div>
           )}
         </div>
@@ -114,7 +61,7 @@ export default async function CGVPage() {
               <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-spruce mb-4">
                 {frenchSpacing(title)}
               </h2>
-              <Blocks blocks={blocks} />
+              <PolicyBlocks blocks={blocks} />
             </section>
           ))}
         </div>
