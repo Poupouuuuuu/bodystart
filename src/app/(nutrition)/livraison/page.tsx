@@ -33,7 +33,8 @@ const shippingMethods = [
     name: MONDIAL_RELAY.label,
     delay: MONDIAL_RELAY.delayLabel,
     price: `Offerte dès ${FRANCO} · sinon ${MR_PRICE}`,
-    details: 'Retrait dans le point relais de ton choix. Pratique et économique.',
+    details:
+      'Choisis ton point relais dans le panier\u00a0; sinon, on choisit le plus proche de ton adresse.',
   },
   {
     Icon: Truck,

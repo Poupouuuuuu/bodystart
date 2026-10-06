@@ -1,82 +1,100 @@
 import { describe, it, expect } from 'vitest'
 import {
-  formatRelayAttributeValue,
-  parseRelayAttributeValue,
-  buildRelayDeliveryAddress,
+  MR_BRAND,
+  RELAY_ID_ATTRIBUTE_KEY,
+  RELAY_ADDRESS_ATTRIBUTE_KEY,
+  formatRelayId,
+  formatRelayAddress,
+  buildRelayAttributes,
+  readRelayPickup,
   type ParcelShop,
 } from './mondialRelay'
 
+// Données réelles renvoyées par le widget pour 78310 (06/10/2026).
 const shop: ParcelShop = {
-  id: '12345',
-  name: 'Tabac de la Gare',
-  address: '12 Rue des Lilas',
+  id: '039986',
+  name: 'PROXI',
+  address: '1 PASSAGE DU COMMERCE',
   postalCode: '78310',
-  city: 'Coignières',
+  city: 'COIGNIERES',
   countryCode: 'FR',
 }
 
-describe('formatRelayAttributeValue', () => {
-  it('formate "[ID], [Nom], [Adresse], [CP] [Ville]"', () => {
-    expect(formatRelayAttributeValue(shop)).toBe(
-      '12345, Tabac de la Gare, 12 Rue des Lilas, 78310 Coignières'
-    )
-  })
-
-  it('normalise les espaces multiples de l’adresse', () => {
-    expect(formatRelayAttributeValue({ ...shop, address: '12   Rue   des  Lilas' })).toBe(
-      '12345, Tabac de la Gare, 12 Rue des Lilas, 78310 Coignières'
-    )
+describe('MR_BRAND', () => {
+  it('retombe sur l’enseigne de production sans variable d’environnement', () => {
+    expect(MR_BRAND).toBe('CC23Y4G1')
   })
 })
 
-describe('parseRelayAttributeValue', () => {
-  it('relit le nom + le CP Ville depuis la valeur formatée', () => {
-    const value = formatRelayAttributeValue(shop)
-    expect(parseRelayAttributeValue(value)).toEqual({
-      id: '12345',
-      name: 'Tabac de la Gare',
-      cpVille: '78310 Coignières',
+describe('formatRelayId', () => {
+  it('préfixe le pays comme le widget et Connect : « FR-039986 »', () => {
+    expect(formatRelayId(shop)).toBe('FR-039986')
+  })
+
+  it('met le pays en majuscules et replie sur FR si absent', () => {
+    expect(formatRelayId({ ...shop, countryCode: 'be' })).toBe('BE-039986')
+    expect(formatRelayId({ ...shop, countryCode: '' })).toBe('FR-039986')
+  })
+})
+
+describe('formatRelayAddress', () => {
+  it('formate « Nom, adresse, CP Ville »', () => {
+    expect(formatRelayAddress(shop)).toBe('PROXI, 1 PASSAGE DU COMMERCE, 78310 COIGNIERES')
+  })
+
+  it('normalise les espaces multiples et saute une adresse vide', () => {
+    expect(formatRelayAddress({ ...shop, address: '1   PASSAGE  DU COMMERCE' })).toBe(
+      'PROXI, 1 PASSAGE DU COMMERCE, 78310 COIGNIERES'
+    )
+    expect(formatRelayAddress({ ...shop, address: '' })).toBe('PROXI, 78310 COIGNIERES')
+  })
+})
+
+describe('buildRelayAttributes', () => {
+  it('produit les deux attributs du brief, dans l’ordre', () => {
+    expect(buildRelayAttributes(shop)).toEqual([
+      { key: 'Point relais Mondial Relay', value: 'FR-039986' },
+      { key: 'Point relais (adresse)', value: 'PROXI, 1 PASSAGE DU COMMERCE, 78310 COIGNIERES' },
+    ])
+  })
+})
+
+describe('readRelayPickup', () => {
+  it('relit numéro, nom et CP Ville depuis les attributs écrits', () => {
+    expect(readRelayPickup(buildRelayAttributes(shop))).toEqual({
+      id: 'FR-039986',
+      name: 'PROXI',
+      cpVille: '78310 COIGNIERES',
     })
   })
 
-  it('gère une adresse contenant des virgules (garde le dernier segment)', () => {
-    const value = '999, Carrefour City, 3, Av. Foch, 75016 Paris'
-    expect(parseRelayAttributeValue(value)).toEqual({
-      id: '999',
+  it('garde le dernier segment quand l’adresse contient des virgules', () => {
+    const attrs = [
+      { key: RELAY_ID_ATTRIBUTE_KEY, value: 'FR-012345' },
+      { key: RELAY_ADDRESS_ATTRIBUTE_KEY, value: 'Carrefour City, 3, Av. Foch, 75016 Paris' },
+    ]
+    expect(readRelayPickup(attrs)).toEqual({
+      id: 'FR-012345',
       name: 'Carrefour City',
       cpVille: '75016 Paris',
     })
   })
 
-  it('relit encore l’ancien format « ID — Nom, … » (paniers ouverts avant le 25/09/2026)', () => {
-    const value = '999 — Carrefour City, 3, Av. Foch, 75016 Paris'
-    expect(parseRelayAttributeValue(value)).toEqual({
-      id: '999',
-      name: 'Carrefour City',
-      cpVille: '75016 Paris',
+  it('affiche le numéro si l’adresse manque', () => {
+    expect(readRelayPickup([{ key: RELAY_ID_ATTRIBUTE_KEY, value: 'FR-012345' }])).toEqual({
+      id: 'FR-012345',
+      name: 'FR-012345',
+      cpVille: '',
     })
   })
 
-  it('renvoie null sur valeur vide ou sans séparateur', () => {
-    expect(parseRelayAttributeValue('')).toBeNull()
-    expect(parseRelayAttributeValue(null)).toBeNull()
-    expect(parseRelayAttributeValue(undefined)).toBeNull()
-    expect(parseRelayAttributeValue('pas-de-separateur')).toBeNull()
-  })
-})
-
-describe('buildRelayDeliveryAddress', () => {
-  it('encode l’ID relais dans company + force FR', () => {
-    const addr = buildRelayDeliveryAddress(shop)
-    expect(addr.company).toBe('Point Relais 12345')
-    expect(addr.countryCode).toBe('FR')
-    expect(addr.zip).toBe('78310')
-    expect(addr.city).toBe('Coignières')
-    expect(addr.address1).toBe('12 Rue des Lilas')
-  })
-
-  it('replie sur le nom si l’adresse est vide', () => {
-    const addr = buildRelayDeliveryAddress({ ...shop, address: '' })
-    expect(addr.address1).toBe('Tabac de la Gare')
+  it('renvoie null sans numéro de point', () => {
+    expect(readRelayPickup(null)).toBeNull()
+    expect(readRelayPickup(undefined)).toBeNull()
+    expect(readRelayPickup([])).toBeNull()
+    expect(readRelayPickup([{ key: RELAY_ID_ATTRIBUTE_KEY, value: '  ' }])).toBeNull()
+    expect(
+      readRelayPickup([{ key: RELAY_ADDRESS_ATTRIBUTE_KEY, value: 'PROXI, 78310 COIGNIERES' }])
+    ).toBeNull()
   })
 })

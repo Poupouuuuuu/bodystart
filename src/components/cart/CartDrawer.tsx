@@ -231,7 +231,7 @@ export default function CartDrawer() {
 
     try {
       // Passage en retrait : un point relais éventuel n'a plus de sens
-      // (attribut + adresse de livraison retirés du cart).
+      // (attributs du point relais retirés du cart).
       if (newValue && relayPickup) {
         await clearRelayPickup()
       }
