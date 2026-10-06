@@ -27,13 +27,13 @@ export const REFERRAL_COMMISSION_RATE = 0.05
  */
 export const REFERRAL_WINDOW_MONTHS = 12
 
-/** -10€ sur la 1ere commande du filleul (≥ 60€). Pas cumulable avec BIENVENUE5. */
+/** -10 € sur la 1ere commande du filleul (≥ 60 €). Pas cumulable avec BIENVENUE5. */
 export const FILLEUL_DISCOUNT_CENTS = 1000
 
-/** Montant minimum d'une 1ere commande pour debloquer le -10€ filleul : 60€. */
+/** Montant minimum d'une 1ere commande pour debloquer le -10 € filleul : 60 €. */
 export const FILLEUL_MIN_ORDER_CENTS = 6000
 
-/** Solde minimum pour pouvoir utiliser sa cagnotte : 20€. */
+/** Solde minimum pour pouvoir utiliser sa cagnotte : 20 €. */
 export const REDEEM_MIN_BALANCE_CENTS = 2000
 
 /** Plafond d'utilisation de la cagnotte par commande : 50% du panier. */
@@ -73,7 +73,7 @@ export function calcReferrerCommissionCents(filleulPaidCents: number): number {
  * Cagnotte maximum utilisable par le parrain sur SA commande.
  *
  * Regles :
- *   - si balance < 20€   → 0 (interdit d'utiliser sous le seuil)
+ *   - si balance < 20 €  → 0 (interdit d'utiliser sous le seuil)
  *   - si panier ≤ 0      → 0 (defense)
  *   - sinon              → min(balance, 50% du panier), arrondi a l'inferieur
  *
@@ -139,7 +139,7 @@ export function isWithinReferralWindow(
 }
 
 /**
- * Indique si une commande du filleul est eligible au -5€ (1ere commande, ≥ 40€).
+ * Indique si une commande du filleul est eligible au -5 € (1ere commande, ≥ 40 €).
  *
  * @param orderTotalCents Total de la commande en centimes
  * @param hasFirstPurchase Le filleul a-t-il deja fait un achat ?

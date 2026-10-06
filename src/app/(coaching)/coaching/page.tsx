@@ -115,7 +115,7 @@ export default function CoachingPage() {
                 <h3 className="font-black text-white text-base uppercase tracking-tight mb-2">{p.name}</h3>
                 <p className="text-gray-400 text-xs font-bold leading-relaxed mb-6 flex-1">{p.description}</p>
                 <div className="flex items-end justify-between">
-                  <span className="font-display font-black text-3xl text-white">{p.price}€</span>
+                  <span className="font-display font-black text-3xl text-white">{p.price}&nbsp;€</span>
                   <Link href="/coaching/tarifs" className="text-coaching-cyan-400 text-[10px] font-black uppercase tracking-widest hover:text-coaching-cyan-300 transition-colors inline-flex items-center gap-1">
                     Détails <ChevronRight className="w-3 h-3" />
                   </Link>
@@ -130,7 +130,7 @@ export default function CoachingPage() {
                 <h3 className="font-black text-white text-base uppercase tracking-tight mb-2">{seance.name}</h3>
                 <p className="text-gray-400 text-xs font-bold leading-relaxed mb-6 flex-1">{seance.description}</p>
                 <div className="flex items-end justify-between">
-                  <span className="font-display font-black text-3xl text-white">{seance.price}€</span>
+                  <span className="font-display font-black text-3xl text-white">{seance.price}&nbsp;€</span>
                   <Link href="/coaching/tarifs" className="text-coaching-cyan-400 text-[10px] font-black uppercase tracking-widest hover:text-coaching-cyan-300 transition-colors inline-flex items-center gap-1">
                     Détails <ChevronRight className="w-3 h-3" />
                   </Link>
@@ -149,7 +149,7 @@ export default function CoachingPage() {
                 <p className="text-gray-400 text-xs font-bold leading-relaxed mb-6 flex-1">{abonnement.description}</p>
                 <div className="flex items-end justify-between">
                   <div>
-                    <span className="font-display font-black text-3xl text-coaching-cyan-400">{abonnement.price}€</span>
+                    <span className="font-display font-black text-3xl text-coaching-cyan-400">{abonnement.price}&nbsp;€</span>
                     <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest ml-1">/mois</span>
                   </div>
                   <Link href="/coaching/tarifs" className="text-coaching-cyan-400 text-[10px] font-black uppercase tracking-widest hover:text-coaching-cyan-300 transition-colors inline-flex items-center gap-1">
