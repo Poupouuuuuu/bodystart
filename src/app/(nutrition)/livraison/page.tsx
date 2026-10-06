@@ -1,22 +1,24 @@
 import type { Metadata } from 'next'
-import { Truck, Store, Package } from 'lucide-react'
+import { Truck, Store, Package, MapPinHouse } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import {
   CLICK_AND_COLLECT,
   COLISSIMO,
   MONDIAL_RELAY,
+  LIVRAISON_LOCALE,
   FREE_SHIPPING_THRESHOLD_CENTS,
   formatShippingPrice,
 } from '@/lib/shipping'
 
-const FRANCO = `${FREE_SHIPPING_THRESHOLD_CENTS / 100}€`
+const FRANCO = formatShippingPrice(FREE_SHIPPING_THRESHOLD_CENTS)
 const MR_PRICE = formatShippingPrice(MONDIAL_RELAY.priceCents)
 const COLIS_PRICE = formatShippingPrice(COLISSIMO.priceCents)
+const LOCAL_PRICE = formatShippingPrice(LIVRAISON_LOCALE.priceCents)
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/livraison',
   title: 'Livraison & Retours',
-  description: `Click & Collect gratuit, Mondial Relay ${MR_PRICE}, Colissimo ${COLIS_PRICE}. Livraison offerte dès ${FRANCO}.`,
+  description: `Click & Collect gratuit. Mondial Relay ${MR_PRICE} et Colissimo ${COLIS_PRICE}, offerts dès ${FRANCO}. Livraison locale le soir même autour de Coignières\u00a0: ${LOCAL_PRICE}.`,
 })
 
 // Tarifs et délais : source unique src/lib/shipping.ts (alignée sur les rates Shopify).
@@ -42,6 +44,14 @@ const shippingMethods = [
     delay: COLISSIMO.delayLabel,
     price: `Offerte dès ${FRANCO} · sinon ${COLIS_PRICE}`,
     details: 'Livraison à domicile avec suivi. Un numéro de suivi est envoyé par email.',
+  },
+  {
+    Icon: MapPinHouse,
+    name: LIVRAISON_LOCALE.label,
+    delay: LIVRAISON_LOCALE.delayLabel,
+    // Jamais offerte : pas de mention du franco sur la pastille.
+    price: LOCAL_PRICE,
+    details: `Autour de la boutique (environ 10\u00a0km\u00a0: Maurepas, La Verrière, Élancourt, Le Mesnil-Saint-Denis, Les Essarts-le-Roi, Trappes...). On te livre nous-mêmes, en main propre, du lundi au samedi entre 19\u00a0h et 21\u00a0h. On t'appelle avant de passer. Ce mode reste payant au-delà de ${FRANCO}.`,
   },
 ]
 
