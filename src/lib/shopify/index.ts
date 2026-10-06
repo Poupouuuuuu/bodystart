@@ -19,8 +19,6 @@ import {
   GET_CART,
   UPDATE_CART_ATTRIBUTES,
   UPDATE_CART_DISCOUNT_CODES,
-  ADD_CART_DELIVERY_ADDRESSES,
-  REMOVE_CART_DELIVERY_ADDRESSES,
   UPDATE_CART_BUYER_IDENTITY,
 } from './queries/cart'
 import {
@@ -207,59 +205,6 @@ export async function updateCartAttributes(
     { cartId, attributes }
   )
   return data.cartAttributesUpdate.cart
-}
-
-// ─── Mondial Relay : adresses de livraison du cart ───────────
-// Input CartSelectableAddressInput (Storefront 2024-04).
-export interface CartSelectableAddressInput {
-  address: {
-    deliveryAddress: {
-      company?: string
-      address1?: string
-      address2?: string
-      city?: string
-      zip?: string
-      countryCode?: string
-      firstName?: string
-      lastName?: string
-      provinceCode?: string
-      phone?: string
-    }
-  }
-  selected?: boolean
-  oneTimeUse?: boolean
-  validationStrategy?: 'COUNTRY_CODE_ONLY' | 'STRICT'
-}
-
-export async function addCartDeliveryAddresses(
-  cartId: string,
-  addresses: CartSelectableAddressInput[]
-) {
-  const data = await shopifyFetch<{
-    cartDeliveryAddressesAdd: {
-      cart: ShopifyCart
-      userErrors: { field: string[]; message: string }[]
-    }
-  }>(ADD_CART_DELIVERY_ADDRESSES, { cartId, addresses })
-  const userErrors = data.cartDeliveryAddressesAdd.userErrors
-  if (userErrors?.length > 0) {
-    throw new Error(`[addCartDeliveryAddresses] ${userErrors.map((e) => e.message).join(' | ')}`)
-  }
-  return data.cartDeliveryAddressesAdd.cart
-}
-
-export async function removeCartDeliveryAddresses(cartId: string, addressIds: string[]) {
-  const data = await shopifyFetch<{
-    cartDeliveryAddressesRemove: {
-      cart: ShopifyCart
-      userErrors: { field: string[]; message: string }[]
-    }
-  }>(REMOVE_CART_DELIVERY_ADDRESSES, { cartId, addressIds })
-  const userErrors = data.cartDeliveryAddressesRemove.userErrors
-  if (userErrors?.length > 0) {
-    throw new Error(`[removeCartDeliveryAddresses] ${userErrors.map((e) => e.message).join(' | ')}`)
-  }
-  return data.cartDeliveryAddressesRemove.cart
 }
 
 export async function updateCartDiscountCodes(

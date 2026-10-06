@@ -2,13 +2,14 @@
 
 // Bloc point relais Mondial Relay dans le panier (sous le récap).
 // Non bloquant : on peut toujours passer commande sans choisir de relais
-// (livraison domicile / Click & Collect). Masqué si la feature est éteinte
-// (NEXT_PUBLIC_MR_ENSEIGNE absente) ou si le widget ne charge pas.
+// (la boutique prend alors le plus proche de l'adresse du client). Masqué si
+// le widget ne charge pas (adblock, réseau).
 
 import { useState, useCallback } from 'react'
 import { MapPin } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
-import { isMondialRelayEnabled, type ParcelShop } from '@/lib/mondialRelay'
+import { useCustomer } from '@/context/CustomerContext'
+import type { ParcelShop } from '@/lib/mondialRelay'
 import dynamic from 'next/dynamic'
 // PERF : le picker (carte Leaflet + widget) pesait ~15 Ko gzip dans le bundle
 // de TOUTES les pages via le tiroir panier du layout. Charge a l'ouverture.
@@ -16,6 +17,7 @@ const MondialRelayPicker = dynamic(() => import('./MondialRelayPicker'), { ssr: 
 
 export default function RelayPickupBlock() {
   const { relayPickup, selectRelayPickup, clearRelayPickup } = useCart()
+  const { customer } = useCustomer()
   const [open, setOpen] = useState(false)
   const [unavailable, setUnavailable] = useState(false)
 
@@ -32,11 +34,14 @@ export default function RelayPickupBlock() {
     setUnavailable(true)
   }, [])
 
-  // Feature flag éteinte ou widget bloqué → on ne montre rien.
-  if (!isMondialRelayEnabled || unavailable) return null
+  // Widget bloqué → on ne montre rien.
+  if (unavailable) return null
 
-  // Pré-remplissage du code postal si on connaît déjà un relais (5 chiffres).
-  const prefillPostCode = relayPickup?.cpVille?.match(/\d{4,5}/)?.[0]
+  // Code postal prérempli si on le connaît : relais déjà choisi, sinon
+  // adresse par défaut du client connecté.
+  const prefillPostCode =
+    relayPickup?.cpVille?.match(/\d{5}/)?.[0] ??
+    customer?.defaultAddress?.zip?.trim().match(/^\d{5}$/)?.[0]
 
   return (
     <div className="mb-5">
@@ -56,16 +61,20 @@ export default function RelayPickupBlock() {
             {relayPickup.cpVille && (
               <p className="text-[12px] font-medium text-ink-mute mt-0.5">{relayPickup.cpVille}</p>
             )}
-            <div className="flex items-center gap-4 mt-2">
+            <p className="text-[12px] text-ink-mute mt-1.5 leading-snug">
+              Au paiement, choisis la livraison Mondial Relay.
+            </p>
+            {/* Zones tactiles 44 px (règle mobile first) */}
+            <div className="flex items-center gap-5 mt-0.5">
               <button
                 onClick={() => setOpen(true)}
-                className="text-[12px] font-semibold text-fresh underline underline-offset-2 hover:text-fresh-deep transition-colors"
+                className="inline-flex items-center min-h-[44px] text-[12px] font-semibold text-fresh underline underline-offset-2 hover:text-fresh-deep transition-colors"
               >
                 Modifier
               </button>
               <button
                 onClick={() => void clearRelayPickup()}
-                className="text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-terracotta transition-colors"
+                className="inline-flex items-center min-h-[44px] text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-terracotta transition-colors"
               >
                 Retirer
               </button>
@@ -85,7 +94,7 @@ export default function RelayPickupBlock() {
                 Tu veux être livré en point relais ?
               </p>
               <p className="text-[12px] font-medium text-ink-mute mt-0.5">
-                Choisis ton relais maintenant
+                Choisis-le ici. Sinon, on prend le plus proche de ton adresse.
               </p>
             </div>
           </div>

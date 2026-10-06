@@ -17,6 +17,7 @@ const FAQ_ITEMS = [
       { q: 'La livraison est-elle gratuite ?', a: `La livraison est gratuite à partir de ${FRANCO} d'achat. En dessous, les frais sont de ${formatShippingPrice(MONDIAL_RELAY.priceCents)} en Mondial Relay (point relais) et ${formatShippingPrice(COLISSIMO.priceCents)} en Colissimo (domicile).` },
       { q: 'Comment suivre ma commande ?', a: 'Tu recevras un email avec ton numéro de suivi dès l\'expédition de ton colis. Tu peux aussi consulter ton espace client.' },
       { q: 'Comment fonctionne le Click & Collect ?', a: 'Choisis le Click & Collect au checkout. Ta commande est prête sous 2h. Présente ton email de confirmation en boutique pour retirer tes produits.' },
+      { q: 'Comment choisir mon point relais ?', a: 'Choisis ton point relais dans le panier\u00a0; sinon, on choisit le plus proche de ton adresse. Au paiement, prends la livraison Mondial Relay.' },
     ],
   },
   {

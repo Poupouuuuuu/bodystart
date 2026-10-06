@@ -1,11 +1,11 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef, type ReactNode } from 'react'
-import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, addCartDeliveryAddresses, removeCartDeliveryAddresses, updateCartBuyerIdentity } from '@/lib/shopify'
+import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, updateCartBuyerIdentity } from '@/lib/shopify'
 import { useCustomer } from '@/context/CustomerContext'
 import { getStoredToken } from '@/lib/shopify/customer'
 import type { ShopifyCart } from '@/lib/shopify/types'
-import { RELAY_ATTRIBUTE_KEY, formatRelayAttributeValue, parseRelayAttributeValue, buildRelayDeliveryAddress, type ParcelShop } from '@/lib/mondialRelay'
+import { RELAY_ATTRIBUTE_KEYS, buildRelayAttributes, readRelayPickup, type ParcelShop, type RelayPickup } from '@/lib/mondialRelay'
 import { gaAddToCart } from '@/lib/analytics'
 import { metaAddToCart } from '@/lib/meta-pixel'
 import { toast } from '@/lib/toast'
@@ -32,7 +32,7 @@ interface CartContextType {
   applyDiscountCode: (code: string) => Promise<void>
   removeDiscountCode: (code: string) => Promise<void>
   // Mondial Relay (point relais)
-  relayPickup: { id: string; name: string; cpVille: string } | null
+  relayPickup: RelayPickup | null
   selectRelayPickup: (shop: ParcelShop) => Promise<void>
   clearRelayPickup: () => Promise<void>
 }
@@ -297,19 +297,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cart])
 
   // ─── Mondial Relay : point relais ──────────────────────────
-  // Relais courant dérivé de l'attribut "Point Relais" du cart (re-hydraté
-  // après reload sans état React).
-  const relayPickup = useMemo(() => {
-    const attr = cart?.attributes?.find((a) => a.key === RELAY_ATTRIBUTE_KEY)
-    return parseRelayAttributeValue(attr?.value)
-  }, [cart])
+  // Relais courant dérivé des attributs du cart (ré-hydraté après reload
+  // sans état React). L'adresse de livraison du cart n'est jamais touchée.
+  const relayPickup = useMemo(() => readRelayPickup(cart?.attributes), [cart])
 
-  // Attributs hors "Point Relais" (en préservant leurs valeurs non nulles),
+  // Attributs hors point relais (en préservant leurs valeurs non nulles),
   // pour merger sans écraser le Click & Collect ni d'autres attributs.
   const attributesWithoutRelay = useCallback(
     (): { key: string; value: string }[] =>
       (cart?.attributes ?? [])
-        .filter((a) => a.key !== RELAY_ATTRIBUTE_KEY && a.value != null)
+        .filter((a) => !RELAY_ATTRIBUTE_KEYS.includes(a.key) && a.value != null)
         .map((a) => ({ key: a.key, value: a.value as string })),
     [cart]
   )
@@ -318,30 +315,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!cart) return
     setIsLoading(true)
     try {
-      // 1) Attribut "Point Relais" — MERGE (source de vérité pour l'étiquette).
-      const merged = [
+      // cartAttributesUpdate remplace TOUS les attributs : on merge.
+      const updated = await updateCartAttributes(cart.id, [
         ...attributesWithoutRelay(),
-        { key: RELAY_ATTRIBUTE_KEY, value: formatRelayAttributeValue(shop) },
-      ]
-      let updated = await updateCartAttributes(cart.id, merged)
-      // 2) Adresse de livraison du relais (pré-remplissage checkout) — best-effort.
-      //    Si le script/API échoue, l'attribut suffit : on n'interrompt rien.
-      try {
-        const existing = (updated.delivery?.addresses ?? []).map((a) => a.id)
-        if (existing.length) updated = await removeCartDeliveryAddresses(cart.id, existing)
-        updated = await addCartDeliveryAddresses(cart.id, [
-          {
-            address: { deliveryAddress: buildRelayDeliveryAddress(shop) },
-            selected: true,
-            validationStrategy: 'COUNTRY_CODE_ONLY',
-          },
-        ])
-      } catch {
-        /* non bloquant : l'attribut "Point Relais" reste posé */
-      }
+        ...buildRelayAttributes(shop),
+      ])
       setCart(updated)
     } catch {
-      toast.error('Impossible d\'enregistrer le point relais')
+      toast.error('Impossible d\'enregistrer le point relais. Réessaie dans un instant.')
     } finally {
       setIsLoading(false)
     }
@@ -351,13 +332,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!cart) return
     setIsLoading(true)
     try {
-      let updated = await updateCartAttributes(cart.id, attributesWithoutRelay())
-      try {
-        const existing = (updated.delivery?.addresses ?? []).map((a) => a.id)
-        if (existing.length) updated = await removeCartDeliveryAddresses(cart.id, existing)
-      } catch {
-        /* non bloquant */
-      }
+      const updated = await updateCartAttributes(cart.id, attributesWithoutRelay())
       setCart(updated)
     } catch {
       /* silencieux : le retrait du relais ne doit jamais bloquer le panier */
