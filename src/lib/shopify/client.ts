@@ -18,6 +18,10 @@ if (!domain || !storefrontAccessToken) {
 }
 
 const STOREFRONT_URL = `https://${domain}/api/2024-04/graphql.json`
+// Version récente, réservée aux champs absents de 2024-04 (ex. shop.termsOfSale,
+// apparu en 2026-04). Le reste du site reste sur 2024-04.
+const storefrontUrl = (apiVersion?: string) =>
+  apiVersion ? `https://${domain}/api/${apiVersion}/graphql.json` : STOREFRONT_URL
 const ADMIN_URL = `https://${domain}/admin/api/2024-04/graphql.json`
 
 interface GraphQLResponse<T> {
@@ -57,10 +61,14 @@ async function graphqlRequest<T>(
 }
 
 // ─── Storefront API (client-safe, produits/panier/clients) ───
-export async function shopifyFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+export async function shopifyFetch<T>(
+  query: string,
+  variables?: Record<string, unknown>,
+  options?: { apiVersion?: string }
+): Promise<T> {
   try {
     return await graphqlRequest<T>(
-      STOREFRONT_URL,
+      storefrontUrl(options?.apiVersion),
       { 'X-Shopify-Storefront-Access-Token': storefrontAccessToken ?? '' },
       query,
       variables
