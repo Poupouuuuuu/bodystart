@@ -205,17 +205,19 @@ export default async function ProductPage({ params }: Props) {
   }))
 
   // Politique de retour — résout l'avertissement « hasMerchantReturnPolicy
-  // manquant (dans offers) ». CGV §7 : droit de rétractation 14 j, retour par
-  // voie postale. Frais de retour à la charge du client : c'est le défaut légal
-  // (art. L221-23 Code conso) et aucune clause « retour gratuit » n'existe en CGV
-  // → ReturnFeesCustomerResponsibility.
+  // manquant (dans offers) ». Alignée sur la « Politique de remboursement »
+  // Shopify et l'article 7 des CGV (06/10/2026) : rétractation 14 j, retour
+  // gratuit en boutique ou par la poste aux frais du client
+  // (ReturnFeesCustomerResponsibility) ; produit défectueux ou non conforme :
+  // frais de retour à la charge de la boutique (itemDefectReturnFees).
   const merchantReturnPolicy = {
     '@type': 'MerchantReturnPolicy',
     applicableCountry: 'FR',
     returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
     merchantReturnDays: 14,
-    returnMethod: 'https://schema.org/ReturnByMail',
+    returnMethod: ['https://schema.org/ReturnByMail', 'https://schema.org/ReturnInStore'],
     returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
+    itemDefectReturnFees: 'https://schema.org/FreeReturn',
   }
 
   // Avis-ready : n'émet aggregateRating QUE si une vraie source d'avis existe

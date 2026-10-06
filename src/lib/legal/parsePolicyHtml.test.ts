@@ -98,3 +98,62 @@ describe('assertUsablePolicy', () => {
     expect(() => assertUsablePolicy(parsePolicyHtml('<h3>1. Objet</h3><p> </p>'), 'CGV')).toThrow()
   })
 })
+
+describe('parsePolicyHtml : mentions légales Shopify réelles', () => {
+  const html = fs.readFileSync(path.join(__dirname, 'fixtures/mentions-legales-shopify-2026-10-06.html'), 'utf8')
+  const policy = parsePolicyHtml(html)
+
+  it('4 rubriques, sans « Limitation de responsabilité »', () => {
+    expect(policy.sections.map((s) => s.title)).toEqual([
+      'Éditeur du site',
+      'Hébergement',
+      'Propriété intellectuelle',
+      'Droit applicable',
+    ])
+  })
+
+  it('fiche éditeur et hébergeur : une ligne par information, sans ligne vide finale', () => {
+    const lines = (i: number) => {
+      const b = policy.sections[i].blocks[0]
+      if (b.type !== 'p') throw new Error('paragraphe attendu')
+      return runsText(b.runs).split('\n')
+    }
+    expect(lines(0)).toHaveLength(9)
+    expect(lines(0)[0]).toBe('Raison sociale : BODYSTART NUTRITION, SASU au capital de 500 €')
+    expect(lines(1)).toEqual([
+      'Boutique et paiement : Shopify International Limited, Victoria Buildings, 1-2 Haddington Road, Dublin 4, Irlande.',
+      'Site bodystart-nutrition.fr : Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis.',
+    ])
+  })
+})
+
+describe('parsePolicyHtml : politique de remboursement Shopify réelle', () => {
+  const html = fs.readFileSync(path.join(__dirname, 'fixtures/remboursement-shopify-2026-10-06.html'), 'utf8')
+  const policy = parsePolicyHtml(html)
+
+  it('pas de titre h3 : 6 paragraphes, chacun ouvert par un intitulé en gras', () => {
+    expect(policy.sections).toEqual([])
+    expect(policy.intro).toHaveLength(6)
+    for (const b of policy.intro) {
+      if (b.type !== 'p') throw new Error('paragraphe attendu')
+      expect(b.runs[0].strong).toBe(true)
+      expect(b.runs[1].br).toBe(true)
+    }
+  })
+
+  it('formulaire de rétractation : un champ par ligne', () => {
+    const form = policy.intro[5]
+    if (form.type !== 'p') throw new Error('paragraphe attendu')
+    const lines = runsText(form.runs).split('\n')
+    expect(lines[0]).toBe('Formulaire de rétractation')
+    for (const field of [
+      'Commandé le / reçu le (rayer la mention inutile) :',
+      'Numéro de commande :',
+      'Nom du consommateur :',
+      'Adresse du consommateur :',
+      'Date :',
+    ]) {
+      expect(lines).toContain(field)
+    }
+  })
+})
