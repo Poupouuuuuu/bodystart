@@ -111,7 +111,7 @@ function ProgrammeContent() {
             </div>
 
             <div className="mb-6 pb-6 border-b-2 border-gray-100">
-              <span className="font-display font-black text-4xl text-gray-900">{product.price}€</span>
+              <span className="font-display font-black text-4xl text-gray-900">{product.price}&nbsp;€</span>
               {product.stripeMode === 'subscription' && (
                 <span className="text-gray-500 text-sm font-black uppercase tracking-widest ml-1">/mois</span>
               )}

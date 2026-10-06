@@ -126,7 +126,7 @@ export default function CoachingTarifsPage() {
 
             <div className="text-center lg:text-right">
               <div className="mb-6">
-                <span className="font-display font-black text-6xl md:text-7xl text-coaching-cyan-400">{abonnement.price}€</span>
+                <span className="font-display font-black text-6xl md:text-7xl text-coaching-cyan-400">{abonnement.price}&nbsp;€</span>
                 <span className="text-gray-500 text-sm font-black uppercase tracking-widest block mt-1">/mois · sans engagement</span>
               </div>
               <button
@@ -165,7 +165,7 @@ export default function CoachingTarifsPage() {
 
               <div className="pt-4 border-t-2 border-gray-800 mt-auto">
                 <div className="flex items-end justify-between mb-4">
-                  <span className="font-display font-black text-3xl text-white">{p.price}€</span>
+                  <span className="font-display font-black text-3xl text-white">{p.price}&nbsp;€</span>
                   {p.durationDays && (
                     <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest">
                       {p.durationDays >= 30 ? `${Math.round(p.durationDays / 7)} sem.` : `${p.durationDays}j`}
@@ -231,7 +231,7 @@ export default function CoachingTarifsPage() {
                     "p-4 text-center font-display font-black text-xl",
                     p.type === 'abonnement' ? "text-coaching-cyan-400 bg-coaching-cyan-500/5" : "text-white"
                   )}>
-                    {p.price}€{p.stripeMode === 'subscription' && <span className="text-xs text-gray-500 block">/mois</span>}
+                    {p.price}&nbsp;€{p.stripeMode === 'subscription' && <span className="text-xs text-gray-500 block">/mois</span>}
                   </td>
                 ))}
               </tr>

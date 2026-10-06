@@ -2,7 +2,7 @@
  * Logique de reservation cagnotte en ligne (spec V2 §5 methode A).
  *
  * Flow :
- *   1. validateRedemptionRequest : valide les bornes (min 20€, cap 50%).
+ *   1. validateRedemptionRequest : valide les bornes (min 20 €, cap 50%).
  *   2. expireOldRedemptions : sweep lazy DB-side.
  *   3. reserveRedemption : cree le code Shopify (endsAt 1h) + insert
  *      loyalty_redemptions(status='reserved').

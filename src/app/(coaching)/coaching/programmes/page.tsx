@@ -68,7 +68,7 @@ export default function CoachingProgrammesPage() {
                 </ul>
 
                 <div className="flex items-center justify-between pt-6 border-t-2 border-gray-800">
-                  <span className="font-display font-black text-4xl text-white">{p.price}€</span>
+                  <span className="font-display font-black text-4xl text-white">{p.price}&nbsp;€</span>
                   <Link
                     href={`/coaching/tarifs#${p.id}`}
                     className="inline-flex items-center gap-2 px-6 py-3 bg-coaching-cyan-500 text-black font-black text-[10px] uppercase tracking-widest rounded-sm border-2 border-coaching-cyan-500 hover:bg-coaching-cyan-400 hover:border-coaching-cyan-400 transition-all shadow-[4px_4px_0_theme(colors.black)] hover:shadow-[6px_6px_0_theme(colors.black)] hover:-translate-y-0.5"
@@ -102,7 +102,7 @@ export default function CoachingProgrammesPage() {
                 ))}
               </ul>
               <div className="flex items-center justify-between pt-6 border-t-2 border-gray-800">
-                <span className="font-display font-black text-4xl text-white">{seance.price}€</span>
+                <span className="font-display font-black text-4xl text-white">{seance.price}&nbsp;€</span>
                 <Link
                   href={`/coaching/tarifs#${seance.id}`}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-coaching-cyan-500 text-black font-black text-[10px] uppercase tracking-widest rounded-sm border-2 border-coaching-cyan-500 hover:bg-coaching-cyan-400 hover:border-coaching-cyan-400 transition-all shadow-[4px_4px_0_theme(colors.black)]"
@@ -131,8 +131,8 @@ export default function CoachingProgrammesPage() {
               </ul>
               <div className="flex items-center justify-between pt-6 border-t-2 border-gray-800">
                 <div>
-                  <span className="font-display font-black text-4xl text-coaching-cyan-400">{pack.price}€</span>
-                  <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest ml-2">soit {Math.round(pack.price / 10)}€/séance</span>
+                  <span className="font-display font-black text-4xl text-coaching-cyan-400">{pack.price}&nbsp;€</span>
+                  <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest ml-2">soit {Math.round(pack.price / 10)}&nbsp;€/séance</span>
                 </div>
                 <Link
                   href={`/coaching/tarifs#${pack.id}`}

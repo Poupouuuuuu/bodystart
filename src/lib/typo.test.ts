@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { frenchSpacing } from './typo'
 
-const NBSP = ' '
+const NBSP = '\u00a0'
 
 describe('frenchSpacing', () => {
   it('met une espace insécable avant la ponctuation haute et les unités', () => {

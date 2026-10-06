@@ -4,7 +4,7 @@
 // pour les textes copiés tels quels depuis Shopify, comme les CGV).
 export function frenchSpacing(text: string): string {
   return text
-    .replace(/ (?=[:;!?€%»])/g, ' ')
-    .replace(/« /g, '« ')
-    .replace(/(\d) (?=h\b)/g, '$1 ')
+    .replace(/ (?=[:;!?€%»])/g, '\u00a0')
+    .replace(/« /g, '«\u00a0')
+    .replace(/(\d) (?=h\b)/g, '$1\u00a0')
 }

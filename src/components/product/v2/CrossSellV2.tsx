@@ -54,7 +54,7 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
             </h2>
           </div>
 
-          {/* Nudge franco (visible uniquement si panier > 0 et < 85€) */}
+          {/* Nudge franco (visible uniquement si panier > 0 et < 85 €) */}
           {subtotalCents > 0 && remainingCents > 0 && (
             <div className="inline-flex items-center gap-2 bg-sage text-spruce text-[13px] font-semibold px-4 py-2 rounded-full">
               <Truck className="w-3.5 h-3.5" />

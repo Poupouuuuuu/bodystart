@@ -13,6 +13,7 @@ import { useCart } from '@/hooks/useCart'
 import { useCustomer } from '@/context/CustomerContext'
 import { cn, formatPrice } from '@/lib/utils'
 import type { ShopifyCollection } from '@/lib/shopify/types'
+import { FREE_SHIPPING_LABEL } from '@/lib/shipping'
 
 type SearchResult = {
   id: string
@@ -161,7 +162,7 @@ function HeaderInner(_props: HeaderProps) {
       <div className="bg-ink relative z-50">
         <div className="container">
           <p className="text-center text-[11px] text-white/80 font-medium py-2">
-            Livraison offerte dès 85€ · Click &amp; Collect gratuit · Conseil gratuit en boutique
+            Livraison offerte {FREE_SHIPPING_LABEL} · Click &amp; Collect gratuit · Conseil gratuit en boutique
           </p>
         </div>
       </div>

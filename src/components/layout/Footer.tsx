@@ -22,7 +22,7 @@ function InstagramIcon({ className }: { className?: string }) {
     </svg>
   )
 }
-import { FREE_SHIPPING_THRESHOLD_CENTS, MONDIAL_RELAY, formatShippingPrice } from '@/lib/shipping'
+import { FREE_SHIPPING_LABEL, MONDIAL_RELAY, formatShippingPrice } from '@/lib/shipping'
 
 // Footer — copy spec §3.9 et §3.10
 //
@@ -32,10 +32,10 @@ import { FREE_SHIPPING_THRESHOLD_CENTS, MONDIAL_RELAY, formatShippingPrice } fro
 // Reseaux sociaux : on ne garde QUE Instagram (lien reel quand disponible).
 // Facebook + TikTok masques tant que les comptes ne sont pas prets (spec §3.10).
 //
-// Forfaits livraison sous 85€ (decision Adam 2026-05-23) :
-//   - Mondial Relay : 4,90€
-//   - Colissimo (domicile) : 6,90€
-// Au-dessus de 85€ : offerte (les deux methodes).
+// Forfaits livraison sous 85 € (decision Adam 2026-05-23) :
+//   - Mondial Relay : 4,90 €
+//   - Colissimo (domicile) : 6,90 €
+// Au-dessus de 85 € : offerte (les deux methodes).
 const FOOTER_LINKS = {
   boutique: [
     { label: 'Tous les produits', href: '/products' },
@@ -74,7 +74,7 @@ const TRUST_BADGES = [
   },
   {
     icon: Truck,
-    label: `Livraison offerte dès ${FREE_SHIPPING_THRESHOLD_CENTS / 100}€`,
+    label: `Livraison offerte ${FREE_SHIPPING_LABEL}`,
     sub: `Sinon dès ${formatShippingPrice(MONDIAL_RELAY.priceCents)} (relais)`,
   },
   {
