@@ -43,13 +43,13 @@ const FAQ_ITEMS = [
     category: 'Retours & Remboursements',
     questions: [
       { q: 'Quel est le délai pour retourner un produit ?', a: 'Tu disposes de 14 jours à compter de la réception pour exercer ton droit de rétractation.' },
-      { q: 'Comment initier un retour ?', a: 'Contacte-nous par email à bodystartnutrition@gmail.com avec ton numéro de commande. Nous t\'enverrons les instructions de retour.' },
-      { q: 'Quand serai-je remboursé(e) ?', a: 'Le remboursement est effectué sous 14 jours après réception et vérification du retour, sur le moyen de paiement initial.' },
+      { q: 'Comment initier un retour ?', a: "Tu as 14 jours après la réception de ta commande pour changer d'avis. Écris-nous à bodystartnutrition@gmail.com avec ton numéro de commande, ou envoie-nous le formulaire de rétractation de notre politique de retour (page Livraison & Retours). Ensuite, rapporte le produit à la boutique de Coignières, gratuitement, du lundi au samedi de 11\u00a0h à 19\u00a0h, ou renvoie-le par la poste à tes frais, dans les 14 jours qui suivent ta demande. Le produit doit être non ouvert, dans son emballage d'origine\u00a0: pour des raisons d'hygiène, on ne peut pas reprendre un produit descellé. Produit défectueux ou non conforme\u00a0: les frais de retour sont pour nous." },
+      { q: 'Quand serai-je remboursé(e) ?', a: "Sous 14 jours à compter de ta demande de rétractation, avec le même moyen de paiement que pour ta commande. Le remboursement comprend le prix des produits et les frais de livraison payés à la commande. On peut attendre d'avoir reçu le produit, ou une preuve de son envoi, avant de te rembourser." },
     ],
   },
 ]
 
-// JSON-LD FAQPage — 6 questions principales, reprises MOT POUR MOT des Q/R
+// JSON-LD FAQPage — 8 questions principales, reprises MOT POUR MOT des Q/R
 // affichées (cf. skill bodystart-seo-geo / references/schema-markup.md : tout ce
 // qui est dans le schema doit être visible sur la page). On les référence
 // directement depuis FAQ_ITEMS → identité garantie avec l'affichage.
@@ -59,6 +59,8 @@ const SCHEMA_FAQ = [
   FAQ_ITEMS[0].questions[3], // Click & Collect
   FAQ_ITEMS[2].questions[1], // Modes de paiement
   FAQ_ITEMS[3].questions[0], // Délai de retour
+  FAQ_ITEMS[3].questions[1], // Comment initier un retour
+  FAQ_ITEMS[3].questions[2], // Quand serai-je remboursé(e)
   FAQ_ITEMS[1].questions[2], // Contrôle antidopage
 ]
 
