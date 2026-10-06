@@ -56,10 +56,9 @@ const sections = [
   },
   {
     title: '11. Médiateur de la consommation',
-    // ⚠️ Adam doit adhérer à un médiateur agréé (CM2C, AME Conso, MEDICYS…) puis
-    // remplacer la dernière phrase par ses coordonnées complètes (nom + adresse
-    // postale + site web), ici ET dans les CGV Shopify. Obligation L612-1.
-    content: `Conformément à l'article L612-1 du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable du litige. Les coordonnées du médiateur de BODYSTART NUTRITION seront publiées ici dès l'adhésion effective.`,
+    // Médiateur CM2C (obligation L612-1). Toute modification : ici ET dans les
+    // CGV Shopify (« Conditions générales de vente »).
+    content: `Conformément aux articles L612-1 et suivants du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement au médiateur de la consommation dont relève BODYSTART NUTRITION : CM2C (Centre de la Médiation de la Consommation de Conciliateurs de Justice), 49 rue de Ponthieu, 75008 Paris, https://www.cm2c.net. La demande de médiation doit être introduite dans un délai d'un an à compter de la réclamation écrite.`,
   },
 ]
 
