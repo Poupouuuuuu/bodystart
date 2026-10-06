@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ScrollText } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
+import { frenchSpacing } from '@/lib/typo'
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/cgv',
@@ -88,7 +89,7 @@ export default function CGVPage() {
               refléter le dernier vrai changement, pas le jour de la visite. À mettre à
               jour manuellement à chaque édition des CGV. */}
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute border-t border-spruce/10 pt-4">
-            Dernière mise à jour : 6 octobre 2026
+            Dernière mise à jour&nbsp;: 6 octobre 2026
           </p>
         </div>
 
@@ -102,7 +103,7 @@ export default function CGVPage() {
                 {title}
               </h2>
               <p className="text-ink leading-relaxed text-base">
-                {content}
+                {frenchSpacing(content)}
               </p>
             </section>
           ))}

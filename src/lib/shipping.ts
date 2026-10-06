@@ -58,7 +58,7 @@ export const LIVRAISON_LOCALE: ShippingMethod = {
   label: 'Livraison locale',
   priceCents: 899,
   transitDays: [0, 1],
-  delayLabel: 'Le soir même si tu commandes avant 17 h',
+  delayLabel: 'Le soir même si tu commandes avant\u00a017\u00a0h',
 }
 
 /** Préparation de commande (handling) pour le JSON-LD Product. */

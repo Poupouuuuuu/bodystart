@@ -51,7 +51,7 @@ const shippingMethods = [
     delay: LIVRAISON_LOCALE.delayLabel,
     // Jamais offerte : pas de mention du franco sur la pastille.
     price: LOCAL_PRICE,
-    details: `Autour de la boutique (environ 10 km\u00a0: Maurepas, La Verrière, Élancourt, Le Mesnil-Saint-Denis, Les Essarts-le-Roi, Trappes...). On te livre nous-mêmes, en main propre, du lundi au samedi entre 19 h et 21 h. On t'appelle avant de passer. Ce mode reste payant au-delà de ${FRANCO}.`,
+    details: `Autour de la boutique (environ 10\u00a0km\u00a0: Maurepas, La Verrière, Élancourt, Le Mesnil-Saint-Denis, Les Essarts-le-Roi, Trappes...). On te livre nous-mêmes, en main propre, du lundi au samedi entre 19\u00a0h et 21\u00a0h. On t'appelle avant de passer. Ce mode reste payant au-delà de ${FRANCO}.`,
   },
 ]
 
