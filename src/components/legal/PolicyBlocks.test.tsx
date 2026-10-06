@@ -38,6 +38,9 @@ describe('PolicyBlocks', () => {
     const html = renderToStaticMarkup(<PolicyBlocks blocks={notice.sections[0].blocks} boldLabels linkEmails />)
     expect(html).toContain('<strong class="font-semibold text-spruce">Raison sociale : </strong>')
     expect(count(html, '<span class="block')).toBe(9)
+    // Libellé suivi d'un lien : en gras aussi
+    expect(html).toContain('<strong class="font-semibold text-spruce">Email\u00a0: </strong><a href="mailto:bodystartnutrition@gmail.com"')
+    expect(count(html, '<strong class="font-semibold text-spruce">')).toBe(9)
     expect(html).toContain('href="mailto:bodystartnutrition@gmail.com"')
   })
 })

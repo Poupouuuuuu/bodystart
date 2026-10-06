@@ -48,8 +48,10 @@ function Runs({ runs, boldLabel }: { runs: InlineRun[]; boldLabel?: boolean }) {
   let items = runs
   let label: string | null = null
   if (boldLabel && items[0] && !items[0].href && !items[0].strong) {
-    const m = items[0].text.match(/^(.{1,60}?)[ \u00a0]: (?=\S)/)
-    if (m) {
+    // La valeur peut suivre dans le même texte ou dans un lien (« Email : <a> »).
+    const m = items[0].text.match(/^(.{1,60}?)[ \u00a0]: ?/)
+    const hasValue = m && (items[0].text.slice(m[0].length).trim() !== '' || items.length > 1)
+    if (m && hasValue) {
       label = `${m[1]} :`
       items = [{ ...items[0], text: items[0].text.slice(m[0].length) }, ...items.slice(1)]
     }
