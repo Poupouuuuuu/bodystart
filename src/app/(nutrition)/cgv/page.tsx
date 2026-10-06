@@ -12,11 +12,11 @@ export const metadata: Metadata = buildPageMetadata({
 const sections = [
   {
     title: '1. Objet',
-    content: `Les présentes Conditions Générales de Vente (CGV) régissent les ventes effectuées sur le site bodystart-nutrition.fr par la société BODYSTART NUTRITION (SASU au capital de 500 €, RCS Versailles 909 197 469, TVA FR46909197469), dont le siège est situé 8 Rue du Pont des Landes, 78310 Coignières, ci-après dénommée "le Vendeur". Toute commande implique l'acceptation sans réserve des présentes CGV.`,
+    content: `Les présentes Conditions Générales de Vente (CGV) régissent les ventes effectuées sur le site bodystart-nutrition.fr par la société BODYSTART NUTRITION (SASU au capital de 500 €, RCS Versailles 909 197 469, TVA FR46909197469), dont le siège est situé 8 Rue du Pont des Landes, 78310 Coignières, ci-après dénommée « le Vendeur ». Toute commande implique l'acceptation sans réserve des présentes CGV.`,
   },
   {
     title: '2. Produits',
-    content: `Les produits proposés à la vente sont des compléments alimentaires. Les photographies et descriptions des produits sont données à titre indicatif. BODYSTART NUTRITION se réserve le droit de modifier la composition des produits sous réserve de maintenir leur qualité équivalente. Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain.`,
+    content: `Les produits proposés à la vente sont des compléments alimentaires, des aliments pour sportifs (protéines, barres, boissons) et des accessoires. Les photographies et descriptions des produits sont données à titre indicatif. BODYSTART NUTRITION se réserve le droit de modifier la composition des produits sous réserve de maintenir leur qualité équivalente. Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain.`,
   },
   {
     title: '3. Prix',
@@ -28,11 +28,14 @@ const sections = [
   },
   {
     title: '5. Paiement',
-    content: `Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express) via notre prestataire Shopify Payments, sécurisé par protocole SSL. BODYSTART NUTRITION ne conserve aucune donnée bancaire.`,
+    content: `Le paiement s'effectue en ligne par carte bancaire (Visa, Mastercard, American Express), Apple Pay ou PayPal, via notre prestataire Shopify Payments, sécurisé par protocole SSL. BODYSTART NUTRITION ne conserve aucune donnée bancaire.`,
   },
   {
     title: '6. Livraison',
-    content: `Les commandes sont expédiées via Colissimo ou Mondial Relay selon le choix effectué au moment de la commande. Les délais de livraison sont indiqués à titre indicatif. La livraison est offerte à partir de 85€ d'achat. Le Click & Collect est disponible dans notre boutique sous 2h après validation de la commande.`,
+    // Texte contractuel daté : copie exacte des CGV Shopify (« Conditions générales
+    // de vente », 06/10/2026), volontairement en dur et non tiré de lib/shipping.ts.
+    // Un changement de tarif doit passer par une nouvelle version datée des CGV.
+    content: `Les modes de livraison proposés sont : le Click & Collect en boutique (gratuit, commande prête sous 2 h après sa validation), Mondial Relay en point relais (4,90 €) et Colissimo à domicile (6,90 €), ces deux derniers étant offerts à partir de 85 € d'achat, ainsi que la livraison locale par nos soins autour de la boutique (8,99 €, y compris au-delà de 85 € d'achat). Les frais de livraison sont indiqués avant la validation de la commande. Les délais de livraison sont indiqués à titre indicatif.`,
   },
   {
     title: '7. Droit de rétractation',
@@ -53,9 +56,9 @@ const sections = [
   {
     title: '11. Médiateur de la consommation',
     // ⚠️ Adam doit adhérer à un médiateur agréé (CM2C, AME Conso, MEDICYS…) puis
-    // remplacer la phrase « procédure d'adhésion en cours » par ses coordonnées
-    // complètes (nom + adresse postale + site web). Obligation L612-1.
-    content: `Conformément à l'article L612-1 du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable du litige. La procédure d'adhésion de BODYSTART NUTRITION auprès d'un médiateur de la consommation agréé est en cours ; ses coordonnées seront publiées sur cette page dès l'adhésion effective.`,
+    // remplacer la dernière phrase par ses coordonnées complètes (nom + adresse
+    // postale + site web), ici ET dans les CGV Shopify. Obligation L612-1.
+    content: `Conformément à l'article L612-1 du Code de la consommation, après avoir adressé une réclamation écrite au Vendeur (bodystartnutrition@gmail.com) restée sans réponse satisfaisante dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable du litige. Les coordonnées du médiateur de BODYSTART NUTRITION seront publiées ici dès l'adhésion effective.`,
   },
 ]
 
@@ -85,7 +88,7 @@ export default function CGVPage() {
               refléter le dernier vrai changement, pas le jour de la visite. À mettre à
               jour manuellement à chaque édition des CGV. */}
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute border-t border-spruce/10 pt-4">
-            Dernière mise à jour : 29 septembre 2026
+            Dernière mise à jour : 6 octobre 2026
           </p>
         </div>
 
