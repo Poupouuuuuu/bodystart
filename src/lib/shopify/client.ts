@@ -23,6 +23,8 @@ const STOREFRONT_URL = `https://${domain}/api/2024-04/graphql.json`
 const storefrontUrl = (apiVersion?: string) =>
   apiVersion ? `https://${domain}/api/${apiVersion}/graphql.json` : STOREFRONT_URL
 const ADMIN_URL = `https://${domain}/admin/api/2024-04/graphql.json`
+const adminUrl = (apiVersion?: string) =>
+  apiVersion ? `https://${domain}/admin/api/${apiVersion}/graphql.json` : ADMIN_URL
 
 interface GraphQLResponse<T> {
   data?: T
@@ -80,12 +82,21 @@ export async function shopifyFetch<T>(
 }
 
 // ─── Admin API (server-only, inventory/locations) ────────────
-export async function shopifyAdminFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+export async function shopifyAdminFetch<T>(
+  query: string,
+  variables?: Record<string, unknown>,
+  options?: { apiVersion?: string }
+): Promise<T> {
   if (!adminAccessToken || !domain) {
     throw new Error('[Shopify Admin] SHOPIFY_ADMIN_API_ACCESS_TOKEN non configuré.')
   }
   try {
-    return await graphqlRequest<T>(ADMIN_URL, { 'X-Shopify-Access-Token': adminAccessToken }, query, variables)
+    return await graphqlRequest<T>(
+      adminUrl(options?.apiVersion),
+      { 'X-Shopify-Access-Token': adminAccessToken },
+      query,
+      variables
+    )
   } catch (error) {
     console.error('[Shopify Admin] Erreur API:', error)
     throw error

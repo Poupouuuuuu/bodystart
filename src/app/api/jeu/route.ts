@@ -1,0 +1,103 @@
+import { randomInt } from 'node:crypto'
+import { NextRequest, NextResponse } from 'next/server'
+import { validateEntry, pickLot, type JeuResult } from '@/lib/jeu-roue/core'
+import { LOTS, lotById } from '@/lib/jeu-roue/lots'
+import {
+  findParticipant,
+  getCustomerById,
+  upsertCustomer,
+  lotsAvailability,
+  createLotDiscount,
+  markParticipant,
+  readResult,
+  hasPlayed,
+} from '@/lib/jeu-roue/shopify'
+import { getStoredResult, storeResult, acquireLock, releaseLock, allowRequest } from '@/lib/jeu-roue/store'
+
+// ============================================================
+// Jeu de la roue en boutique (/jeu) : deux étapes
+//   register : valide, repère un joueur déjà passé, crée ou met à jour la
+//              fiche client Shopify (sans étiquette du jeu à ce stade)
+//   spin     : tirage côté serveur, code de remise unique, marquage client
+// Une participation par personne (e-mail ou téléphone). Le lot ne dépend
+// jamais d'un avis Google.
+// ============================================================
+
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
+export interface PublicResult {
+  lotId: string
+  label: string
+  code: string
+  endsAt: string
+}
+
+function toPublic(r: JeuResult | null): PublicResult | null {
+  const lot = r && lotById(r.lotId)
+  return r && lot ? { lotId: r.lotId, label: lot.label, code: r.code, endsAt: r.endsAt } : null
+}
+
+const played = (r: JeuResult | null) => NextResponse.json({ status: 'played', result: toPublic(r) })
+const fail = (status: number, error: string, field?: string) => NextResponse.json({ error, field }, { status })
+
+export async function POST(req: NextRequest) {
+  const body = (await req.json().catch(() => null)) as Record<string, unknown> | null
+  const step = body?.action === 'spin' ? 'spin' : body?.action === 'register' ? 'register' : null
+  if (!body || !step) return fail(400, 'Requête invalide.')
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local'
+  try {
+    if (!(await allowRequest(ip, step))) return fail(429, 'Trop de tentatives. Réessaie dans quelques minutes.')
+  } catch (err) {
+    console.warn('[jeu-roue] limiteur indisponible :', err)
+  }
+
+  const v = validateEntry(body)
+  if (!v.ok) return fail(400, v.error, v.field)
+  const { entry } = v
+
+  try {
+    // Déjà joué ? Redis d'abord (immédiat), puis Shopify (étiquette jeu-roue).
+    const stored = await getStoredResult(entry.email, entry.phone)
+    if (stored) return played(stored)
+
+    if (step === 'register') {
+      const participant = await findParticipant(entry.email, entry.phone)
+      if (participant) {
+        const r = readResult(participant)
+        if (r) await storeResult(entry.email, entry.phone, r)
+        return played(r)
+      }
+      const customerId = await upsertCustomer(entry)
+      return NextResponse.json({ status: 'ready', customerId })
+    }
+
+    // ─── spin ───
+    const customerId = typeof body.customerId === 'string' ? body.customerId : ''
+    const customer = customerId.startsWith('gid://shopify/Customer/') ? await getCustomerById(customerId) : null
+    if (!customer || customer.defaultEmailAddress?.emailAddress?.toLowerCase() !== entry.email) {
+      return fail(400, 'Participation introuvable. Recommence depuis le début.')
+    }
+    if (hasPlayed(customer)) return played(readResult(customer))
+    const samePhone = await findParticipant(entry.email, entry.phone)
+    if (samePhone) return played(readResult(samePhone))
+
+    if (!(await acquireLock(entry.email))) return fail(409, 'Ta roue tourne déjà. Patiente quelques secondes.')
+    try {
+      const { available, prices } = await lotsAvailability()
+      const lot = pickLot(LOTS, available, randomInt)
+      const { code, endsAt } = await createLotDiscount(lot, prices.get(lot.id) ?? lot.amount)
+      const result: JeuResult = { lotId: lot.id, code, endsAt, playedAt: new Date().toISOString() }
+      // Gardé tout de suite : même si le marquage Shopify échoue, on ne rejoue pas.
+      await storeResult(entry.email, entry.phone, result)
+      await markParticipant(customer, lot, result)
+      return NextResponse.json({ status: 'won', result: toPublic(result) })
+    } finally {
+      await releaseLock(entry.email).catch(() => {})
+    }
+  } catch (err) {
+    console.error(`[jeu-roue] ${step} :`, err)
+    return fail(503, 'Petit souci de connexion avec la boutique. Réessaie dans un instant.')
+  }
+}
