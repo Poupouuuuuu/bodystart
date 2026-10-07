@@ -4,7 +4,7 @@ import { validateEntry, pickLot, type JeuResult } from '@/lib/jeu-roue/core'
 import { LOTS, lotById } from '@/lib/jeu-roue/lots'
 import {
   findParticipant,
-  getCustomerById,
+  getCustomerByEmail,
   upsertCustomer,
   lotsAvailability,
   createLotDiscount,
@@ -83,9 +83,10 @@ export async function POST(req: NextRequest) {
     }
 
     // ─── spin ───
+    // La fiche de cet e-mail doit être celle créée à l'étape register.
     const customerId = typeof body.customerId === 'string' ? body.customerId : ''
-    const customer = customerId.startsWith('gid://shopify/Customer/') ? await getCustomerById(customerId) : null
-    if (!customer || customer.defaultEmailAddress?.emailAddress?.toLowerCase() !== entry.email) {
+    const customer = customerId ? await getCustomerByEmail(entry.email) : null
+    if (!customer || customer.id !== customerId) {
       return fail(400, 'Participation introuvable. Recommence depuis le début.')
     }
     if (hasPlayed(customer)) return played(readResult(customer))

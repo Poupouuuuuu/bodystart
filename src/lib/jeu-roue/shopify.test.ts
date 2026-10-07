@@ -10,6 +10,7 @@ import {
   upsertCustomer,
   createLotDiscount,
   markParticipant,
+  getCustomerByEmail,
   type ShopCustomer,
 } from './shopify'
 import { LOTS, lotById } from './lots'
@@ -113,13 +114,32 @@ describe('upsertCustomer', () => {
 
   it('client existant : mise à jour puis accords e-mail et SMS', async () => {
     adminFetch
-      .mockResolvedValueOnce({ customerByIdentifier: { id: 'gid://shopify/Customer/3', defaultPhoneNumber: null, tags: [], note: null, jeuRoue: null } })
+      .mockResolvedValueOnce({ customerByIdentifier: { id: 'gid://shopify/Customer/3', tags: [], jeuRoue: null } })
       .mockResolvedValueOnce({ customerUpdate: { userErrors: [] } })
       .mockResolvedValueOnce({ customerEmailMarketingConsentUpdate: { userErrors: [] } })
       .mockResolvedValueOnce({ customerSmsMarketingConsentUpdate: { userErrors: [] } })
     expect(await upsertCustomer(entry)).toBe('gid://shopify/Customer/3')
     expect(adminFetch.mock.calls[1][1].input).toMatchObject({ id: 'gid://shopify/Customer/3', firstName: 'Léa', phone: '+33612345678' })
     expect(adminFetch).toHaveBeenCalledTimes(4)
+  })
+
+  it('client existant, téléphone pris ailleurs : mis à jour sans téléphone, pas d’accord SMS', async () => {
+    adminFetch
+      .mockResolvedValueOnce({ customerByIdentifier: { id: 'gid://shopify/Customer/3', tags: [], jeuRoue: null } })
+      .mockResolvedValueOnce({ customerUpdate: { userErrors: [{ field: ['phone'], message: 'Phone has already been taken' }] } })
+      .mockResolvedValueOnce({ customerUpdate: { userErrors: [] } })
+      .mockResolvedValueOnce({ customerEmailMarketingConsentUpdate: { userErrors: [] } })
+    expect(await upsertCustomer(entry)).toBe('gid://shopify/Customer/3')
+    expect(adminFetch.mock.calls[2][1].input).not.toHaveProperty('phone')
+    expect(adminFetch).toHaveBeenCalledTimes(4)
+    expect(adminFetch.mock.calls[3][0]).toContain('customerEmailMarketingConsentUpdate')
+  })
+
+  it('ne relit jamais nom, e-mail ni téléphone (interdit sur le forfait actuel)', async () => {
+    adminFetch.mockResolvedValueOnce({ customerByIdentifier: null })
+    await getCustomerByEmail('lea@exemple.fr')
+    const query = adminFetch.mock.calls[0][0] as string
+    expect(query).not.toMatch(/firstName|lastName|email\s*\{|emailAddress\s*\{|defaultEmailAddress|defaultPhoneNumber|phone\s*\}/)
   })
 })
 
@@ -142,16 +162,28 @@ describe('createLotDiscount', () => {
 })
 
 describe('markParticipant', () => {
+  const customer: ShopCustomer = { id: 'gid://shopify/Customer/4', tags: [], jeuRoue: null }
+  const result = { lotId: 'shaker' as const, code: 'ROUE-ABC234', endsAt: '2026-11-06T10:00:00Z', playedAt: '2026-10-07T10:00:00Z' }
+
   it('étiquettes, note ajoutée à la suite, résultat en métachamp', async () => {
     adminFetch
       .mockResolvedValueOnce({ tagsAdd: { userErrors: [] } })
+      .mockResolvedValueOnce({ customer: { note: 'Client fidèle' } })
       .mockResolvedValueOnce({ customerUpdate: { userErrors: [] } })
       .mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
-    const customer: ShopCustomer = { id: 'gid://shopify/Customer/4', defaultEmailAddress: null, defaultPhoneNumber: null, tags: [], note: 'Client fidèle', jeuRoue: null }
-    const result = { lotId: 'shaker' as const, code: 'ROUE-ABC234', endsAt: '2026-11-06T10:00:00Z', playedAt: '2026-10-07T10:00:00Z' }
     await markParticipant(customer, lotById('shaker')!, result)
     expect(adminFetch.mock.calls[0][1].tags).toEqual(['jeu-roue', 'jeu-roue-shaker'])
-    expect(adminFetch.mock.calls[1][1].input.note).toBe('Client fidèle\nJeu roue 07/10/2026 : Un shaker, code ROUE-ABC234')
-    expect(JSON.parse(adminFetch.mock.calls[2][1].metafields[0].value)).toEqual(result)
+    expect(adminFetch.mock.calls[2][1].input.note).toBe('Client fidèle\nJeu roue 07/10/2026 : Un shaker, code ROUE-ABC234')
+    expect(JSON.parse(adminFetch.mock.calls[3][1].metafields[0].value)).toEqual(result)
+  })
+
+  it('note illisible : rien n’est écrit dans la note, le métachamp est quand même posé', async () => {
+    adminFetch
+      .mockResolvedValueOnce({ tagsAdd: { userErrors: [] } })
+      .mockRejectedValueOnce(new Error('Shopify GraphQL: access denied'))
+      .mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
+    await markParticipant(customer, lotById('shaker')!, result)
+    expect(adminFetch).toHaveBeenCalledTimes(3)
+    expect(adminFetch.mock.calls[2][0]).toContain('metafieldsSet')
   })
 })

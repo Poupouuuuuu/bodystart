@@ -1,6 +1,12 @@
 // Jeu de la roue : appels à l'API Admin Shopify (serveur uniquement).
-// Version d'API épinglée : champs récents (customerByIdentifier,
-// defaultEmailAddress, context des remises).
+// Version d'API épinglée : champs récents (customerByIdentifier, context des
+// remises).
+//
+// Données personnelles : sur le forfait actuel de la boutique, l'app du site
+// peut ÉCRIRE nom, e-mail et téléphone d'un client, mais pas les RELIRE
+// (réservé aux forfaits Shopify, Advanced et Plus). On ne lit donc jamais ces
+// champs : recherche PAR e-mail ou téléphone, lecture de l'id, des étiquettes
+// et du métachamp du jeu seulement.
 
 import { randomInt } from 'node:crypto'
 import { shopifyAdminFetch } from '@/lib/shopify/client'
@@ -17,19 +23,13 @@ type UserError = { field?: string[] | null; message: string; code?: string | nul
 
 const CUSTOMER_FIELDS = `
   id
-  defaultEmailAddress { emailAddress }
-  defaultPhoneNumber { phoneNumber }
   tags
-  note
   jeuRoue: metafield(namespace: "${MF_NAMESPACE}", key: "${MF_KEY}") { value }
 `
 
 export interface ShopCustomer {
   id: string
-  defaultEmailAddress: { emailAddress: string } | null
-  defaultPhoneNumber: { phoneNumber: string } | null
   tags: string[]
-  note: string | null
   jeuRoue: { value: string } | null
 }
 
@@ -57,7 +57,7 @@ export function hasPlayed(c: Pick<ShopCustomer, 'tags'>): boolean {
 export async function findParticipant(email: string, phone: string): Promise<ShopCustomer | null> {
   const data = await shopifyAdminFetch<{ customers: { nodes: ShopCustomer[] } }>(
     `query FindParticipant($q: String!) { customers(first: 5, query: $q) { nodes { ${CUSTOMER_FIELDS} } } }`,
-    { q: `tag:${PARTICIPANT_TAG} AND (email:${email} OR phone:${phone})` },
+    { q: `tag:${PARTICIPANT_TAG} AND (email:"${email}" OR phone:"${phone}")` },
     API
   )
   return data.customers.nodes.find(hasPlayed) ?? null
@@ -72,13 +72,13 @@ export async function getCustomerByEmail(email: string): Promise<ShopCustomer | 
   return data.customerByIdentifier
 }
 
-export async function getCustomerById(id: string): Promise<ShopCustomer | null> {
-  const data = await shopifyAdminFetch<{ customer: ShopCustomer | null }>(
-    `query CustomerById($id: ID!) { customer(id: $id) { ${CUSTOMER_FIELDS} } }`,
+async function getCustomerNote(id: string): Promise<string | null> {
+  const data = await shopifyAdminFetch<{ customer: { note: string | null } | null }>(
+    `query CustomerNote($id: ID!) { customer(id: $id) { note } }`,
     { id },
     API
   )
-  return data.customer
+  return data.customer?.note ?? null
 }
 
 // ─── Fiche client ─────────────────────────────────────────────
@@ -116,10 +116,10 @@ export async function upsertCustomer(entry: Entry): Promise<string> {
           API
         )
       ).customerUpdate.userErrors
-    let errs = await update(existing.defaultPhoneNumber?.phoneNumber !== entry.phone)
-    let phoneOk = existing.defaultPhoneNumber?.phoneNumber === entry.phone
+    // Téléphone actuel illisible (cf. en-tête) : on tente avec, puis sans.
+    let errs = await update(true)
+    const phoneOk = errs.length === 0
     if (errs.length && isPhoneError(errs)) errs = await update(false)
-    else if (!errs.length) phoneOk = true
     if (errs.length) console.warn('[jeu-roue] customerUpdate userErrors:', JSON.stringify(errs))
 
     if (entry.optIn) await subscribe(existing.id, now, phoneOk)
@@ -281,6 +281,7 @@ export async function createLotDiscount(lot: Lot, amount: number): Promise<{ cod
  * Étiquettes `jeu-roue` et `jeu-roue-<lot>`, ligne ajoutée à la note, résultat
  * en métachamp (pour réafficher le lot). Chaque étape est indépendante : un
  * échec est journalisé sans bloquer (le résultat est déjà gardé dans Redis).
+ * Note illisible : on n'y écrit rien plutôt que d'écraser l'existante.
  */
 export async function markParticipant(customer: ShopCustomer, lot: Lot, result: JeuResult): Promise<void> {
   const steps: [string, () => Promise<UserError[]>][] = [
@@ -297,14 +298,16 @@ export async function markParticipant(customer: ShopCustomer, lot: Lot, result: 
     ],
     [
       'note',
-      async () =>
-        (
+      async () => {
+        const note = await getCustomerNote(customer.id)
+        return (
           await shopifyAdminFetch<{ customerUpdate: { userErrors: UserError[] } }>(
             `mutation UpdateNote($input: CustomerInput!) { customerUpdate(input: $input) { customer { id } userErrors { field message } } }`,
-            { input: { id: customer.id, note: [customer.note?.trim(), noteLine(result, lot)].filter(Boolean).join('\n') } },
+            { input: { id: customer.id, note: [note?.trim(), noteLine(result, lot)].filter(Boolean).join('\n') } },
             API
           )
-        ).customerUpdate.userErrors,
+        ).customerUpdate.userErrors
+      },
     ],
     [
       'metafield',

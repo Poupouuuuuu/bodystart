@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const { shop, store } = vi.hoisted(() => ({
   shop: {
     findParticipant: vi.fn(),
-    getCustomerById: vi.fn(),
+    getCustomerByEmail: vi.fn(),
     upsertCustomer: vi.fn(),
     lotsAvailability: vi.fn(),
     createLotDiscount: vi.fn(),
@@ -32,14 +32,7 @@ const call = async (body: Record<string, unknown>) => {
   const res = await POST(new Request('http://x/api/jeu', { method: 'POST', body: JSON.stringify(body) }) as never)
   return { status: res.status, json: await res.json() }
 }
-const customer = (tags: string[] = []) => ({
-  id: 'gid://shopify/Customer/7',
-  defaultEmailAddress: { emailAddress: 'lea@exemple.fr' },
-  defaultPhoneNumber: null,
-  tags,
-  note: null,
-  jeuRoue: null,
-})
+const customer = (tags: string[] = []) => ({ id: 'gid://shopify/Customer/7', tags, jeuRoue: null })
 
 beforeEach(() => {
   for (const f of [...Object.values(shop), ...Object.values(store)]) f.mockReset()
@@ -71,15 +64,15 @@ describe('POST /api/jeu', () => {
     expect(shop.upsertCustomer.mock.calls[0][0]).toMatchObject({ email: 'lea@exemple.fr', phone: '+33612345678', optIn: true })
   })
 
-  it('spin : refusé si la fiche ne correspond pas à l’e-mail', async () => {
-    shop.getCustomerById.mockResolvedValue({ ...customer(), defaultEmailAddress: { emailAddress: 'autre@x.fr' } })
+  it('spin : refusé si la fiche de cet e-mail n’est pas celle de l’étape register', async () => {
+    shop.getCustomerByEmail.mockResolvedValue({ ...customer(), id: 'gid://shopify/Customer/8' })
     const r = await call({ ...form, action: 'spin', customerId: 'gid://shopify/Customer/7' })
     expect(r.status).toBe(400)
     expect(shop.createLotDiscount).not.toHaveBeenCalled()
   })
 
   it('spin : tirage, code créé, résultat gardé puis fiche marquée', async () => {
-    shop.getCustomerById.mockResolvedValue(customer())
+    shop.getCustomerByEmail.mockResolvedValue(customer())
     shop.lotsAvailability.mockResolvedValue({ available: new Set(['bon-5']), prices: new Map() })
     shop.createLotDiscount.mockResolvedValue({ code: 'ROUE-XYZ789', endsAt: '2026-11-06T10:00:00.000Z' })
     const r = await call({ ...form, action: 'spin', customerId: 'gid://shopify/Customer/7' })
@@ -94,14 +87,14 @@ describe('POST /api/jeu', () => {
   })
 
   it('spin : fiche déjà marquée jeu-roue → pas de second tirage', async () => {
-    shop.getCustomerById.mockResolvedValue(customer(['jeu-roue']))
+    shop.getCustomerByEmail.mockResolvedValue(customer(['jeu-roue']))
     const r = await call({ ...form, action: 'spin', customerId: 'gid://shopify/Customer/7' })
     expect(r.json.status).toBe('played')
     expect(shop.createLotDiscount).not.toHaveBeenCalled()
   })
 
   it('spin : double clic (verrou pris) → 409', async () => {
-    shop.getCustomerById.mockResolvedValue(customer())
+    shop.getCustomerByEmail.mockResolvedValue(customer())
     store.acquireLock.mockResolvedValue(false)
     expect((await call({ ...form, action: 'spin', customerId: 'gid://shopify/Customer/7' })).status).toBe(409)
   })
