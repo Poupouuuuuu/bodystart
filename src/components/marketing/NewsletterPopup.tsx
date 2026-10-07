@@ -31,7 +31,10 @@ export default function NewsletterPopup() {
 
   // Pas de checkout sur notre domaine (hébergé Shopify) ; on exclut par sécurité
   // l'espace caisse et tout chemin checkout éventuel.
-  const excluded = !!pathname && (pathname.startsWith('/staff') || pathname.startsWith('/checkout'))
+  // /jeu : page du jeu en boutique (QR code), le parcours ne doit pas être interrompu.
+  const excluded =
+    !!pathname &&
+    (pathname.startsWith('/staff') || pathname.startsWith('/checkout') || pathname.startsWith('/jeu'))
 
   const markSeen = useCallback(() => {
     try {
