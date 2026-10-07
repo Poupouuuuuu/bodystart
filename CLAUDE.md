@@ -35,6 +35,7 @@ src/
 │       ├── contact/        # Formulaire de conseil (Resend + rate limit)
 │       ├── newsletter/     # Inscription newsletter (Resend contacts)
 │       ├── inventory/      # Stock en temps réel par variante/location (Admin API + rate limit)
+│       ├── jeu/            # Jeu de la roue en boutique (/jeu, QR code) : register puis spin, Admin API 2026-04, limite par IP
 │       ├── stock-alert/    # POST « me prévenir quand c'est de retour » (Supabase stock_alerts) + webhook/ inventory_levels/update → email Resend
 │       │   └── sweep/      # GET cron Vercel quotidien (07:00 UTC) : rattrape les alertes que le webhook a manquées (Bearer CRON_SECRET)
 │       ├── version/        # GET { sha, env } : quel commit sert la prod (skill verif-prod)
@@ -109,7 +110,8 @@ NEXT_PUBLIC_SITE_URL=https://bodystart.com
 # Cron Vercel (/api/stock-alert/sweep) — défini sur Vercel uniquement, jamais en local
 CRON_SECRET=xxx                           # ≥ 32 caractères aléatoires ; Vercel l'envoie en Authorization: Bearer
 
-# Upstash Redis (rate limiting — /api/contact, /api/inventory)
+# Upstash Redis (limites par IP + mémoire du jeu de la roue) : actif en prod depuis le 07/10/2026
+# Noms exacts obligatoires (pas les KV_REST_API_* de l'intégration Vercel). Absentes = aucune limite.
 UPSTASH_REDIS_REST_URL=https://xxx.upstash.io
 UPSTASH_REDIS_REST_TOKEN=xxx
 
@@ -226,15 +228,20 @@ Tout est dans `.claude/` (hooks, skills, agents) et documenté dans `.claude/hoo
 - **Stripe** : Paiements coaching (Checkout Sessions, subscriptions, webhooks)
 - **Judge.me** : Avis clients (via API REST)
 - **Resend** : Emails transactionnels (contact, newsletter)
-- **Upstash Redis** : Rate limiting (contact, inventory)
+- **Upstash Redis** : limites de requêtes par IP sur les routes publiques + mémoire du jeu de la roue (voir Points d'attention)
 
 ## Points d'attention
 
 - Les routes `/account/*` sont protégées par `src/middleware.ts` — vérifie la présence du cookie `body-start-customer-token`
 - Click & Collect fonctionnel : stock réel via Admin API, toggle livraison/retrait dans le CartDrawer, attributs panier transmis au checkout
 - La newsletter est connectée à `/api/newsletter` (Resend contacts + email de bienvenue avec code promo)
-- L'API `/api/contact` est protégée par rate limiting Upstash (5 req / 10 min par IP) et échappement HTML des inputs
-- L'API `/api/inventory` est protégée par rate limiting Upstash (30 req / 1 min par IP)
+- L'API `/api/contact` échappe le HTML des champs saisis (en plus de la limite par IP ci-dessous)
+- **Upstash Redis, état réel** :
+  - Actif en prod depuis le 07/10/2026 (variables ajoutées sur Vercel puis redéploiement). Vérifié le jour même : `/api/subscribe` refuse (429) dès la 6ᵉ requête, `/api/jeu` dès la 11ᵉ. Avant cette date, constaté absent en prod (aucune limite ne s'appliquait), depuis quand : inconnu. Preview : non vérifié.
+  - Le code ne lit que `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`. Si elles manquent (ou contiennent `xxx`), chaque route passe **sans limite et sans erreur** : après tout changement de variables, refaire le test ci-dessous.
+  - Limites par IP (fenêtre glissante) : `/api/contact`, `/api/subscribe`, `/api/stock-alert`, `/api/loyalty/me/enroll`, `/api/loyalty/customers/upsert` : 5 / 10 min ; `/api/jeu` : 10 / 10 min par étape (register, spin) ; `/api/loyalty/me/redeem-online`, `/api/loyalty/me/ambassador/redeem` : 10 / 1 min ; `/api/inventory`, `/api/loyalty/preview` : 30 / 1 min.
+  - Jeu de la roue (`src/lib/jeu-roue/store.ts`) : résultat gardé ~13 mois par e-mail et par téléphone (2ᵉ tentative réaffichée tout de suite, même téléphone reconnu avec un autre e-mail). Le verrou anti double code ne dépend pas de Redis (réservation atomique dans le métachamp Shopify du client).
+  - Tester depuis une session cloud Claude : la sortie Internet tourne sur une quinzaine d'adresses IP, donc des `curl` séparés ne déclenchent jamais la limite. Envoyer toutes les requêtes dans **une seule commande curl** (même connexion, même IP), avec un corps invalide pour ne rien créer : `curl -sS -X POST -H 'Content-Type: application/json' -d '{}' -w '%{http_code} ' $(for i in $(seq 1 8); do printf -- '-o /dev/null https://bodystart-nutrition.fr/api/subscribe '; done)` doit afficher cinq 400 puis des 429.
 - Les tokens clients sont en localStorage + cookie sync (pour le middleware)
 - Cookie consent banner RGPD en place (`CookieBanner.tsx`) avec 3 options : accepter / refuser / personnaliser
 - JSON-LD en place : Organization + LocalBusiness dans le layout Nutrition, Product + BreadcrumbList sur les pages produit et collection
