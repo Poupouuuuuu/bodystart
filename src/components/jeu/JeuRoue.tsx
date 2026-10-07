@@ -1,11 +1,17 @@
 'use client'
 
-// Jeu de la roue en boutique (/jeu) : formulaire → avis Google (facultatif) →
-// roue → code à montrer en caisse. Le lot est tiré par /api/jeu, jamais ici :
-// la roue ne fait que s'arrêter sur le segment renvoyé par le serveur.
+// Jeu de la roue en boutique (/jeu) : formulaire → avis Google → roue → code à
+// montrer en caisse. Le lot est tiré par /api/jeu, jamais ici : la roue ne fait
+// que s'arrêter sur le segment renvoyé par le serveur.
+//
+// Étape avis : la roue se débloque quand le joueur a ouvert le lien d'avis et
+// revient sur la page au moins 15 s plus tard (on ne peut pas vérifier qu'un
+// avis a été posté). Même étape pour tout le monde, sans tri. L'étape est
+// gardée sur l'appareil : un rechargement ou un passage par l'appli Google
+// Maps ne la fait pas perdre.
 
 import { useEffect, useRef, useState, type FormEvent, type ReactNode, type RefObject } from 'react'
-import { AlertCircle, CheckCircle2, ChevronDown, Loader2, Star } from 'lucide-react'
+import { AlertCircle, CheckCircle2, ChevronDown, Loader2, Lock } from 'lucide-react'
 import Wheel, { type WheelSegment } from './Wheel'
 import { LOTS, GOOGLE_REVIEW_URL, type LotId } from '@/lib/jeu-roue/lots'
 import { validateEntry, formatDateFr, type EntryField } from '@/lib/jeu-roue/core'
@@ -31,6 +37,9 @@ interface FormState {
 }
 
 const STORAGE_KEY = 'bs_jeu_resultat'
+const STEP_KEY = 'bs_jeu_etape'
+const REVIEW_MIN_MS = 15_000 // délai minimal entre le clic sur l'avis et le retour
+const STEP_TTL_MS = 24 * 3600 * 1000
 const MIN_SPIN_MS = 1200 // suspense minimal avant la décélération
 const GENERIC_ERROR = 'Petit souci de connexion. Vérifie ton réseau et réessaie.'
 
@@ -72,10 +81,49 @@ async function postJeu(body: Record<string, unknown>): Promise<JeuResponse> {
 function saveResult(result: PublicResult, variant: Variant) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ result, variant }))
+    localStorage.removeItem(STEP_KEY)
   } catch {
     /* navigation privée : l'écran reste affiché tant que l'onglet est ouvert */
   }
 }
+
+/** Étape avis en cours, gardée sur l'appareil du joueur jusqu'au tirage. */
+interface SavedStep {
+  form: FormState
+  customerId: string
+  reviewClickedAt: number | null
+  unlocked: boolean
+  savedAt: number
+}
+
+function readStep(): SavedStep | null {
+  try {
+    const s = JSON.parse(localStorage.getItem(STEP_KEY) ?? 'null') as SavedStep | null
+    if (s?.customerId && s.form?.email && Date.now() - s.savedAt < STEP_TTL_MS) return s
+    localStorage.removeItem(STEP_KEY)
+  } catch {
+    /* stockage indisponible */
+  }
+  return null
+}
+
+function writeStep(step: Omit<SavedStep, 'savedAt'>) {
+  try {
+    localStorage.setItem(STEP_KEY, JSON.stringify({ ...step, savedAt: Date.now() }))
+  } catch {
+    /* navigation privée : l'étape tient tant que l'onglet reste ouvert */
+  }
+}
+
+function clearStep() {
+  try {
+    localStorage.removeItem(STEP_KEY)
+  } catch {
+    /* rien à effacer */
+  }
+}
+
+const reviewDone = (clickedAt: number | null) => clickedAt !== null && Date.now() - clickedAt >= REVIEW_MIN_MS
 
 export default function JeuRoue() {
   const [screen, setScreen] = useState<Screen>('form')
@@ -89,13 +137,16 @@ export default function JeuRoue() {
   const [spinning, setSpinning] = useState(false)
   const [target, setTarget] = useState<number | null>(null)
   const [spinError, setSpinError] = useState<{ message: string; restart: boolean } | null>(null)
+  const [reviewClickedAt, setReviewClickedAt] = useState<number | null>(null)
+  const [unlocked, setUnlocked] = useState(false)
+  const [tooEarly, setTooEarly] = useState(false)
 
   const headingRef = useRef<HTMLHeadingElement>(null)
   const fieldRefs = useRef<Partial<Record<EntryField, HTMLInputElement | null>>>({})
   const firstScreen = useRef(true)
 
-  // Retour sur la page (onglet rechargé, téléphone verrouillé) : on réaffiche
-  // le code gagné, c'est lui qu'on montre en caisse.
+  // Retour sur la page (onglet rechargé, téléphone verrouillé, passage par
+  // l'appli Google Maps) : on réaffiche le code gagné, sinon l'étape avis.
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') as { result?: PublicResult; variant?: Variant } | null
@@ -103,11 +154,52 @@ export default function JeuRoue() {
         setResult(saved.result)
         setVariant(saved.variant === 'played' ? 'played' : 'won')
         setScreen('resultat')
+        return
       }
     } catch {
       /* stockage indisponible : on part du formulaire */
     }
+    const step = readStep()
+    if (step) {
+      setForm(step.form)
+      setCustomerId(step.customerId)
+      setReviewClickedAt(step.reviewClickedAt)
+      setUnlocked(step.unlocked || reviewDone(step.reviewClickedAt))
+      setScreen('avis')
+    }
   }, [])
+
+  // Étape avis gardée sur l'appareil à chaque changement.
+  useEffect(() => {
+    if (screen === 'avis' && customerId) writeStep({ form, customerId, reviewClickedAt, unlocked })
+  }, [screen, form, customerId, reviewClickedAt, unlocked])
+
+  // Retour sur la page après le clic sur l'avis (onglet, appli) : déblocage
+  // si au moins 15 s se sont écoulées depuis le clic.
+  useEffect(() => {
+    if (screen !== 'avis' || unlocked || reviewClickedAt === null) return
+    let left = false
+    const check = () => {
+      if (document.visibilityState === 'hidden') {
+        left = true
+        return
+      }
+      if (reviewDone(reviewClickedAt)) {
+        setUnlocked(true)
+        setTooEarly(false)
+      } else if (left) {
+        setTooEarly(true)
+      }
+    }
+    document.addEventListener('visibilitychange', check)
+    window.addEventListener('pageshow', check)
+    window.addEventListener('focus', check)
+    return () => {
+      document.removeEventListener('visibilitychange', check)
+      window.removeEventListener('pageshow', check)
+      window.removeEventListener('focus', check)
+    }
+  }, [screen, unlocked, reviewClickedAt])
 
   // Changement d'écran : retour en haut et focus sur le titre (lecteurs d'écran).
   useEffect(() => {
@@ -146,6 +238,9 @@ export default function JeuRoue() {
     setBusy(false)
     if (r.status === 'ready' && r.customerId) {
       setCustomerId(r.customerId)
+      setReviewClickedAt(null)
+      setUnlocked(false)
+      setTooEarly(false)
       setScreen('avis')
     } else if (r.status === 'played') {
       showResult(r.result ?? null, 'played')
@@ -188,6 +283,16 @@ export default function JeuRoue() {
     setSpinError({ message: r.error ?? GENERIC_ERROR, restart: r.httpStatus === 400 })
   }
 
+  function onReviewClick() {
+    setTooEarly(false)
+    if (reviewClickedAt !== null || !customerId) return
+    const now = Date.now()
+    setReviewClickedAt(now)
+    // Écrit tout de suite : l'onglet peut être mis en veille dès l'ouverture
+    // de l'avis (appli Google Maps), avant le prochain rendu.
+    writeStep({ form, customerId, reviewClickedAt: now, unlocked: false })
+  }
+
   function onWheelDone() {
     setSpinning(false)
     setScreen('resultat')
@@ -204,6 +309,10 @@ export default function JeuRoue() {
     } catch {
       /* rien à effacer */
     }
+    clearStep()
+    setReviewClickedAt(null)
+    setUnlocked(false)
+    setTooEarly(false)
     setForm({ firstName: '', lastName: '', email: '', phone: '', optIn: false })
     setCustomerId(null)
     setResult(null)
@@ -264,8 +373,8 @@ export default function JeuRoue() {
               onChange={update('email')}
               error={fieldError?.field === 'email' ? fieldError.message : null}
               inputRef={(el) => {
-                  fieldRefs.current.email = el
-                }}
+                fieldRefs.current.email = el
+              }}
               className="mt-3"
             />
             <Field
@@ -279,8 +388,8 @@ export default function JeuRoue() {
               onChange={update('phone')}
               error={fieldError?.field === 'phone' ? fieldError.message : null}
               inputRef={(el) => {
-                  fieldRefs.current.phone = el
-                }}
+                fieldRefs.current.phone = el
+              }}
               className="mt-3"
             />
 
@@ -342,23 +451,55 @@ export default function JeuRoue() {
       )}
 
       {screen === 'avis' && (
-        <section aria-labelledby="jeu-merci" className="pt-4 text-center">
-          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sage">
-            <CheckCircle2 className="h-8 w-8 text-fresh" aria-hidden="true" />
+        <section aria-labelledby="jeu-avis" className="pt-4 text-center">
+          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-card">
+            <GoogleG className="h-8 w-8" />
           </span>
-          <h1 id="jeu-merci" ref={headingRef} tabIndex={-1} className="mt-5 text-[2.1rem] leading-tight text-spruce outline-none">
-            {frenchSpacing('Merci !')}
+          <h1 id="jeu-avis" ref={headingRef} tabIndex={-1} className="mt-5 text-[2rem] leading-tight text-spruce outline-none">
+            {frenchSpacing('Étape 2 : ton avis Google')}
           </h1>
           <p className="mt-3 text-[17px] leading-relaxed text-ink">
-            Un avis Google nous aide énormément, ça prend 30 secondes.
+            {frenchSpacing('Laisse-nous ton avis sur Google (30\u00a0secondes), puis reviens ici : la roue sera débloquée.')}
           </p>
-          <p className="mt-2 text-[15px] font-semibold text-spruce">Ton cadeau ne dépend pas de ton avis.</p>
 
           <div className="mt-8 flex flex-col gap-3">
-            <ReviewButton />
-            <button type="button" onClick={spin} className="btn-primary press min-h-[56px] w-full text-[16px]">
-              Tourner la roue
-            </button>
+            <ReviewButton label="Laisser mon avis Google" primary={!unlocked} onClick={onReviewClick} />
+
+            <div aria-live="polite" className="min-h-0">
+              {unlocked ? (
+                <p className="flex items-center justify-center gap-2 py-1 text-[16px] font-semibold text-fresh">
+                  <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+                  {frenchSpacing('Merci ! Tu peux tourner la roue.')}
+                </p>
+              ) : (
+                tooEarly && (
+                  <p className="py-1 text-[14px] font-medium text-terracotta">
+                    Prends le temps de laisser ton avis, puis reviens ici pour débloquer la roue.
+                  </p>
+                )
+              )}
+            </div>
+
+            {unlocked ? (
+              <button type="button" onClick={spin} className="btn-primary press min-h-[56px] w-full text-[16px]">
+                Tourner la roue
+              </button>
+            ) : (
+              <div>
+                <button
+                  type="button"
+                  disabled
+                  aria-describedby="jeu-roue-verrou"
+                  className="flex min-h-[56px] w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-ink/[0.07] px-8 text-[16px] font-semibold text-ink-mute"
+                >
+                  <Lock className="h-4 w-4" aria-hidden="true" />
+                  Tourner la roue
+                </button>
+                <p id="jeu-roue-verrou" className="mt-2 text-[13.5px] text-ink-mute">
+                  Débloqué après ton avis
+                </p>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -379,7 +520,15 @@ export default function JeuRoue() {
               <ErrorLine className="justify-center text-left">{spinError.message}</ErrorLine>
               <button
                 type="button"
-                onClick={spinError.restart ? () => setScreen('form') : spin}
+                onClick={
+                  spinError.restart
+                    ? () => {
+                        clearStep()
+                        setCustomerId(null)
+                        setScreen('form')
+                      }
+                    : spin
+                }
                 className="btn-primary press mt-4 min-h-[52px] w-full text-[16px]"
               >
                 {spinError.restart ? 'Revenir au formulaire' : 'Réessayer'}
@@ -479,7 +628,7 @@ function ResultScreen({
       )}
 
       <div className="mt-8">
-        <ReviewButton />
+        <ReviewButton label="Laisser un avis Google" />
       </div>
 
       <button type="button" onClick={onRestart} className="btn-ghost press mt-6">
@@ -491,29 +640,32 @@ function ResultScreen({
 
 // ─── Petits composants ────────────────────────────────────────────────────
 
-function ReviewButton() {
+function ReviewButton({ label, primary = false, onClick }: { label: string; primary?: boolean; onClick?: () => void }) {
   return (
     <a
       href={GOOGLE_REVIEW_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className="press flex min-h-[56px] w-full items-center justify-center gap-3 rounded-full bg-white px-6 text-[16px] font-semibold text-ink shadow-card ring-1 ring-spruce/10 hover:shadow-lift"
+      onClick={onClick}
+      className={cn(
+        'press flex min-h-[56px] w-full items-center justify-center gap-3 rounded-full px-6 text-[16px] font-semibold',
+        primary
+          ? 'bg-fresh text-white shadow-soft hover:bg-fresh-deep hover:shadow-lift'
+          : 'bg-white text-ink shadow-card ring-1 ring-spruce/10 hover:shadow-lift'
+      )}
     >
-      <GoogleG />
-      Laisser un avis Google
-      <span className="flex gap-0.5" aria-hidden="true">
-        {[0, 1, 2, 3, 4].map((i) => (
-          <Star key={i} className="h-3.5 w-3.5 fill-mustard text-mustard" />
-        ))}
+      <span className={cn('flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full', primary && 'bg-white')}>
+        <GoogleG className="h-5 w-5" />
       </span>
+      {label}
       <span className="sr-only">(nouvel onglet)</span>
     </a>
   )
 }
 
-function GoogleG() {
+function GoogleG({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className="h-5 w-5 flex-shrink-0" aria-hidden="true">
+    <svg viewBox="0 0 48 48" className={cn('flex-shrink-0', className)} aria-hidden="true">
       <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
       <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
       <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
