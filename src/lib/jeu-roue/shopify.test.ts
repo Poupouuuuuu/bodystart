@@ -11,6 +11,7 @@ import {
   createLotDiscount,
   markParticipant,
   getCustomerByEmail,
+  claimSpin,
   type ShopCustomer,
 } from './shopify'
 import { LOTS, lotById } from './lots'
@@ -165,25 +166,63 @@ describe('markParticipant', () => {
   const customer: ShopCustomer = { id: 'gid://shopify/Customer/4', tags: [], jeuRoue: null }
   const result = { lotId: 'shaker' as const, code: 'ROUE-ABC234', endsAt: '2026-11-06T10:00:00Z', playedAt: '2026-10-07T10:00:00Z' }
 
-  it('étiquettes, note ajoutée à la suite, résultat en métachamp', async () => {
+  it('résultat en métachamp (sans contrôle), étiquettes, note ajoutée à la suite', async () => {
     adminFetch
+      .mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
       .mockResolvedValueOnce({ tagsAdd: { userErrors: [] } })
       .mockResolvedValueOnce({ customer: { note: 'Client fidèle' } })
       .mockResolvedValueOnce({ customerUpdate: { userErrors: [] } })
-      .mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
     await markParticipant(customer, lotById('shaker')!, result)
-    expect(adminFetch.mock.calls[0][1].tags).toEqual(['jeu-roue', 'jeu-roue-shaker'])
-    expect(adminFetch.mock.calls[2][1].input.note).toBe('Client fidèle\nJeu roue 07/10/2026 : Un shaker, code ROUE-ABC234')
-    expect(JSON.parse(adminFetch.mock.calls[3][1].metafields[0].value)).toEqual(result)
+    const mf = adminFetch.mock.calls[0][1].metafields[0]
+    expect(JSON.parse(mf.value)).toEqual(result)
+    expect(mf).not.toHaveProperty('compareDigest')
+    expect(adminFetch.mock.calls[1][1].tags).toEqual(['jeu-roue', 'jeu-roue-shaker'])
+    expect(adminFetch.mock.calls[3][1].input.note).toBe('Client fidèle\nJeu roue 07/10/2026 : Un shaker, code ROUE-ABC234')
   })
 
-  it('note illisible : rien n’est écrit dans la note, le métachamp est quand même posé', async () => {
+  it('note illisible : rien n’est écrit dans la note, le reste est fait', async () => {
     adminFetch
+      .mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
       .mockResolvedValueOnce({ tagsAdd: { userErrors: [] } })
       .mockRejectedValueOnce(new Error('Shopify GraphQL: access denied'))
-      .mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
     await markParticipant(customer, lotById('shaker')!, result)
     expect(adminFetch).toHaveBeenCalledTimes(3)
-    expect(adminFetch.mock.calls[2][0]).toContain('metafieldsSet')
+    expect(adminFetch.mock.calls.some((c) => String(c[0]).includes('customerUpdate'))).toBe(false)
+  })
+})
+
+describe('claimSpin', () => {
+  const stale = { metafieldsSet: { userErrors: [{ field: ['metafields', '0'], message: 'stale', code: 'STALE_OBJECT' }] } }
+  const current = (value: unknown) => ({ customer: { jeuRoue: { value: JSON.stringify(value), compareDigest: 'abc' } } })
+
+  it('métachamp absent : réservé avec compareDigest null', async () => {
+    adminFetch.mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
+    expect(await claimSpin('gid://shopify/Customer/4')).toEqual({ status: 'claimed' })
+    const mf = adminFetch.mock.calls[0][1].metafields[0]
+    expect(mf.compareDigest).toBeNull()
+    expect(JSON.parse(mf.value).status).toBe('pending')
+  })
+
+  it('résultat déjà là : rien de nouveau, lot réaffiché', async () => {
+    adminFetch.mockResolvedValueOnce(stale).mockResolvedValueOnce(current({ lotId: 'shaker', code: 'ROUE-ABC234', endsAt: 'e', playedAt: 'p' }))
+    expect(await claimSpin('gid://shopify/Customer/4')).toEqual({
+      status: 'played',
+      result: { lotId: 'shaker', code: 'ROUE-ABC234', endsAt: 'e', playedAt: 'p' },
+    })
+    expect(adminFetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('tirage en cours (moins de 2 min) : occupé', async () => {
+    adminFetch.mockResolvedValueOnce(stale).mockResolvedValueOnce(current({ status: 'pending', at: new Date().toISOString() }))
+    expect(await claimSpin('gid://shopify/Customer/4')).toEqual({ status: 'busy' })
+  })
+
+  it('réservation abandonnée (plus de 2 min) : reprise avec le compareDigest lu', async () => {
+    adminFetch
+      .mockResolvedValueOnce(stale)
+      .mockResolvedValueOnce(current({ status: 'pending', at: new Date(Date.now() - 5 * 60_000).toISOString() }))
+      .mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
+    expect(await claimSpin('gid://shopify/Customer/4')).toEqual({ status: 'claimed' })
+    expect(adminFetch.mock.calls[2][1].metafields[0].compareDigest).toBe('abc')
   })
 })

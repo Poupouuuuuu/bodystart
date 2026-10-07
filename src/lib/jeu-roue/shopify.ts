@@ -227,6 +227,89 @@ export async function lotsAvailability(): Promise<{ available: Set<LotId>; price
   return { available: avail, prices }
 }
 
+// ─── Réservation du tirage (verrou atomique, sans Redis) ──────
+// Avant de créer un code, on pose dans le métachamp du client une valeur
+// « en cours » avec compareDigest: null : Shopify refuse (STALE_OBJECT) si le
+// métachamp existe déjà. Deux requêtes simultanées pour la même fiche ne
+// peuvent donc pas créer deux codes. Une réservation abandonnée (plantage
+// entre la réservation et la fin) se reprend au bout de 2 minutes.
+
+const PENDING_TTL_MS = 2 * 60 * 1000
+
+export type Claim =
+  | { status: 'claimed' }
+  | { status: 'played'; result: JeuResult | null }
+  | { status: 'busy' }
+
+const isStale = (errs: UserError[]) => errs.some((e) => e.code === 'STALE_OBJECT')
+
+async function setJeuMetafield(customerId: string, value: string, compareDigest?: string | null) {
+  const data = await shopifyAdminFetch<{ metafieldsSet: { userErrors: UserError[] } }>(
+    `mutation SetJeu($metafields: [MetafieldsSetInput!]!) { metafieldsSet(metafields: $metafields) { userErrors { field message code } } }`,
+    {
+      metafields: [
+        {
+          ownerId: customerId,
+          namespace: MF_NAMESPACE,
+          key: MF_KEY,
+          type: 'json',
+          value,
+          ...(compareDigest !== undefined ? { compareDigest } : {}),
+        },
+      ],
+    },
+    API
+  )
+  return data.metafieldsSet.userErrors
+}
+
+async function readJeuMetafield(customerId: string): Promise<{ value: string; compareDigest: string } | null> {
+  const data = await shopifyAdminFetch<{ customer: { jeuRoue: { value: string; compareDigest: string } | null } | null }>(
+    `query JeuMetafield($id: ID!) { customer(id: $id) { jeuRoue: metafield(namespace: "${MF_NAMESPACE}", key: "${MF_KEY}") { value compareDigest } } }`,
+    { id: customerId },
+    API
+  )
+  return data.customer?.jeuRoue ?? null
+}
+
+function pendingSince(value: string): number | null {
+  try {
+    const v = JSON.parse(value) as { status?: string; at?: string }
+    return v.status === 'pending' && v.at ? new Date(v.at).getTime() : null
+  } catch {
+    return null
+  }
+}
+
+export async function claimSpin(customerId: string): Promise<Claim> {
+  const pending = JSON.stringify({ status: 'pending', at: new Date().toISOString() })
+  const errs = await setJeuMetafield(customerId, pending, null)
+  if (!errs.length) return { status: 'claimed' }
+  if (!isStale(errs)) throw new Error(`[jeu-roue] réservation : ${JSON.stringify(errs)}`)
+
+  // Métachamp déjà là : résultat final, tirage en cours, ou réservation abandonnée.
+  const current = await readJeuMetafield(customerId)
+  if (!current) return { status: 'busy' }
+  const result = readResult({ jeuRoue: current })
+  if (result) return { status: 'played', result }
+  const since = pendingSince(current.value)
+  if (since !== null && Date.now() - since < PENDING_TTL_MS) return { status: 'busy' }
+
+  const retry = await setJeuMetafield(customerId, pending, current.compareDigest)
+  if (!retry.length) return { status: 'claimed' }
+  if (isStale(retry)) return { status: 'busy' }
+  throw new Error(`[jeu-roue] réservation : ${JSON.stringify(retry)}`)
+}
+
+/** Tirage raté (code non créé) : on libère pour que la personne puisse réessayer. */
+export async function releaseSpin(customerId: string): Promise<void> {
+  await shopifyAdminFetch(
+    `mutation ReleaseSpin($metafields: [MetafieldIdentifierInput!]!) { metafieldsDelete(metafields: $metafields) { userErrors { field message } } }`,
+    { metafields: [{ ownerId: customerId, namespace: MF_NAMESPACE, key: MF_KEY }] },
+    API
+  )
+}
+
 // ─── Code de remise ───────────────────────────────────────────
 
 export function discountInput(lot: Lot, code: string, amount: number, startsAt: Date, endsAt: Date) {
@@ -278,13 +361,14 @@ export async function createLotDiscount(lot: Lot, amount: number): Promise<{ cod
 // ─── Marquage du participant ──────────────────────────────────
 
 /**
- * Étiquettes `jeu-roue` et `jeu-roue-<lot>`, ligne ajoutée à la note, résultat
- * en métachamp (pour réafficher le lot). Chaque étape est indépendante : un
- * échec est journalisé sans bloquer (le résultat est déjà gardé dans Redis).
- * Note illisible : on n'y écrit rien plutôt que d'écraser l'existante.
+ * Résultat en métachamp (remplace la réservation, sert à réafficher le lot),
+ * étiquettes `jeu-roue` et `jeu-roue-<lot>`, ligne ajoutée à la note. Chaque
+ * étape est indépendante : un échec est journalisé sans bloquer, le code est
+ * déjà créé. Note illisible : on n'y écrit rien plutôt que d'écraser.
  */
 export async function markParticipant(customer: ShopCustomer, lot: Lot, result: JeuResult): Promise<void> {
   const steps: [string, () => Promise<UserError[]>][] = [
+    ['metafield', () => setJeuMetafield(customer.id, JSON.stringify(result))],
     [
       'tagsAdd',
       async () =>
@@ -308,21 +392,6 @@ export async function markParticipant(customer: ShopCustomer, lot: Lot, result: 
           )
         ).customerUpdate.userErrors
       },
-    ],
-    [
-      'metafield',
-      async () =>
-        (
-          await shopifyAdminFetch<{ metafieldsSet: { userErrors: UserError[] } }>(
-            `mutation SetResult($metafields: [MetafieldsSetInput!]!) { metafieldsSet(metafields: $metafields) { userErrors { field message } } }`,
-            {
-              metafields: [
-                { ownerId: customer.id, namespace: MF_NAMESPACE, key: MF_KEY, type: 'json', value: JSON.stringify(result) },
-              ],
-            },
-            API
-          )
-        ).metafieldsSet.userErrors,
     ],
   ]
   for (const [name, run] of steps) {

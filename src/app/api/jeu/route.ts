@@ -1,7 +1,7 @@
 import { randomInt } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { validateEntry, pickLot, type JeuResult } from '@/lib/jeu-roue/core'
-import { LOTS, lotById } from '@/lib/jeu-roue/lots'
+import { LOTS, lotById, type Lot } from '@/lib/jeu-roue/lots'
 import {
   findParticipant,
   getCustomerByEmail,
@@ -11,8 +11,10 @@ import {
   markParticipant,
   readResult,
   hasPlayed,
+  claimSpin,
+  releaseSpin,
 } from '@/lib/jeu-roue/shopify'
-import { getStoredResult, storeResult, acquireLock, releaseLock, allowRequest } from '@/lib/jeu-roue/store'
+import { getStoredResult, storeResult, allowRequest } from '@/lib/jeu-roue/store'
 
 // ============================================================
 // Jeu de la roue en boutique (/jeu) : deux étapes
@@ -89,23 +91,31 @@ export async function POST(req: NextRequest) {
     if (!customer || customer.id !== customerId) {
       return fail(400, 'Participation introuvable. Recommence depuis le début.')
     }
-    if (hasPlayed(customer)) return played(readResult(customer))
+    if (hasPlayed(customer) || readResult(customer)) return played(readResult(customer))
     const samePhone = await findParticipant(entry.email, entry.phone)
     if (samePhone) return played(readResult(samePhone))
 
-    if (!(await acquireLock(entry.email))) return fail(409, 'Ta roue tourne déjà. Patiente quelques secondes.')
+    // Réservation atomique sur la fiche : un double envoi ne crée pas deux codes.
+    const claim = await claimSpin(customer.id)
+    if (claim.status === 'played') return played(claim.result)
+    if (claim.status === 'busy') return fail(409, 'Ta roue tourne déjà. Patiente quelques secondes.')
+
+    let lot: Lot
+    let code: string
+    let endsAt: string
     try {
       const { available, prices } = await lotsAvailability()
-      const lot = pickLot(LOTS, available, randomInt)
-      const { code, endsAt } = await createLotDiscount(lot, prices.get(lot.id) ?? lot.amount)
-      const result: JeuResult = { lotId: lot.id, code, endsAt, playedAt: new Date().toISOString() }
-      // Gardé tout de suite : même si le marquage Shopify échoue, on ne rejoue pas.
-      await storeResult(entry.email, entry.phone, result)
-      await markParticipant(customer, lot, result)
-      return NextResponse.json({ status: 'won', result: toPublic(result) })
-    } finally {
-      await releaseLock(entry.email).catch(() => {})
+      lot = pickLot(LOTS, available, randomInt)
+      ;({ code, endsAt } = await createLotDiscount(lot, prices.get(lot.id) ?? lot.amount))
+    } catch (err) {
+      await releaseSpin(customer.id).catch((e) => console.error('[jeu-roue] libération :', e))
+      throw err
     }
+    const result: JeuResult = { lotId: lot.id, code, endsAt, playedAt: new Date().toISOString() }
+    // Le code existe : la personne le voit quoi qu'il arrive ensuite.
+    await storeResult(entry.email, entry.phone, result).catch((e) => console.error('[jeu-roue] redis :', e))
+    await markParticipant(customer, lot, result)
+    return NextResponse.json({ status: 'won', result: toPublic(result) })
   } catch (err) {
     console.error(`[jeu-roue] ${step} :`, err)
     return fail(503, 'Petit souci de connexion avec la boutique. Réessaie dans un instant.', undefined, debugDetail(err))

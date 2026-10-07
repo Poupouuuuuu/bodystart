@@ -8,12 +8,12 @@ const { shop, store } = vi.hoisted(() => ({
     lotsAvailability: vi.fn(),
     createLotDiscount: vi.fn(),
     markParticipant: vi.fn(),
+    claimSpin: vi.fn(),
+    releaseSpin: vi.fn(),
   },
   store: {
     getStoredResult: vi.fn(),
     storeResult: vi.fn(),
-    acquireLock: vi.fn(),
-    releaseLock: vi.fn(),
     allowRequest: vi.fn(),
   },
 }))
@@ -38,9 +38,10 @@ beforeEach(() => {
   for (const f of [...Object.values(shop), ...Object.values(store)]) f.mockReset()
   store.allowRequest.mockResolvedValue(true)
   store.getStoredResult.mockResolvedValue(null)
-  store.acquireLock.mockResolvedValue(true)
-  store.releaseLock.mockResolvedValue(undefined)
+  store.storeResult.mockResolvedValue(undefined)
   shop.findParticipant.mockResolvedValue(null)
+  shop.claimSpin.mockResolvedValue({ status: 'claimed' })
+  shop.releaseSpin.mockResolvedValue(undefined)
 })
 
 describe('POST /api/jeu', () => {
@@ -83,7 +84,26 @@ describe('POST /api/jeu', () => {
     expect(shop.createLotDiscount.mock.calls[0][1]).toBe(5)
     // Résultat gardé AVANT le marquage Shopify
     expect(store.storeResult.mock.invocationCallOrder[0]).toBeLessThan(shop.markParticipant.mock.invocationCallOrder[0])
-    expect(store.releaseLock).toHaveBeenCalled()
+    expect(shop.claimSpin.mock.invocationCallOrder[0]).toBeLessThan(shop.createLotDiscount.mock.invocationCallOrder[0])
+    expect(shop.releaseSpin).not.toHaveBeenCalled()
+  })
+
+  it('spin : création du code en échec → réservation libérée, 503', async () => {
+    shop.getCustomerByEmail.mockResolvedValue(customer())
+    shop.lotsAvailability.mockResolvedValue({ available: new Set(['bon-5']), prices: new Map() })
+    shop.createLotDiscount.mockRejectedValue(new Error('Shopify GraphQL: boom'))
+    const r = await call({ ...form, action: 'spin', customerId: 'gid://shopify/Customer/7' })
+    expect(r.status).toBe(503)
+    expect(shop.releaseSpin).toHaveBeenCalledWith('gid://shopify/Customer/7')
+    expect(shop.markParticipant).not.toHaveBeenCalled()
+  })
+
+  it('spin : réservation déjà finalisée par une requête parallèle → même lot réaffiché', async () => {
+    shop.getCustomerByEmail.mockResolvedValue(customer())
+    shop.claimSpin.mockResolvedValue({ status: 'played', result: { lotId: 'whey', code: 'ROUE-WWW222', endsAt: 'e', playedAt: 'p' } })
+    const r = await call({ ...form, action: 'spin', customerId: 'gid://shopify/Customer/7' })
+    expect(r.json).toEqual({ status: 'played', result: { lotId: 'whey', label: 'Une whey Protimuscle 1 kg', code: 'ROUE-WWW222', endsAt: 'e' } })
+    expect(shop.createLotDiscount).not.toHaveBeenCalled()
   })
 
   it('spin : fiche déjà marquée jeu-roue → pas de second tirage', async () => {
@@ -93,9 +113,9 @@ describe('POST /api/jeu', () => {
     expect(shop.createLotDiscount).not.toHaveBeenCalled()
   })
 
-  it('spin : double clic (verrou pris) → 409', async () => {
+  it('spin : double envoi (réservation prise) → 409', async () => {
     shop.getCustomerByEmail.mockResolvedValue(customer())
-    store.acquireLock.mockResolvedValue(false)
+    shop.claimSpin.mockResolvedValue({ status: 'busy' })
     expect((await call({ ...form, action: 'spin', customerId: 'gid://shopify/Customer/7' })).status).toBe(409)
   })
 })
