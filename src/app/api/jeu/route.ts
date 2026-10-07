@@ -39,7 +39,16 @@ function toPublic(r: JeuResult | null): PublicResult | null {
 }
 
 const played = (r: JeuResult | null) => NextResponse.json({ status: 'played', result: toPublic(r) })
-const fail = (status: number, error: string, field?: string) => NextResponse.json({ error, field }, { status })
+const fail = (status: number, error: string, field?: string, detail?: string) =>
+  NextResponse.json({ error, field, detail }, { status })
+
+// Détail technique de l'erreur renvoyé seulement hors production (preview,
+// dev) : diagnostic sans accès aux journaux Vercel. Jamais de secret dedans
+// (messages d'erreur Shopify ou Redis).
+const debugDetail = (err: unknown) =>
+  process.env.VERCEL_ENV === 'production' || (!process.env.VERCEL_ENV && process.env.NODE_ENV === 'production')
+    ? undefined
+    : String(err instanceof Error ? err.message : err).slice(0, 500)
 
 export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null
@@ -98,6 +107,6 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     console.error(`[jeu-roue] ${step} :`, err)
-    return fail(503, 'Petit souci de connexion avec la boutique. Réessaie dans un instant.')
+    return fail(503, 'Petit souci de connexion avec la boutique. Réessaie dans un instant.', undefined, debugDetail(err))
   }
 }
