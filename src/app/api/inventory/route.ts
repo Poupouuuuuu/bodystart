@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { shopifyAdminFetch } from '@/lib/shopify/client'
-import { getProductInventoryByLocation } from '@/lib/shopify'
+import { getProductInventoryByLocation, getInventoryForVariants } from '@/lib/shopify'
 
 // Lit les query params → forcer le rendu dynamique pour éviter le warning au build
 export const dynamic = 'force-dynamic'
@@ -17,6 +17,9 @@ if (process.env.UPSTASH_REDIS_REST_URL && !process.env.UPSTASH_REDIS_REST_URL.in
     prefix: 'ratelimit:inventory',
   })
 }
+
+const MAX_VARIANT_IDS = 10
+const VARIANT_GID = /^gid:\/\/shopify\/ProductVariant\/\d+$/
 
 const GET_VARIANT_INVENTORY = `
   query GetVariantInventory($variantId: ID!) {
@@ -58,13 +61,32 @@ export async function GET(req: NextRequest) {
 
     const variantId = req.nextUrl.searchParams.get('variantId')
     const productId = req.nextUrl.searchParams.get('productId')
+    const variantIds = req.nextUrl.searchParams.get('variantIds')
     const locationId = req.nextUrl.searchParams.get('locationId')
 
-    if ((!variantId && !productId) || !locationId) {
+    if ((!variantId && !productId && !variantIds) || !locationId) {
       return NextResponse.json(
-        { error: 'Paramètres (variantId OU productId) et locationId requis.' },
+        { error: 'Paramètres (variantId, productId OU variantIds) et locationId requis.' },
         { status: 400 }
       )
+    }
+
+    // ─── Mode LISTE : quelques variantes en 1 appel Admin ───
+    // (guide /conseil : revérification du stock boutique juste avant de
+    // réserver la sélection, au plus quelques produits.)
+    if (variantIds) {
+      const ids = variantIds.split(',').map((s) => s.trim()).filter(Boolean)
+      if (ids.length === 0 || ids.length > MAX_VARIANT_IDS || !ids.every((id) => VARIANT_GID.test(id))) {
+        return NextResponse.json(
+          { error: `variantIds : 1 à ${MAX_VARIANT_IDS} identifiants de variante Shopify.` },
+          { status: 400 }
+        )
+      }
+      const levels = await getInventoryForVariants(ids, locationId)
+      return NextResponse.json({
+        locationId,
+        variants: ids.map((id) => ({ variantId: id, available: levels[id] ?? 0 })),
+      })
     }
 
     // ─── Mode PRODUIT : stock de TOUTES les variantes en 1 appel Admin ───
