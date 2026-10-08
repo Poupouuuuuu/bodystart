@@ -59,6 +59,10 @@ function buildContentSecurityPolicy() {
     'script-src': [
       "'self'",
       "'unsafe-inline'",
+      // Exigé par le widget Mondial Relay (jQuery 2.2.4 exécute ses réponses
+      // via eval) : testé le 2026-10-08, sans lui la liste des relais ne
+      // s'affiche plus. Coût faible, 'unsafe-inline' étant déjà requis.
+      "'unsafe-eval'",
       'https://www.googletagmanager.com',
       'https://connect.facebook.net',
       'https://ajax.googleapis.com',
