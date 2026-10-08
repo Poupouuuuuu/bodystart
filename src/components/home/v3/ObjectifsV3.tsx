@@ -5,12 +5,14 @@ import { ArrowRight } from 'lucide-react'
 /**
  * Objectifs V3 — liste typographique géante.
  *
- * Plutôt que 4 cartes avec icônes (patron générique), les objectifs sont
+ * Plutôt que des cartes avec icônes (patron générique), les objectifs sont
  * écrits en Fraunces jusqu'à 64 px, séparés par des filets : une page de
  * sommaire éditorial. Au survol, le libellé glisse et la flèche pivote vers
  * le haut-droite (la « tension » qui fait vivant).
  *
- * Les clés `obj=` sont celles du filtre catalogue (ProductsPageClient.GOALS).
+ * Chaque ligne ouvre le guide /conseil avec l'objectif déjà choisi
+ * (`?objectif=<clé du guide>`, libellés alignés sur le metafield
+ * `bodystart.guide_conseil`) : le client démarre à la question 2.
  *
  * Maillage SEO (25/09/2026) : les rayons cités dans chaque description sont
  * des liens vers leur page /categories, avec le mot exact comme ancre
@@ -33,36 +35,48 @@ const GOALS: { n: string; label: string; desc: Part[]; href: string }[] = [
       { label: 'barres protéinées', href: '/categories/barres-proteinees' },
       ', gainers : les bases qu’on conseille au comptoir.',
     ],
-    href: '/products?obj=muscle',
+    href: '/conseil?objectif=muscle',
   },
   {
+    // Ajouté le 08/10/2026 avec le guide /conseil. Aucune promesse de perte de
+    // poids : la description reste factuelle (voix BodyStart, UE 1924/2006).
     n: '02',
-    label: 'Avoir de l’énergie',
+    label: 'Affiner ma silhouette',
+    desc: [
+      'Whey claire, ',
+      { label: 'protéines', href: '/categories/proteines' },
+      ', créatine : on t’accompagne, avec l’entraînement et l’assiette.',
+    ],
+    href: '/conseil?objectif=affiner',
+  },
+  {
+    n: '03',
+    label: 'Énergie et endurance',
     desc: [
       { label: 'Pré-workout', href: '/categories/pre-workout' },
       ', ',
       { label: 'boosters', href: '/categories/boosters' },
       ', boissons : performer plus longtemps.',
     ],
-    href: '/products?obj=energie',
+    href: '/conseil?objectif=endurance',
   },
   {
-    n: '03',
+    n: '04',
     label: 'Mieux récupérer',
     desc: [
       { label: 'Acides aminés', href: '/categories/acides-amines' },
       ', magnésium, sommeil : encaisser les séances.',
     ],
-    href: '/products?obj=recuperation',
+    href: '/conseil?objectif=recuperation',
   },
   {
-    n: '04',
-    label: 'Prendre soin de soi',
+    n: '05',
+    label: 'Santé et bien-être au quotidien',
     desc: [
       { label: 'Vitamines', href: '/categories/sante' },
-      ', oméga-3, collagène, immunité : le quotidien.',
+      ', oméga-3, collagène, immunité : prendre soin de toi.',
     ],
-    href: '/products?obj=sante',
+    href: '/conseil?objectif=sante',
   },
 ]
 

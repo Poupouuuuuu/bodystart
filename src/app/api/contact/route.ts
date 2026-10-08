@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { CONTACT_EMAIL } from '@/lib/store-info'
+import { validerContact } from '@/lib/contact-validation'
 
 const TO = process.env.CONTACT_EMAIL_TO ?? CONTACT_EMAIL
 // Expéditeur Resend. Par défaut le domaine de TEST Resend (onboarding@resend.dev),
@@ -50,16 +51,17 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const body = await req.json()
-    const { name, email, phone, objectif, message } = body
-
-    if (!name || !email || !objectif) {
+    // E-mail facultatif depuis le 08/10/2026 : prénom, objectif et un moyen
+    // de recontacter (téléphone, sinon e-mail) suffisent (lib/contact-validation).
+    const demande = validerContact(await req.json().catch(() => null))
+    if (!demande) {
       return NextResponse.json({ error: 'Champs requis manquants.' }, { status: 400 })
     }
+    const { name, email, phone, objectif, message } = demande
 
     // ─── Échapper tous les champs utilisateur ───
     const safeName = escapeHtml(name)
-    const safeEmail = escapeHtml(email)
+    const safeEmail = email ? escapeHtml(email) : ''
     const safePhone = phone ? escapeHtml(phone) : ''
     const safeMessage = message ? escapeHtml(message) : ''
 
@@ -76,7 +78,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: FROM,
       to: TO,
-      replyTo: email,
+      ...(email ? { replyTo: email } : {}),
       subject: `🏋️ Nouvelle demande de conseil de ${safeName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0;">
@@ -99,12 +101,12 @@ export async function POST(req: NextRequest) {
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280; width: 140px;">Nom</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">${safeName}</td>
               </tr>
-              <tr>
+              ${safeEmail ? `<tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280;">Email</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">
                   <a href="mailto:${safeEmail}" style="color: #15803d;">${safeEmail}</a>
                 </td>
-              </tr>
+              </tr>` : ''}
               ${safePhone ? `<tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280;">Téléphone</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">
@@ -131,11 +133,11 @@ export async function POST(req: NextRequest) {
       `,
     })
 
-    // Email de confirmation au client
-    await resend.emails.send({
+    // Email de confirmation au client, seulement s'il a laissé son adresse
+    if (email) await resend.emails.send({
       from: FROM,
       to: email,
-      subject: 'Votre demande de conseil a bien été reçue (BodyStart)',
+      subject: 'Ta demande de rappel est bien reçue (BodyStart)',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #111827; padding: 32px; text-align: center;">
@@ -145,13 +147,13 @@ export async function POST(req: NextRequest) {
           </div>
           <div style="padding: 32px; background: #ffffff;">
             <h2 style="color: #111827; font-size: 20px; font-weight: 800; margin: 0 0 16px;">
-              Bonjour ${safeName} 👋
+              Bonjour ${safeName},
             </h2>
             <p style="color: #374151; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
-              Nous avons bien reçu votre demande de conseil pour l'objectif <strong style="color: #15803d;">${objectifLabel}</strong>.
+              On a bien reçu ta demande de conseil pour l'objectif <strong style="color: #15803d;">${objectifLabel}</strong>.
             </p>
             <p style="color: #374151; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
-              Notre équipe va vous contacter sous <strong>24 à 48h</strong> pour vous proposer un rendez-vous personnalisé en boutique.
+              On te rappelle pour en parler, aux heures d'ouverture de la boutique. Tu peux aussi passer directement, sans rendez-vous.
             </p>
             <div style="background: #f0fdf4; border: 2px solid #15803d; border-radius: 4px; padding: 20px; margin-bottom: 24px;">
               <p style="margin: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; color: #15803d; letter-spacing: 1px;">Notre boutique</p>
@@ -159,7 +161,7 @@ export async function POST(req: NextRequest) {
               <p style="margin: 4px 0 0; color: #6b7280; font-size: 13px;">Ouvert du lundi au samedi · 11h à 19h</p>
             </div>
             <p style="color: #9ca3af; font-size: 13px; margin: 0;">
-              Pour toute question urgente : <a href="tel:+33761847580" style="color: #15803d;">07 61 84 75 80</a>
+              Une question urgente ? Appelle-nous : <a href="tel:+33761847580" style="color: #15803d;">07 61 84 75 80</a>
             </p>
           </div>
         </div>

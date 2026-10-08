@@ -23,12 +23,22 @@ interface CartContextType {
   /** Renvoie true si l'ajout a réussi (les erreurs sont déjà toastées ici) —
    *  les CTA ne doivent afficher « Ajouté ✓ » que sur true. */
   addItem: (merchandiseId: string, quantity?: number) => Promise<boolean>
+  /** Ajout groupé (guide /conseil) : toutes les lignes en UNE mutation, puis
+   *  les attributs fournis FUSIONNÉS avec ceux du panier (cartAttributesUpdate
+   *  remplace tout). `clearRelay` retire un point relais éventuel, comme le
+   *  passage en retrait du tiroir. Renvoie true si les lignes sont au panier. */
+  addItems: (
+    lines: { merchandiseId: string; quantity: number }[],
+    options?: { attributes?: { key: string; value: string }[]; clearRelay?: boolean }
+  ) => Promise<boolean>
   updateItem: (lineId: string, quantity: number) => Promise<void>
   /** Attend la fin des mutations quantité en cours (à appeler avant de
    *  partir au checkout pour ne pas payer une quantité périmée). */
   flushCartUpdates: () => Promise<void>
   removeItem: (lineId: string) => Promise<void>
-  setCartAttributes: (attributes: { key: string; value: string }[]) => Promise<void>
+  /** Pose des attributs en les FUSIONNANT avec ceux du panier (source du guide
+   *  /conseil, parrainage…) ; `remove` retire des clés en plus (point relais). */
+  setCartAttributes: (attributes: { key: string; value: string }[], options?: { remove?: string[] }) => Promise<void>
   applyDiscountCode: (code: string) => Promise<void>
   removeDiscountCode: (code: string) => Promise<void>
   // Mondial Relay (point relais)
@@ -195,6 +205,83 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cart])
 
+  const addItems = useCallback(async (
+    lines: { merchandiseId: string; quantity: number }[],
+    options?: { attributes?: { key: string; value: string }[]; clearRelay?: boolean }
+  ) => {
+    if (lines.length === 0) return false
+    setIsLoading(true)
+    try {
+      let updatedCart: ShopifyCart
+      if (!cart) {
+        updatedCart = await createCart(lines)
+        localStorage.setItem('body-start-cart-id', updatedCart.id)
+      } else {
+        try {
+          updatedCart = await addToCart(cart.id, lines)
+        } catch {
+          // Panier expiré — on en recrée un nouveau
+          updatedCart = await createCart(lines)
+          localStorage.setItem('body-start-cart-id', updatedCart.id)
+        }
+      }
+      setCart(updatedCart)
+
+      const attributes = options?.attributes ?? []
+      if (attributes.length > 0) {
+        const nouvelles = new Set(attributes.map((a) => a.key))
+        const conservees = (updatedCart.attributes ?? [])
+          .filter(
+            (a) =>
+              a.value != null &&
+              !nouvelles.has(a.key) &&
+              !(options?.clearRelay && RELAY_ATTRIBUTE_KEYS.includes(a.key))
+          )
+          .map((a) => ({ key: a.key, value: a.value as string }))
+        try {
+          updatedCart = await updateCartAttributes(updatedCart.id, [...conservees, ...attributes])
+          setCart(updatedCart)
+        } catch {
+          // Les produits sont bien au panier : on le dit, et le client règle
+          // le mode de livraison dans le tiroir (qui reflète le vrai panier).
+          toast.error('Ta sélection est au panier, mais le mode de livraison n\'a pas été enregistré : vérifie-le dans le panier.')
+        }
+      }
+
+      // GA4 add_to_cart / Meta AddToCart par ligne (no-op sans consentement).
+      try {
+        for (const { merchandiseId, quantity } of lines) {
+          const line = updatedCart.lines.nodes.find((l) => l.merchandise.id === merchandiseId)
+          if (!line) continue
+          const variant = line.merchandise.title
+          gaAddToCart({
+            item_id: line.merchandise.product.handle,
+            item_name: line.merchandise.product.title,
+            price: parseFloat(line.merchandise.price.amount),
+            quantity,
+            item_variant: variant && variant !== 'Default Title' ? variant : undefined,
+          })
+          metaAddToCart({
+            variantId: merchandiseId,
+            name: line.merchandise.product.title,
+            price: parseFloat(line.merchandise.price.amount),
+            quantity,
+          })
+        }
+      } catch {
+        /* tracking best-effort */
+      }
+      setIsOpen(true)
+      toast.success(lines.length > 1 ? 'Sélection ajoutée au panier !' : 'Produit ajouté au panier !')
+      return true
+    } catch {
+      toast.error('Erreur lors de l\'ajout au panier')
+      return false
+    } finally {
+      setIsLoading(false)
+    }
+  }, [cart])
+
   // Mise à jour quantité — sérialisée, sans gel global (le drawer gère son
   // propre état par ligne). Détecte le plafonnement stock (Shopify renvoie la
   // ligne CLAMPÉE sans forcément d'userError) et ne remplace JAMAIS le panier
@@ -245,11 +332,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cart])
 
-  const setCartAttributes = useCallback(async (attributes: { key: string; value: string }[]) => {
-    if (!cart) return
+  const setCartAttributes = useCallback(async (
+    attributes: { key: string; value: string }[],
+    options?: { remove?: string[] }
+  ) => {
+    const current = cartRef.current ?? cart
+    if (!current) return
     setIsLoading(true)
     try {
-      const updatedCart = await updateCartAttributes(cart.id, attributes)
+      // cartAttributesUpdate remplace TOUS les attributs : on garde ceux du
+      // panier (source=guide-conseil, objectif, budget…) sauf ceux qu'on
+      // remplace ou qu'on retire. Avant : la bascule Livraison/Retrait les
+      // effaçait tous.
+      const replaced = new Set([...attributes.map((a) => a.key), ...(options?.remove ?? [])])
+      const kept = (current.attributes ?? [])
+        .filter((a) => a.value != null && !replaced.has(a.key))
+        .map((a) => ({ key: a.key, value: a.value as string }))
+      const updatedCart = await updateCartAttributes(current.id, [...kept, ...attributes])
       setCart(updatedCart)
     } catch (err) {
       toast.error('Erreur lors de la mise à jour')
@@ -344,7 +443,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return (
     <CartContext.Provider value={{
       cart, isLoading, isInitializing, isOpen, totalQuantity,
-      openCart, closeCart, addItem, updateItem, flushCartUpdates, removeItem, setCartAttributes,
+      openCart, closeCart, addItem, addItems, updateItem, flushCartUpdates, removeItem, setCartAttributes,
       applyDiscountCode, removeDiscountCode,
       relayPickup, selectRelayPickup, clearRelayPickup,
     }}>
