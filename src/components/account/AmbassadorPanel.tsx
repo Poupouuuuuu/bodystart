@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { BadgeCheck, Copy, Loader2, TrendingUp, Users, Wallet, ArrowDownRight, ArrowUpRight, Ticket } from 'lucide-react'
 import { useAmbassador, type AmbassadorTx } from '@/hooks/useAmbassador'
 import { toast } from '@/lib/toast'
+import { CONTACT_EMAIL } from '@/lib/store-info'
 
 const euros = (cents: number) =>
   (cents / 100).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €'
@@ -43,7 +44,7 @@ export function AmbassadorPanel() {
       <div className="bg-white rounded-2xl border border-spruce/10 p-8 text-center">
         <p className="text-ink-mute text-sm font-medium">
           Cet espace est réservé aux ambassadeurs BodyStart. Tu veux le devenir ?{' '}
-          <a href="mailto:contact.nexus.developpement@gmail.com" className="text-fresh font-semibold underline underline-offset-4">
+          <a href={`mailto:${CONTACT_EMAIL}`} className="text-fresh font-semibold underline underline-offset-4">
             Écris-nous.
           </a>
         </p>

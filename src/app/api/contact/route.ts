@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { CONTACT_EMAIL } from '@/lib/store-info'
 
-const TO = process.env.CONTACT_EMAIL_TO ?? 'bodystartnutrition@gmail.com'
+const TO = process.env.CONTACT_EMAIL_TO ?? CONTACT_EMAIL
 // Expéditeur Resend. Par défaut le domaine de TEST Resend (onboarding@resend.dev),
 // qui ne délivre qu'à l'adresse propriétaire du compte Resend. Au go-live :
 // vérifier un vrai domaine dans Resend puis définir RESEND_FROM (ex:

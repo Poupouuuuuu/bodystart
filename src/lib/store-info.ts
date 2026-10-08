@@ -11,6 +11,14 @@
  */
 export const GOOGLE_REVIEW_URL = 'https://g.page/r/CUW9gSjUXRTTEBM/review'
 
+/**
+ * Adresse de contact publiée partout sur le site (pages légales, FAQ, boutique,
+ * JSON-LD). Adresse du domaine (Infomaniak, redirigée vers la boîte Gmail de la
+ * boutique) : jamais l'adresse Gmail elle-même, un client ne pourrait pas
+ * distinguer un vrai message d'une usurpation créée sur une messagerie gratuite.
+ */
+export const CONTACT_EMAIL = 'contact@bodystart-nutrition.fr'
+
 /** Itinéraire vers la boutique (coordonnées exactes, déjà utilisées sur /stores). */
 export const GOOGLE_DIRECTIONS_URL =
   'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'

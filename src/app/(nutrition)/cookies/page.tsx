@@ -4,6 +4,7 @@ import { ArrowLeft, Cookie, Lock, BarChart3, Megaphone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buildPageMetadata } from '@/lib/seo'
 import CookieSettingsButton from '@/components/ui/CookieSettingsButton'
+import { CONTACT_EMAIL } from '@/lib/store-info'
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/cookies',
@@ -119,10 +120,10 @@ export default function CookiesPage() {
           <p className="text-ink">
             Pour en savoir plus ou exercer vos droits :{' '}
             <a
-              href="mailto:bodystartnutrition@gmail.com"
+              href={`mailto:${CONTACT_EMAIL}`}
               className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
             >
-              bodystartnutrition@gmail.com
+              {CONTACT_EMAIL}
             </a>
           </p>
         </div>
