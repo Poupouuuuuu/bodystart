@@ -98,9 +98,9 @@ export default function HeroV3() {
               </Link>
               <Link
                 href="/conseil"
-                className="group inline-flex min-h-[44px] items-center gap-2 text-[15px] font-semibold text-white/90 transition-colors duration-500 ease-out-expo hover:text-white"
+                className="press group inline-flex min-h-[52px] items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 text-[15px] font-semibold text-white backdrop-blur-md transition-colors duration-500 ease-out-expo hover:bg-white/20"
               >
-                Demander conseil
+                Trouve ton produit en 1 min
                 <ArrowUpRight
                   className="h-4 w-4 transition-transform duration-500 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                   strokeWidth={1.75}
