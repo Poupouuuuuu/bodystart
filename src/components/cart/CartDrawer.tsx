@@ -14,6 +14,7 @@ import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { getCartLineComponentImages } from '@/lib/shopify/bundle'
 import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
+import { RELAY_ATTRIBUTE_KEYS } from '@/lib/mondialRelay'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
@@ -35,7 +36,7 @@ type CrossSellItem = {
 }
 
 export default function CartDrawer() {
-  const { cart, isOpen, isLoading, isInitializing, closeCart, addItem, updateItem, flushCartUpdates, removeItem, setCartAttributes, relayPickup, clearRelayPickup } = useCart()
+  const { cart, isOpen, isLoading, isInitializing, closeCart, addItem, updateItem, flushCartUpdates, removeItem, setCartAttributes } = useCart()
 
   const [isClickAndCollect, setIsClickAndCollect] = useState(false)
 
@@ -230,12 +231,9 @@ export default function CartDrawer() {
     setIsClickAndCollect(newValue)
 
     try {
-      // Passage en retrait : un point relais éventuel n'a plus de sens
-      // (attributs du point relais retirés du cart).
-      if (newValue && relayPickup) {
-        await clearRelayPickup()
-      }
-
+      // Une seule mise à jour, fusionnée avec les autres attributs du panier
+      // (source du guide /conseil…) ; en retrait, un point relais éventuel
+      // n'a plus de sens : ses attributs sont retirés dans le même appel.
       if (activeStore) {
         await setCartAttributes(
           newValue
@@ -246,7 +244,8 @@ export default function CartDrawer() {
             : [
                 { key: '__click_and_collect', value: 'false' },
                 { key: 'pickup_location_id', value: '' },
-              ]
+              ],
+          { remove: newValue ? RELAY_ATTRIBUTE_KEYS : [] }
         )
       }
     } catch {
@@ -525,7 +524,7 @@ export default function CartDrawer() {
                   {activeStore && (
                     <div className="flex bg-white p-1 rounded-xl mb-4 border border-spruce/10">
                 {/* disabled pendant la mutation : un double-tap rapide lançait
-                    deux flux clearRelayPickup/setCartAttributes entrelacés */}
+                    deux mises à jour d'attributs entrelacées */}
                 <button
                   onClick={() => isClickAndCollect && toggleClickAndCollect()}
                   disabled={isLoading}

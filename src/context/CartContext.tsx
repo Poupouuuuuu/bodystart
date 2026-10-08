@@ -36,7 +36,9 @@ interface CartContextType {
    *  partir au checkout pour ne pas payer une quantité périmée). */
   flushCartUpdates: () => Promise<void>
   removeItem: (lineId: string) => Promise<void>
-  setCartAttributes: (attributes: { key: string; value: string }[]) => Promise<void>
+  /** Pose des attributs en les FUSIONNANT avec ceux du panier (source du guide
+   *  /conseil, parrainage…) ; `remove` retire des clés en plus (point relais). */
+  setCartAttributes: (attributes: { key: string; value: string }[], options?: { remove?: string[] }) => Promise<void>
   applyDiscountCode: (code: string) => Promise<void>
   removeDiscountCode: (code: string) => Promise<void>
   // Mondial Relay (point relais)
@@ -330,11 +332,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cart])
 
-  const setCartAttributes = useCallback(async (attributes: { key: string; value: string }[]) => {
-    if (!cart) return
+  const setCartAttributes = useCallback(async (
+    attributes: { key: string; value: string }[],
+    options?: { remove?: string[] }
+  ) => {
+    const current = cartRef.current ?? cart
+    if (!current) return
     setIsLoading(true)
     try {
-      const updatedCart = await updateCartAttributes(cart.id, attributes)
+      // cartAttributesUpdate remplace TOUS les attributs : on garde ceux du
+      // panier (source=guide-conseil, objectif, budget…) sauf ceux qu'on
+      // remplace ou qu'on retire. Avant : la bascule Livraison/Retrait les
+      // effaçait tous.
+      const replaced = new Set([...attributes.map((a) => a.key), ...(options?.remove ?? [])])
+      const kept = (current.attributes ?? [])
+        .filter((a) => a.value != null && !replaced.has(a.key))
+        .map((a) => ({ key: a.key, value: a.value as string }))
+      const updatedCart = await updateCartAttributes(current.id, [...kept, ...attributes])
       setCart(updatedCart)
     } catch (err) {
       toast.error('Erreur lors de la mise à jour')
