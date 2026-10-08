@@ -14,6 +14,7 @@ import { SlidersHorizontal, X, ChevronDown, Search, Package } from 'lucide-react
 import { cn } from '@/lib/utils'
 import { availableFirst } from '@/lib/product-order'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
+import { cardPriceOf } from '@/lib/product-price'
 import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 
 // ─── Objectifs (bandeau haut) ───
@@ -357,25 +358,21 @@ export function ProductsCatalog({
       }
     }
 
+    // Filtre et tri sur le prix AFFICHÉ par la carte (lib/product-price).
+    const shownPrice = (p: ShopifyProduct) =>
+      parseFloat((cardPriceOf(p)?.price ?? p.priceRange.minVariantPrice).amount)
+
     result = result.filter((p) => {
-      const price = parseFloat(p.priceRange.minVariantPrice.amount)
+      const price = shownPrice(p)
       return price >= priceRange[0] && price <= priceRange[1]
     })
 
     switch (sortKey) {
       case 'price-asc':
-        result.sort(
-          (a, b) =>
-            parseFloat(a.priceRange.minVariantPrice.amount) -
-            parseFloat(b.priceRange.minVariantPrice.amount)
-        )
+        result.sort((a, b) => shownPrice(a) - shownPrice(b))
         break
       case 'price-desc':
-        result.sort(
-          (a, b) =>
-            parseFloat(b.priceRange.minVariantPrice.amount) -
-            parseFloat(a.priceRange.minVariantPrice.amount)
-        )
+        result.sort((a, b) => shownPrice(b) - shownPrice(a))
         break
       case 'name':
         result.sort((a, b) => a.title.localeCompare(b.title))
@@ -438,18 +435,15 @@ export function ProductsCatalog({
           reste active pour les deep-links ?obj=... venant de la home. */}
       <div className="container pb-10">
         {/* ─── Barre de contrôle ─── */}
-        {/* gap-3 / pr-9 / min-w-0 : la barre débordait de 2 px à 390 px
-            (défilement horizontal) ; plus étroit encore, le tri rétrécit
-            au lieu de pousser la page. */}
+        {/* Mobile : le compteur est masqué (il est repris au-dessus de « Voir
+            plus ») pour laisser au tri sa largeur entière. Avant, à 390 px, la
+            barre débordait ; la faire rétrécir coupait « Meilleures ventes ». */}
         <div className="flex items-center justify-between mb-6 gap-3">
-          {/* Mobile : « 12 sur 110 » sur une ligne (le mot se cassait sur 3 lignes
-              a cote des boutons Filtres / tri). */}
-          <p className="text-[13px] text-ink-mute whitespace-nowrap">
-            {Math.min(visibleCount, filtered.length)} sur {filtered.length}
-            <span className="hidden sm:inline"> produit{filtered.length > 1 ? 's' : ''}</span>
+          <p className="hidden sm:block text-[13px] text-ink-mute whitespace-nowrap">
+            {Math.min(visibleCount, filtered.length)} sur {filtered.length} produit{filtered.length > 1 ? 's' : ''}
           </p>
 
-          <div className="flex min-w-0 items-center gap-2.5">
+          <div className="flex w-full items-center justify-between gap-2.5 sm:w-auto sm:justify-start">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="lg:hidden inline-flex h-11 items-center gap-2 px-4 bg-white rounded-full text-[14px] font-semibold text-spruce border border-spruce/15 hover:border-spruce/40 transition-colors"
@@ -478,12 +472,12 @@ export function ProductsCatalog({
               )}
             </div>
 
-            <div className="relative min-w-0">
+            <div className="relative">
               <select
                 value={sortKey}
                 onChange={(e) => setSortKey(e.target.value)}
                 aria-label="Trier les produits"
-                className="appearance-none h-11 md:h-auto max-w-full bg-white rounded-full text-[16px] md:text-[13px] text-ink border border-spruce/15 pl-4 pr-9 py-2 cursor-pointer focus:outline-none focus:border-spruce/40"
+                className="appearance-none h-11 md:h-auto bg-white rounded-full text-[16px] md:text-[13px] text-ink border border-spruce/15 pl-4 pr-10 py-2 cursor-pointer focus:outline-none focus:border-spruce/40"
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.key} value={o.key}>

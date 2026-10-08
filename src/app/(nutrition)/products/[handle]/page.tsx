@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { getProductByHandle, getProducts } from '@/lib/shopify'
 import { pickComplements } from '@/lib/merchandising'
+import { wheyLabel } from '@/lib/product-subtitle'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { isBundle, pickInitialBundleVariant } from '@/lib/shopify/bundle'
 import { pickDefaultVariant } from '@/lib/product-variant'
@@ -89,9 +90,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-// Tags Shopify qui donnent une pastille benefice automatique sur la buy box
+// Tags Shopify qui donnent une pastille benefice automatique sur la buy box.
+// Le type de whey (claire, isolat, concentrée) vient de wheyLabel, d'après
+// les étiquettes précises : l'étiquette « whey » seule ne dit pas lequel.
 const BENEFIT_TAGS_MAP: Record<string, string> = {
-  whey: 'Whey isolat',
   'sans-sucre': 'Sans sucre',
   vegan: '100% végétal',
   'anti-dopage': 'Certifié anti-dopage',
@@ -100,8 +102,9 @@ const BENEFIT_TAGS_MAP: Record<string, string> = {
   bio: 'Bio',
 }
 
-function extractBenefits(tags: string[]): string[] {
-  const out: string[] = []
+function extractBenefits(tags: string[], title: string): string[] {
+  const whey = wheyLabel(tags, title)
+  const out: string[] = whey ? [whey] : []
   for (const tag of tags) {
     const label = BENEFIT_TAGS_MAP[tag.toLowerCase()]
     if (label && !out.includes(label)) out.push(label)
@@ -158,20 +161,10 @@ export default async function ProductPage({ params }: Props) {
   const mainVariant = productIsBundle
     ? pickInitialBundleVariant(product.variants.nodes)
     : pickDefaultVariant(product.variants.nodes)
-  const hasDiscount =
-    mainVariant?.compareAtPrice &&
-    parseFloat(mainVariant.compareAtPrice.amount) > parseFloat(mainVariant.price.amount)
-  const discountPct = hasDiscount
-    ? Math.round(
-        ((parseFloat(mainVariant!.compareAtPrice!.amount) - parseFloat(mainVariant!.price.amount)) /
-          parseFloat(mainVariant!.compareAtPrice!.amount)) *
-          100
-      )
-    : null
 
   const collectionName = product.collections?.nodes?.[0]?.title ?? null
   const collectionHandle = product.collections?.nodes?.[0]?.handle ?? null
-  const benefits = extractBenefits(product.tags ?? [])
+  const benefits = extractBenefits(product.tags ?? [], product.title)
   const format = extractFormat(product.metafields)
   // Bloc « Précautions d'emploi » (complément alimentaire) : pas pour les aliments
   // courants (barres, snacks, boissons) ni les accessoires (relecture UE, 25/09/2026).
@@ -291,7 +284,6 @@ export default async function ProductPage({ params }: Props) {
             title={product.title}
             handle={product.handle}
             productType={product.productType}
-            discountPct={discountPct}
             collectionName={collectionName}
             collectionHandle={collectionHandle}
             activeStore={activeStore}
@@ -335,7 +327,9 @@ export default async function ProductPage({ params }: Props) {
       />
 
       {/* ─── Avis ─── */}
-      <Suspense fallback={null}><ReviewsV2 /></Suspense>
+      {/* Sans <Suspense> : composant serveur (note Google), rien à hydrater ;
+          la frontière ne servait qu'à l'envoyer dans un bloc caché sans JS. */}
+      <ReviewsV2 />
 
       {/* ─── Cross-sell + nudge franco ─── */}
       {relatedProducts.length > 0 && (

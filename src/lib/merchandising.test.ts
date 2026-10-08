@@ -57,13 +57,13 @@ describe('pickComplements', () => {
     expect(out).not.toContain('shaker-eric-favre')
     expect(out).not.toContain('creatine-epuisee')
   })
-  it('à tour de rôle par famille, puis moins de résultats plutôt qu’un concurrent', () => {
+  it('un seul produit par famille, quitte à en proposer moins', () => {
     const out = pickComplements(p('whey', 'Protéines'), POOL, 10).map((x) => x.handle)
-    expect(out).toEqual(['creatine-dedicated', 'shaker-skill', 'cream-of-rice', 'crunch-bar', 'creatine-dy', 'critical-cookie'])
+    expect(out).toEqual(['creatine-dedicated', 'shaker-skill', 'cream-of-rice', 'crunch-bar'])
   })
-  it('sous une créatine : protéine, shaker, collation (jamais une autre créatine)', () => {
+  it('sous une créatine : protéine, shaker, collation seulement (ni 2ᵉ protéine ni autre créatine)', () => {
     const out = pickComplements(POOL[5], POOL).map((x) => x.handle)
-    expect(out).toEqual(['whey-native-protimuscle', 'shaker-skill', 'crunch-bar', 'shadowhey-isolate'])
+    expect(out).toEqual(['whey-native-protimuscle', 'shaker-skill', 'crunch-bar'])
   })
 })
 

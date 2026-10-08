@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import HeroV3 from '@/components/home/v3/HeroV3'
 import MarqueeBand from '@/components/home/v3/MarqueeBand'
 import ObjectifsV3 from '@/components/home/v3/ObjectifsV3'
@@ -38,7 +37,10 @@ export const metadata: Metadata = {
 // placeholder "BS" sur les produits ajoutés/imagés après le dernier déploiement.
 export const revalidate = 3600
 
-// Sections async isolees → streaming via Suspense pour ne pas bloquer le Hero (LCP)
+// Meilleures ventes : rendues avec la page, SANS <Suspense> (08/10/2026). La
+// page est en ISR (HTML régénéré au plus toutes les heures, servi depuis le
+// cache) : le streaming n'apportait rien au visiteur et envoyait la section
+// dans un bloc caché, invisible sans JS.
 async function BestSellersAsync() {
   let products: import('@/lib/shopify/types').ShopifyProduct[] = []
   try {
@@ -54,11 +56,6 @@ async function BestSellersAsync() {
     // Sans cles API, section vide
   }
   return <BestSellersV3 products={products} />
-}
-
-// Skeleton leger pour eviter le CLS pendant le streaming
-function SectionFallback({ minHeight = '500px' }: { minHeight?: string }) {
-  return <div style={{ minHeight }} aria-hidden="true" />
 }
 
 export default function HomePage() {
@@ -78,9 +75,7 @@ export default function HomePage() {
 
       {/* 3. Best-sellers (data Shopify, streame) */}
       <Reveal>
-        <Suspense fallback={<SectionFallback minHeight="760px" />}>
-          <BestSellersAsync />
-        </Suspense>
+        <BestSellersAsync />
       </Reveal>
 
       {/* 3 bis. Vu sur Instagram — vidéos d'influenceurs tournées à la boutique.

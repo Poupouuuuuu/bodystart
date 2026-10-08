@@ -24,6 +24,7 @@ import { cn, formatPrice } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { productSubtitle } from '@/lib/product-subtitle'
+import { cardPriceOf } from '@/lib/product-price'
 
 // ─── Badges (tags Shopify → pastilles) ───
 
@@ -61,23 +62,23 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
 
   // Sous-titre : libellé propre tiré d'une liste blanche d'étiquettes, jamais
   // la catégorie en double ni une étiquette brute (lib/product-subtitle).
-  const subtitle = productSubtitle(product.tags, categoryLabel)
+  const subtitle = productSubtitle(product.tags, {
+    category: categoryLabel,
+    title: product.title,
+    productType: product.productType,
+  })
 
-  const isSante = isSanteProduct(product)
+  // Badge « Santé » seulement si la catégorie affichée ne le dit pas déjà.
+  const isSante =
+    isSanteProduct(product) &&
+    (categoryLabel ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() !== 'sante'
   const isBest = isBestSeller(product)
   const showLowStock = stockAtStore !== undefined && stockAtStore > 0 && stockAtStore <= 5
 
-  // Promo si compareAtPrice > price
-  const hasDiscount =
-    variant?.compareAtPrice &&
-    parseFloat(variant.compareAtPrice.amount) > parseFloat(variant.price.amount)
-  const discountPct = hasDiscount
-    ? Math.round(
-        ((parseFloat(variant!.compareAtPrice!.amount) - parseFloat(variant!.price.amount)) /
-          parseFloat(variant!.compareAtPrice!.amount)) *
-          100
-      )
-    : null
+  // Prix de la variante en stock la moins chère, « dès » si les prix varient,
+  // remise seulement sur CETTE variante (lib/product-price).
+  const prix = cardPriceOf(product)
+  const discountPct = prix?.discountPct ?? null
 
   // Le bouton est actif si : multi-variantes AVEC au moins une dispo (→ fiche),
   // ou mono-variante disponible (→ ajout direct). Produit épuisé → grisé,
@@ -211,12 +212,11 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
             {/* Le prix en serif extrabold : c'est LE chiffre de la carte, il doit
                 dominer le titre (19px contre 16px). */}
             <span className="font-display text-[19px] font-extrabold tracking-tight text-spruce">
-              {formatPrice(product.priceRange.minVariantPrice)}
+              {prix?.from && <span className="mr-1 font-sans text-[13px] font-medium text-ink-mute">dès</span>}
+              {formatPrice(prix?.price ?? product.priceRange.minVariantPrice)}
             </span>
-            {variant?.compareAtPrice && hasDiscount && (
-              <span className="text-[12px] text-ink-mute line-through">
-                {formatPrice(variant.compareAtPrice)}
-              </span>
+            {prix?.compareAt && (
+              <span className="text-[12px] text-ink-mute line-through">{formatPrice(prix.compareAt)}</span>
             )}
           </div>
 

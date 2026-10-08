@@ -8,7 +8,7 @@
 //   l'intention de sortie dès la 1re page. Plus de déclenchement au premier
 //   écran sur mobile (le bandeau couvrait les deux tiers de l'écran).
 // - Jamais sur /conseil, /jeu, les fiches produit, /staff (caisse), un checkout,
-//   ni pour un client connecté.
+//   ni pour un client connecté, ni avant la réponse au bandeau cookies.
 // - Une fois par visiteur tous les 30 jours (date posée dès l'affichage).
 // - Soumission → /api/subscribe (abonne le contact dans Shopify). Le code part
 //   par email via l'automatisation Shopify Email : on ne l'affiche jamais ici.
@@ -18,6 +18,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { X, Mail, Check, Loader2 } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
+import { CONSENT_EVENT, readConsent } from '@/lib/consent'
 import {
   NEWSLETTER_DELAY_MS,
   NEWSLETTER_FLAG,
@@ -40,6 +41,16 @@ export default function NewsletterPopup() {
   const [pageViews, setPageViews] = useState(0)
 
   const excluded = isExcludedPath(pathname)
+
+  // Jamais par-dessus le bandeau cookies : on attend que le visiteur ait fait
+  // son choix (accepter, refuser ou personnaliser), puis les règles normales.
+  const [consentAnswered, setConsentAnswered] = useState(false)
+  useEffect(() => {
+    const sync = () => setConsentAnswered(readConsent() !== null)
+    sync()
+    window.addEventListener(CONSENT_EVENT, sync)
+    return () => window.removeEventListener(CONSENT_EVENT, sync)
+  }, [])
 
   // Pages vues de la visite (sessionStorage) : +1 à chaque changement de page.
   useEffect(() => {
@@ -78,7 +89,7 @@ export default function NewsletterPopup() {
   // un délai lancé sur l'accueil ne s'ouvre jamais sur une fiche produit).
   useEffect(() => {
     if (isLoading || pageViews === 0) return // connecté ? page comptée ?
-    if (excluded || isLoggedIn || shownRef.current) return
+    if (!consentAnswered || excluded || isLoggedIn || shownRef.current) return
     let seen = false
     try {
       const raw = localStorage.getItem(NEWSLETTER_FLAG)
@@ -102,7 +113,7 @@ export default function NewsletterPopup() {
       if (timer) clearTimeout(timer)
       document.removeEventListener('mouseout', onMouseOut)
     }
-  }, [isLoading, excluded, isLoggedIn, show, pageViews])
+  }, [isLoading, consentAnswered, excluded, isLoggedIn, show, pageViews])
 
   // Fermeture à la touche Échap
   useEffect(() => {
@@ -157,9 +168,10 @@ export default function NewsletterPopup() {
       className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center sm:p-4 bg-ink/50 backdrop-blur-sm animate-fade-in"
       onClick={close}
     >
-      {/* Mobile : BOTTOM-SHEET (≈ contenu, max 85dvh) au lieu du plein écran —
-          l'interstitiel full-screen est pénalisé par Google et interrompt la
-          navigation. Desktop : modale centrée inchangée. */}
+      {/* Mobile : BOTTOM-SHEET compact (≈ 40 % de l'écran, 08/10/2026) : pas
+          d'icône, texte court, marges serrées. L'interstitiel plein écran est
+          pénalisé par Google et interrompt la navigation. Desktop : modale
+          centrée inchangée. */}
       <div
         className="relative bg-canvas w-full max-h-[85dvh] rounded-t-2xl sm:max-w-md sm:rounded-2xl overflow-y-auto flex flex-col shadow-2xl animate-slide-up sm:animate-none"
         onClick={(e) => e.stopPropagation()}
@@ -172,7 +184,7 @@ export default function NewsletterPopup() {
           <X className="w-5 h-5" />
         </button>
 
-        <div className="px-7 py-10 sm:px-9 sm:py-9 max-w-md mx-auto w-full">
+        <div className="px-6 pt-6 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-9 sm:py-9 max-w-md mx-auto w-full">
           {status === 'success' ? (
             /* ─── Succès ─── */
             <div className="text-center">
@@ -195,21 +207,23 @@ export default function NewsletterPopup() {
           ) : (
             /* ─── Formulaire ─── */
             <>
-              <span className="inline-flex w-14 h-14 rounded-full bg-sage items-center justify-center mb-5">
+              <span className="hidden sm:inline-flex w-14 h-14 rounded-full bg-sage items-center justify-center mb-5">
                 <Mail className="w-7 h-7 text-spruce" />
               </span>
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-fresh-deep mb-2">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-fresh-deep mb-1.5 sm:mb-2 pr-12 sm:pr-0">
                 Offre de bienvenue
               </p>
-              <h2 className="font-display text-[26px] sm:text-[28px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-3">
+              <h2 className="font-display text-[22px] sm:text-[28px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-2 sm:mb-3 pr-10 sm:pr-0">
                 -5 % sur ta première commande ?
               </h2>
-              <p className="text-[15px] text-ink-mute leading-relaxed mb-6">
-                Laisse ton email, on t&apos;envoie ton code. Et tu seras au courant des nouveautés
-                et bons plans avant tout le monde.
+              <p className="text-[14px] sm:text-[15px] text-ink-mute leading-relaxed mb-4 sm:mb-6">
+                Laisse ton email, on t&apos;envoie ton code.
+                <span className="hidden sm:inline">
+                  {' '}Et tu seras au courant des nouveautés et bons plans avant tout le monde.
+                </span>
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-3" noValidate>
+              <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3" noValidate>
                 <input
                   ref={emailInputRef}
                   type="email"
@@ -225,7 +239,7 @@ export default function NewsletterPopup() {
                   aria-label="Ton adresse email"
                   aria-invalid={status === 'error'}
                   aria-describedby={status === 'error' ? 'newsletter-error' : undefined}
-                  className="w-full px-5 py-3.5 rounded-full border border-spruce/20 bg-white text-[16px] md:text-[15px] font-medium text-ink placeholder:text-ink-mute/60 focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 transition-all"
+                  className="w-full px-5 py-3 sm:py-3.5 rounded-full border border-spruce/20 bg-white text-[16px] md:text-[15px] font-medium text-ink placeholder:text-ink-mute/60 focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30 transition-all"
                 />
                 {status === 'error' && (
                   <p id="newsletter-error" role="alert" className="text-[13px] font-medium text-terracotta px-1">
@@ -235,7 +249,7 @@ export default function NewsletterPopup() {
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full py-3.5 rounded-full bg-fresh text-white text-[15px] font-semibold hover:bg-fresh-deep transition-colors inline-flex items-center justify-center gap-2 disabled:opacity-70"
+                  className="w-full py-3 sm:py-3.5 rounded-full bg-fresh text-white text-[15px] font-semibold hover:bg-fresh-deep transition-colors inline-flex items-center justify-center gap-2 disabled:opacity-70"
                 >
                   {status === 'loading' ? (
                     <>
@@ -247,7 +261,7 @@ export default function NewsletterPopup() {
                 </button>
               </form>
 
-              <p className="text-[11px] text-ink-mute/80 leading-relaxed mt-5">
+              <p className="text-[11px] text-ink-mute/80 leading-snug sm:leading-relaxed mt-3 sm:mt-5">
                 En t&apos;inscrivant, tu acceptes de recevoir nos emails. Tu peux te désabonner à
                 tout moment.{' '}
                 {/* Lien au fil du texte : py-4 agrandit la zone tactile à 44 px sans
@@ -263,7 +277,7 @@ export default function NewsletterPopup() {
               </p>
               <button
                 onClick={close}
-                className="mx-auto mt-2 flex w-fit min-h-[44px] items-center px-3 text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-spruce transition-colors"
+                className="mx-auto sm:mt-2 flex w-fit min-h-[44px] items-center px-3 text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-spruce transition-colors"
               >
                 Non merci, plus tard
               </button>

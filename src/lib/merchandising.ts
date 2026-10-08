@@ -106,9 +106,10 @@ interface Candidate {
 
 /**
  * Suggestions pour un produit affiché : produits des familles complémentaires,
- * marques exclues retirées, disponibles, un par famille à tour de rôle (dans
- * l'ordre de préférence) pour varier, dans l'ordre du pool (meilleures ventes).
- * Moins de `n` résultats plutôt qu'un concurrent pour compléter.
+ * marques exclues retirées, disponibles, UN SEUL par famille (le mieux vendu,
+ * ordre du pool), dans l'ordre de préférence des familles. Moins de `n`
+ * résultats plutôt que deux produits de la même famille (relecture du
+ * 08/10/2026 : deux créatines proposées sous une whey) ou un concurrent.
  */
 export function pickComplements<T extends Candidate>(current: Candidate, pool: T[], n = 4): T[] {
   const wanted = COMPLEMENTS[familyOf(current)]
@@ -122,16 +123,9 @@ export function pickComplements<T extends Candidate>(current: Candidate, pool: T
     seen.add(p.handle)
   }
   const out: T[] = []
-  for (let round = 0; out.length < n; round++) {
-    let added = false
-    for (const f of wanted) {
-      const p = byFamily.get(f)?.[round]
-      if (p && out.length < n) {
-        out.push(p)
-        added = true
-      }
-    }
-    if (!added) break
+  for (const f of wanted) {
+    const p = byFamily.get(f)?.[0]
+    if (p && out.length < n) out.push(p)
   }
   return out
 }

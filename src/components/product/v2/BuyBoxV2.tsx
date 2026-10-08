@@ -14,6 +14,7 @@ import StockAlertForm from './StockAlertForm'
 import { getBundleComponentDetailsFromVariant, getCompleteBundleVariants, pickInitialBundleVariant } from '@/lib/shopify/bundle'
 import { initialImageIndex, pickDefaultVariant, variantFromSearch } from '@/lib/product-variant'
 import TrackViewItem from '@/components/analytics/TrackViewItem'
+import { discountPctOf } from '@/lib/product-price'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
 
 interface BuyBoxV2Props {
@@ -24,7 +25,6 @@ interface BuyBoxV2Props {
   handle: string
   /** Type de produit Shopify : catégorie pour Meta (ViewContent). */
   productType?: string | null
-  discountPct: number | null
   collectionName: string | null
   collectionHandle: string | null
   activeStore?: BodyStartStore
@@ -84,7 +84,6 @@ export default function BuyBoxV2({
   title,
   handle,
   productType = null,
-  discountPct,
   collectionHandle,
   activeStore,
   productId,
@@ -341,18 +340,20 @@ export default function BuyBoxV2({
       )}
       <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-start">
         {/* ─── Galerie ─── */}
+        {/* Pastille -X % : remise de la variante AFFICHÉE (compareAtPrice > price
+            sur cette variante), pas celle de la variante d'ouverture. */}
         <div className="lg:sticky lg:top-24">
           {isBundleMode ? (
             <BundleGalleryV2
               components={bundleDetails}
               title={title}
-              discountPct={discountPct}
+              discountPct={discountPctOf(selectedVariant)}
             />
           ) : (
             <ProductGalleryV2
               images={images}
               title={title}
-              discountPct={discountPct}
+              discountPct={discountPctOf(selectedVariant)}
               selectedIndex={selectedImageIndex}
               priorityIndex={openingImageIndex}
               onImageChange={handleImageChange}
@@ -400,13 +401,11 @@ export default function BuyBoxV2({
             <span className="font-display text-[32px] md:text-[36px] font-extrabold text-spruce leading-none">
               {formatPrice(selectedVariant.price)}
             </span>
-            {selectedVariant.compareAtPrice &&
-              parseFloat(selectedVariant.compareAtPrice.amount) >
-                parseFloat(selectedVariant.price.amount) && (
-                <span className="text-[16px] text-ink-mute line-through font-medium">
-                  {formatPrice(selectedVariant.compareAtPrice)}
-                </span>
-              )}
+            {selectedVariant.compareAtPrice && discountPctOf(selectedVariant) !== null && (
+              <span className="text-[16px] text-ink-mute line-through font-medium">
+                {formatPrice(selectedVariant.compareAtPrice)}
+              </span>
+            )}
           </div>
 
           {/* Selecteurs : BundleSelectorsV2 si bundle, sinon saveur/format produit normal */}

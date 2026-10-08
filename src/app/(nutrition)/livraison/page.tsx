@@ -70,7 +70,7 @@ const shippingMethods = [
 const HERO_HIGHLIGHTS = [
   { Icon: Truck, label: 'Colissimo', sub: `${COLISSIMO.transitDays![0]}-${COLISSIMO.transitDays![1]} jours` },
   { Icon: Package, label: 'Mondial Relay', sub: `${MONDIAL_RELAY.transitDays![0]}-${MONDIAL_RELAY.transitDays![1]} jours` },
-  { Icon: Store, label: 'Click & Collect', sub: 'Sous 2h' },
+  { Icon: Store, label: 'Click & Collect', sub: PICKUP_PROMISE.court },
 ]
 
 export default async function LivraisonPage() {

@@ -32,11 +32,26 @@ export const PRODUCT_CARD_FRAGMENT = `
         title
       }
     }
+    # Toutes les variantes, champs minimaux : prix de carte calculé côté
+    # serveur (lib/product-price, via lib/shopify) puis retiré du produit.
+    prixVariantes: variants(first: 100) {
+      nodes {
+        availableForSale
+        price {
+          amount
+          currencyCode
+        }
+        compareAtPrice {
+          amount
+          currencyCode
+        }
+      }
+    }
     variants(first: 2) {
       # first: 2 (et pas 1) : le quick-add « + » des cartes doit savoir si le
       # produit a PLUSIEURS variantes (nodes.length > 1) pour renvoyer vers la
-      # fiche (choix de saveur) au lieu d'ajouter la 1re à l'aveugle. Les
-      # consommateurs n'utilisent que nodes[0] pour le prix, payload +1 variante.
+      # fiche (choix de saveur) au lieu d'ajouter la 1re à l'aveugle. Le prix
+      # affiché vient de prixVariantes (cardPrice), jamais de nodes[0].
       nodes {
         id
         title
@@ -245,6 +260,20 @@ export const GET_FEATURED_PRODUCTS = `
           nodes {
             handle
             title
+          }
+        }
+        # Toutes les variantes, champs minimaux : prix de carte (cf. PRODUCT_CARD_FRAGMENT).
+        prixVariantes: variants(first: 100) {
+          nodes {
+            availableForSale
+            price {
+              amount
+              currencyCode
+            }
+            compareAtPrice {
+              amount
+              currencyCode
+            }
           }
         }
         variants(first: 2) {

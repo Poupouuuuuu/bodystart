@@ -25,10 +25,10 @@ src/
 │   │   ├── products/       # Catalogue et fiches produit (+ stock en temps réel)
 │   │   ├── collections/    # Collections Shopify (+ breadcrumb JSON-LD)
 │   │   ├── objectifs/      # Navigation par objectif fitness
-│   │   ├── blog/           # Articles (+ loading.tsx)
+│   │   ├── blog/           # Articles
 │   │   ├── account/        # Espace client (protégé par middleware + error.tsx + loading.tsx)
 │   │   │   └── coaching/   # Dashboard coaching, programmes/[id], suivi de progression
-│   │   ├── stores/         # Boutiques physiques (+ loading.tsx)
+│   │   ├── stores/         # Boutique physique
 │   │   └── ...             # Pages légales, auth, etc.
 │   ├── (coaching)/         # Route group Coaching (pages publiques : home, programmes, tarifs)
 │   └── api/
@@ -182,6 +182,7 @@ Mesure de référence : `node .claude/skills/verif-prod/scripts/probe-perf.mjs [
 - **LCP** : tout grand visuel au-dessus du pli est un `<Image priority>` (jamais un `background-image` CSS : découvert tard, non préchargé) **avec `fetchPriority="high"`** : en Next 15, `priority` précharge en priorité réseau basse. Fiche produit : le fond végétal de la galerie est un `<Image priority fill unoptimized>`.
 - **Hero accueil** : `sizes` à 70vw sous 640 px, le téléphone prend la variante 828 px (67 Ko au lieu de 128 Ko) ; sur mobile seul le haut de la photo se voit, sous un voile sombre.
 - **Fond végétal** : un seul fichier, `/bg-vegetal-800.webp` (800 px, 20 Ko, flou), partagé par les cartes produit (CSS) et la galerie (même URL, un seul téléchargement). `/bg-vegetal.webp` (1200 px, 44 Ko) n'est plus qu'un original de travail.
+- **`<Suspense>` et `loading.tsx` cachent le contenu sans JS** (constaté le 08/10/2026) : le HTML d'une frontière pas encore prête part dans un `<div hidden>` révélé par un script. Header, Footer, meilleures ventes, /stores et /packs étaient ainsi invisibles sans JS. Sur une page ISR, pas de `<Suspense>` autour d'un contenu visible ni de `loading.tsx`, sauf besoin d'hydratation par îlot assumé (BuyBoxV2, CrossSellV2 sur la fiche). Contrôle : `curl -s URL | grep -c '<div hidden id="S:'` (les seuls restants doivent être des îlots voulus).
 - **`useSearchParams`** : jamais sans contenu d'attente rendu côté serveur. Un `<Suspense>` vide fait basculer tout son contenu en rendu navigateur (rien avant le JS, pas de liens dans le HTML). Modèle : `/products`, où le contenu d'attente est `<ProductsCatalog searchParams={null}>`, la vraie grille par défaut.
 - **Fraunces** (61 Ko, préchargée sur toutes les pages) : l'axe SOFT coûte 25 Ko (36 Ko sans). WONK ne coûte rien. Le retirer change le dessin des titres : décision de design, pas de perf seule.
 - **JS initial** : pas de `graphql-request` (client Shopify = `fetch`, `lib/shopify/client.ts`) ; `libphonenumber-js` importé dynamiquement au point d'usage ; toasts via `@/lib/toast` (jamais `react-hot-toast` en import direct, sinon le `<ToasterLazy>` ne se monte pas) ; tiroir panier monté à la demande (`CartDrawerLazy`) ; picker Mondial Relay en `next/dynamic`.
@@ -251,7 +252,7 @@ Tout est dans `.claude/` (hooks, skills, agents) et documenté dans `.claude/hoo
 - Cookie consent banner RGPD en place (`CookieBanner.tsx`) avec 3 options : accepter / refuser / personnaliser
 - JSON-LD en place : Organization + LocalBusiness dans le layout Nutrition, Product + BreadcrumbList sur les pages produit et collection
 - Error boundaries sur les routes root, nutrition, et account
-- Loading skeletons sur account, blog, stores
+- Loading skeletons sur account et search seulement (pages dynamiques) ; jamais de `loading.tsx` sur une page ISR (voir Performance mobile)
 - **Phase 3 Coaching** : Stripe Checkout (one-shot + subscription) pour 5 produits coaching, webhook pour activation/désactivation automatique
 - Les clients coaching reçoivent automatiquement un code promo -15% (`COACH-XXXXXXXX`) via l'Admin API Shopify (discount codes)
 - Espace coaching dans `/account/coaching` : dashboard, détail programme, suivi de progression (formulaire workout logging)

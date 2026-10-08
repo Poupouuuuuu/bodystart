@@ -6,7 +6,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Suspense, useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { ShoppingBag, Menu, X, ChevronDown, Search, User, Loader2, Phone, Navigation, MapPin } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
@@ -23,6 +23,8 @@ type SearchResult = {
   image: string | null
   price: string
   currency: string
+  /** Les variantes n'ont pas toutes le même prix : « dès ». */
+  from?: boolean
   availableForSale?: boolean
 }
 
@@ -64,15 +66,7 @@ const STORE = BODY_START_STORES.find((s) => s.isActive) ?? BODY_START_STORES[0]
 // « 07 61 84 75 80 » → tel:+33761847580
 const STORE_TEL = `tel:+33${STORE.phone.replace(/\s/g, '').replace(/^0/, '')}`
 
-export default function Header(props: HeaderProps) {
-  return (
-    <Suspense fallback={<div className="h-[104px] bg-white border-b border-spruce/10" />}>
-      <HeaderInner {...props} />
-    </Suspense>
-  )
-}
-
-function HeaderInner(_props: HeaderProps) {
+export default function Header(_props: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileCatsOpen, setMobileCatsOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -387,6 +381,7 @@ function HeaderInner(_props: HeaderProps) {
                               {result.title}
                             </p>
                             <p className="text-sm font-bold mt-0.5 text-spruce">
+                              {result.from && <span className="mr-1 font-medium text-ink-mute">dès</span>}
                               {formatPrice({ amount: result.price, currencyCode: result.currency })}
                             </p>
                           </div>
