@@ -79,8 +79,10 @@ describe('lotsAvailability', () => {
         { __typename: 'ProductVariant', id: 'gid://shopify/ProductVariant/54095546515798', price: '46.90', inventoryItem: level(0) },
       ],
     })
-    const { available, prices } = await lotsAvailability()
+    const { available, prices, stock } = await lotsAvailability()
     expect([...available].sort()).toEqual(['bon-5', 'crunch-bar', 'shaker', 'whey'])
+    // Unités en boutique par lot article (récap hebdo) : pas d'entrée pour le bon
+    expect(Object.fromEntries(stock)).toEqual({ 'canette-abe': 0, 'crunch-bar': 7, shaker: 53, creatine: 0, whey: 6 })
     expect(prices.get('whey')).toBe(46.9)
     expect(prices.get('crunch-bar')).toBe(2.9)
     expect(adminFetch.mock.calls[0][1].loc).toBe('gid://shopify/Location/119350657366')
@@ -178,6 +180,16 @@ describe('markParticipant', () => {
     expect(mf).not.toHaveProperty('compareDigest')
     expect(adminFetch.mock.calls[1][1].tags).toEqual(['jeu-roue', 'jeu-roue-shaker'])
     expect(adminFetch.mock.calls[3][1].input.note).toBe('Client fidèle\nJeu roue 07/10/2026 : Un shaker, code ROUE-ABC234')
+  })
+
+  it('case offres cochée : étiquette jeu-roue-optin en plus', async () => {
+    adminFetch
+      .mockResolvedValueOnce({ metafieldsSet: { userErrors: [] } })
+      .mockResolvedValueOnce({ tagsAdd: { userErrors: [] } })
+      .mockResolvedValueOnce({ customer: { note: null } })
+      .mockResolvedValueOnce({ customerUpdate: { userErrors: [] } })
+    await markParticipant(customer, lotById('shaker')!, result, true)
+    expect(adminFetch.mock.calls[1][1].tags).toEqual(['jeu-roue', 'jeu-roue-shaker', 'jeu-roue-optin'])
   })
 
   it('note illisible : rien n’est écrit dans la note, le reste est fait', async () => {

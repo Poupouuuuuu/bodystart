@@ -16,6 +16,9 @@ import { LOTS, JEU_LOCATION_ID, CODE_VALIDITY_DAYS, lotById, type Lot, type LotI
 const API = { apiVersion: '2026-04' }
 
 export const PARTICIPANT_TAG = 'jeu-roue'
+/** Case « offres par e-mail et SMS » cochée : compté dans le récap hebdo
+ *  (le filtre de recherche Shopify par abonnement e-mail est ignoré). */
+export const OPTIN_TAG = 'jeu-roue-optin'
 const MF_NAMESPACE = 'bodystart'
 const MF_KEY = 'jeu_roue'
 
@@ -193,7 +196,7 @@ const available = (v: StockVariant) => v.inventoryItem?.inventoryLevel?.quantiti
  * sur commande l'est toujours) et prix d'une unité (le plus élevé des
  * variantes ciblées, pour que l'article soit toujours entièrement offert).
  */
-export async function lotsAvailability(): Promise<{ available: Set<LotId>; prices: Map<LotId, number> }> {
+export async function lotsAvailability(): Promise<{ available: Set<LotId>; prices: Map<LotId, number>; stock: Map<LotId, number> }> {
   const ids = LOTS.flatMap((l) => [...(l.products ?? []), ...(l.variants ?? [])])
   const data = await shopifyAdminFetch<{ nodes: StockNode[] }>(
     `query LotsStock($ids: [ID!]!, $loc: ID!) {
@@ -214,17 +217,20 @@ export async function lotsAvailability(): Promise<{ available: Set<LotId>; price
 
   const avail = new Set<LotId>()
   const prices = new Map<LotId, number>()
+  const stock = new Map<LotId, number>()
   for (const lot of LOTS) {
     if (lot.type === 'order') {
       avail.add(lot.id)
       continue
     }
     const variants = [...(lot.products ?? []), ...(lot.variants ?? [])].flatMap((id) => byId.get(id) ?? [])
-    if (variants.reduce((sum, v) => sum + Math.max(0, available(v)), 0) > 0) avail.add(lot.id)
+    const units = variants.reduce((sum, v) => sum + Math.max(0, available(v)), 0)
+    stock.set(lot.id, units)
+    if (units > 0) avail.add(lot.id)
     const max = Math.max(0, ...variants.map((v) => Number(v.price)).filter(Number.isFinite))
     if (max > 0) prices.set(lot.id, max)
   }
-  return { available: avail, prices }
+  return { available: avail, prices, stock }
 }
 
 // ─── Réservation du tirage (verrou atomique, sans Redis) ──────
@@ -366,7 +372,7 @@ export async function createLotDiscount(lot: Lot, amount: number): Promise<{ cod
  * étape est indépendante : un échec est journalisé sans bloquer, le code est
  * déjà créé. Note illisible : on n'y écrit rien plutôt que d'écraser.
  */
-export async function markParticipant(customer: ShopCustomer, lot: Lot, result: JeuResult): Promise<void> {
+export async function markParticipant(customer: ShopCustomer, lot: Lot, result: JeuResult, optIn = false): Promise<void> {
   const steps: [string, () => Promise<UserError[]>][] = [
     ['metafield', () => setJeuMetafield(customer.id, JSON.stringify(result))],
     [
@@ -375,7 +381,7 @@ export async function markParticipant(customer: ShopCustomer, lot: Lot, result: 
         (
           await shopifyAdminFetch<{ tagsAdd: { userErrors: UserError[] } }>(
             `mutation AddTags($id: ID!, $tags: [String!]!) { tagsAdd(id: $id, tags: $tags) { userErrors { field message } } }`,
-            { id: customer.id, tags: [PARTICIPANT_TAG, `${PARTICIPANT_TAG}-${lot.id}`] },
+            { id: customer.id, tags: [PARTICIPANT_TAG, `${PARTICIPANT_TAG}-${lot.id}`, ...(optIn ? [OPTIN_TAG] : [])] },
             API
           )
         ).tagsAdd.userErrors,

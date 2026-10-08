@@ -82,6 +82,8 @@ describe('POST /api/jeu', () => {
       result: { lotId: 'bon-5', label: '5 € dès 30 € d’achat', code: 'ROUE-XYZ789', endsAt: '2026-11-06T10:00:00.000Z' },
     })
     expect(shop.createLotDiscount.mock.calls[0][1]).toBe(5)
+    // Case offres cochée transmise au marquage (étiquette jeu-roue-optin)
+    expect(shop.markParticipant.mock.calls[0][3]).toBe(true)
     // Résultat gardé AVANT le marquage Shopify
     expect(store.storeResult.mock.invocationCallOrder[0]).toBeLessThan(shop.markParticipant.mock.invocationCallOrder[0])
     expect(shop.claimSpin.mock.invocationCallOrder[0]).toBeLessThan(shop.createLotDiscount.mock.invocationCallOrder[0])
