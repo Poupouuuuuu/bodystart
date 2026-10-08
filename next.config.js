@@ -1,16 +1,22 @@
 /** @type {import('next').NextConfig} */
 
-// ─── Content-Security-Policy (Report-Only) ──────────────────────────────────
-// Introduite en Report-Only le 2026-07-17 : NE BLOQUE RIEN. Le navigateur se
-// contente de REMONTER les violations (console + en-tête sur la réponse) pour
-// inventorier finement les tiers réellement chargés avant tout passage en mode
-// bloquant. Tiers audités côté navigateur (2026-07-17) :
+// ─── Content-Security-Policy ────────────────────────────────────────────────
+// Introduite en Report-Only le 2026-07-17, BLOQUANTE en production depuis le
+// 2026-10-08 (dev : reste en Report-Only, le serveur de dev de Next a besoin
+// d'eval). Avant le passage, inventaire Playwright de toutes les violations
+// sur les parcours clés avec consentement complet (accueil, catalogue, fiche,
+// panier + choix d'un point relais, collection, boutiques, blog, recherche,
+// contact, pages légales, connexion, compte, /jeu, 404) : seul le widget
+// Mondial Relay manquait (ses CSS + Google Fonts). Les violations restantes
+// remontent dans les journaux Vercel via /api/csp-report (lignes « [csp] »).
+// Tiers audités côté navigateur (2026-07-17, revus le 2026-10-08) :
 //   - Shopify Storefront API (panier client) ...... connect (env NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN)
 //   - Supabase (auth loyalty côté client) ......... connect (env NEXT_PUBLIC_SUPABASE_URL)
 //   - GA4 post-consentement ....................... script/img/connect (googletagmanager + google-analytics)
 //   - Meta Pixel post-consentement publicité ...... script (connect.facebook.net) + img/connect (www.facebook.com)
 //   - Widget Mondial Relay ........................ jQuery (ajax.googleapis.com) + Leaflet (unpkg.com)
-//                                                   + plugin (widget.mondialrelay.com) + tuiles OSM
+//                                                   + plugin et CSS (widget.mondialrelay.com) + tuiles OSM
+//                                                   + police Montserrat (fonts.googleapis.com / fonts.gstatic.com)
 //   - Carte Google Maps (embed /stores) ........... frame (maps.google.com / www.google.com)
 //   - Images .......................................cdn.shopify.com ; visuels : images/plus.unsplash.com
 // Polices : next/font/google = AUTO-HÉBERGÉES → 'self' suffit (0 requête Google Fonts au runtime).
@@ -25,6 +31,20 @@ function cspHostFrom(urlOrDomain) {
     return ''
   }
 }
+
+// Barre d'outils Vercel (commentaires, partage) : injectée sur les previews
+// uniquement, jamais en production.
+const VERCEL_TOOLBAR =
+  process.env.VERCEL_ENV === 'preview'
+    ? {
+        script: ['https://vercel.live'],
+        style: ['https://vercel.live'],
+        font: ['https://vercel.live', 'https://assets.vercel.com'],
+        img: ['https://vercel.live', 'https://vercel.com'],
+        connect: ['https://vercel.live', 'wss://ws-us3.pusher.com'],
+        frame: ['https://vercel.live'],
+      }
+    : { script: [], style: [], font: [], img: [], connect: [], frame: [] }
 
 function buildContentSecurityPolicy() {
   const shopHost = cspHostFrom(process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN)
@@ -44,9 +64,17 @@ function buildContentSecurityPolicy() {
       'https://ajax.googleapis.com',
       'https://unpkg.com',
       'https://widget.mondialrelay.com',
+      ...VERCEL_TOOLBAR.script,
     ],
-    'style-src': ["'self'", "'unsafe-inline'", 'https://unpkg.com'],
-    'font-src': ["'self'", 'data:'],
+    'style-src': [
+      "'self'",
+      "'unsafe-inline'",
+      'https://unpkg.com',
+      'https://widget.mondialrelay.com',
+      'https://fonts.googleapis.com',
+      ...VERCEL_TOOLBAR.style,
+    ],
+    'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com', ...VERCEL_TOOLBAR.font],
     'img-src': [
       "'self'",
       'data:',
@@ -63,6 +91,7 @@ function buildContentSecurityPolicy() {
       'https://*.tile.openstreetmap.org',
       'https://maps.gstatic.com',
       'https://*.googleusercontent.com',
+      ...VERCEL_TOOLBAR.img,
     ],
     'connect-src': [
       "'self'",
@@ -76,17 +105,26 @@ function buildContentSecurityPolicy() {
       'https://www.facebook.com',
       'https://widget.mondialrelay.com',
       'https://api.mondialrelay.com',
+      ...VERCEL_TOOLBAR.connect,
     ].filter(Boolean),
-    'frame-src': ["'self'", 'https://maps.google.com', 'https://www.google.com'],
+    'frame-src': ["'self'", 'https://maps.google.com', 'https://www.google.com', ...VERCEL_TOOLBAR.frame],
     'worker-src': ["'self'", 'blob:'],
     'manifest-src': ["'self'"],
     'media-src': ["'self'"],
+    'upgrade-insecure-requests': [],
+    // Collecte des violations (journaux Vercel, cf. src/app/api/csp-report).
+    'report-uri': ['/api/csp-report'],
   }
 
   return Object.entries(directives)
-    .map(([directive, values]) => `${directive} ${values.join(' ')}`)
+    .map(([directive, values]) => [directive, ...values].join(' '))
     .join('; ')
 }
+
+// Bloquante en production. En dev, Report-Only : le serveur de dev de Next
+// évalue son code (eval), qu'une CSP bloquante sans 'unsafe-eval' casserait.
+const CSP_HEADER =
+  process.env.NODE_ENV === 'production' ? 'Content-Security-Policy' : 'Content-Security-Policy-Report-Only'
 
 const nextConfig = {
   // Racine du projet explicite : un package-lock.json parasite traîne dans le dossier parent.
@@ -109,10 +147,8 @@ const nextConfig = {
           // Renforce le HSTS par défaut de Vercel avec includeSubDomains.
           // (preload volontairement absent : soumission hstspreload.org = décision à part.)
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
-          // CSP en Report-Only (cf. buildContentSecurityPolicy ci-dessus) :
-          // observe les violations sans rien bloquer. Passage en enforce = étape
-          // ultérieure, après une période d'observation sans faux positifs.
-          { key: 'Content-Security-Policy-Report-Only', value: buildContentSecurityPolicy() },
+          // CSP (cf. buildContentSecurityPolicy ci-dessus) : bloquante en prod.
+          { key: CSP_HEADER, value: buildContentSecurityPolicy() },
         ],
       },
     ]
