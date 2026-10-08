@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck, RotateCcw, Award, Star } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
-import { GOOGLE_LISTING_URL, GOOGLE_RATING } from '@/lib/store-info'
+import { GOOGLE_LISTING_URL, GOOGLE_RATING, type GoogleRating } from '@/lib/store-info'
+import { PICKUP_PROMISE } from '@/lib/shipping'
 import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
 import BundleGalleryV2 from './BundleGalleryV2'
@@ -13,6 +14,7 @@ import StockAlertForm from './StockAlertForm'
 import { getBundleComponentDetailsFromVariant, getCompleteBundleVariants, pickInitialBundleVariant } from '@/lib/shopify/bundle'
 import { initialImageIndex, pickDefaultVariant, variantFromSearch } from '@/lib/product-variant'
 import TrackViewItem from '@/components/analytics/TrackViewItem'
+import { discountPctOf } from '@/lib/product-price'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
 
 interface BuyBoxV2Props {
@@ -23,7 +25,6 @@ interface BuyBoxV2Props {
   handle: string
   /** Type de produit Shopify : catégorie pour Meta (ViewContent). */
   productType?: string | null
-  discountPct: number | null
   collectionName: string | null
   collectionHandle: string | null
   activeStore?: BodyStartStore
@@ -55,6 +56,8 @@ interface BuyBoxV2Props {
    * on affiche alors la note Google de la boutique.
    */
   rating?: { ratingValue: number; reviewCount: number } | null
+  /** Note Google de la boutique (métachamps Shopify, lue par la page). */
+  googleRating?: GoogleRating
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -73,7 +76,7 @@ const variantSize = (v: ShopifyProductVariant) => v.title.split(' / ')[1]?.trim(
  * Decisions appliquees :
  * - Pas d'abonnement (achat unique only)
  * - Stock <= 5 → chiffre exact terracotta ; sinon "En stock" sage
- * - Reassurance sous le bouton : livraison 85 € · retrait quelques minutes · paiement securise
+ * - Reassurance sous le bouton : livraison 85 € · retrait (immédiat si la variante est en stock à Coignières) · paiement securise
  */
 export default function BuyBoxV2({
   images,
@@ -81,7 +84,6 @@ export default function BuyBoxV2({
   title,
   handle,
   productType = null,
-  discountPct,
   collectionHandle,
   activeStore,
   productId,
@@ -90,6 +92,7 @@ export default function BuyBoxV2({
   vendor = null,
   isBundle = false,
   rating = null,
+  googleRating = GOOGLE_RATING,
 }: BuyBoxV2Props) {
   // Variante d'ouverture (rendu serveur, donc sans ?variant=) :
   // - bundle : une variante COMPLÈTE (composants tous présents), pour ne pas
@@ -337,18 +340,20 @@ export default function BuyBoxV2({
       )}
       <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-start">
         {/* ─── Galerie ─── */}
+        {/* Pastille -X % : remise de la variante AFFICHÉE (compareAtPrice > price
+            sur cette variante), pas celle de la variante d'ouverture. */}
         <div className="lg:sticky lg:top-24">
           {isBundleMode ? (
             <BundleGalleryV2
               components={bundleDetails}
               title={title}
-              discountPct={discountPct}
+              discountPct={discountPctOf(selectedVariant)}
             />
           ) : (
             <ProductGalleryV2
               images={images}
               title={title}
-              discountPct={discountPct}
+              discountPct={discountPctOf(selectedVariant)}
               selectedIndex={selectedImageIndex}
               priorityIndex={openingImageIndex}
               onImageChange={handleImageChange}
@@ -396,13 +401,11 @@ export default function BuyBoxV2({
             <span className="font-display text-[32px] md:text-[36px] font-extrabold text-spruce leading-none">
               {formatPrice(selectedVariant.price)}
             </span>
-            {selectedVariant.compareAtPrice &&
-              parseFloat(selectedVariant.compareAtPrice.amount) >
-                parseFloat(selectedVariant.price.amount) && (
-                <span className="text-[16px] text-ink-mute line-through font-medium">
-                  {formatPrice(selectedVariant.compareAtPrice)}
-                </span>
-              )}
+            {selectedVariant.compareAtPrice && discountPctOf(selectedVariant) !== null && (
+              <span className="text-[16px] text-ink-mute line-through font-medium">
+                {formatPrice(selectedVariant.compareAtPrice)}
+              </span>
+            )}
           </div>
 
           {/* Selecteurs : BundleSelectorsV2 si bundle, sinon saveur/format produit normal */}
@@ -582,8 +585,12 @@ export default function BuyBoxV2({
             </li>
             <li className="flex items-center gap-2.5">
               <Store className="w-4 h-4 text-spruce flex-shrink-0" />
+              {/* « Immédiat » seulement si la variante est en stock en boutique
+                  (stock lu en direct) : sinon la promesse serait fausse. */}
               <span>
-                Click &amp; Collect gratuit à Coignières, souvent prêt en quelques minutes
+                {storeStock !== undefined && storeStock > 0
+                  ? `Click & Collect gratuit. ${PICKUP_PROMISE.enStock}`
+                  : 'Click & Collect gratuit à Coignières'}
               </span>
             </li>
             <li className="flex items-center gap-2.5">
@@ -608,7 +615,7 @@ export default function BuyBoxV2({
                 On ne vend que ce qu&apos;on consomme, et on te conseille comme au comptoir.
               </p>
               {/* Avis PRODUIT (app d'avis) si disponibles, sinon note Google de la
-                  boutique (source unique GOOGLE_RATING, relevée à la main). */}
+                  boutique (métachamps Shopify, cf. lib/shopify/google-rating). */}
               {rating && rating.reviewCount > 0 ? (
                 <a
                   href="#avis"
@@ -625,7 +632,7 @@ export default function BuyBoxV2({
                 className="-mt-1.5 -mb-3 inline-flex min-h-[44px] items-center gap-1.5 font-semibold underline underline-offset-2 hover:text-fresh-deep transition-colors"
               >
                 <Star className="w-3.5 h-3.5 text-mustard fill-current" aria-hidden="true" />
-                {GOOGLE_RATING.value.toLocaleString('fr-FR')}/5 sur Google · {GOOGLE_RATING.count} avis
+                {googleRating.value.toLocaleString('fr-FR')}/5 sur Google · {googleRating.count} avis
               </a>
               )}
             </div>

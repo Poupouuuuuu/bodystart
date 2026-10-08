@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     default: 'BodyStart, compléments sport et santé à Coignières (78)',
   },
   description:
-    "BodyStart, ta boutique de compléments sport et santé à Coignières. Conseil d'humain en magasin, produits propres et bien dosés, livraison dans le 78, Click & Collect en 2h.",
+    "BodyStart, ta boutique de compléments sport et santé à Coignières. Conseil d'humain en magasin, produits propres et bien dosés, livraison dans le 78, retrait immédiat en boutique si en stock.",
   keywords: [
     'compléments alimentaires Coignières',
     'whey',
@@ -120,11 +120,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    // suppressHydrationWarning : le script du <head> ajoute `js-reveal` sur
-    // <html> AVANT l'hydratation (pour éviter tout flash), donc la classe rendue
-    // côté serveur diffère par construction de celle du client. C'est le patron
-    // officiel pour ce cas (celui de next-themes) ; la suppression est limitée à
-    // CET élément — les écarts d'hydratation des enfants remontent toujours.
+    // suppressHydrationWarning : certaines extensions de navigateur (mode
+    // sombre, traduction) ajoutent des attributs à <html> avant l'hydratation ;
+    // la suppression est limitée à CET élément, les écarts des enfants
+    // remontent toujours.
     <html
       lang="fr"
       className={`${inter.variable} ${fraunces.variable}`}
@@ -133,22 +132,6 @@ export default function RootLayout({
       <head>
         {/* dns-prefetch suffit pour cdn.shopify.com (images produits below-the-fold) */}
         <link rel="dns-prefetch" href="https://cdn.shopify.com" />
-        {/* PREMIUM V2 — arme les révélations au scroll AVANT le premier paint
-            (sinon le contenu s'afficherait puis disparaîtrait : flash visible).
-            Volontairement inline et synchrone, c'est ~120 octets.
-            Ne s'active pas si la personne a demandé moins de mouvement, et
-            jamais si JS est absent → le contenu reste visible par défaut. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              // FILET DE SÉCURITÉ (indispensable) : le masquage CSS dépend de la
-              // classe js-reveal. Si React n'hydrate jamais (bundle bloqué, erreur
-              // d'hydratation), les sections masquées resteraient invisibles.
-              // On retire donc la classe au bout de 2,5 s si aucun <Reveal> n'a
-              // signalé son montage (data-reveal-ready) → tout redevient visible.
-              "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var d=document.documentElement;d.classList.add('js-reveal');setTimeout(function(){if(!d.dataset.revealReady){d.classList.remove('js-reveal')}},2500)}}catch(e){}",
-          }}
-        />
       </head>
       <body className="min-h-screen flex flex-col">
         {/* Voile de grain (~3 %) sur toute la page — cf. .grain-overlay */}

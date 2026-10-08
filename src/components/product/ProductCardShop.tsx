@@ -23,6 +23,8 @@ import { Plus } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
 import type { ShopifyProduct } from '@/lib/shopify/types'
+import { productSubtitle } from '@/lib/product-subtitle'
+import { cardPriceOf } from '@/lib/product-price'
 
 // ─── Badges (tags Shopify → pastilles) ───
 
@@ -38,18 +40,6 @@ export function isBestSeller(p: ShopifyProduct): boolean {
     return tag === 'best-seller' || tag === 'bestseller' || tag === 'best_seller'
   })
 }
-
-/** Capitalise la 1re lettre uniquement (sentence case, pas title case). */
-function capitalizeFirst(s: string): string {
-  if (!s) return s
-  return s.charAt(0).toUpperCase() + s.slice(1)
-}
-
-// Tags techniques qui font déjà office de badge → exclus du bénéfice court.
-const TECHNICAL_TAGS = new Set([
-  'best-seller', 'bestseller', 'nouveau', 'new', 'sante', 'santé', 'whey', 'vegan',
-  'sans-sucre', 'sans-gluten', 'bio', 'anti-dopage', 'made-in-france',
-])
 
 export interface ProductCardShopProps {
   product: ShopifyProduct
@@ -70,26 +60,25 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
   // Vrai libelle categorie (collection title preferee, sinon productType, sinon null)
   const categoryLabel = product.collections?.nodes?.[0]?.title ?? product.productType ?? null
 
-  // Bénéfice court : on prend le 1er tag "humain" lisible si disponible
-  const shortBenefit = (product.tags ?? []).find(
-    (t) => t.length <= 30 && !TECHNICAL_TAGS.has(t.toLowerCase()) && !t.includes('_')
-  )
+  // Sous-titre : libellé propre tiré d'une liste blanche d'étiquettes, jamais
+  // la catégorie en double ni une étiquette brute (lib/product-subtitle).
+  const subtitle = productSubtitle(product.tags, {
+    category: categoryLabel,
+    title: product.title,
+    productType: product.productType,
+  })
 
-  const isSante = isSanteProduct(product)
+  // Badge « Santé » seulement si la catégorie affichée ne le dit pas déjà.
+  const isSante =
+    isSanteProduct(product) &&
+    (categoryLabel ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() !== 'sante'
   const isBest = isBestSeller(product)
   const showLowStock = stockAtStore !== undefined && stockAtStore > 0 && stockAtStore <= 5
 
-  // Promo si compareAtPrice > price
-  const hasDiscount =
-    variant?.compareAtPrice &&
-    parseFloat(variant.compareAtPrice.amount) > parseFloat(variant.price.amount)
-  const discountPct = hasDiscount
-    ? Math.round(
-        ((parseFloat(variant!.compareAtPrice!.amount) - parseFloat(variant!.price.amount)) /
-          parseFloat(variant!.compareAtPrice!.amount)) *
-          100
-      )
-    : null
+  // Prix de la variante en stock la moins chère, « dès » si les prix varient,
+  // remise seulement sur CETTE variante (lib/product-price).
+  const prix = cardPriceOf(product)
+  const discountPct = prix?.discountPct ?? null
 
   // Le bouton est actif si : multi-variantes AVEC au moins une dispo (→ fiche),
   // ou mono-variante disponible (→ ajout direct). Produit épuisé → grisé,
@@ -195,8 +184,9 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
         </div>
       </Link>
 
-      {/* Contenu */}
-      <div className="p-5 flex flex-col flex-1">
+      {/* Contenu. p-4 sous sm : à 360 px la carte fait 154 px, et avec p-5 un
+          prix à 5 chiffres (« 36,90 € ») plus le bouton de 44 px ne tenaient pas. */}
+      <div className="p-4 sm:p-5 flex flex-col flex-1">
         {/* Libelle categorie reelle (si dispo) */}
         {categoryLabel && (
           <span className="text-[12px] text-ink-mute font-medium mb-1.5">
@@ -212,25 +202,24 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
           </h3>
         </Link>
 
-        {/* Une ligne de benefice court (optionnelle, capitalisee) */}
-        {shortBenefit && (
-          <p className="text-[13px] text-ink-mute leading-snug mb-3 line-clamp-1">
-            {capitalizeFirst(shortBenefit)}
-          </p>
+        {/* Sous-titre court (optionnel) */}
+        {subtitle && (
+          <p className="text-[13px] text-ink-mute leading-snug mb-3 line-clamp-1">{subtitle}</p>
         )}
 
         {/* Prix + bouton ajout discret (icone +) */}
-        <div className="flex items-center justify-between mt-auto pt-2">
-          <div className="flex items-baseline gap-2">
+        {/* Carte étroite (2 colonnes à 390 px) : « dès », le prix et le prix
+            barré passent à la ligne au lieu de glisser sous le bouton. */}
+        <div className="flex items-center justify-between gap-2 mt-auto pt-2">
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
+            {prix?.from && <span className="text-[13px] font-medium text-ink-mute">dès</span>}
             {/* Le prix en serif extrabold : c'est LE chiffre de la carte, il doit
                 dominer le titre (19px contre 16px). */}
-            <span className="font-display text-[19px] font-extrabold tracking-tight text-spruce">
-              {formatPrice(product.priceRange.minVariantPrice)}
+            <span className="whitespace-nowrap font-display text-[19px] font-extrabold tracking-tight text-spruce">
+              {formatPrice(prix?.price ?? product.priceRange.minVariantPrice)}
             </span>
-            {variant?.compareAtPrice && hasDiscount && (
-              <span className="text-[12px] text-ink-mute line-through">
-                {formatPrice(variant.compareAtPrice)}
-              </span>
+            {prix?.compareAt && (
+              <span className="whitespace-nowrap text-[12px] text-ink-mute line-through">{formatPrice(prix.compareAt)}</span>
             )}
           </div>
 

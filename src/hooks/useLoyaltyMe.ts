@@ -36,13 +36,28 @@ interface UseLoyaltyMeReturn {
   refresh: () => void
 }
 
-export function useLoyaltyMe(): UseLoyaltyMeReturn {
+/**
+ * `auth` (facultatif) : état de connexion déjà connu de l'appelant. Invité →
+ * « logged_out » sans requête (avant le 08/10/2026, chaque ouverture du panier
+ * d'un invité produisait une 401 dans la console) ; « pending » → on attend.
+ */
+export function useLoyaltyMe(
+  { auth }: { auth?: 'pending' | 'logged_in' | 'logged_out' } = {}
+): UseLoyaltyMeReturn {
   const [state, setState] = useState<LoyaltyMeState>({ kind: 'loading' })
   const [refreshKey, setRefreshKey] = useState(0)
 
   const refresh = useCallback(() => setRefreshKey((k) => k + 1), [])
 
   useEffect(() => {
+    if (auth === 'pending') {
+      setState({ kind: 'loading' })
+      return
+    }
+    if (auth === 'logged_out') {
+      setState({ kind: 'logged_out' })
+      return
+    }
     let cancelled = false
     setState({ kind: 'loading' })
 
@@ -80,7 +95,7 @@ export function useLoyaltyMe(): UseLoyaltyMeReturn {
     return () => {
       cancelled = true
     }
-  }, [refreshKey])
+  }, [refreshKey, auth])
 
   return { state, refresh }
 }

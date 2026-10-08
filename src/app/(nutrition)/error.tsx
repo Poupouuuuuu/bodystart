@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useChunkReload, ReloadingScreen } from '@/components/ui/ChunkReload'
 import Link from 'next/link'
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 
@@ -16,9 +17,13 @@ export default function NutritionError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  // Fichier JS introuvable (souvent juste après une mise en ligne) :
+  // rechargement automatique, une fois, au lieu de la page d'erreur.
+  const reloading = useChunkReload(error)
   useEffect(() => {
     console.error('[Nutrition Error]', error)
   }, [error])
+  if (reloading) return <ReloadingScreen />
 
   return (
     <main className="bg-canvas">

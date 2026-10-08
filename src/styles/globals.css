@@ -235,23 +235,31 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* 2. RÉVÉLATIONS AU SCROLL — dégradation gracieuse : sans JS (ou en
-   prefers-reduced-motion), `.reveal` n'est jamais masqué, le contenu reste
-   visible et indexable. La classe `js-reveal` n'est posée sur <html> par le
-   script du layout QUE si JS tourne et que le mouvement est accepté ; le fait
-   qu'elle soit posée avant le premier paint évite tout flash. */
-html.js-reveal .reveal {
+/* 2. RÉVÉLATIONS AU SCROLL — contenu VISIBLE PAR DÉFAUT (08/10/2026).
+   Rien n'est masqué tant que <Reveal> n'a pas tourné : sans JS, JS lent ou en
+   échec, en prefers-reduced-motion, tout reste visible et indexable. Une fois
+   le JS chargé, Reveal ne masque (`is-armed`) que les blocs encore HORS de
+   l'écran, puis les révèle (`is-in`) quand ils y entrent : le visiteur ne voit
+   jamais une section vide. Avant : masquage global dès le premier paint
+   (html.js-reveal), donc des sections blanches si on défilait avant le JS. */
+.reveal.is-armed {
   opacity: 0;
   transform: translateY(20px);
   will-change: opacity, transform;
 }
-html.js-reveal .reveal.is-in {
+.reveal.is-armed.is-in {
   opacity: 1;
   transform: none;
   transition:
     opacity 0.75s var(--ease-out-expo) var(--reveal-delay, 0ms),
     transform 0.75s var(--ease-out-expo) var(--reveal-delay, 0ms);
   will-change: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal.is-armed {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* 4. ENTRÉE DU HÉROS — cascade au chargement, réservée aux éléments

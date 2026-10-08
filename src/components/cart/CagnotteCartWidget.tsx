@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Wallet, Check, X, Loader2 } from 'lucide-react'
 import { toast } from '@/lib/toast'
 import { useLoyaltyMe } from '@/hooks/useLoyaltyMe'
+import { useCustomer } from '@/context/CustomerContext'
 import { useCart } from '@/hooks/useCart'
 
 // Prefix des codes generes par createRedemptionDiscountCode (cf. src/lib/shopify/loyalty-discounts.ts)
@@ -25,7 +26,10 @@ function eurosToCents(amount: string | number): number {
 }
 
 export function CagnotteCartWidget() {
-  const { state, refresh } = useLoyaltyMe()
+  const { isLoggedIn, isLoading } = useCustomer()
+  const { state, refresh } = useLoyaltyMe({
+    auth: isLoading ? 'pending' : isLoggedIn ? 'logged_in' : 'logged_out',
+  })
   const { cart, applyDiscountCode, removeDiscountCode, closeCart } = useCart()
   const [redeemAmount, setRedeemAmount] = useState(0)
   const [busy, setBusy] = useState(false)

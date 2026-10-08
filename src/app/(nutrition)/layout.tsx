@@ -111,16 +111,16 @@ export default async function NutritionLayout({ children }: { children: React.Re
       <VenometteBanner />
       {/* Compteur de navigations internes (bouton Retour des fiches produit) */}
       <NavigationTracker />
-      <Suspense fallback={<div className="h-[104px] bg-white border-b border-spruce/10" />}>
-        <Header collections={collections} />
-      </Suspense>
+      {/* Header et Footer HORS <Suspense> (08/10/2026) : une frontière Suspense
+          autour d'un composant client fait partir son HTML dans un bloc caché,
+          révélé par un script. Sans JS (ou si le script échoue), plus de menu
+          ni de pied de page. Aucun des deux n'utilise useSearchParams. */}
+      <Header collections={collections} />
       <Suspense fallback={null}>
         <CartDrawerLazy />
       </Suspense>
       <main id="main" className="flex-1">{children}</main>
-      <Suspense fallback={null}>
-        <Footer />
-      </Suspense>
+      <Footer />
       <BackToTop />
     </>
   )

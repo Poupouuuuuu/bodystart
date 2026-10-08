@@ -10,24 +10,23 @@ interface RevealProps {
 }
 
 /**
- * Révélation au scroll — PREMIUM V2 (2026-08).
+ * Révélation au scroll — PREMIUM V2 (2026-08), contenu visible par défaut
+ * depuis le 08/10/2026.
  *
  * Pourquoi maison plutôt qu'une librairie d'animation : un IntersectionObserver
  * + 2 règles CSS pèsent ~0 ko de plus dans le bundle, là où framer-motion en
  * ajoute ~40 ko sur un site dont les Core Web Vitals sont un actif SEO.
  *
- * ⚠️ RÈGLE ABSOLUE : ce composant masque du contenu réel. Un contenu masqué qui
- * ne se révèle pas est un bug GRAVE (sections blanches en production). D'où
- * quatre filets, du plus général au plus fin :
- *  1. Le masquage vit sous `html.js-reveal`, posée par le script du root layout
- *     → sans JS, rien n'est jamais masqué (contenu visible et indexable).
- *  2. Ce script ne pose pas la classe en prefers-reduced-motion, et la RETIRE
- *     au bout de 2,5 s si aucun Reveal n'a signalé son hydratation.
- *  3. Ici : si le bloc est déjà à l'écran au montage, on révèle sans attendre
- *     l'observer (couvre le cas d'un onglet ouvert en arrière-plan, où le moteur
- *     de rendu est inactif et où l'observer reste muet).
- *  4. Ici : secours au scroll, mesuré à la main (getBoundingClientRect marche
- *     même sans frames composités), au cas où l'observer ne rapporte rien.
+ * ⚠️ RÈGLE ABSOLUE : un contenu masqué qui ne se révèle pas est un bug GRAVE
+ * (sections blanches en production). D'où :
+ *  1. Le rendu serveur est VISIBLE : rien n'est masqué avant ce composant
+ *     (sans JS, JS lent ou en échec, tout s'affiche).
+ *  2. Au montage, on ne masque (`is-armed`) que si le bloc est HORS de
+ *     l'écran : un bloc déjà vu (défilement avant le chargement du JS) n'est
+ *     jamais caché après coup. Mouvement réduit demandé : rien n'est masqué.
+ *  3. Révélation par IntersectionObserver, avec un secours au scroll mesuré à
+ *     la main (getBoundingClientRect marche même sans frames composités).
+ *  4. Navigateur sans IntersectionObserver : on ne masque pas.
  */
 export default function Reveal({ children, delay = 0, className = '' }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -35,15 +34,8 @@ export default function Reveal({ children, delay = 0, className = '' }: RevealPr
   useEffect(() => {
     const el = ref.current
     if (!el) return
-
-    // Signale au filet du root layout que l'hydratation a eu lieu : sans ce
-    // marqueur, il retire `js-reveal` à 2,5 s et tout redevient visible.
-    document.documentElement.dataset.revealReady = '1'
-
-    // Pas de masquage en cours (JS tardif, mouvement refusé) → rien à faire.
-    if (!document.documentElement.classList.contains('js-reveal')) return
-
-    const show = () => el.classList.add('is-in')
+    if (typeof IntersectionObserver === 'undefined') return
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
 
     // 94 % de la hauteur d'écran : cohérent avec le rootMargin de l'observer.
     const isOnScreen = () => {
@@ -51,18 +43,11 @@ export default function Reveal({ children, delay = 0, className = '' }: RevealPr
       return r.top < window.innerHeight * 0.94 && r.bottom > 0
     }
 
-    // Filet 3 — déjà visible : on révèle tout de suite.
-    if (isOnScreen()) {
-      show()
-      return
-    }
+    // Déjà à l'écran (ou au-dessus, déjà parcouru) : on le laisse tel quel.
+    if (isOnScreen() || el.getBoundingClientRect().bottom <= 0) return
 
-    // Navigateur sans IntersectionObserver → visible d'emblée plutôt
-    // qu'invisible pour toujours.
-    if (typeof IntersectionObserver === 'undefined') {
-      show()
-      return
-    }
+    el.classList.add('is-armed')
+    const show = () => el.classList.add('is-in')
 
     let cleanup = () => {}
 
@@ -79,7 +64,7 @@ export default function Reveal({ children, delay = 0, className = '' }: RevealPr
       { threshold: 0.1, rootMargin: '0px 0px -6% 0px' }
     )
 
-    // Filet 4 — secours indépendant de l'observer.
+    // Secours indépendant de l'observer.
     const onScroll = () => {
       if (!isOnScreen()) return
       show()
@@ -93,7 +78,11 @@ export default function Reveal({ children, delay = 0, className = '' }: RevealPr
 
     io.observe(el)
     window.addEventListener('scroll', onScroll, { passive: true })
-    return cleanup
+    return () => {
+      cleanup()
+      // Démontage avant révélation (navigation) : rien ne reste masqué.
+      el.classList.remove('is-armed')
+    }
   }, [])
 
   return (

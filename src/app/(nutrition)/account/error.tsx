@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useChunkReload, ReloadingScreen } from '@/components/ui/ChunkReload'
 import Link from 'next/link'
 import { AlertTriangle, RotateCcw, Home, LogIn } from 'lucide-react'
 
@@ -11,9 +12,13 @@ export default function AccountError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  // Fichier JS introuvable (souvent juste après une mise en ligne) :
+  // rechargement automatique, une fois, au lieu de la page d'erreur.
+  const reloading = useChunkReload(error)
   useEffect(() => {
     console.error('[Account Error]', error)
   }, [error])
+  if (reloading) return <ReloadingScreen />
 
   return (
     <main className="min-h-[60vh] flex items-center justify-center bg-canvas px-4 py-16">

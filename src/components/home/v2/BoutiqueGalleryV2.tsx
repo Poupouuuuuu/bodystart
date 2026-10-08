@@ -57,9 +57,8 @@ const FACTS = [
   { value: '13 ans', label: 'de conseil en nutrition' },
   { value: 'Lun. au sam.', label: 'ouvert de 11h à 19h' },
   { value: '+2 600', label: 'clients conseillés' },
-  // Note Google réelle — source unique GOOGLE_RATING (store-info.ts), relevée
-  // à la main. Mettre à jour ici si la note/le volume bouge sensiblement.
-  { value: '4,6/5', label: '58 avis Google' },
+  // Pas de note Google ici : le hero et la bande de chiffres l'affichent déjà
+  // (une seule fois par écran, chiffres lus dans Shopify).
 ] as const
 
 export default function BoutiqueGalleryV2() {

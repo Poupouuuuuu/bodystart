@@ -30,8 +30,18 @@ import {
   GET_INVENTORY_FOR_VARIANTS,
 } from './queries/inventory'
 import type { ShopifyProduct, ShopifyCollection, ShopifyCart, ShopifyBlog, ShopifyArticle } from './types'
+import { computeCardPrice } from '@/lib/product-price'
 
 // ─── PRODUITS ────────────────────────────────────────────────
+
+/**
+ * Prix de carte calculé sur TOUTES les variantes (prixVariantes), puis la
+ * liste brute est retirée : les composants client ne reçoivent que le résultat.
+ */
+export function withCardPrice<T extends ShopifyProduct>(p: T): T {
+  const { prixVariantes, ...rest } = p
+  return { ...rest, cardPrice: computeCardPrice(prixVariantes?.nodes ?? p.variants?.nodes) } as T
+}
 
 export async function getProducts(options?: {
   first?: number
@@ -55,7 +65,7 @@ export async function getProducts(options?: {
       query: options?.query ?? null,
     }
   )
-  return data.products
+  return { ...data.products, nodes: data.products.nodes.map(withCardPrice) }
 }
 
 export async function searchProducts(query: string, first = 24) {
@@ -63,7 +73,7 @@ export async function searchProducts(query: string, first = 24) {
     SEARCH_PRODUCTS,
     { query, first }
   )
-  return data.products.nodes
+  return data.products.nodes.map(withCardPrice)
 }
 
 // cache() (React request memoization) : generateMetadata ET la page appellent
@@ -75,18 +85,19 @@ export const getProductByHandle = cache(async (handle: string) => {
     GET_PRODUCT_BY_HANDLE,
     { handle }
   )
-  return data.product
+  return data.product ? withCardPrice(data.product) : null
 })
 
 export const getFeaturedProducts = cache(async (): Promise<ShopifyProduct[]> => {
-  // 8 meilleures ventes avec composants de bundle (cf. GET_FEATURED_PRODUCTS).
+  // 20 meilleures ventes avec composants de bundle (cf. GET_FEATURED_PRODUCTS) :
+  // marge pour les marques exclues des blocs automatiques (lib/merchandising).
   // Épuisés en fin de liste : un best-seller en rupture ne doit pas occuper
   // les premières cartes de la home (règle transverse boutique).
   try {
     const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>(
       GET_FEATURED_PRODUCTS
     )
-    return availableFirst(data.products.nodes)
+    return availableFirst(data.products.nodes.map(withCardPrice))
   } catch {
     // Sans cles API : section vide (graceful)
     return []

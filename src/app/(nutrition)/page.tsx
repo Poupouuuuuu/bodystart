@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import HeroV3 from '@/components/home/v3/HeroV3'
 import MarqueeBand from '@/components/home/v3/MarqueeBand'
 import ObjectifsV3 from '@/components/home/v3/ObjectifsV3'
@@ -11,7 +10,8 @@ import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import Reveal from '@/components/ui/Reveal'
-import { getFeaturedProducts } from '@/lib/shopify'
+import { getFeaturedProducts, getProductByHandle } from '@/lib/shopify'
+import { HOME_FEATURED_HANDLE, homeBestSellers } from '@/lib/merchandising'
 import { buildPageMetadata } from '@/lib/seo'
 
 // REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
@@ -37,20 +37,25 @@ export const metadata: Metadata = {
 // placeholder "BS" sur les produits ajoutés/imagés après le dernier déploiement.
 export const revalidate = 3600
 
-// Sections async isolees → streaming via Suspense pour ne pas bloquer le Hero (LCP)
+// Meilleures ventes : rendues avec la page, SANS <Suspense> (08/10/2026). La
+// page est en ISR (HTML régénéré au plus toutes les heures, servi depuis le
+// cache) : le streaming n'apportait rien au visiteur et envoyait la section
+// dans un bloc caché, invisible sans JS.
 async function BestSellersAsync() {
   let products: import('@/lib/shopify/types').ShopifyProduct[] = []
   try {
-    products = await getFeaturedProducts()
+    // Meilleures ventes sans les marques exclues, carte « Best-seller » choisie
+    // à la main en tête (lib/merchandising) ; lue à part si elle n'est pas
+    // dans les meilleures ventes du moment.
+    const best = await getFeaturedProducts()
+    const featured = best.some((p) => p.handle === HOME_FEATURED_HANDLE)
+      ? null
+      : await getProductByHandle(HOME_FEATURED_HANDLE).catch(() => null)
+    products = homeBestSellers(best, featured)
   } catch {
     // Sans cles API, section vide
   }
   return <BestSellersV3 products={products} />
-}
-
-// Skeleton leger pour eviter le CLS pendant le streaming
-function SectionFallback({ minHeight = '500px' }: { minHeight?: string }) {
-  return <div style={{ minHeight }} aria-hidden="true" />
 }
 
 export default function HomePage() {
@@ -70,9 +75,7 @@ export default function HomePage() {
 
       {/* 3. Best-sellers (data Shopify, streame) */}
       <Reveal>
-        <Suspense fallback={<SectionFallback minHeight="760px" />}>
-          <BestSellersAsync />
-        </Suspense>
+        <BestSellersAsync />
       </Reveal>
 
       {/* 3 bis. Vu sur Instagram — vidéos d'influenceurs tournées à la boutique.

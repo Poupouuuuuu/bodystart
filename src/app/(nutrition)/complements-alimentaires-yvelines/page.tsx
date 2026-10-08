@@ -57,7 +57,7 @@ const LOCAL_FAQ = [
   },
   {
     q: 'Peut-on faire du Click & Collect depuis une autre ville du 78 ?',
-    a: 'Bien sûr. Tu commandes en ligne depuis Montigny, Plaisir, Rambouillet ou ailleurs dans les Yvelines, tu choisis le retrait en boutique au paiement, et tu récupères ta commande au comptoir à Coignières, souvent prête en quelques minutes, sans montant minimum.',
+    a: 'Bien sûr. Tu commandes en ligne depuis Montigny, Plaisir, Rambouillet ou ailleurs dans les Yvelines, tu choisis le retrait en boutique au paiement, et tu récupères ta commande au comptoir à Coignières, immédiatement pour les produits en stock, sans montant minimum.',
   },
   {
     q: 'Vendez-vous les mêmes marques qu’en ligne ?',

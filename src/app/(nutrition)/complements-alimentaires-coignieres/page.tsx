@@ -26,7 +26,7 @@ const LOCAL_FAQ = [
   },
   {
     q: 'Le Click & Collect est-il gratuit ?',
-    a: 'Oui. Tu commandes sur bodystart-nutrition.fr, tu choisis le retrait en boutique au moment du paiement, et tu récupères ta commande au comptoir à Coignières, souvent prête en quelques minutes. Aucun montant minimum.',
+    a: 'Oui. Tu commandes sur bodystart-nutrition.fr, tu choisis le retrait en boutique au moment du paiement, et tu récupères ta commande au comptoir à Coignières, immédiatement pour les produits en stock, aux heures d\'ouverture. Aucun montant minimum.',
   },
   {
     q: 'Peut-on se faire conseiller sans rien acheter ?',
@@ -87,7 +87,7 @@ export default function CoignieresLandingPage() {
             produit, pas le plus cher : on prend le temps de comprendre ton objectif
             avant de te conseiller. Et si tu préfères commander en ligne, le{' '}
             <strong className="font-semibold">Click &amp; Collect est gratuit</strong> : ta
-            commande t&apos;attend au comptoir, souvent en quelques minutes.
+            commande t&apos;attend au comptoir, retrait immédiat si les produits sont en stock.
           </p>
           <p className="text-ink/90 text-[15px] leading-[1.7] mt-4">
             Tu viens d&apos;une autre commune du 78 ? Voir aussi{' '}
@@ -102,7 +102,7 @@ export default function CoignieresLandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-14">
           {[
             { Icon: MessageCircle, title: 'Conseil gratuit', desc: 'Objectif, budget, niveau : on te guide au comptoir, sans engagement.' },
-            { Icon: ShoppingBag, title: 'Click & Collect', desc: 'Commande en ligne, retire en boutique, souvent prêt en quelques minutes.' },
+            { Icon: ShoppingBag, title: 'Click & Collect', desc: 'Commande en ligne, retire en boutique : immédiat pour les produits en stock.' },
             { Icon: Truck, title: 'Livraison France', desc: 'Pas dans le 78 ? Mondial Relay 4,90 €, Colissimo 6,90 €, offert dès 85 €.' },
           ].map(({ Icon, title, desc }) => (
             <div key={title} className="bg-white rounded-2xl border border-spruce/10 p-6">

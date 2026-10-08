@@ -22,7 +22,7 @@ function InstagramIcon({ className }: { className?: string }) {
     </svg>
   )
 }
-import { FREE_SHIPPING_LABEL, MONDIAL_RELAY, formatShippingPrice } from '@/lib/shipping'
+import { FREE_SHIPPING_LABEL, MONDIAL_RELAY, PICKUP_PROMISE, formatShippingPrice } from '@/lib/shipping'
 
 // Footer — copy spec §3.9 et §3.10
 //
@@ -80,7 +80,7 @@ const TRUST_BADGES = [
   {
     icon: Store,
     label: 'Click & Collect gratuit',
-    sub: 'Souvent prêt en quelques minutes',
+    sub: PICKUP_PROMISE.court,
   },
   {
     icon: Headphones,

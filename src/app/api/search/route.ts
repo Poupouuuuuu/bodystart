@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { searchProducts } from '@/lib/shopify'
+import { cardPriceOf } from '@/lib/product-price'
 
 // Lit les query params → forcer le rendu dynamique pour éviter le warning au build
 export const dynamic = 'force-dynamic'
@@ -14,15 +15,21 @@ export async function GET(req: NextRequest) {
 
     const products = await searchProducts(q, 12)
 
-    const results = products.map((p) => ({
-      id: p.id,
-      handle: p.handle,
-      title: p.title,
-      image: p.featuredImage?.url ?? null,
-      price: p.priceRange.minVariantPrice.amount,
-      currency: p.priceRange.minVariantPrice.currencyCode,
-      availableForSale: p.availableForSale ?? true,
-    }))
+    // Même prix que les cartes du catalogue (lib/product-price).
+    const results = products.map((p) => {
+      const prix = cardPriceOf(p)
+      const price = prix?.price ?? p.priceRange.minVariantPrice
+      return {
+        id: p.id,
+        handle: p.handle,
+        title: p.title,
+        image: p.featuredImage?.url ?? null,
+        price: price.amount,
+        currency: price.currencyCode,
+        from: prix?.from ?? false,
+        availableForSale: p.availableForSale ?? true,
+      }
+    })
 
     return NextResponse.json(
       { results },

@@ -27,11 +27,19 @@ export const GOOGLE_DIRECTIONS_URL =
 export const GOOGLE_LISTING_URL =
   'https://www.google.com/maps/place/?q=place_id:ChIJR-Jgxiyd5kcRRb2BKNRdFNM'
 
+export interface GoogleRating {
+  value: number
+  count: number
+}
+
 /**
- * Note Google RÉELLE, relevée à la main sur la fiche (2026-08-05 : 4,6/5,
- * 58 avis). Pas de flux automatique (l'API Places est payante) → rafraîchir
- * ces deux valeurs de temps en temps. Ne JAMAIS inventer ces chiffres.
+ * Note Google RÉELLE de la fiche. Depuis le 08/10/2026, la source est Shopify
+ * (métachamps boutique `bodystart.avis_google_note` / `avis_google_nombre`,
+ * mis à jour chaque lundi), lue par getGoogleRating() dans
+ * lib/shopify/google-rating.ts. Cette constante n'est que la valeur de REPLI
+ * si la lecture échoue (relevé du 08/10/2026 : 4,7/5, 75 avis). Ne JAMAIS
+ * inventer ces chiffres.
  * ⚠️ Ne pas émettre d'aggregateRating JSON-LD avec cette note : les guidelines
  * Google réservent ce schema aux avis collectés sur le site lui-même.
  */
-export const GOOGLE_RATING = { value: 4.6, count: 58 }
+export const GOOGLE_RATING: GoogleRating = { value: 4.7, count: 75 }

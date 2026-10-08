@@ -45,7 +45,7 @@ const REASONS = [
   {
     icon: Store,
     title: 'Une vraie boutique, ouverte du lundi au samedi',
-    desc: "8 Rue du Pont des Landes à Coignières, de 11h à 19h du lundi au samedi (fermé le dimanche). Tu touches les produits, tu poses tes questions, tu repars avec, ou tu retires ta commande en Click & Collect en quelques minutes.",
+    desc: "8 Rue du Pont des Landes à Coignières, de 11h à 19h du lundi au samedi (fermé le dimanche). Tu touches les produits, tu poses tes questions, tu repars avec, ou tu retires ta commande en Click & Collect : retrait immédiat pour les produits en stock.",
   },
   {
     icon: BadgeCheck,
@@ -116,8 +116,8 @@ export default function PourquoiBodystartPage() {
             Coignières (78), ouverte du lundi au samedi, qui conseille des sportifs depuis
             13&nbsp;ans, avec des marques sélectionnées, des produits testés par
             des pratiquants et un conseil personnalisé gratuit, en magasin comme
-            en ligne. Tu peux commander sur le site et retirer en boutique en
-            quelques minutes.
+            en ligne. Tu peux commander sur le site et retirer en boutique tout de
+            suite si le produit est en stock.
           </p>
           <p className="text-[12px] text-ink-mute font-medium mt-6">
             Mise à jour : {LAST_UPDATED}

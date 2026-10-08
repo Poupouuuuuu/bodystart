@@ -15,6 +15,7 @@ import { BODY_START_STORES } from '@/lib/shopify/types'
 import { getCartLineComponentImages } from '@/lib/shopify/bundle'
 import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
 import { RELAY_ATTRIBUTE_KEYS } from '@/lib/mondialRelay'
+import { familyOf, type Family } from '@/lib/merchandising'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
@@ -33,6 +34,8 @@ type CrossSellItem = {
   price: string
   currency: string
   variantId: string | null
+  /** Famille (lib/merchandising) : pas de suggestion concurrente d'un article du panier. */
+  family?: Family
 }
 
 export default function CartDrawer() {
@@ -209,11 +212,20 @@ export default function CartDrawer() {
   const freeShippingProgress = Math.min(100, (subtotalAmount / FREE_SHIPPING_THRESHOLD) * 100)
   const hasFreeShipping = subtotalAmount >= FREE_SHIPPING_THRESHOLD
 
-  // Cross-sell candidats : best-sellers PAS déjà au panier (max 3 pour ne pas
-  // alourdir le tiroir). Recalculé quand le panier change → un produit ajouté
+  // Cross-sell candidats : best-sellers PAS déjà au panier, d'une autre
+  // famille que les articles du panier (pas de whey proposée avec une whey) et
+  // un seul par famille (pas deux créatines côte à côte), max 3 pour ne pas
+  // alourdir le tiroir. Recalculé quand le panier change → un produit ajouté
   // via le cross-sell disparaît aussitôt de la liste.
   const cartHandles = new Set(items.map((i) => i.merchandise.product.handle))
-  const crossSellItems = (crossSell ?? []).filter((c) => !cartHandles.has(c.handle)).slice(0, 3)
+  const takenFamilies = new Set<Family>(items.map((i) => familyOf(i.merchandise.product)))
+  const crossSellItems: CrossSellItem[] = []
+  for (const c of crossSell ?? []) {
+    if (crossSellItems.length >= 3) break
+    if (cartHandles.has(c.handle) || (c.family && takenFamilies.has(c.family))) continue
+    if (c.family) takenFamilies.add(c.family)
+    crossSellItems.push(c)
+  }
 
   async function addCrossSell(item: CrossSellItem) {
     if (!item.variantId || addingCross) return
