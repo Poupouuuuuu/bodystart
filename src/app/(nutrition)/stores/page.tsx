@@ -102,7 +102,7 @@ export default function StoresPage() {
           <div className="max-w-2xl">
             <p className={EYEBROW}>Coignières · 78</p>
             <h1 className="font-display text-[34px] sm:text-[42px] lg:text-[52px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
-              Nos boutiques
+              Notre boutique
             </h1>
             <p className="text-ink-mute text-[16px] md:text-[18px] leading-[1.6]">
               Sport &amp; santé, le bon conseil près de chez toi, ouvert du lundi au
