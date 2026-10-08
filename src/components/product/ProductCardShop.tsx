@@ -23,6 +23,7 @@ import { Plus } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
 import type { ShopifyProduct } from '@/lib/shopify/types'
+import { productSubtitle } from '@/lib/product-subtitle'
 
 // ─── Badges (tags Shopify → pastilles) ───
 
@@ -38,18 +39,6 @@ export function isBestSeller(p: ShopifyProduct): boolean {
     return tag === 'best-seller' || tag === 'bestseller' || tag === 'best_seller'
   })
 }
-
-/** Capitalise la 1re lettre uniquement (sentence case, pas title case). */
-function capitalizeFirst(s: string): string {
-  if (!s) return s
-  return s.charAt(0).toUpperCase() + s.slice(1)
-}
-
-// Tags techniques qui font déjà office de badge → exclus du bénéfice court.
-const TECHNICAL_TAGS = new Set([
-  'best-seller', 'bestseller', 'nouveau', 'new', 'sante', 'santé', 'whey', 'vegan',
-  'sans-sucre', 'sans-gluten', 'bio', 'anti-dopage', 'made-in-france',
-])
 
 export interface ProductCardShopProps {
   product: ShopifyProduct
@@ -70,10 +59,9 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
   // Vrai libelle categorie (collection title preferee, sinon productType, sinon null)
   const categoryLabel = product.collections?.nodes?.[0]?.title ?? product.productType ?? null
 
-  // Bénéfice court : on prend le 1er tag "humain" lisible si disponible
-  const shortBenefit = (product.tags ?? []).find(
-    (t) => t.length <= 30 && !TECHNICAL_TAGS.has(t.toLowerCase()) && !t.includes('_')
-  )
+  // Sous-titre : libellé propre tiré d'une liste blanche d'étiquettes, jamais
+  // la catégorie en double ni une étiquette brute (lib/product-subtitle).
+  const subtitle = productSubtitle(product.tags, categoryLabel)
 
   const isSante = isSanteProduct(product)
   const isBest = isBestSeller(product)
@@ -212,11 +200,9 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
           </h3>
         </Link>
 
-        {/* Une ligne de benefice court (optionnelle, capitalisee) */}
-        {shortBenefit && (
-          <p className="text-[13px] text-ink-mute leading-snug mb-3 line-clamp-1">
-            {capitalizeFirst(shortBenefit)}
-          </p>
+        {/* Sous-titre court (optionnel) */}
+        {subtitle && (
+          <p className="text-[13px] text-ink-mute leading-snug mb-3 line-clamp-1">{subtitle}</p>
         )}
 
         {/* Prix + bouton ajout discret (icone +) */}

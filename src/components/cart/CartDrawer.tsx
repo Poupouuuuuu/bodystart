@@ -14,6 +14,7 @@ import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { getCartLineComponentImages } from '@/lib/shopify/bundle'
 import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
+import { familyOf, type Family } from '@/lib/merchandising'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
@@ -32,6 +33,8 @@ type CrossSellItem = {
   price: string
   currency: string
   variantId: string | null
+  /** Famille (lib/merchandising) : pas de suggestion concurrente d'un article du panier. */
+  family?: Family
 }
 
 export default function CartDrawer() {
@@ -208,11 +211,15 @@ export default function CartDrawer() {
   const freeShippingProgress = Math.min(100, (subtotalAmount / FREE_SHIPPING_THRESHOLD) * 100)
   const hasFreeShipping = subtotalAmount >= FREE_SHIPPING_THRESHOLD
 
-  // Cross-sell candidats : best-sellers PAS déjà au panier (max 3 pour ne pas
-  // alourdir le tiroir). Recalculé quand le panier change → un produit ajouté
-  // via le cross-sell disparaît aussitôt de la liste.
+  // Cross-sell candidats : best-sellers PAS déjà au panier et d'une autre
+  // famille que les articles du panier (pas de whey proposée avec une whey),
+  // max 3 pour ne pas alourdir le tiroir. Recalculé quand le panier change →
+  // un produit ajouté via le cross-sell disparaît aussitôt de la liste.
   const cartHandles = new Set(items.map((i) => i.merchandise.product.handle))
-  const crossSellItems = (crossSell ?? []).filter((c) => !cartHandles.has(c.handle)).slice(0, 3)
+  const cartFamilies = new Set(items.map((i) => familyOf(i.merchandise.product)))
+  const crossSellItems = (crossSell ?? [])
+    .filter((c) => !cartHandles.has(c.handle) && !(c.family && cartFamilies.has(c.family)))
+    .slice(0, 3)
 
   async function addCrossSell(item: CrossSellItem) {
     if (!item.variantId || addingCross) return

@@ -438,7 +438,10 @@ export function ProductsCatalog({
           reste active pour les deep-links ?obj=... venant de la home. */}
       <div className="container pb-10">
         {/* ─── Barre de contrôle ─── */}
-        <div className="flex items-center justify-between mb-6 gap-4">
+        {/* gap-3 / pr-9 / min-w-0 : la barre débordait de 2 px à 390 px
+            (défilement horizontal) ; plus étroit encore, le tri rétrécit
+            au lieu de pousser la page. */}
+        <div className="flex items-center justify-between mb-6 gap-3">
           {/* Mobile : « 12 sur 110 » sur une ligne (le mot se cassait sur 3 lignes
               a cote des boutons Filtres / tri). */}
           <p className="text-[13px] text-ink-mute whitespace-nowrap">
@@ -446,7 +449,7 @@ export function ProductsCatalog({
             <span className="hidden sm:inline"> produit{filtered.length > 1 ? 's' : ''}</span>
           </p>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex min-w-0 items-center gap-2.5">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="lg:hidden inline-flex h-11 items-center gap-2 px-4 bg-white rounded-full text-[14px] font-semibold text-spruce border border-spruce/15 hover:border-spruce/40 transition-colors"
@@ -475,11 +478,12 @@ export function ProductsCatalog({
               )}
             </div>
 
-            <div className="relative">
+            <div className="relative min-w-0">
               <select
                 value={sortKey}
                 onChange={(e) => setSortKey(e.target.value)}
-                className="appearance-none h-11 md:h-auto bg-white rounded-full text-[16px] md:text-[13px] text-ink border border-spruce/15 pl-4 pr-10 py-2 cursor-pointer focus:outline-none focus:border-spruce/40"
+                aria-label="Trier les produits"
+                className="appearance-none h-11 md:h-auto max-w-full bg-white rounded-full text-[16px] md:text-[13px] text-ink border border-spruce/15 pl-4 pr-9 py-2 cursor-pointer focus:outline-none focus:border-spruce/40"
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.key} value={o.key}>

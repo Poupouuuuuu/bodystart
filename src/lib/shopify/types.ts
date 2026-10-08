@@ -135,6 +135,9 @@ export interface CartItem {
       id: string
       handle: string
       title: string
+      /** Famille du produit (suggestions du panier, cf. lib/merchandising). */
+      productType?: string
+      tags?: string[]
       featuredImage: ShopifyImage | null
     }
     price: ShopifyMoney
@@ -259,12 +262,3 @@ export const BODY_START_STORES: BodyStartStore[] = [
   },
 ]
 
-// Boutique B — ouverture prochaine
-export const COMING_SOON_STORES = [
-  {
-    id: 'boutique-b',
-    name: 'BodyStart Nutrition, Boutique 2',
-    city: 'Bientôt disponible',
-    openingDate: 'Ouverture prochaine',
-  },
-]

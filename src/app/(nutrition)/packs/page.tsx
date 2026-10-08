@@ -5,30 +5,42 @@ import { getCollectionByHandle } from '@/lib/shopify'
 import PackCardV2 from '@/components/pack/v2/PackCardV2'
 import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = buildPageMetadata({
-  path: '/packs',
-  title: 'Nos packs, BodyStart Nutrition',
-  description:
-    'Nos meilleurs produits regroupés pour t’aider à économiser. Une routine complète, un seul prix.',
-})
-
 // 60s — laisse Adam ajuster les packs cote Shopify sans avoir a rebuild.
 export const revalidate = 60
 
-export default async function PacksPage() {
-  // Strategie : on s'appuie sur la collection "packs" (handle Shopify),
-  // c'est le critere le plus fiable et le plus simple a piloter cote Adam
-  // (il publie un Bundle Shopify et le tague dans la collection "packs").
-  // Si la collection est vide ou inexistante (premier deploiement, debug
-  // Shopify, etc.) on tombe sur l'empty state V2.
-  let collection: Awaited<ReturnType<typeof getCollectionByHandle>> = null
+// Strategie : on s'appuie sur la collection "packs" (handle Shopify),
+// c'est le critere le plus fiable et le plus simple a piloter cote Adam
+// (il publie un Bundle Shopify et le tague dans la collection "packs").
+// Si la collection est vide ou inexistante, la page reste en ligne (URL
+// conservee) avec l'etat « Nos packs arrivent ». getCollectionByHandle est
+// memoise (cache) : un seul appel pour la metadata et la page.
+async function getPacks() {
   try {
-    collection = await getCollectionByHandle('packs', 24)
+    const collection = await getCollectionByHandle('packs', 24)
+    return collection?.products?.nodes ?? []
   } catch (err) {
     console.error('[PacksPage] fetch collection failed:', err)
+    return []
   }
+}
 
-  const packs = collection?.products?.nodes ?? []
+export async function generateMetadata(): Promise<Metadata> {
+  const packs = await getPacks()
+  return {
+    ...buildPageMetadata({
+      path: '/packs',
+      title: 'Nos packs, BodyStart Nutrition',
+      description:
+        'Nos meilleurs produits regroupés pour t’aider à économiser. Une routine complète, un seul prix.',
+    }),
+    // Page sans pack : gardée pour les liens existants, mais pas indexée
+    // (contenu trop mince pour Google).
+    ...(packs.length === 0 ? { robots: { index: false, follow: true } } : {}),
+  }
+}
+
+export default async function PacksPage() {
+  const packs = await getPacks()
 
   return (
     <div className="bg-canvas min-h-screen">
@@ -42,10 +54,12 @@ export default async function PacksPage() {
             <h1 className="font-display text-[36px] sm:text-[44px] lg:text-[52px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
               Nos packs
             </h1>
-            <p className="text-ink-mute text-[16px] md:text-[17px] leading-[1.6] max-w-[600px]">
-              Nos meilleurs produits regroupés pour t’aider à économiser. Une routine
-              complète, un seul prix.
-            </p>
+            {packs.length > 0 && (
+              <p className="text-ink-mute text-[16px] md:text-[17px] leading-[1.6] max-w-[600px]">
+                Nos meilleurs produits regroupés pour t’aider à économiser. Une routine
+                complète, un seul prix.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -66,24 +80,22 @@ export default async function PacksPage() {
               ))}
             </div>
           ) : (
-            /* Empty state V2 — sobre, DA claire, pas de gros titre vert caps */
-            <div className="max-w-xl mx-auto bg-white border border-spruce/10 rounded-2xl p-8 md:p-10 text-center">
+            /* Aucun pack publié : la page reste (liens existants), avec un
+               renvoi vers le conseil. Carte V2 : blanche, ombre teintée, sans bordure. */
+            <div className="max-w-xl mx-auto rounded-[20px] bg-white shadow-card p-8 md:p-10 text-center">
               <div className="w-12 h-12 bg-sage rounded-full mx-auto mb-5 flex items-center justify-center">
-                <Package className="w-5 h-5 text-spruce" />
+                <Package className="w-5 h-5 text-spruce" aria-hidden="true" />
               </div>
               <h2 className="font-display text-[22px] md:text-[26px] font-extrabold text-spruce tracking-tight mb-3">
-                On prépare des nouveautés
+                Nos packs arrivent
               </h2>
-              <p className="text-ink-mute text-[14.5px] leading-[1.6] max-w-md mx-auto mb-6">
-                Nos packs reviennent très vite. En attendant, tu peux composer ta routine
-                à la carte dans le catalogue.
+              <p className="text-ink-mute text-[15px] leading-[1.6] max-w-md mx-auto mb-6">
+                On prépare des packs avec les produits qu’on conseille le plus au comptoir.
+                En attendant, dis-nous ton objectif, on t’oriente.
               </p>
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 bg-fresh text-white font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-fresh-deep transition-colors"
-              >
-                Voir tous les produits
-                <ArrowRight className="w-3.5 h-3.5" />
+              <Link href="/conseil" className="btn-primary press inline-flex min-h-[44px] items-center gap-2">
+                Demander conseil
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
           )}

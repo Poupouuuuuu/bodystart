@@ -11,7 +11,8 @@ import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import Reveal from '@/components/ui/Reveal'
-import { getFeaturedProducts } from '@/lib/shopify'
+import { getFeaturedProducts, getProductByHandle } from '@/lib/shopify'
+import { HOME_FEATURED_HANDLE, homeBestSellers } from '@/lib/merchandising'
 import { buildPageMetadata } from '@/lib/seo'
 
 // REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
@@ -41,7 +42,14 @@ export const revalidate = 3600
 async function BestSellersAsync() {
   let products: import('@/lib/shopify/types').ShopifyProduct[] = []
   try {
-    products = await getFeaturedProducts()
+    // Meilleures ventes sans les marques exclues, carte « Best-seller » choisie
+    // à la main en tête (lib/merchandising) ; lue à part si elle n'est pas
+    // dans les meilleures ventes du moment.
+    const best = await getFeaturedProducts()
+    const featured = best.some((p) => p.handle === HOME_FEATURED_HANDLE)
+      ? null
+      : await getProductByHandle(HOME_FEATURED_HANDLE).catch(() => null)
+    products = homeBestSellers(best, featured)
   } catch {
     // Sans cles API, section vide
   }

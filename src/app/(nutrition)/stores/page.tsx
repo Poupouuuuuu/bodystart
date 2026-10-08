@@ -8,7 +8,6 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { BODY_START_STORES } from '@/lib/shopify/types'
-import NotifyFormV2 from '@/components/stores/NotifyFormV2'
 import StoreStatusV2 from '@/components/stores/StoreStatusV2'
 import { buildPageMetadata } from '@/lib/seo'
 import { CONTACT_EMAIL } from '@/lib/store-info'
@@ -113,11 +112,11 @@ export default function StoresPage() {
         </div>
       </section>
 
-      {/* ─── 2. Les deux cards (cœur de la page) ─── */}
+      {/* ─── 2. La boutique (cœur de la page) ─── */}
       <section className="pb-16 md:pb-20">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
-            {/* Card 1 — BodyStart Nutrition Coignières */}
+          {/* Une seule boutique (la 2ᵉ n'est plus d'actualité, 08/10/2026). */}
+          <div className="max-w-3xl">
             <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-8 flex flex-col">
               <StoreStatusV2 hours={store.hours} />
 
@@ -177,26 +176,6 @@ export default function StoresPage() {
                   </li>
                 ))}
               </ul>
-            </div>
-
-            {/* Card 2 — 2e boutique (bientôt) */}
-            <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-8 flex flex-col">
-              <span className="inline-flex items-center self-start gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full">
-                Bientôt
-              </span>
-
-              <h2 className="font-display text-[22px] md:text-[26px] font-extrabold text-spruce leading-[1.15] tracking-tight mt-4">
-                Une 2ᵉ boutique arrive
-              </h2>
-
-              <p className="text-ink-mute text-[15px] leading-[1.6] mt-3">
-                On s&apos;agrandit. Laisse ton email pour être prévenu de l&apos;ouverture et
-                recevoir une offre de bienvenue.
-              </p>
-
-              <div className="mt-auto pt-7">
-                <NotifyFormV2 />
-              </div>
             </div>
           </div>
         </div>

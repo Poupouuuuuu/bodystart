@@ -60,14 +60,18 @@ export default function LeConseilBodyStartV2({ handle }: { handle: string }) {
         <Field label="Tu n'en as PAS besoin si…" value={content.pasBesoinSi} variant="caution" />
       </div>
 
-      <p className="mt-7 pt-5 border-t border-spruce/10 text-[13px] text-ink-mute leading-relaxed flex items-center gap-2">
-        <MessageCircle className="w-4 h-4 text-spruce flex-shrink-0" />
-        Une question ? Passe nous voir à Coignières ou{' '}
-        <a href="/conseil" className="text-spruce font-semibold hover:text-fresh-deep underline underline-offset-2">
-          remplis le formulaire conseil
-        </a>
-        . On répond sous 24h.
-      </p>
+      {/* Icône + texte en deux blocs : en `flex` direct, chaque morceau de
+          phrase devenait une colonne et la ligne se cassait sur mobile. */}
+      <div className="mt-7 pt-5 border-t border-spruce/10 flex items-start gap-2 text-[13px] text-ink-mute leading-relaxed">
+        <MessageCircle className="w-4 h-4 mt-0.5 text-spruce flex-shrink-0" aria-hidden="true" />
+        <p>
+          Une question ? Passe nous voir à Coignières ou{' '}
+          <a href="/conseil" className="text-spruce font-semibold hover:text-fresh-deep underline underline-offset-2">
+            demande conseil en ligne
+          </a>
+          .
+        </p>
+      </div>
     </section>
   )
 }

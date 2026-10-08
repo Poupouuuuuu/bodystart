@@ -216,7 +216,7 @@ export const GET_PRODUCT_BY_HANDLE = `
 // exploserait le cout Storefront. Ici first:8 → cout maitrise.
 export const GET_FEATURED_PRODUCTS = `
   query GetFeaturedProducts {
-    products(first: 8, sortKey: BEST_SELLING) {
+    products(first: 20, sortKey: BEST_SELLING) {
       nodes {
         id
         handle

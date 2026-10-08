@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import { formatPrice } from '@/lib/utils'
+import { HOME_FEATURED_HANDLE } from '@/lib/merchandising'
 
 /**
  * Best-sellers V3 — grille « bento » asymétrique.
@@ -88,12 +89,13 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
 export default function BestSellersV3({ products }: BestSellersV3Props) {
   const items = products.slice(0, 5)
   if (items.length === 0) return null
-  // La grande tuile met en scène un produit qui la remplit : d'abord un
-  // produit tagué best-seller, sinon le plus cher des 5 (un pot de whey ou de
-  // créatine, pas une barre à 2,90 € perdue dans 600 px de fond végétal —
-  // c'est ce que donnait l'ordre brut de la collection Shopify).
+  // La grande tuile met en scène un produit qui la remplit : la carte choisie
+  // à la main (HOME_FEATURED_HANDLE, 08/10/2026), sinon un produit tagué
+  // best-seller, sinon le plus cher des 5 (un pot de whey ou de créatine, pas
+  // une barre à 2,90 € perdue dans 600 px de fond végétal).
   const priceOf = (p: ShopifyProduct) => parseFloat(p.variants.nodes[0]?.price.amount ?? '0')
   const featured =
+    items.find((p) => p.handle === HOME_FEATURED_HANDLE) ??
     items.find((p) => (p.tags ?? []).some((t) => /best.?seller/i.test(t))) ??
     [...items].sort((a, b) => priceOf(b) - priceOf(a))[0]
   const rest = items.filter((p) => p.id !== featured.id).slice(0, 4)

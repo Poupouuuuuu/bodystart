@@ -1,3 +1,5 @@
+import { PICKUP_PROMISE } from '@/lib/shipping'
+
 /**
  * Bandeau défilant — signature des sites de marque premium (Ritual, Huel).
  * Remplace BrandValuesV2 sur la home : ses 4 puces doublonnaient la bande de
@@ -9,7 +11,7 @@
  */
 const ITEMS = [
   'Conseil gratuit en boutique',
-  'Click & Collect en quelques minutes',
+  PICKUP_PROMISE.court,
   'Livraison offerte dès 85 €',
   '13 ans de conseil à Coignières',
   'Marques sélectionnées, dosages vérifiés',

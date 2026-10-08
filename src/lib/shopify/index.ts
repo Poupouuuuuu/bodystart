@@ -79,7 +79,8 @@ export const getProductByHandle = cache(async (handle: string) => {
 })
 
 export const getFeaturedProducts = cache(async (): Promise<ShopifyProduct[]> => {
-  // 8 meilleures ventes avec composants de bundle (cf. GET_FEATURED_PRODUCTS).
+  // 20 meilleures ventes avec composants de bundle (cf. GET_FEATURED_PRODUCTS) :
+  // marge pour les marques exclues des blocs automatiques (lib/merchandising).
   // Épuisés en fin de liste : un best-seller en rupture ne doit pas occuper
   // les premières cartes de la home (règle transverse boutique).
   try {

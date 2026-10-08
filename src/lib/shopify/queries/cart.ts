@@ -26,6 +26,8 @@ const CART_FRAGMENT = `
               id
               handle
               title
+              productType
+              tags
               featuredImage {
                 url
                 altText

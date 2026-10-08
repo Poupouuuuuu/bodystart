@@ -3,9 +3,13 @@
 // Popup de capture d'email : -5 % sur la 1re commande (code BIENVENUE5 envoyé
 // par l'automatisation Shopify Email ; passé de 10 à 5 % le 2026-09-05 pour
 // laisser les codes influenceurs/ambassadeurs à -10 %).
-// - Déclenchement : ~15 s OU exit-intent (desktop) / remontée rapide (mobile).
-// - UNE fois par visiteur (flag localStorage posé dès l'affichage ou la fermeture).
-// - Pas sur /staff (caisse) ni pour un client connecté.
+// - Déclenchement (08/10/2026, règles dans lib/newsletter-popup) : à partir de
+//   la 2ᵉ page vue de la visite, après 8 s ; sur ordinateur, aussi à
+//   l'intention de sortie dès la 1re page. Plus de déclenchement au premier
+//   écran sur mobile (le bandeau couvrait les deux tiers de l'écran).
+// - Jamais sur /conseil, /jeu, les fiches produit, /staff (caisse), un checkout,
+//   ni pour un client connecté.
+// - Une fois par visiteur tous les 30 jours (date posée dès l'affichage).
 // - Soumission → /api/subscribe (abonne le contact dans Shopify). Le code part
 //   par email via l'automatisation Shopify Email : on ne l'affiche jamais ici.
 
@@ -14,9 +18,15 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { X, Mail, Check, Loader2 } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
+import {
+  NEWSLETTER_DELAY_MS,
+  NEWSLETTER_FLAG,
+  PAGE_VIEWS_KEY,
+  isExcludedPath,
+  seenRecently,
+  timerAllowed,
+} from '@/lib/newsletter-popup'
 
-const FLAG = 'bs_newsletter_popup'
-const DELAY_MS = 15000
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function NewsletterPopup() {
@@ -26,19 +36,27 @@ export default function NewsletterPopup() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
-  const armedRef = useRef(false)
   const shownRef = useRef(false)
+  const [pageViews, setPageViews] = useState(0)
 
-  // Pas de checkout sur notre domaine (hébergé Shopify) ; on exclut par sécurité
-  // l'espace caisse et tout chemin checkout éventuel.
-  // /jeu : page du jeu en boutique (QR code), le parcours ne doit pas être interrompu.
-  const excluded =
-    !!pathname &&
-    (pathname.startsWith('/staff') || pathname.startsWith('/checkout') || pathname.startsWith('/jeu'))
+  const excluded = isExcludedPath(pathname)
+
+  // Pages vues de la visite (sessionStorage) : +1 à chaque changement de page.
+  useEffect(() => {
+    if (!pathname) return
+    let n = 1
+    try {
+      n = Number(sessionStorage.getItem(PAGE_VIEWS_KEY) ?? '0') + 1
+      sessionStorage.setItem(PAGE_VIEWS_KEY, String(n))
+    } catch {
+      /* sessionStorage indispo : on reste à la 1re page, pas de délai armé */
+    }
+    setPageViews(n)
+  }, [pathname])
 
   const markSeen = useCallback(() => {
     try {
-      localStorage.setItem(FLAG, '1')
+      localStorage.setItem(NEWSLETTER_FLAG, String(Date.now()))
     } catch {
       /* localStorage indispo (navigation privée stricte) : on n'insiste pas */
     }
@@ -56,45 +74,35 @@ export default function NewsletterPopup() {
     setOpen(false)
   }, [markSeen])
 
-  // Armement des déclencheurs (une seule fois, si éligible)
+  // Armement des déclencheurs, page par page (désarmés au changement de page :
+  // un délai lancé sur l'accueil ne s'ouvre jamais sur une fiche produit).
   useEffect(() => {
-    if (isLoading) return // on attend de savoir si le visiteur est connecté
-    if (excluded || isLoggedIn || armedRef.current) return
+    if (isLoading || pageViews === 0) return // connecté ? page comptée ?
+    if (excluded || isLoggedIn || shownRef.current) return
     let seen = false
     try {
-      seen = localStorage.getItem(FLAG) === '1'
+      const raw = localStorage.getItem(NEWSLETTER_FLAG)
+      seen = seenRecently(raw, Date.now())
+      // Ancien drapeau sans date : daté d'aujourd'hui (cf. seenRecently)
+      if (raw === '1') localStorage.setItem(NEWSLETTER_FLAG, String(Date.now()))
     } catch {
       seen = false
     }
     if (seen) return
-    armedRef.current = true
 
-    const timer = setTimeout(show, DELAY_MS)
+    const timer = timerAllowed(pageViews) ? setTimeout(show, NEWSLETTER_DELAY_MS) : undefined
 
-    // Exit-intent desktop : la souris sort par le haut de la fenêtre
+    // Intention de sortie, ordinateur seulement (souris qui sort par le haut)
+    const desktop = window.matchMedia?.('(hover: hover) and (pointer: fine)').matches ?? false
     const onMouseOut = (e: MouseEvent) => {
       if (e.clientY <= 0 && !e.relatedTarget) show()
     }
-    // Mobile : remontée rapide vers le haut de page
-    let lastY = window.scrollY
-    let lastT = Date.now()
-    const onScroll = () => {
-      const y = window.scrollY
-      const t = Date.now()
-      const dy = lastY - y // > 0 = scroll vers le haut
-      const dt = t - lastT || 1
-      if (dy > 60 && dy / dt > 0.45 && y < 400) show()
-      lastY = y
-      lastT = t
-    }
-    document.addEventListener('mouseout', onMouseOut)
-    window.addEventListener('scroll', onScroll, { passive: true })
+    if (desktop) document.addEventListener('mouseout', onMouseOut)
     return () => {
-      clearTimeout(timer)
+      if (timer) clearTimeout(timer)
       document.removeEventListener('mouseout', onMouseOut)
-      window.removeEventListener('scroll', onScroll)
     }
-  }, [isLoading, excluded, isLoggedIn, show])
+  }, [isLoading, excluded, isLoggedIn, show, pageViews])
 
   // Fermeture à la touche Échap
   useEffect(() => {

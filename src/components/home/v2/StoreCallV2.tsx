@@ -25,8 +25,8 @@ export default function StoreCallV2() {
               Passe nous voir en boutique.
             </h2>
             <p className="text-ink-mute text-[17px] leading-[1.65] mb-8 max-w-[520px]">
-              Commande en ligne, récupère à Coignières, souvent prêt en quelques minutes,
-              on te prévient dès que c&apos;est bon. Et tant que t&apos;es là, on prend 5
+              Commande en ligne, récupère à Coignières : retrait immédiat pour les produits
+              en stock, aux heures d&apos;ouverture. Et tant que t&apos;es là, on prend 5
               minutes pour t&apos;aider à choisir. C&apos;est gratuit, et c&apos;est tout
               l&apos;intérêt d&apos;avoir une vraie boutique.
             </p>

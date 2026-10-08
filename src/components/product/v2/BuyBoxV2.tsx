@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck, RotateCcw, Award, Star } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
-import { GOOGLE_LISTING_URL, GOOGLE_RATING } from '@/lib/store-info'
+import { GOOGLE_LISTING_URL, GOOGLE_RATING, type GoogleRating } from '@/lib/store-info'
+import { PICKUP_PROMISE } from '@/lib/shipping'
 import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
 import BundleGalleryV2 from './BundleGalleryV2'
@@ -55,6 +56,8 @@ interface BuyBoxV2Props {
    * on affiche alors la note Google de la boutique.
    */
   rating?: { ratingValue: number; reviewCount: number } | null
+  /** Note Google de la boutique (métachamps Shopify, lue par la page). */
+  googleRating?: GoogleRating
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -73,7 +76,7 @@ const variantSize = (v: ShopifyProductVariant) => v.title.split(' / ')[1]?.trim(
  * Decisions appliquees :
  * - Pas d'abonnement (achat unique only)
  * - Stock <= 5 → chiffre exact terracotta ; sinon "En stock" sage
- * - Reassurance sous le bouton : livraison 85 € · retrait quelques minutes · paiement securise
+ * - Reassurance sous le bouton : livraison 85 € · retrait (immédiat si la variante est en stock à Coignières) · paiement securise
  */
 export default function BuyBoxV2({
   images,
@@ -90,6 +93,7 @@ export default function BuyBoxV2({
   vendor = null,
   isBundle = false,
   rating = null,
+  googleRating = GOOGLE_RATING,
 }: BuyBoxV2Props) {
   // Variante d'ouverture (rendu serveur, donc sans ?variant=) :
   // - bundle : une variante COMPLÈTE (composants tous présents), pour ne pas
@@ -582,8 +586,12 @@ export default function BuyBoxV2({
             </li>
             <li className="flex items-center gap-2.5">
               <Store className="w-4 h-4 text-spruce flex-shrink-0" />
+              {/* « Immédiat » seulement si la variante est en stock en boutique
+                  (stock lu en direct) : sinon la promesse serait fausse. */}
               <span>
-                Click &amp; Collect gratuit à Coignières, souvent prêt en quelques minutes
+                {storeStock !== undefined && storeStock > 0
+                  ? `Click & Collect gratuit. ${PICKUP_PROMISE.enStock}`
+                  : 'Click & Collect gratuit à Coignières'}
               </span>
             </li>
             <li className="flex items-center gap-2.5">
@@ -608,7 +616,7 @@ export default function BuyBoxV2({
                 On ne vend que ce qu&apos;on consomme, et on te conseille comme au comptoir.
               </p>
               {/* Avis PRODUIT (app d'avis) si disponibles, sinon note Google de la
-                  boutique (source unique GOOGLE_RATING, relevée à la main). */}
+                  boutique (métachamps Shopify, cf. lib/shopify/google-rating). */}
               {rating && rating.reviewCount > 0 ? (
                 <a
                   href="#avis"
@@ -625,7 +633,7 @@ export default function BuyBoxV2({
                 className="-mt-1.5 -mb-3 inline-flex min-h-[44px] items-center gap-1.5 font-semibold underline underline-offset-2 hover:text-fresh-deep transition-colors"
               >
                 <Star className="w-3.5 h-3.5 text-mustard fill-current" aria-hidden="true" />
-                {GOOGLE_RATING.value.toLocaleString('fr-FR')}/5 sur Google · {GOOGLE_RATING.count} avis
+                {googleRating.value.toLocaleString('fr-FR')}/5 sur Google · {googleRating.count} avis
               </a>
               )}
             </div>

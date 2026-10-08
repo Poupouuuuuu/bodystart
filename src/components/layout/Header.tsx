@@ -8,11 +8,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense, useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { ShoppingBag, Menu, X, ChevronDown, Search, User, Loader2 } from 'lucide-react'
+import { ShoppingBag, Menu, X, ChevronDown, Search, User, Loader2, Phone, Navigation, MapPin } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useCustomer } from '@/context/CustomerContext'
 import { cn, formatPrice } from '@/lib/utils'
-import type { ShopifyCollection } from '@/lib/shopify/types'
+import { BODY_START_STORES, type ShopifyCollection } from '@/lib/shopify/types'
+import { GOOGLE_DIRECTIONS_URL } from '@/lib/store-info'
 import { FREE_SHIPPING_LABEL } from '@/lib/shipping'
 
 type SearchResult = {
@@ -58,6 +59,10 @@ const MOBILE_CATEGORY_LINKS: { label: string; href: string }[] = [
 interface HeaderProps {
   collections?: ShopifyCollection[]
 }
+
+const STORE = BODY_START_STORES.find((s) => s.isActive) ?? BODY_START_STORES[0]
+// « 07 61 84 75 80 » → tel:+33761847580
+const STORE_TEL = `tel:+33${STORE.phone.replace(/\s/g, '').replace(/^0/, '')}`
 
 export default function Header(props: HeaderProps) {
   return (
@@ -490,6 +495,33 @@ function HeaderInner(_props: HeaderProps) {
                 <User className="w-4 h-4" />
                 {isLoggedIn ? 'Mon Compte' : 'Connexion / Inscription'}
               </Link>
+            </div>
+
+            {/* La boutique, en bas du menu : adresse, horaires, appel, itinéraire */}
+            <div className="rounded-[20px] bg-sage p-4">
+              <p className="flex items-start gap-2 text-[14px] font-semibold text-spruce">
+                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                {STORE.address}, Coignières
+              </p>
+              <p className="mt-1 pl-6 text-[14px] text-ink-mute">Du lundi au samedi, 11 h à 19 h</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <a
+                  href={STORE_TEL}
+                  className="press inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-fresh px-4 text-[14px] font-semibold text-white hover:bg-fresh-deep transition-colors"
+                >
+                  <Phone className="h-4 w-4" aria-hidden="true" />
+                  Appeler
+                </a>
+                <a
+                  href={GOOGLE_DIRECTIONS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="press inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-white px-4 text-[14px] font-semibold text-spruce hover:bg-canvas transition-colors"
+                >
+                  <Navigation className="h-4 w-4" aria-hidden="true" />
+                  Itinéraire
+                </a>
+              </div>
             </div>
           </div>
         </div>
