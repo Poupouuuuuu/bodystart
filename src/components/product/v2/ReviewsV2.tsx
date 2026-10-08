@@ -1,5 +1,6 @@
 import { MessageCircle, ExternalLink } from 'lucide-react'
-import { GOOGLE_REVIEW_URL, GOOGLE_LISTING_URL, GOOGLE_RATING } from '@/lib/store-info'
+import { GOOGLE_REVIEW_URL, GOOGLE_LISTING_URL } from '@/lib/store-info'
+import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
 import StarRating from '@/components/product/StarRating'
 
 /**
@@ -7,13 +8,14 @@ import StarRating from '@/components/product/StarRating'
  * Cf. tech-specs/site-rewrite-copy-v1.md §3.6
  *      tech-specs/redesign-v2-direction-artistique.md §B.Fiche produit.6
  *
- * 2026-08-05 : la fiche Google a atteint 4,6/5 (58 avis) → on affiche la note
- * RÉELLE de la boutique (source unique GOOGLE_RATING dans store-info.ts,
- * relevée à la main, jamais inventée) avec lien vers la fiche pour TOUT lire.
- * Pas de verbatims copiés : les avis se lisent chez Google, à la source.
+ * Note RÉELLE de la boutique, lue dans les métachamps Shopify (mis à jour
+ * chaque lundi), avec lien vers la fiche pour TOUT lire. Nombre d'avis écrit
+ * une seule fois dans la section. Pas de verbatims copiés : les avis se
+ * lisent chez Google, à la source.
  */
-export default function ReviewsV2() {
-  const note = GOOGLE_RATING.value.toLocaleString('fr-FR')
+export default async function ReviewsV2() {
+  const rating = await getGoogleRating()
+  const note = formatRating(rating)
   return (
     <section className="bg-white">
       <div className="container py-14 md:py-18">
@@ -25,9 +27,9 @@ export default function ReviewsV2() {
             Nos clients nous notent {note}/5 sur Google.
           </h2>
           <div className="flex items-center justify-center gap-3 mb-5">
-            <StarRating rating={GOOGLE_RATING.value} size="lg" showCount={false} />
+            <StarRating rating={rating.value} size="lg" showCount={false} />
             <span className="text-[15px] font-semibold text-spruce">
-              {note}/5 · {GOOGLE_RATING.count} avis
+              {rating.count} avis
             </span>
           </div>
           <p className="text-[15px] text-ink-mute leading-[1.65] mb-7">
@@ -43,7 +45,7 @@ export default function ReviewsV2() {
               className="inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-fresh-deep transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
-              Lire les {GOOGLE_RATING.count} avis
+              Lire les avis sur Google
             </a>
             <a
               href={GOOGLE_REVIEW_URL}

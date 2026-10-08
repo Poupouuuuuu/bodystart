@@ -1,12 +1,9 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import {
-  getProductByHandle,
-  getProducts,
-  getCollectionByHandle,
-  getFeaturedProducts,
-} from '@/lib/shopify'
+import { getProductByHandle, getProducts } from '@/lib/shopify'
+import { pickComplements } from '@/lib/merchandising'
+import { wheyLabel } from '@/lib/product-subtitle'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { isBundle, pickInitialBundleVariant } from '@/lib/shopify/bundle'
 import { pickDefaultVariant } from '@/lib/product-variant'
@@ -23,6 +20,7 @@ import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
 import { buildPageMetadata } from '@/lib/seo'
 import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
 import { ratingFromMetafields, buildAggregateRating } from '@/lib/reviews'
+import { getGoogleRating } from '@/lib/shopify/google-rating'
 
 // ISR 3 min (sprint perf 2026-07-04) : la page était en revalidate=0 +
 // force-no-store « pour le stock C&C temps réel » → TTFB ~600 ms mesuré en prod
@@ -92,9 +90,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-// Tags Shopify qui donnent une pastille benefice automatique sur la buy box
+// Tags Shopify qui donnent une pastille benefice automatique sur la buy box.
+// Le type de whey (claire, isolat, concentrée) vient de wheyLabel, d'après
+// les étiquettes précises : l'étiquette « whey » seule ne dit pas lequel.
 const BENEFIT_TAGS_MAP: Record<string, string> = {
-  whey: 'Whey isolat',
   'sans-sucre': 'Sans sucre',
   vegan: '100% végétal',
   'anti-dopage': 'Certifié anti-dopage',
@@ -103,8 +102,9 @@ const BENEFIT_TAGS_MAP: Record<string, string> = {
   bio: 'Bio',
 }
 
-function extractBenefits(tags: string[]): string[] {
-  const out: string[] = []
+function extractBenefits(tags: string[], title: string): string[] {
+  const whey = wheyLabel(tags, title)
+  const out: string[] = whey ? [whey] : []
   for (const tag of tags) {
     const label = BENEFIT_TAGS_MAP[tag.toLowerCase()]
     if (label && !out.includes(label)) out.push(label)
@@ -137,24 +137,15 @@ export default async function ProductPage({ params }: Props) {
   // l'identité du magasin actif.
   const activeStore = BODY_START_STORES.find((s) => s.isActive)
 
-  // Produits cross-sell (meme collection) avec fallback featured products
-  // si le produit n'a pas de collection rattachee.
+  // Suggestions : ce qui VA AVEC ce produit (créatine, shaker, crème de riz,
+  // collation sous une whey…), jamais un concurrent de la même famille ni une
+  // marque exclue des blocs automatiques (lib/merchandising). Avant le
+  // 08/10/2026 : produits de la même collection, donc une whey sous une whey.
   let relatedProducts: import('@/lib/shopify/types').ShopifyProduct[] = []
-  if (product.collections?.nodes?.[0]?.handle) {
-    try {
-      const collection = await getCollectionByHandle(product.collections.nodes[0].handle, 5)
-      relatedProducts = collection?.products?.nodes ?? []
-    } catch {
-      // On continue sans recommandations de collection
-    }
-  }
-  if (relatedProducts.length === 0) {
-    // Fallback : featured products (4 cartes garanties si Shopify renvoie quelque chose)
-    try {
-      relatedProducts = await getFeaturedProducts()
-    } catch {
-      // Pas de cross-sell affiche si tout echoue (graceful)
-    }
+  try {
+    relatedProducts = pickComplements(product, (await getProducts({ first: 100, sortKey: 'BEST_SELLING' })).nodes)
+  } catch {
+    // Pas de suggestions si Shopify ne répond pas (section masquée)
   }
 
   // SEO + JSON-LD (rich snippets)
@@ -170,20 +161,10 @@ export default async function ProductPage({ params }: Props) {
   const mainVariant = productIsBundle
     ? pickInitialBundleVariant(product.variants.nodes)
     : pickDefaultVariant(product.variants.nodes)
-  const hasDiscount =
-    mainVariant?.compareAtPrice &&
-    parseFloat(mainVariant.compareAtPrice.amount) > parseFloat(mainVariant.price.amount)
-  const discountPct = hasDiscount
-    ? Math.round(
-        ((parseFloat(mainVariant!.compareAtPrice!.amount) - parseFloat(mainVariant!.price.amount)) /
-          parseFloat(mainVariant!.compareAtPrice!.amount)) *
-          100
-      )
-    : null
 
   const collectionName = product.collections?.nodes?.[0]?.title ?? null
   const collectionHandle = product.collections?.nodes?.[0]?.handle ?? null
-  const benefits = extractBenefits(product.tags ?? [])
+  const benefits = extractBenefits(product.tags ?? [], product.title)
   const format = extractFormat(product.metafields)
   // Bloc « Précautions d'emploi » (complément alimentaire) : pas pour les aliments
   // courants (barres, snacks, boissons) ni les accessoires (relecture UE, 25/09/2026).
@@ -223,6 +204,7 @@ export default async function ProductPage({ params }: Props) {
   // Avis-ready : n'émet aggregateRating QUE si une vraie source d'avis existe
   // (aucune aujourd'hui → rien n'est émis ; cf. src/lib/reviews.ts).
   const rating = ratingFromMetafields(product.metafields)
+  const googleRating = await getGoogleRating()
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -302,7 +284,6 @@ export default async function ProductPage({ params }: Props) {
             title={product.title}
             handle={product.handle}
             productType={product.productType}
-            discountPct={discountPct}
             collectionName={collectionName}
             collectionHandle={collectionHandle}
             activeStore={activeStore}
@@ -312,6 +293,7 @@ export default async function ProductPage({ params }: Props) {
             vendor={product.vendor}
             isBundle={productIsBundle}
             rating={rating}
+            googleRating={googleRating}
           />
           </Suspense>
         </div>
@@ -345,7 +327,9 @@ export default async function ProductPage({ params }: Props) {
       />
 
       {/* ─── Avis ─── */}
-      <Suspense fallback={null}><ReviewsV2 /></Suspense>
+      {/* Sans <Suspense> : composant serveur (note Google), rien à hydrater ;
+          la frontière ne servait qu'à l'envoyer dans un bloc caché sans JS. */}
+      <ReviewsV2 />
 
       {/* ─── Cross-sell + nudge franco ─── */}
       {relatedProducts.length > 0 && (

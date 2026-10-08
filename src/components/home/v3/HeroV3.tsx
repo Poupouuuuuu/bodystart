@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, ArrowUpRight, MapPin, Star } from 'lucide-react'
-import { GOOGLE_LISTING_URL, GOOGLE_RATING } from '@/lib/store-info'
+import { GOOGLE_LISTING_URL } from '@/lib/store-info'
+import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
 
 /**
  * HERO V3 — immersif, pleine largeur.
@@ -24,8 +25,8 @@ import { GOOGLE_LISTING_URL, GOOGLE_RATING } from '@/lib/store-info'
  *   ×3 comparées), LCP mobile −550 ms à lui seul (mesure du 08/10/2026,
  *   4G lent + CPU ×4).
  */
-export default function HeroV3() {
-  const note = GOOGLE_RATING.value.toLocaleString('fr-FR')
+export default async function HeroV3() {
+  const rating = await getGoogleRating()
 
   return (
     <section className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-[#0f160f]">
@@ -69,7 +70,7 @@ export default function HeroV3() {
               >
                 <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md transition-colors duration-500 ease-out-expo group-hover:bg-white/20">
                   <Star className="h-3.5 w-3.5 fill-mustard text-mustard" aria-hidden="true" />
-                  {note}/5 · {GOOGLE_RATING.count} avis Google
+                  {formatRating(rating)}/5 · {rating.count} avis Google
                 </span>
               </a>
             </div>
@@ -144,7 +145,7 @@ export default function HeroV3() {
           {[
             { value: '13 ans', label: 'de conseil au comptoir' },
             { value: '+2 600', label: 'clients conseillés' },
-            { value: 'Click & Collect', label: 'prêt en quelques minutes' },
+            { value: 'Click & Collect', label: 'retrait immédiat si en stock' },
           ].map((f) => (
             <div key={f.value} className="flex items-baseline gap-2">
               <dt className="sr-only">{f.label}</dt>

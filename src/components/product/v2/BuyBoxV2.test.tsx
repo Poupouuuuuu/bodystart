@@ -59,7 +59,6 @@ function renderFiche(search: string) {
       title: 'YEAAH EAA',
       handle: 'yeaah-eaa',
       productType: 'Acides aminés',
-      discountPct: null,
       collectionName: null,
       collectionHandle: null,
       vendor: 'Dedicated',

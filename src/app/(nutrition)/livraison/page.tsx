@@ -6,6 +6,7 @@ import { getRefundPolicy } from '@/lib/shopify/policies'
 import PolicyBlocks from '@/components/legal/PolicyBlocks'
 import {
   CLICK_AND_COLLECT,
+  PICKUP_PROMISE,
   COLISSIMO,
   MONDIAL_RELAY,
   LIVRAISON_LOCALE,
@@ -35,9 +36,11 @@ const shippingMethods = [
   {
     Icon: Store,
     name: CLICK_AND_COLLECT.label,
-    delay: `${CLICK_AND_COLLECT.delayLabel}, souvent en quelques minutes`,
+    // Immédiat si en stock en boutique ; « sous 2 h » reste le délai maximum
+    // (aligné sur les CGV Shopify).
+    delay: `Immédiat si en stock, au plus tard ${CLICK_AND_COLLECT.delayLabel.replace(/^Prêt /, '')}`,
     price: 'Gratuit',
-    details: "Retire ta commande en boutique à Coignières. On te prévient dès que c'est prêt.",
+    details: `Retire ta commande en boutique à Coignières, du lundi au samedi de 11 h à 19 h. ${PICKUP_PROMISE.horsHoraires}`,
   },
   {
     Icon: Package,
@@ -67,7 +70,7 @@ const shippingMethods = [
 const HERO_HIGHLIGHTS = [
   { Icon: Truck, label: 'Colissimo', sub: `${COLISSIMO.transitDays![0]}-${COLISSIMO.transitDays![1]} jours` },
   { Icon: Package, label: 'Mondial Relay', sub: `${MONDIAL_RELAY.transitDays![0]}-${MONDIAL_RELAY.transitDays![1]} jours` },
-  { Icon: Store, label: 'Click & Collect', sub: 'Sous 2h' },
+  { Icon: Store, label: 'Click & Collect', sub: PICKUP_PROMISE.court },
 ]
 
 export default async function LivraisonPage() {

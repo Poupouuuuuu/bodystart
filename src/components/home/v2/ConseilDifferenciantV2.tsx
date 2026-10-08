@@ -70,7 +70,7 @@ export default function ConseilDifferenciantV2() {
             </div>
 
             <div className="inline-flex items-center gap-2 bg-sage text-spruce text-[13px] font-semibold px-4 py-2 rounded-full">
-              Click &amp; Collect gratuit, souvent prêt en quelques minutes
+              Click &amp; Collect gratuit, retrait immédiat si en stock
             </div>
           </div>
         </div>

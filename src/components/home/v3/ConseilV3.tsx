@@ -76,7 +76,7 @@ export default function ConseilV3() {
 
             <p className="mt-10 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-spruce shadow-soft">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-fresh" />
-              Click &amp; Collect gratuit, souvent prêt en quelques minutes
+              Click &amp; Collect gratuit, retrait immédiat si en stock
             </p>
           </div>
         </div>

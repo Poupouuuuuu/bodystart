@@ -1,24 +1,25 @@
-import { GOOGLE_LISTING_URL, GOOGLE_RATING } from '@/lib/store-info'
+import { GOOGLE_LISTING_URL } from '@/lib/store-info'
+import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
 
 /**
  * Bande de preuves — chiffres géants en Fraunces sur vert sapin.
  *
  * Seul aplat sombre de la page (avec le hero photo) : un CHAPITRE délibéré
  * de ~260 px, pas un fond de page. Les trois faits sont réels et déjà
- * utilisés ailleurs (13 ans, +2 600 clients, note Google lue sur la fiche).
+ * utilisés ailleurs (13 ans, +2 600 clients, note Google lue dans Shopify).
  */
-const FACTS = [
-  { value: '13', unit: 'ans', label: 'de conseil à Coignières' },
-  { value: '+2 600', unit: '', label: 'clients conseillés au comptoir' },
-  {
-    value: GOOGLE_RATING.value.toLocaleString('fr-FR'),
-    unit: '/5',
-    label: `${GOOGLE_RATING.count} avis Google`,
-    href: GOOGLE_LISTING_URL,
-  },
-]
-
-export default function StatsBand() {
+export default async function StatsBand() {
+  const rating = await getGoogleRating()
+  const FACTS: { value: string; unit: string; label: string; href?: string }[] = [
+    { value: '13', unit: 'ans', label: 'de conseil à Coignières' },
+    { value: '+2 600', unit: '', label: 'clients conseillés au comptoir' },
+    {
+      value: formatRating(rating),
+      unit: '/5',
+      label: `${rating.count} avis Google`,
+      href: GOOGLE_LISTING_URL,
+    },
+  ]
   return (
     <section className="bg-spruce text-canvas">
       <div className="container py-12 md:py-20">

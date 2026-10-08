@@ -49,6 +49,26 @@ export const CLICK_AND_COLLECT: ShippingMethod = {
   delayLabel: 'Prêt sous 2h',
 }
 
+/**
+ * Promesse de retrait en boutique (08/10/2026) : IMMÉDIAT pour un produit en
+ * stock à Coignières, aux heures d'ouverture ; commande passée hors horaires :
+ * prête dès l'ouverture (11 h). Sans stock en boutique, aucune promesse
+ * d'immédiateté (elle serait fausse) : la fiche produit n'affiche « retrait
+ * immédiat » que si le stock boutique de la variante est positif. Les textes
+ * légaux lus depuis Shopify (CGV, politique d'expédition) gardent « sous 2 h »
+ * comme délai maximum (CLICK_AND_COLLECT.delayLabel).
+ */
+export const PICKUP_PROMISE = {
+  /** Mention courte : bandeaux, puces, pied de page. */
+  court: 'Retrait immédiat si en stock',
+  /** Phrase complète, pages d'information. */
+  long: "Retrait immédiat en boutique pour les produits en stock, aux heures d'ouverture",
+  /** Fiche produit, variante en stock à Coignières. */
+  enStock: "Retrait immédiat à Coignières, aux heures d'ouverture",
+  /** Commande passée en dehors des horaires. */
+  horsHoraires: "Commande passée en dehors des horaires : prête dès l'ouverture, à 11 h.",
+} as const
+
 // Livrée par la boutique, en main propre, du lundi au samedi entre 19 h et
 // 21 h : le soir même pour une commande passée avant 17 h, sinon le lendemain
 // soir. JAMAIS offerte (le franco ne s'applique pas). Zone limitée à ~10 km :

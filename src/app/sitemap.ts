@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getProducts } from '@/lib/shopify'
+import { isPackProduct } from '@/lib/shopify/bundle'
 import { CATEGORY_PAGES } from '@/lib/categories'
 import { BLOG_ARTICLES } from '@/content/blog'
 
@@ -12,7 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, priority: 1.0, changeFrequency: 'daily' },
     { url: `${BASE_URL}/products`, priority: 0.9, changeFrequency: 'daily' },
-    { url: `${BASE_URL}/packs`, priority: 0.85, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/blog`, priority: 0.85, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/stores`, priority: 0.8, changeFrequency: 'weekly' },
     { url: `${BASE_URL}/complements-alimentaires-coignieres`, priority: 0.8, changeFrequency: 'monthly' },
@@ -47,8 +47,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Routes produits — fetch dynamique
   let productRoutes: MetadataRoute.Sitemap = []
+  // /packs seulement s'il existe un pack publié : sans pack, la page est en
+  // noindex (cf. packs/page.tsx) et ne doit pas figurer au sitemap.
+  let packRoutes: MetadataRoute.Sitemap = []
   try {
     const result = await getProducts({ first: 250 })
+    if (result.nodes.some(isPackProduct)) {
+      packRoutes = [{ url: `${BASE_URL}/packs`, priority: 0.85, changeFrequency: 'weekly' }]
+    }
     productRoutes = result.nodes.map((p) => ({
       url: `${BASE_URL}/products/${p.handle}`,
       priority: 0.75,
@@ -58,7 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Shopify indisponible
   }
 
-  return [...staticRoutes, ...categoryRoutes, ...blogRoutes, ...productRoutes].map((route) => ({
+  return [...staticRoutes, ...packRoutes, ...categoryRoutes, ...blogRoutes, ...productRoutes].map((route) => ({
     ...route,
     lastModified: route.lastModified ?? now,
   }))

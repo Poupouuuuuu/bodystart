@@ -1,3 +1,4 @@
+import type { CardPrice, PrixVariante } from '@/lib/product-price'
 // ============================================================
 // TYPES SHOPIFY — BodyStart
 // ============================================================
@@ -83,6 +84,10 @@ export interface ShopifyProduct {
     nodes: { handle: string; title: string }[]
   }
   metafields?: ShopifyMetafield[]
+  /** Prix de carte calculé côté serveur sur toutes les variantes (lib/product-price). */
+  cardPrice?: CardPrice | null
+  /** Variantes brutes pour ce calcul : retirées avant d'envoyer le produit aux composants. */
+  prixVariantes?: { nodes: PrixVariante[] }
   // Champs SEO dédiés Shopify (Storefront API). Nullables si non remplis.
   seo?: {
     title: string | null
@@ -135,6 +140,9 @@ export interface CartItem {
       id: string
       handle: string
       title: string
+      /** Famille du produit (suggestions du panier, cf. lib/merchandising). */
+      productType?: string
+      tags?: string[]
       featuredImage: ShopifyImage | null
     }
     price: ShopifyMoney
@@ -259,12 +267,3 @@ export const BODY_START_STORES: BodyStartStore[] = [
   },
 ]
 
-// Boutique B — ouverture prochaine
-export const COMING_SOON_STORES = [
-  {
-    id: 'boutique-b',
-    name: 'BodyStart Nutrition, Boutique 2',
-    city: 'Bientôt disponible',
-    openingDate: 'Ouverture prochaine',
-  },
-]

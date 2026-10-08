@@ -15,10 +15,10 @@ const FAQ_ITEMS = [
   {
     category: 'Commandes & Livraison',
     questions: [
-      { q: 'Quels sont les délais de livraison ?', a: `Mondial Relay (point relais) : ${MONDIAL_RELAY.delayLabel}. Colissimo (domicile) : ${COLISSIMO.delayLabel}. Click & Collect : prêt sous 2h en boutique.` },
+      { q: 'Quels sont les délais de livraison ?', a: `Mondial Relay (point relais) : ${MONDIAL_RELAY.delayLabel}. Colissimo (domicile) : ${COLISSIMO.delayLabel}. Click & Collect : retrait immédiat en boutique si le produit est en stock, sinon prêt au plus tard sous 2 h.` },
       { q: 'La livraison est-elle gratuite ?', a: `La livraison est gratuite à partir de ${FRANCO} d'achat en Mondial Relay et en Colissimo. En dessous, les frais sont de ${formatShippingPrice(MONDIAL_RELAY.priceCents)} en Mondial Relay (point relais) et ${formatShippingPrice(COLISSIMO.priceCents)} en Colissimo (domicile). Le Click & Collect est toujours gratuit. Autour de Coignières, on peut aussi te livrer nous-mêmes le soir même pour ${formatShippingPrice(LIVRAISON_LOCALE.priceCents)}.` },
       { q: 'Comment suivre ma commande ?', a: 'Tu recevras un email avec ton numéro de suivi dès l\'expédition de ton colis. Tu peux aussi consulter ton espace client.' },
-      { q: 'Comment fonctionne le Click & Collect ?', a: 'Choisis le Click & Collect au checkout. Ta commande est prête sous 2h. Présente ton email de confirmation en boutique pour retirer tes produits.' },
+      { q: 'Comment fonctionne le Click & Collect ?', a: 'Choisis le Click & Collect au checkout. Si tes produits sont en stock en boutique, tu peux les retirer tout de suite, aux heures d\'ouverture ; sinon ta commande est prête au plus tard sous 2 h. Présente ton email de confirmation en boutique pour retirer tes produits.' },
       { q: 'Comment choisir mon point relais ?', a: 'Choisis ton point relais dans le panier\u00a0; sinon, on choisit le plus proche de ton adresse. Au paiement, prends la livraison Mondial Relay.' },
     ],
   },

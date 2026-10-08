@@ -10,6 +10,7 @@ import { availableFirst } from '@/lib/product-order'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
+import { cardPriceOf } from '@/lib/product-price'
 
 interface CrossSellV2Props {
   products: ShopifyProduct[]
@@ -126,11 +127,15 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                   <h3 className="font-display font-bold text-[15px] text-ink leading-tight mb-2 line-clamp-2">
                     {product.title}
                   </h3>
-                  {/* minVariantPrice : MÊME prix que la carte catalogue
-                      (variants.nodes[0].price pouvait afficher le prix d'un
-                      autre format → le site se contredisait entre 2 écrans) */}
+                  {/* MÊME prix que la carte catalogue (lib/product-price) :
+                      variante en stock la moins chère, « dès » si les prix
+                      varient. minVariantPrice comptait aussi les variantes
+                      épuisées : prix affiché introuvable sur la fiche. */}
                   <p className="font-semibold text-[15px] text-spruce">
-                    {formatPrice(product.priceRange.minVariantPrice)}
+                    {cardPriceOf(product)?.from && (
+                      <span className="mr-1 text-[13px] font-medium text-ink-mute">dès</span>
+                    )}
+                    {formatPrice(cardPriceOf(product)?.price ?? product.priceRange.minVariantPrice)}
                   </p>
                 </div>
               </Link>
