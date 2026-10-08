@@ -1,9 +1,8 @@
 // @vitest-environment jsdom
 /**
- * Rendu (jsdom) du panneau admin — garantit le REPLI : quand la recherche
- * clients est indisponible (forfait Basic → /admin/customers 502), un CHAMP
- * EMAIL MANUEL doit rester présent pour que la création fonctionne toujours.
- * (Régression du bug : aucun champ email quand la recherche échouait.)
+ * Rendu (jsdom) du panneau admin. Forfait Shopify Basic : pas de recherche
+ * par nom (données clients illisibles), l'e-mail est saisi à la main et on
+ * vérifie seulement qu'un compte client existe avec cet e-mail.
  */
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, cleanup, fireEvent } from '@testing-library/react'
@@ -12,12 +11,12 @@ vi.mock('react-hot-toast', () => ({ default: { success: vi.fn(), error: vi.fn() 
 
 import { AdminAmbassadorsPanel } from './AdminAmbassadorsPanel'
 
-function mockFetch(customersOk: boolean) {
+function mockFetch(customersOk: boolean, exists = true) {
   return vi.fn(async (url: string) => {
     const u = String(url)
     if (u.includes('/admin/customers')) {
       return customersOk
-        ? ({ ok: true, json: async () => ({ customers: [] }) } as Response)
+        ? ({ ok: true, json: async () => ({ exists }) } as Response)
         : ({ ok: false, status: 502, json: async () => ({ error: 'search_failed' }) } as unknown as Response)
     }
     // liste ambassadeurs
@@ -45,23 +44,38 @@ function mockFetchWithAmb() {
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 
-describe('AdminAmbassadorsPanel — repli email manuel', () => {
-  it('recherche INDISPONIBLE (Basic) → champ email manuel présent, pas de boîte de recherche', async () => {
-    vi.stubGlobal('fetch', mockFetch(false))
+describe('AdminAmbassadorsPanel — e-mail du compte client', () => {
+  it('champ e-mail présent, plus de recherche par nom, aucun appel tant que l’e-mail est incomplet', async () => {
+    const f = mockFetch(true)
+    vi.stubGlobal('fetch', f)
     render(<AdminAmbassadorsPanel />)
-    // Le champ email est TOUJOURS là → création possible.
     expect(await screen.findByPlaceholderText('julie@email.com')).toBeTruthy()
-    // La boîte de recherche n'est PAS rendue quand indispo.
     expect(screen.queryByPlaceholderText('Tape un nom ou un email…')).toBeNull()
-    // Note explicative du repli.
-    expect(await screen.findByText(/forfait Shopify supérieur/i)).toBeTruthy()
+    expect(screen.getByText(/exact/)).toBeTruthy()
+    expect(f.mock.calls.some(([u]) => String(u).includes('/admin/customers'))).toBe(false)
   })
 
-  it('recherche DISPONIBLE → boîte de recherche ET champ email présents', async () => {
-    vi.stubGlobal('fetch', mockFetch(true))
+  it('e-mail complet → vérification : compte trouvé', async () => {
+    const f = mockFetch(true, true)
+    vi.stubGlobal('fetch', f)
     render(<AdminAmbassadorsPanel />)
-    expect(await screen.findByPlaceholderText('Tape un nom ou un email…')).toBeTruthy()
-    expect(screen.getByPlaceholderText('julie@email.com')).toBeTruthy()
+    fireEvent.change(await screen.findByPlaceholderText('julie@email.com'), { target: { value: 'Julie@Email.com' } })
+    expect(await screen.findByText('Compte client trouvé', {}, { timeout: 2000 })).toBeTruthy()
+    expect(f.mock.calls.some(([u]) => String(u).includes('/admin/customers?email=julie%40email.com'))).toBe(true)
+  })
+
+  it('e-mail sans compte → avertissement, création toujours possible', async () => {
+    vi.stubGlobal('fetch', mockFetch(true, false))
+    render(<AdminAmbassadorsPanel />)
+    fireEvent.change(await screen.findByPlaceholderText('julie@email.com'), { target: { value: 'nouveau@email.com' } })
+    expect(await screen.findByText(/Aucun compte client avec cet e-mail/, {}, { timeout: 2000 })).toBeTruthy()
+  })
+
+  it('vérification en échec → message neutre', async () => {
+    vi.stubGlobal('fetch', mockFetch(false))
+    render(<AdminAmbassadorsPanel />)
+    fireEvent.change(await screen.findByPlaceholderText('julie@email.com'), { target: { value: 'julie@email.com' } })
+    expect(await screen.findByText(/Vérification indisponible/, {}, { timeout: 2000 })).toBeTruthy()
   })
 
   it('mode « Entrée de suivi » → champ code présent', async () => {
