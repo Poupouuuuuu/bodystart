@@ -209,7 +209,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
         {/* Prix + bouton ajout discret (icone +) */}
         {/* Carte étroite (2 colonnes à 390 px) : « dès », le prix et le prix
             barré passent à la ligne au lieu de glisser sous le bouton. */}
-        <div className="flex items-center justify-between gap-2 mt-auto pt-2">
+        <div className="flex items-center justify-between gap-1 mt-auto pt-2">
           <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
             {prix?.from && <span className="text-[13px] font-medium text-ink-mute">dès</span>}
             {/* Le prix en serif extrabold : c'est LE chiffre de la carte, il doit
