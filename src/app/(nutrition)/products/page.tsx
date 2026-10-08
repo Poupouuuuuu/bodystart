@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import { getProducts, getCollections, getInventoryForVariants } from '@/lib/shopify'
 import { BODY_START_STORES, type ShopifyCollection, type ShopifyProduct } from '@/lib/shopify/types'
 import { isPackProduct } from '@/lib/shopify/bundle'
-import ProductsPageClient from '@/components/product/ProductsPageClient'
+import ProductsPageClient, { ProductsCatalog } from '@/components/product/ProductsPageClient'
 import { buildPageMetadata } from '@/lib/seo'
 
 // 60s : compromis entre fraicheur stock et limite rate Shopify Admin.
@@ -61,8 +61,7 @@ export default async function ProductsPage() {
 
   return (
     <div className="bg-canvas min-h-screen">
-      {/* H1 rendu côté serveur (SSR) : la grille ci-dessous est client-rendered
-          (useSearchParams), donc le H1 doit vivre ici pour être dans le HTML. */}
+      {/* H1 rendu côté serveur, hors du Suspense : il ne dépend pas de l'URL. */}
       <section className="pt-10 pb-4 md:pt-12 md:pb-6">
         <div className="container">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
@@ -73,9 +72,20 @@ export default async function ProductsPage() {
           </h1>
         </div>
       </section>
-      {/* Suspense : isole useSearchParams (ProductsPageClient) pour que le H1
-          ci-dessus soit rendu côté serveur (sinon toute la route bascule en CSR). */}
-      <Suspense fallback={<div className="container pb-10" />}>
+      {/* Suspense : isole useSearchParams (ProductsPageClient), sinon toute la
+          route bascule en rendu navigateur. Le contenu d'attente est la vraie
+          grille par défaut, rendue côté serveur (LCP mobile, liens produit
+          dans le HTML) ; ProductsPageClient la remplace une fois le JS chargé. */}
+      <Suspense
+        fallback={
+          <ProductsCatalog
+            products={products}
+            collections={collections}
+            stockByProductId={stockByProductId}
+            searchParams={null}
+          />
+        }
+      >
         <ProductsPageClient
           products={products}
           collections={collections}

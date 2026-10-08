@@ -125,8 +125,29 @@ interface Props {
   stockByProductId?: Record<string, number>
 }
 
-export default function ProductsPageClient({ products, stockByProductId = {} }: Props) {
+/** Paramètres d'URL lus par le catalogue (cat, obj, tag). */
+type CatalogParams = Pick<URLSearchParams, 'get' | 'toString'> | null
+
+/** Catalogue piloté par l'URL : vue réelle, après chargement du JS. */
+export default function ProductsPageClient(props: Props) {
   const searchParams = useSearchParams()
+  return <ProductsCatalog {...props} searchParams={searchParams} />
+}
+
+/**
+ * Le catalogue lui-même, sans lecture directe de l'URL. La page le rend aussi
+ * en contenu d'attente du Suspense (`searchParams={null}` : vue par défaut,
+ * 12 premières cartes) pour que la grille soit dans le HTML : sans ça,
+ * useSearchParams fait basculer toute la grille en rendu navigateur, rien
+ * n'apparaît avant le JS (LCP mobile 4,7 s mesuré le 08/10/2026) et le HTML
+ * ne contient aucun lien produit. Une fois le JS chargé, ProductsPageClient
+ * remplace ce rendu à l'identique (ou filtré si l'URL porte cat/obj/tag).
+ */
+export function ProductsCatalog({
+  products,
+  stockByProductId = {},
+  searchParams,
+}: Props & { searchParams: CatalogParams }) {
   const pathname = usePathname()
 
   const initialCat = searchParams?.get('cat') ?? null
