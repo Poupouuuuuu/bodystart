@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react'
 /**
  * Objectifs V3 — liste typographique géante.
  *
- * Plutôt que 4 cartes avec icônes (patron générique), les objectifs sont
+ * Plutôt que des cartes avec icônes (patron générique), les objectifs sont
  * écrits en Fraunces jusqu'à 64 px, séparés par des filets : une page de
  * sommaire éditorial. Au survol, le libellé glisse et la flèche pivote vers
  * le haut-droite (la « tension » qui fait vivant).
@@ -38,7 +38,19 @@ const GOALS: { n: string; label: string; desc: Part[]; href: string }[] = [
     href: '/conseil?objectif=muscle',
   },
   {
+    // Ajouté le 08/10/2026 avec le guide /conseil. Aucune promesse de perte de
+    // poids : la description reste factuelle (voix BodyStart, UE 1924/2006).
     n: '02',
+    label: 'Affiner ma silhouette',
+    desc: [
+      'Whey claire, ',
+      { label: 'protéines', href: '/categories/proteines' },
+      ', créatine : on t’accompagne, avec l’entraînement et l’assiette.',
+    ],
+    href: '/conseil?objectif=affiner',
+  },
+  {
+    n: '03',
     label: 'Énergie et endurance',
     desc: [
       { label: 'Pré-workout', href: '/categories/pre-workout' },
@@ -49,7 +61,7 @@ const GOALS: { n: string; label: string; desc: Part[]; href: string }[] = [
     href: '/conseil?objectif=endurance',
   },
   {
-    n: '03',
+    n: '04',
     label: 'Mieux récupérer',
     desc: [
       { label: 'Acides aminés', href: '/categories/acides-amines' },
@@ -58,7 +70,7 @@ const GOALS: { n: string; label: string; desc: Part[]; href: string }[] = [
     href: '/conseil?objectif=recuperation',
   },
   {
-    n: '04',
+    n: '05',
     label: 'Santé et bien-être au quotidien',
     desc: [
       { label: 'Vitamines', href: '/categories/sante' },

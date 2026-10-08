@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useId } from 'react'
 import { Package } from 'lucide-react'
 import { formatCents } from '@/lib/conseil/libelles'
+import { formatPoids } from '@/lib/typo'
 import type { Ligne, VarianteProposee } from '@/lib/conseil/types'
 import { frenchSpacing } from '@/lib/typo'
 import { cn } from '@/lib/utils'
@@ -60,7 +61,7 @@ export default function CarteProduitConseil({ ligne, variantes, choisie, onChois
               {ligne.titre}
             </Link>
           </h3>
-          {ligne.format && <p className="mt-0.5 text-[13px] text-ink-mute">{ligne.format}</p>}
+          {ligne.format && <p className="mt-0.5 text-[13px] text-ink-mute">{formatPoids(ligne.format)}</p>}
           {choisie && (
             <p className="mt-1.5 font-display text-[18px] font-extrabold tabular-nums text-spruce">
               {formatCents(choisie.prixCents)}
@@ -82,14 +83,14 @@ export default function CarteProduitConseil({ ligne, variantes, choisie, onChois
           >
             {variantes.map((v) => (
               <option key={v.id} value={v.id}>
-                {v.libelle || 'Standard'}
+                {formatPoids(v.libelle) || 'Standard'}
                 {v.prixCents !== choisie.prixCents ? ` (${formatCents(v.prixCents)})` : ''}
               </option>
             ))}
           </select>
         </div>
       ) : (
-        choisie?.libelle && <p className="mt-3 text-[14px] text-ink">{choisie.libelle}</p>
+        choisie?.libelle && <p className="mt-3 text-[14px] text-ink">{formatPoids(choisie.libelle)}</p>
       )}
 
       <p

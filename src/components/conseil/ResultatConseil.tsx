@@ -6,7 +6,7 @@ import { useCart } from '@/hooks/useCart'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { LIBELLES_BUDGET, LIBELLES_CONTRAINTES, LIBELLES_SEANCES, formatCents } from '@/lib/conseil/libelles'
 import type { Ligne, Reponses, Resultat, VarianteProposee } from '@/lib/conseil/types'
-import { frenchSpacing } from '@/lib/typo'
+import { formatPoids, frenchSpacing } from '@/lib/typo'
 import { cn } from '@/lib/utils'
 import CarteProduitConseil from './CarteProduitConseil'
 import BoutiqueConseil from './BoutiqueConseil'
@@ -41,7 +41,7 @@ function effective(ligne: Ligne, epuisees: Set<string>, choixId: string | undefi
 }
 
 function descriptionLigne({ ligne, choisie }: LigneEffective): string {
-  const details = [ligne.format, choisie?.libelle].filter(Boolean).join(', ')
+  const details = formatPoids([ligne.format, choisie?.libelle].filter(Boolean).join(', '))
   return `${ligne.titre}${details ? ` (${details})` : ''}${choisie ? ` : ${formatCents(choisie.prixCents)}` : ''}`
 }
 

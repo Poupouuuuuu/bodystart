@@ -16,6 +16,7 @@ import { getCartLineComponentImages } from '@/lib/shopify/bundle'
 import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
 import { RELAY_ATTRIBUTE_KEYS } from '@/lib/mondialRelay'
 import { familyOf, type Family } from '@/lib/merchandising'
+import { formatPoids } from '@/lib/typo'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
@@ -446,7 +447,7 @@ export default function CartDrawer() {
                         </Link>
                         {item.merchandise.title !== 'Default Title' && (
                           <p className="text-[12px] font-medium text-ink-mute mt-0.5">
-                            {item.merchandise.title}
+                            {formatPoids(item.merchandise.title)}
                           </p>
                         )}
 
