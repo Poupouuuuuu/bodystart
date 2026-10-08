@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Shield, ChevronRight } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
+import { CONTACT_EMAIL } from '@/lib/store-info'
 
 export const metadata: Metadata = buildPageMetadata({
   path: '/confidentialite',
@@ -45,10 +46,10 @@ export default function ConfidentialitePage() {
             <p className="text-ink leading-relaxed text-base">
               BODYSTART NUTRITION (SASU) dont le siège social est situé 8 Rue du Pont des Landes, 78310 Coignières, est responsable du traitement de vos données personnelles. Contact :{' '}
               <a
-                href="mailto:bodystartnutrition@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
               >
-                bodystartnutrition@gmail.com
+                {CONTACT_EMAIL}
               </a>
             </p>
           </section>
@@ -115,10 +116,10 @@ export default function ConfidentialitePage() {
             <p className="mt-6 text-ink">
               Pour exercer ces droits, contactez-nous :{' '}
               <a
-                href="mailto:bodystartnutrition@gmail.com"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep transition-colors"
               >
-                bodystartnutrition@gmail.com
+                {CONTACT_EMAIL}
               </a>
             </p>
             <p className="mt-4 text-ink leading-relaxed">

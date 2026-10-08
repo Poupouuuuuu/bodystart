@@ -12,6 +12,7 @@ import {
   FREE_SHIPPING_THRESHOLD_CENTS,
   formatShippingPrice,
 } from '@/lib/shipping'
+import { CONTACT_EMAIL } from '@/lib/store-info'
 
 const FRANCO = formatShippingPrice(FREE_SHIPPING_THRESHOLD_CENTS)
 const MR_PRICE = formatShippingPrice(MONDIAL_RELAY.priceCents)
@@ -180,10 +181,10 @@ export default async function LivraisonPage() {
             Notre équipe est disponible du lundi au samedi.
           </p>
           <a
-            href="mailto:bodystartnutrition@gmail.com"
+            href={`mailto:${CONTACT_EMAIL}`}
             className="inline-flex items-center justify-center mt-6 bg-fresh text-white font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-fresh-deep transition-colors max-w-full break-all"
           >
-            bodystartnutrition@gmail.com
+            {CONTACT_EMAIL}
           </a>
         </section>
       </div>

@@ -7,6 +7,7 @@ import {
   FREE_SHIPPING_THRESHOLD_CENTS,
   formatShippingPrice,
 } from '@/lib/shipping'
+import { CONTACT_EMAIL } from '@/lib/store-info'
 
 const FRANCO = formatShippingPrice(FREE_SHIPPING_THRESHOLD_CENTS)
 
@@ -43,7 +44,7 @@ const FAQ_ITEMS = [
     category: 'Retours & Remboursements',
     questions: [
       { q: 'Quel est le délai pour retourner un produit ?', a: 'Tu disposes de 14 jours à compter de la réception pour exercer ton droit de rétractation.' },
-      { q: 'Comment initier un retour ?', a: "Tu as 14 jours après la réception de ta commande pour changer d'avis. Écris-nous à bodystartnutrition@gmail.com avec ton numéro de commande, ou envoie-nous le formulaire de rétractation de notre politique de retour (page Livraison & Retours). Ensuite, rapporte le produit à la boutique de Coignières, gratuitement, du lundi au samedi de 11\u00a0h à 19\u00a0h, ou renvoie-le par la poste à tes frais, dans les 14 jours qui suivent ta demande. Le produit doit être non ouvert, dans son emballage d'origine\u00a0: pour des raisons d'hygiène, on ne peut pas reprendre un produit descellé. Produit défectueux ou non conforme\u00a0: les frais de retour sont pour nous." },
+      { q: 'Comment initier un retour ?', a: `Tu as 14 jours après la réception de ta commande pour changer d'avis. Écris-nous à ${CONTACT_EMAIL} avec ton numéro de commande, ou envoie-nous le formulaire de rétractation de notre politique de retour (page Livraison & Retours). Ensuite, rapporte le produit à la boutique de Coignières, gratuitement, du lundi au samedi de 11\u00a0h à 19\u00a0h, ou renvoie-le par la poste à tes frais, dans les 14 jours qui suivent ta demande. Le produit doit être non ouvert, dans son emballage d'origine\u00a0: pour des raisons d'hygiène, on ne peut pas reprendre un produit descellé. Produit défectueux ou non conforme\u00a0: les frais de retour sont pour nous.` },
       { q: 'Quand serai-je remboursé(e) ?', a: "Sous 14 jours à compter de ta demande de rétractation, avec le même moyen de paiement que pour ta commande. Le remboursement comprend le prix des produits et les frais de livraison payés à la commande. On peut attendre d'avoir reçu le produit, ou une preuve de son envoi, avant de te rembourser." },
     ],
   },
@@ -94,7 +95,7 @@ export default function FAQPage() {
         <p className="text-ink-mute text-[16px] leading-[1.6] mb-12">
           Tu ne trouves pas la réponse ?{' '}
           <a
-            href="mailto:bodystartnutrition@gmail.com"
+            href={`mailto:${CONTACT_EMAIL}`}
             className="text-spruce font-semibold hover:underline underline-offset-4"
           >
             Contacte-nous

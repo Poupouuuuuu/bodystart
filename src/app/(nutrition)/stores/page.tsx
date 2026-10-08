@@ -11,6 +11,7 @@ import { BODY_START_STORES } from '@/lib/shopify/types'
 import NotifyFormV2 from '@/components/stores/NotifyFormV2'
 import StoreStatusV2 from '@/components/stores/StoreStatusV2'
 import { buildPageMetadata } from '@/lib/seo'
+import { CONTACT_EMAIL } from '@/lib/store-info'
 
 // ─── SEO ──────────────────────────────────────────────────────────
 export const metadata: Metadata = {
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
 const ADDRESS_LINE = '8 Rue du Pont des Landes, 78310 Coignières'
 const PHONE_DISPLAY = '07 61 84 75 80'
 const PHONE_TEL = '+33761847580'
-const EMAIL = 'bodystartnutrition@gmail.com'
+const EMAIL = CONTACT_EMAIL
 const HOURS_DISPLAY = 'Du lundi au samedi · 11h à 19h (fermé le dimanche)'
 const MAPS_DIRECTIONS = 'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'
 const MAPS_EMBED =
