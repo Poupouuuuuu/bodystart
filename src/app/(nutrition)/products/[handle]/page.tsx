@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { getProductByHandle, getProducts } from '@/lib/shopify'
 import { pickComplements } from '@/lib/merchandising'
@@ -274,10 +273,10 @@ export default async function ProductPage({ params }: Props) {
       {/* ─── Buy box : galerie + panneau achat ─── */}
       <section className="bg-canvas">
         <div className="container py-10 md:py-14">
-          {/* PERF : Suspense = hydratation selective par ilot (React decoupe le
-              travail au lieu d'une seule tache de ~3 s sur mobile). Le HTML serveur
-              est affiche tel quel, le fallback ne sert jamais. */}
-          <Suspense fallback={null}>
+          {/* Sans <Suspense> (08/10/2026) : React sort toute frontière dont le
+              HTML dépasse ~12 Ko dans un bloc caché révélé par un script, même
+              prête. La zone d'achat (galerie, prix, bouton) était invisible sans
+              JS. Coût mesuré dans la PR : l'hydratation n'est plus découpée. */}
           <BuyBoxV2
             images={images}
             variants={product.variants.nodes}
@@ -295,7 +294,6 @@ export default async function ProductPage({ params }: Props) {
             rating={rating}
             googleRating={googleRating}
           />
-          </Suspense>
         </div>
       </section>
 
@@ -333,7 +331,7 @@ export default async function ProductPage({ params }: Props) {
 
       {/* ─── Cross-sell + nudge franco ─── */}
       {relatedProducts.length > 0 && (
-        <Suspense fallback={null}><CrossSellV2 products={relatedProducts} currentHandle={product.handle} /></Suspense>
+        <CrossSellV2 products={relatedProducts} currentHandle={product.handle} />
       )}
 
       {/* ─── Précautions d'emploi des compléments alimentaires (statique, légal) ─── */}

@@ -79,9 +79,7 @@ export async function createCoachingDiscount(
       code,
       startsAt,
       endsAt,
-      customerSelection: {
-        all: true,
-      },
+      context: { all: 'ALL' }, // customerSelection retiré des versions récentes de l'API
       customerGets: {
         value: {
           percentage: 0.15,
