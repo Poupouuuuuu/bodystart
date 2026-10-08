@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck, RotateCcw, Award, Star } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
+import { formatPoids } from '@/lib/typo'
 import { GOOGLE_LISTING_URL, GOOGLE_RATING, type GoogleRating } from '@/lib/store-info'
 import { PICKUP_PROMISE } from '@/lib/shipping'
 import { useCart } from '@/hooks/useCart'
@@ -67,6 +68,8 @@ const LOW_STOCK_THRESHOLD = 5
 // était fragile (« vanille » matchait « vanille-1 », etc.).
 const variantFlavor = (v: ShopifyProductVariant) => v.title.split(' / ')[0]?.trim() || v.title
 const variantSize = (v: ShopifyProductVariant) => v.title.split(' / ')[1]?.trim() ?? ''
+// Affichage seulement (« 2.27kg » → « 2,27 kg », lib/typo) : les titres Shopify
+// restent tels quels, le metafield du guide /conseil s'en sert pour les formats.
 
 /**
  * Buy box V2 — galerie gauche + panneau achat droite.
@@ -378,7 +381,7 @@ export default function BuyBoxV2({
 
           {/* Format / grammage (metafield Shopify) */}
           {format && (
-            <p className="text-[14px] text-ink-mute font-medium mb-5">{format}</p>
+            <p className="text-[14px] text-ink-mute font-medium mb-5">{formatPoids(format)}</p>
           )}
           {!format && <div className="mb-5" />}
 
@@ -446,7 +449,7 @@ export default function BuyBoxV2({
                             !isAvailable && 'opacity-40 cursor-not-allowed line-through'
                           )}
                         >
-                          {flavor}
+                          {formatPoids(flavor)}
                         </button>
                       )
                     })}
@@ -484,7 +487,7 @@ export default function BuyBoxV2({
                             !isAvailable && 'opacity-40 cursor-not-allowed line-through'
                           )}
                         >
-                          {size}
+                          {formatPoids(size)}
                         </button>
                       )
                     })}
@@ -691,7 +694,7 @@ export default function BuyBoxV2({
         <div className="container flex items-center gap-4">
           <div className="hidden md:flex flex-col min-w-0 flex-1">
             <span className="font-semibold text-ink text-[14px] truncate">{title}</span>
-            <span className="text-ink-mute text-[12px]">{selectedVariant.title}</span>
+            <span className="text-ink-mute text-[12px]">{formatPoids(selectedVariant.title)}</span>
           </div>
           {/* Prix visible aussi sur mobile : la barre y est le seul endroit ou
               prix et CTA sont ensemble au premier ecran. */}

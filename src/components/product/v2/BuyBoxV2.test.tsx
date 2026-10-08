@@ -110,3 +110,34 @@ describe("BuyBoxV2 : variante d'ouverture", () => {
     expect(pressedFlavor()).toMatch(/Tropical/)
   })
 })
+
+describe('formats affichés à la française (Mutant Mass)', () => {
+  it('« 2.27kg » et « 6.8kg » s’affichent « 2,27 kg » et « 6,8 kg », titres Shopify intacts', () => {
+    window.history.replaceState({}, '', '/products/mutant-mass')
+    const mm = (id: string, size: string): ShopifyProductVariant => ({
+      ...variant(id, 'Triple Chocolate', true),
+      title: `Triple Chocolate / ${size}`,
+      selectedOptions: [
+        { name: 'Saveur', value: 'Triple Chocolate' },
+        { name: 'Format', value: size },
+      ],
+    })
+    const variants = [mm('1', '2.27kg'), mm('2', '6.8kg')]
+    render(
+      createElement(BuyBoxV2, {
+        images: [img('mutant')],
+        variants,
+        title: 'Mutant Mass',
+        handle: 'mutant-mass',
+        productType: 'Protéines',
+        collectionName: null,
+        collectionHandle: null,
+        vendor: 'Mutant',
+      })
+    )
+    expect(screen.getByRole('button', { name: /^2,27\s+kg$/ })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /^6,8\s+kg$/ })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /2\.27kg/ })).toBeNull()
+    expect(variants[0].title).toBe('Triple Chocolate / 2.27kg')
+  })
+})
