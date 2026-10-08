@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { CONTACT_EMAIL } from '@/lib/store-info'
+import { validerContact } from '@/lib/contact-validation'
 
 const TO = process.env.CONTACT_EMAIL_TO ?? CONTACT_EMAIL
 // Expéditeur Resend. Par défaut le domaine de TEST Resend (onboarding@resend.dev),
@@ -50,16 +51,17 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const body = await req.json()
-    const { name, email, phone, objectif, message } = body
-
-    if (!name || !email || !objectif) {
+    // E-mail facultatif depuis le 08/10/2026 : prénom, objectif et un moyen
+    // de recontacter (téléphone, sinon e-mail) suffisent (lib/contact-validation).
+    const demande = validerContact(await req.json().catch(() => null))
+    if (!demande) {
       return NextResponse.json({ error: 'Champs requis manquants.' }, { status: 400 })
     }
+    const { name, email, phone, objectif, message } = demande
 
     // ─── Échapper tous les champs utilisateur ───
     const safeName = escapeHtml(name)
-    const safeEmail = escapeHtml(email)
+    const safeEmail = email ? escapeHtml(email) : ''
     const safePhone = phone ? escapeHtml(phone) : ''
     const safeMessage = message ? escapeHtml(message) : ''
 
@@ -76,7 +78,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: FROM,
       to: TO,
-      replyTo: email,
+      ...(email ? { replyTo: email } : {}),
       subject: `🏋️ Nouvelle demande de conseil de ${safeName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0;">
@@ -99,12 +101,12 @@ export async function POST(req: NextRequest) {
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280; width: 140px;">Nom</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">${safeName}</td>
               </tr>
-              <tr>
+              ${safeEmail ? `<tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280;">Email</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">
                   <a href="mailto:${safeEmail}" style="color: #15803d;">${safeEmail}</a>
                 </td>
-              </tr>
+              </tr>` : ''}
               ${safePhone ? `<tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6b7280;">Téléphone</td>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111827; font-weight: 600;">
@@ -131,8 +133,8 @@ export async function POST(req: NextRequest) {
       `,
     })
 
-    // Email de confirmation au client
-    await resend.emails.send({
+    // Email de confirmation au client, seulement s'il a laissé son adresse
+    if (email) await resend.emails.send({
       from: FROM,
       to: email,
       subject: 'Ta demande de rappel est bien reçue (BodyStart)',

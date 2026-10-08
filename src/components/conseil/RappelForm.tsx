@@ -19,8 +19,9 @@ interface Props {
 }
 
 /**
- * « Être rappelé », facultatif : envoie à /api/contact (mêmes champs que
- * l'ancien formulaire : name, email, phone, objectif, message).
+ * « Être rappelé », facultatif : envoie à /api/contact (name, email, phone,
+ * objectif, message). Prénom et téléphone obligatoires, e-mail facultatif
+ * (08/10/2026) : sans e-mail, pas de confirmation, la boutique rappelle.
  */
 export default function RappelForm({ objectif, contexte }: Props) {
   const id = useId()
@@ -99,12 +100,11 @@ export default function RappelForm({ objectif, contexte }: Props) {
       </div>
       <div>
         <label htmlFor={`${id}-email`} className="mb-1.5 block text-[13px] font-semibold text-ink">
-          Ton e-mail
+          Ton e-mail (facultatif)
         </label>
         <input
           id={`${id}-email`}
           type="email"
-          required
           autoComplete="email"
           value={form.email}
           onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}

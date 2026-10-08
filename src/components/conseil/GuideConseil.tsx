@@ -242,8 +242,9 @@ export default function GuideConseil({ guide, catalogue }: Props) {
             Retour
           </button>
         )}
+        {/* Étape 1 sans total : le nombre d'étapes dépend de l'objectif choisi. */}
         <p className="text-[13px] font-semibold tabular-nums text-ink-mute">
-          Étape {x}/{n}
+          {premier ? 'Étape 1' : `Étape ${x}/${n}`}
         </p>
       </div>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sage" aria-hidden="true">

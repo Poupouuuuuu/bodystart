@@ -7,7 +7,7 @@
  */
 import { createElement } from 'react'
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
-import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, cleanup, fireEvent, waitFor, within } from '@testing-library/react'
 import { construireCatalogue, guide, HANDLES, rupture } from '@/lib/conseil/test-utils'
 import type { Catalogue } from '@/lib/conseil/types'
 
@@ -73,10 +73,10 @@ afterEach(() => {
 })
 
 describe('écrans', () => {
-  it('écran 1 rendu d’emblée : les 6 objectifs du guide, « Étape 1/4 »', () => {
+  it('écran 1 rendu d’emblée : les 6 objectifs du guide, « Étape 1 » sans total', () => {
     afficher()
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Trouve ton produit en 1 minute')
-    expect(screen.getByText('Étape 1/4')).toBeTruthy()
+    expect(screen.getByText('Étape 1')).toBeTruthy()
     for (const o of guide.objectifs) expect(screen.getByRole('button', { name: new RegExp(o.libelle) })).toBeTruthy()
     expect(screen.queryByRole('button', { name: /Retour/ })).toBeNull()
   })
@@ -123,7 +123,7 @@ describe('écrans', () => {
     await screen.findByText('Étape 2/4')
     expect(window.location.search).toBe('?utm_source=accueil&objectif=sante&etape=seances')
     cliquer(/Retour/)
-    expect(screen.getByText('Étape 1/4')).toBeTruthy()
+    expect(screen.getByText('Étape 1')).toBeTruthy()
     expect(window.location.search).toBe('?utm_source=accueil')
     expect(screen.getByRole('button', { name: /Santé et bien-être/ }).getAttribute('aria-pressed')).toBe('true')
   })
@@ -138,7 +138,7 @@ describe('écrans', () => {
     expect(etape()).toBe('seances')
     // Le bouton « Retour » de l'écran utilise aussi l'historique.
     cliquer(/Retour/)
-    await waitFor(() => expect(screen.getByText('Étape 1/4')).toBeTruthy())
+    await waitFor(() => expect(screen.getByText('Étape 1')).toBeTruthy())
   })
 
   it('rechargement au milieu du parcours : réponses retrouvées (sessionStorage)', async () => {
@@ -166,13 +166,13 @@ describe('résultat', () => {
     afficher()
     await parcoursMuscle(['Sans lactose'])
     expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual([
-      'Isolate Native Whey Mix - Musclewhey',
+      'Clear Whey Isolate - 500 g',
       'Micronized Creatine Monohydrate',
     ])
     expect(screen.getAllByText('En stock à Coignières')).toHaveLength(2)
-    expect(screen.getByText(/Un isolat de whey native/)).toBeTruthy()
+    expect(screen.getByText(/Une whey isolat claire/)).toBeTruthy()
     expect(screen.getByText(/Intolérance avérée/)).toBeTruthy()
-    expect(prix('89,80').length).toBeGreaterThan(0)
+    expect(prix('71,80').length).toBeGreaterThan(0)
     // Mention obligatoire (CE 1924/2006, art. 10.2.a) dès que des allégations s'affichent
     expect(screen.getByText(/ne se substituent pas à une alimentation variée et équilibrée/)).toBeTruthy()
     expect(window.location.search).toBe('?objectif=muscle&etape=resultat')
@@ -266,16 +266,28 @@ describe('résultat', () => {
     expect(screen.getByRole('link', { name: 'Confidentialité', hidden: true }).getAttribute('href')).toBe('/confidentialite')
     fireEvent.change(screen.getByLabelText('Ton prénom'), { target: { value: 'Léa' } })
     fireEvent.change(screen.getByLabelText('Ton téléphone'), { target: { value: '06 12 34 56 78' } })
-    fireEvent.change(screen.getByLabelText('Ton e-mail'), { target: { value: 'lea@exemple.fr' } })
+    fireEvent.change(screen.getByLabelText(/Ton e-mail/), { target: { value: 'lea@exemple.fr' } })
     fireEvent.click(screen.getByRole('button', { name: 'Être rappelé', hidden: true }))
     await screen.findByText(/C.est noté/)
     const [url, init] = fetchMock.mock.calls.find(([u]) => u === '/api/contact')!
     expect(url).toBe('/api/contact')
     const body = JSON.parse((init as RequestInit).body as string)
     expect(body).toMatchObject({ name: 'Léa', email: 'lea@exemple.fr', phone: '06 12 34 56 78', objectif: 'Prendre du muscle' })
-    expect(body.message).toContain('Isolate Native Whey Mix - Musclewhey')
+    expect(body.message).toContain('Clear Whey Isolate - 500 g')
     expect(body.message).toMatch(/Budget par mois : 40 à 90/)
     expect(JSON.stringify(body)).not.toMatch(/lactose|vegan|caf[ée]ine/i)
+  })
+
+  it('« Être rappelé » sans e-mail : prénom et téléphone suffisent', async () => {
+    afficher()
+    await parcoursMuscle()
+    expect((screen.getByLabelText(/Ton e-mail/) as HTMLInputElement).required).toBe(false)
+    fireEvent.change(screen.getByLabelText('Ton prénom'), { target: { value: 'Léa' } })
+    fireEvent.change(screen.getByLabelText('Ton téléphone'), { target: { value: '06 12 34 56 78' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Être rappelé', hidden: true }))
+    await screen.findByText(/C.est noté/)
+    const [, init] = fetchMock.mock.calls.find(([u]) => u === '/api/contact')!
+    expect(JSON.parse((init as RequestInit).body as string)).toMatchObject({ name: 'Léa', email: '', phone: '06 12 34 56 78' })
   })
 
   it('« Je ne sais pas encore » : résultat boutique direct, texte du guide, suggestions, pas de panier', async () => {
@@ -289,6 +301,18 @@ describe('résultat', () => {
     expect(screen.queryByRole('button', { name: /Je réserve/ })).toBeNull()
     expect(screen.getByRole('link', { name: /Itinéraire/ })).toBeTruthy()
     expect(screen.getByRole('link', { name: /Appeler/ }).getAttribute('href')).toBe('tel:+33761847580')
+    // « Notre boutique » une seule fois (plus de titre en double au-dessus de la carte)
+    expect(screen.getAllByText('Notre boutique')).toHaveLength(1)
+  })
+
+  it('« Je préfère en parler en boutique » : vrai bouton, amène le focus sur la carte boutique', async () => {
+    afficher()
+    await parcoursMuscle()
+    fireEvent.click(screen.getByRole('button', { name: 'Je préfère en parler en boutique' }))
+    const carte = screen.getByRole('region', { name: 'Notre boutique' })
+    expect(document.activeElement).toBe(carte)
+    expect(within(carte).getByRole('link', { name: /Itinéraire/ })).toBeTruthy()
+    expect(within(carte).getByRole('link', { name: /Appeler/ })).toBeTruthy()
   })
 
   it('rien en stock pour les réponses : résultat boutique', async () => {

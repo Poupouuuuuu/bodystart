@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState, type Ref } from 'react'
-import { Info, RotateCcw, ArrowLeft, Store, Truck } from 'lucide-react'
+import { Info, RotateCcw, ArrowLeft, Store, Truck, MapPin } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { LIBELLES_BUDGET, LIBELLES_CONTRAINTES, LIBELLES_SEANCES, formatCents } from '@/lib/conseil/libelles'
@@ -71,6 +71,17 @@ export default function ResultatConseil({ resultat, reponses, objectifLibelle, t
 
   // Barre fixe mobile : visible quand le bloc d'achat est plus bas que l'écran.
   const ctaRef = useRef<HTMLDivElement>(null)
+  const boutiqueRef = useRef<HTMLElement>(null)
+
+  // « Je préfère en parler en boutique » : amène à la carte boutique
+  // (Itinéraire, Appeler) et y place le focus.
+  function allerBoutique() {
+    const el = boutiqueRef.current
+    if (!el) return
+    const reduit = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    el.scrollIntoView?.({ behavior: reduit ? 'auto' : 'smooth', block: 'start' })
+    el.focus({ preventScroll: true })
+  }
   const [barre, setBarre] = useState(false)
   useEffect(() => {
     const el = ctaRef.current
@@ -278,17 +289,27 @@ export default function ResultatConseil({ resultat, reponses, objectifLibelle, t
               {enCours === 'livraison' ? 'Ajout…' : 'Ajouter au panier'}
             </button>
             <p className="mt-2 text-center text-[13px] text-ink-mute">Livraison à domicile ou en point relais.</p>
+            <button
+              type="button"
+              onClick={allerBoutique}
+              className="btn-ghost mt-3 min-h-[44px] w-full px-5"
+            >
+              <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
+              Je préfère en parler en boutique
+            </button>
           </div>
         </>
       )}
 
-      <section className="mt-12" aria-labelledby="conseil-boutique">
-        <h2 id="conseil-boutique" className="font-display text-[24px] font-extrabold tracking-tight text-spruce">
-          {resultat.type === 'selection' ? 'Je préfère en parler en boutique' : 'Notre boutique'}
-        </h2>
-        <div className="mt-4">
-          <BoutiqueConseil />
-        </div>
+      {/* Carte boutique, sans titre au-dessus : elle porte déjà « Notre boutique »
+          (avant, le titre la répétait dans le cas « Je ne sais pas encore »). */}
+      <section
+        ref={boutiqueRef}
+        tabIndex={-1}
+        aria-label="Notre boutique"
+        className="mt-10 scroll-mt-24 rounded-[20px] outline-none focus-visible:ring-2 focus-visible:ring-fresh"
+      >
+        <BoutiqueConseil />
       </section>
 
       {resultat.type === 'boutique' && lignes.length > 0 && (
