@@ -5,7 +5,8 @@
 // Ordre d'application (décrit par les règles du metafield) :
 //   1. parcours = objectifs[objectif].parcours[standard|masse][budget]
 //   2. transformations des candidats (séances, sans lactose, vegan)
-//   3. résolution du stock à la boutique (premier candidat en stock au bon format)
+//   3. résolution du stock à la boutique (premier candidat en stock au bon format) ;
+//      vegan : le premier produit restant devient l'essentiel
 //   4. plafond du budget (on retire le dernier complément, jamais l'essentiel)
 //   5. shaker proposé en option si la sélection contient une protéine ou un gainer
 
@@ -41,22 +42,21 @@ const PROTEINES_OU_GAINERS = new Set([
 ])
 
 /**
- * Vegan, lecture prudente de la règle : elle ne cite que les protéines, les
- * oméga 3 et la vitamine D3 à retirer, et ne dit rien des autres produits
- * (ZMA, multivitamines, acides aminés, barre au lait, gainer). On ne garde
- * donc que ce qu'on sait compatible : liste blanche.
+ * Vegan (règle v3 du 08/10/2026) : ne garder que la créatine et le magnésium,
+ * le premier produit restant devient l'essentiel.
  */
-const VEGAN_AUTORISES = new Set([
-  'creatine',
-  'magnesium',
-  'creamofrice',
-  'cremeriznm',
-  'clusterdextrin',
-  'shaker',
-])
+const VEGAN_AUTORISES = new Set(['creatine', 'magnesium'])
 
-const SANS_LACTOSE_REMPLACES = new Set(['protimuscle1', 'protimuscle225'])
-const SANS_LACTOSE_REMPLACANTS = ['musclewhey', 'clearwhey']
+/**
+ * Sans lactose (règle v3) : la whey native et la MuscleWhey sont remplacées
+ * par la Clear Whey (isolat) d'abord, la MuscleWhey (lactase ajoutée) ne
+ * venant qu'en repli si la Clear Whey n'a aucun parfum en stock.
+ */
+const SANS_LACTOSE_REMPLACES = new Set(['protimuscle1', 'protimuscle225', 'musclewhey'])
+const SANS_LACTOSE_REMPLACANTS = ['clearwhey', 'musclewhey']
+
+/** Séances 0 à 1 (règle v3) : rien ne change pour ces objectifs, pas de message. */
+const FREQUENCE01_EXCLUS = new Set(['sante'])
 
 const CLE_SHAKER = 'shaker'
 const MAX_SUGGESTIONS = 3
@@ -115,6 +115,26 @@ export function extraireMessage(regle: string | undefined): string | null {
   return m ? m[1] : null
 }
 
+const sansAccents = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+
+/**
+ * Messages d'une règle par objectif : « muscle, affiner : « A » ; sante et
+ * endurance : « B » » → { muscle: A, affiner: A, sante: B, endurance: B }.
+ * Seules les clés d'objectifs connues sont retenues.
+ */
+export function messagesParObjectif(regle: string | undefined, objectifs: string[]): Record<string, string> {
+  const out: Record<string, string> = {}
+  if (!regle) return out
+  const connus = new Set(objectifs)
+  for (const m of regle.matchAll(/([^:;«»]+?)\s*:\s*«\s*([^«»]+?)\s*»/g)) {
+    for (const mot of sansAccents(m[1]).split(/,|\set\s/)) {
+      const cle = mot.trim()
+      if (connus.has(cle)) out[cle] = m[2]
+    }
+  }
+  return out
+}
+
 // ─── Étape 2 : transformations des candidats ─────────────────
 
 function sansDoublons(cles: string[]): string[] {
@@ -129,8 +149,8 @@ export function appliquerRegles(emplacements: Emplacement[], r: Reponses): Empla
   return emplacements.map((e) => {
     let c = [...e.candidats]
 
-    // Séances 0 à 1 : la créatine porte sur des exercices intenses.
-    if (r.seances === '0-1') c = c.filter((k) => k !== 'creatine')
+    // Séances 0 à 1 : la créatine porte sur des exercices intenses (sauf santé).
+    if (r.seances === '0-1' && !FREQUENCE01_EXCLUS.has(r.objectif)) c = c.filter((k) => k !== 'creatine')
 
     // Séances 4 et plus avec un budget sans plafond : le grand format d'abord,
     // le 1 kg reste en repli.
@@ -143,8 +163,8 @@ export function appliquerRegles(emplacements: Emplacement[], r: Reponses): Empla
       c = ['protimuscle225', ...c.filter((k) => k !== 'protimuscle225')]
     }
 
-    // Sans lactose : la whey native est remplacée par les isolats, dans cet
-    // ordre, à la place de la première occurrence.
+    // Sans lactose : Clear Whey puis MuscleWhey, à la place de la première
+    // whey remplacée (les suivantes sont retirées).
     if (sansLactose) {
       const i = c.findIndex((k) => SANS_LACTOSE_REMPLACES.has(k))
       if (i !== -1) {
@@ -161,9 +181,11 @@ export function appliquerRegles(emplacements: Emplacement[], r: Reponses): Empla
 
 function messagesApplicables(guide: Guide, r: Reponses): string[] {
   const out: string[] = []
-  if (r.seances === '0-1' && guide.messages.frequence01) out.push(guide.messages.frequence01)
-  if (r.contraintes.includes('sans-lactose') && guide.messages.sansLactose) out.push(guide.messages.sansLactose)
-  if (r.contraintes.includes('vegan') && guide.messages.vegan) out.push(guide.messages.vegan)
+  const m = guide.messages
+  if (r.seances === '0-1' && !FREQUENCE01_EXCLUS.has(r.objectif) && m.frequence01) out.push(m.frequence01)
+  if (r.contraintes.includes('sans-lactose') && m.sansLactose) out.push(m.sansLactose)
+  const vegan = m.veganParObjectif[r.objectif] ?? m.vegan
+  if (r.contraintes.includes('vegan') && vegan) out.push(vegan)
   return out
 }
 
@@ -296,7 +318,12 @@ export function recommander(guide: Guide, reponses: Reponses, catalogue: Catalog
   const messages = messagesApplicables(guide, reponses)
 
   const plafondCents = PLAFONDS_CENTS[reponses.budget]
-  const lignes = appliquerPlafond(resoudreEmplacements(emplacements, guide, catalogue), plafondCents)
+  let resolues = resoudreEmplacements(emplacements, guide, catalogue)
+  // Vegan : le premier produit restant devient l'essentiel (règle v3).
+  if (reponses.contraintes.includes('vegan') && resolues.length > 0 && !resolues.some((l) => l.role === 'essentiel')) {
+    resolues = [{ ...resolues[0], role: 'essentiel' }, ...resolues.slice(1)]
+  }
+  const lignes = appliquerPlafond(resolues, plafondCents)
   if (lignes.length === 0) {
     return { type: 'boutique', raison: 'rupture', texte: null, suggestions: [], messages }
   }

@@ -65,13 +65,14 @@ describe('chargerGuideConseil', () => {
     if (!d.ok) return
 
     const [query, variables] = shopifyFetch.mock.calls[1]
-    expect(Object.keys(variables)).toHaveLength(18) // 20 clés produit, 18 handles distincts
-    expect(query).toContain('p17: product(handle: $h17)')
+    expect(Object.keys(variables)).toHaveLength(17) // 19 clés produit (v3, sans ZMA), 17 handles distincts
+    expect(query).toContain('p16: product(handle: $h16)')
+    expect(query).not.toContain('p17:')
     expect(query).not.toContain('whey-native-protimuscle')
     expect(getInventoryForVariants).toHaveBeenCalledTimes(1)
     expect(getInventoryForVariants.mock.calls[0][1]).toBe(LOCATION)
 
-    expect(Object.keys(d.catalogue)).toHaveLength(20)
+    expect(Object.keys(d.catalogue)).toHaveLength(19)
     expect(d.catalogue.protimuscle1.handle).toBe('whey-native-protimuscle')
     expect(d.catalogue.protimuscle225.variantes).toEqual(d.catalogue.protimuscle1.variantes)
     expect(d.catalogue.creatine.variantes[0]).toMatchObject({ prixCents: 3690 })

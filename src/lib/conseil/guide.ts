@@ -6,7 +6,7 @@
 // et la page /conseil affiche sa version de repli.
 
 import { z } from 'zod'
-import { extraireMessage } from './moteur'
+import { extraireMessage, messagesParObjectif } from './moteur'
 import { BUDGETS, type Guide, type Objectif, type ParcoursParBudget } from './types'
 
 const emplacementSchema = z.object({
@@ -121,6 +121,7 @@ export function parseGuide(brut: unknown): Guide {
       frequence01: extraireMessage(texte(g.regles.frequence_0_1)),
       sansLactose: extraireMessage(texte(g.regles.sans_lactose)),
       vegan: extraireMessage(texte(g.regles.vegan)),
+      veganParObjectif: messagesParObjectif(texte(g.regles.vegan), objectifs.map((o) => o.cle)),
     },
   }
 }

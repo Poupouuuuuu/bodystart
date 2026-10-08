@@ -5,6 +5,7 @@ import {
   extraireMessage,
   formatDansTitre,
   libelleVariante,
+  messagesParObjectif,
   normaliserFormat,
   prixLigneCents,
   recommander,
@@ -14,6 +15,10 @@ import stockReel from './fixtures/stock-coignieres-2026-10-08.json'
 import type { Budget, Guide, Ligne, Resultat } from './types'
 
 const catalogue = construireCatalogue()
+
+const VEGAN_PROTEINE = 'Protéine végétale : passe nous voir, on te conseille.'
+const VEGAN_VITAMINES =
+  "Vegan : certaines vitamines et les oméga 3 sont souvent d'origine animale. Passe nous voir, on te conseille une version végétale."
 
 function selection(r: Resultat) {
   if (r.type !== 'selection') throw new Error(`attendu une sélection, reçu ${r.type}/${r.raison}`)
@@ -68,10 +73,26 @@ describe('messages des règles', () => {
     expect(extraireMessage(undefined)).toBeNull()
   })
 
-  it('le guide réel fournit les trois messages client', () => {
+  it('le guide réel (v3) fournit les messages client, le vegan par objectif', () => {
     expect(guide.messages.frequence01).toMatch(/^Pour progresser, l'entraînement compte plus que les compléments\./)
     expect(guide.messages.sansLactose).toBe("Intolérance avérée : vérifie l'étiquette ou demande-nous conseil en boutique.")
-    expect(guide.messages.vegan).toBe('Protéine végétale : passe nous voir, on te conseille.')
+    expect(guide.messages.veganParObjectif).toEqual({
+      muscle: VEGAN_PROTEINE,
+      affiner: VEGAN_PROTEINE,
+      recuperation: VEGAN_PROTEINE,
+      sante: VEGAN_VITAMINES,
+      endurance: VEGAN_VITAMINES,
+    })
+  })
+
+  it('messagesParObjectif : clés connues seulement, accents ignorés', () => {
+    expect(messagesParObjectif('Texte : muscle, récupération : « A » ; sante et inconnu : « B »', ['muscle', 'recuperation', 'sante'])).toEqual({
+      muscle: 'A',
+      recuperation: 'A',
+      sante: 'B',
+    })
+    expect(messagesParObjectif('Afficher : « Un seul message. »', ['muscle'])).toEqual({})
+    expect(messagesParObjectif(undefined, ['muscle'])).toEqual({})
   })
 })
 
@@ -140,18 +161,23 @@ describe('chaque objectif × chaque budget (tout en stock, 2 à 3 séances, sans
 })
 
 describe('contraintes', () => {
-  it('sans lactose : la whey native devient musclewhey, puis clearwhey en repli, avec le message', () => {
+  it('sans lactose (v3) : Clear Whey d’abord, avec le message', () => {
     const r = recommander(guide, reponses({ objectif: 'muscle', questionSup: false, contraintes: ['sans-lactose'] }), catalogue)
-    expect(cles(r)).toEqual(['musclewhey', 'creatine'])
+    expect(cles(r)).toEqual(['clearwhey', 'creatine'])
     expect(selection(r).messages).toEqual([guide.messages.sansLactose])
+    // MuscleWhey en stock mais jamais devant la Clear Whey, même pour récupération et affiner.
+    expect(cles(recommander(guide, reponses({ objectif: 'recuperation', contraintes: ['sans-lactose'] }), catalogue))).toEqual(['clearwhey', 'magnesium'])
+    expect(cles(recommander(guide, reponses({ objectif: 'affiner', contraintes: ['sans-lactose'] }), catalogue))).toEqual(['clearwhey', 'creatine'])
+  })
 
-    const sansMusclewhey = construireCatalogue({ stock: rupture([HANDLES.musclewhey]) })
-    const r2 = recommander(
-      guide,
-      reponses({ objectif: 'recuperation', contraintes: ['sans-lactose'] }),
-      sansMusclewhey
-    )
-    expect(cles(r2)).toEqual(['clearwhey', 'magnesium'])
+  it('sans lactose (v3) : MuscleWhey seulement si la Clear Whey n’a aucun parfum en stock', () => {
+    const unParfum = construireCatalogue({ stock: (h, t) => (h === HANDLES.clearwhey ? (t === 'Cherry' ? 1 : 0) : 5) })
+    expect(cles(recommander(guide, reponses({ objectif: 'muscle', questionSup: false, contraintes: ['sans-lactose'] }), unParfum))).toEqual(['clearwhey', 'creatine'])
+    const sansClear = construireCatalogue({ stock: rupture([HANDLES.clearwhey]) })
+    expect(cles(recommander(guide, reponses({ objectif: 'muscle', questionSup: false, contraintes: ['sans-lactose'] }), sansClear))).toEqual(['musclewhey', 'creatine'])
+    // Ni l'un ni l'autre : jamais de whey native en repli.
+    const aucun = construireCatalogue({ stock: rupture([HANDLES.clearwhey], [HANDLES.musclewhey]) })
+    expect(cles(recommander(guide, reponses({ objectif: 'muscle', questionSup: false, contraintes: ['sans-lactose'] }), aucun))).toEqual(['creatine'])
   })
 
   it('sans lactose : règle appliquée telle qu’écrite (le gainer et la barre restent)', () => {
@@ -163,25 +189,44 @@ describe('contraintes', () => {
     expect(cles(r)).toEqual(['mutantmass227'])
   })
 
-  it('vegan : liste blanche (créatine, magnésium, crèmes de riz, cluster dextrin, shaker), message', () => {
-    const muscle = recommander(guide, reponses({ objectif: 'muscle', questionSup: false, contraintes: ['vegan'] }), catalogue)
-    expect(cles(muscle)).toEqual(['creatine'])
-    expect(selection(muscle).shaker).toBeNull()
-    expect(selection(muscle).messages).toEqual([guide.messages.vegan])
+  it('vegan (v3) : créatine et magnésium seulement, le premier restant devient l’essentiel', () => {
+    const muscle = selection(recommander(guide, reponses({ objectif: 'muscle', questionSup: false, contraintes: ['vegan'] }), catalogue))
+    expect(muscle.lignes.map((l) => [l.cle, l.role])).toEqual([['creatine', 'essentiel']])
+    expect(muscle.shaker).toBeNull()
 
-    const sante = recommander(guide, reponses({ objectif: 'sante', contraintes: ['vegan'] }), catalogue)
-    expect(cles(sante)).toEqual(['magnesium'])
+    const masse = selection(recommander(guide, reponses({ objectif: 'muscle', questionSup: true, budget: 'plus-90', contraintes: ['vegan'] }), catalogue))
+    expect(masse.lignes.map((l) => [l.cle, l.role])).toEqual([['creatine', 'essentiel']])
 
-    const endurance = recommander(guide, reponses({ objectif: 'endurance', budget: 'plus-90', contraintes: ['vegan'] }), catalogue)
-    expect(cles(endurance)).toEqual(['clusterdextrin', 'magnesium'])
+    const affiner = selection(recommander(guide, reponses({ objectif: 'affiner', budget: 'plus-90', contraintes: ['vegan'] }), catalogue))
+    expect(affiner.lignes.map((l) => [l.cle, l.role])).toEqual([['creatine', 'essentiel']])
 
-    const masse = recommander(guide, reponses({ objectif: 'muscle', questionSup: true, contraintes: ['vegan'] }), catalogue)
-    expect(cles(masse)).toEqual(['creatine'])
+    const sante = selection(recommander(guide, reponses({ objectif: 'sante', contraintes: ['vegan'] }), catalogue))
+    expect(sante.lignes.map((l) => [l.cle, l.role])).toEqual([['magnesium', 'essentiel']])
+
+    const endurance = selection(recommander(guide, reponses({ objectif: 'endurance', budget: 'plus-90', contraintes: ['vegan'] }), catalogue))
+    expect(endurance.lignes.map((l) => [l.cle, l.role])).toEqual([['magnesium', 'essentiel']])
+
+    const recup = selection(recommander(guide, reponses({ objectif: 'recuperation', budget: 'moins-40', contraintes: ['vegan'] }), catalogue))
+    expect(recup.lignes.map((l) => [l.cle, l.role])).toEqual([['magnesium', 'essentiel']])
   })
 
-  it('vegan sans rien de compatible : résultat boutique, message conservé', () => {
-    const r = recommander(guide, reponses({ objectif: 'affiner', budget: 'moins-40', contraintes: ['vegan'] }), catalogue)
-    expect(r).toMatchObject({ type: 'boutique', raison: 'rupture', messages: [guide.messages.vegan] })
+  it('vegan (v3) : message selon l’objectif', () => {
+    const message = (objectif: string, budget: Budget = 'plus-90') =>
+      recommander(guide, reponses({ objectif, questionSup: false, budget, contraintes: ['vegan'] }), catalogue).messages
+    expect(message('muscle')).toEqual([VEGAN_PROTEINE])
+    expect(message('affiner')).toEqual([VEGAN_PROTEINE])
+    expect(message('recuperation')).toEqual([VEGAN_PROTEINE])
+    expect(message('sante')).toEqual([VEGAN_VITAMINES])
+    expect(message('endurance')).toEqual([VEGAN_VITAMINES])
+  })
+
+  it('vegan sans rien de compatible : résultat boutique, message de l’objectif conservé', () => {
+    const affiner = recommander(guide, reponses({ objectif: 'affiner', budget: 'moins-40', contraintes: ['vegan'] }), catalogue)
+    expect(affiner).toMatchObject({ type: 'boutique', raison: 'rupture', messages: [VEGAN_PROTEINE] })
+    const sante = recommander(guide, reponses({ objectif: 'sante', budget: 'moins-40', contraintes: ['vegan'] }), catalogue)
+    expect(sante).toMatchObject({ type: 'boutique', raison: 'rupture', messages: [VEGAN_VITAMINES] })
+    const endurance = recommander(guide, reponses({ objectif: 'endurance', budget: 'moins-40', contraintes: ['vegan'] }), catalogue)
+    expect(endurance).toMatchObject({ type: 'boutique', raison: 'rupture', messages: [VEGAN_VITAMINES] })
   })
 
   it('sans caféine : aucun effet', () => {
@@ -198,7 +243,7 @@ describe('contraintes', () => {
       reponses({ objectif: 'muscle', questionSup: false, seances: '0-1', contraintes: ['vegan', 'sans-lactose'] }),
       catalogue
     )
-    expect(r.messages).toEqual([guide.messages.frequence01, guide.messages.sansLactose, guide.messages.vegan])
+    expect(r.messages).toEqual([guide.messages.frequence01, guide.messages.sansLactose, VEGAN_PROTEINE])
   })
 })
 
@@ -365,6 +410,20 @@ describe('séances', () => {
     expect(r.messages).toEqual([guide.messages.frequence01])
   })
 
+  it('0 à 1 (v3) : santé inchangée, sans message', () => {
+    for (const budget of ['moins-40', '40-90', 'plus-90'] as Budget[]) {
+      const base = recommander(guide, reponses({ objectif: 'sante', budget }), catalogue)
+      const r = recommander(guide, reponses({ objectif: 'sante', budget, seances: '0-1' }), catalogue)
+      expect(r).toEqual(base)
+      expect(r.messages).toEqual([])
+    }
+  })
+
+  it('0 à 1 : la règle vaut pour les autres objectifs (affiner, endurance, récupération)', () => {
+    expect(cles(recommander(guide, reponses({ objectif: 'affiner', seances: '0-1' }), catalogue))).toEqual(['clearwhey'])
+    expect(recommander(guide, reponses({ objectif: 'endurance', seances: '0-1' }), catalogue).messages).toEqual([guide.messages.frequence01])
+  })
+
   it('0 à 1 avec la créatine seule au programme : résultat boutique avec le message', () => {
     const r = recommander(guide, reponses({ objectif: 'muscle', questionSup: false, seances: '0-1', budget: 'moins-40' }), catalogue)
     expect(r).toMatchObject({ type: 'boutique', raison: 'rupture', messages: [guide.messages.frequence01] })
@@ -388,13 +447,13 @@ describe('séances', () => {
     expect(cles(r)).toEqual(['protimuscle1', 'creatine'])
   })
 
-  it('4 et plus + sans lactose : les isolats remplacent aussi le grand format', () => {
+  it('4 et plus + sans lactose : la Clear Whey remplace aussi le grand format', () => {
     const r = recommander(
       guide,
       reponses({ objectif: 'muscle', questionSup: false, seances: '4-plus', budget: 'plus-90', contraintes: ['sans-lactose'] }),
       catalogue
     )
-    expect(cles(r)).toEqual(['musclewhey', 'creatine', 'creamofrice'])
+    expect(cles(r)).toEqual(['clearwhey', 'creatine', 'creamofrice'])
   })
 })
 

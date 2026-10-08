@@ -9,7 +9,7 @@ describe('parseGuide', () => {
     for (const brut of [GUIDE_BRUT, JSON.stringify(GUIDE_BRUT)]) {
       const g = parseGuide(brut)
       expect(g.objectifs.map((o) => o.cle)).toEqual(['muscle', 'affiner', 'endurance', 'recuperation', 'sante', 'ne-sait-pas'])
-      expect(Object.keys(g.produits)).toHaveLength(20)
+      expect(Object.keys(g.produits)).toHaveLength(19)
     }
   })
 

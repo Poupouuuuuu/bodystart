@@ -78,7 +78,10 @@ export interface Guide {
   messages: {
     frequence01: string | null
     sansLactose: string | null
+    /** Message vegan par défaut (le dernier entre « » de la règle). */
     vegan: string | null
+    /** Message vegan propre à un objectif (« muscle, affiner : « … » ; sante : « … » »). */
+    veganParObjectif: Record<string, string>
   }
 }
 
