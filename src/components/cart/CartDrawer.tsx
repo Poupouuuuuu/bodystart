@@ -603,12 +603,6 @@ export default function CartDrawer() {
                   </div>
                 )
               })()}
-              {cart.cost.totalTaxAmount && (
-                <div className="flex justify-between text-[13px] text-ink-mute font-medium">
-                  <span>Dont TVA</span>
-                  <span className="font-semibold text-ink tabular-nums">{formatPrice(cart.cost.totalTaxAmount)}</span>
-                </div>
-              )}
                   </div>
                 </div>
               )}

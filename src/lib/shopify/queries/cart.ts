@@ -77,10 +77,6 @@ const CART_FRAGMENT = `
         amount
         currencyCode
       }
-      totalTaxAmount {
-        amount
-        currencyCode
-      }
     }
     discountCodes {
       code
@@ -89,6 +85,9 @@ const CART_FRAGMENT = `
     # Montants réellement déduits par code, affichés dans le récap et le
     # widget cagnotte (« Cagnotte appliquée : -X € ») ; sans ça le client ne
     # voyait jamais combien sa remise a déduit.
+    # Déprécié en 2026-10 (toujours servi) : à remplacer à la prochaine montée
+    # de version par lines[].discountAllocations(lineLevelOnly: false), en
+    # retirant la part déjà comprise dans subtotalAmount (remises par ligne).
     discountAllocations {
       discountedAmount {
         amount
@@ -196,7 +195,7 @@ export const UPDATE_CART_ATTRIBUTES = `
 
 export const UPDATE_CART_DISCOUNT_CODES = `
   ${CART_FRAGMENT}
-  mutation UpdateCartDiscountCodes($cartId: ID!, $discountCodes: [String!]) {
+  mutation UpdateCartDiscountCodes($cartId: ID!, $discountCodes: [String!]!) {
     cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
       cart {
         ...CartFragment

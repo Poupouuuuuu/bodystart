@@ -186,7 +186,6 @@ export interface ShopifyCart {
   cost: {
     subtotalAmount: ShopifyMoney
     totalAmount: ShopifyMoney
-    totalTaxAmount: ShopifyMoney | null
   }
   discountCodes: CartDiscountCode[]
   // Montants déduits par remise (code présent si remise par code promo).

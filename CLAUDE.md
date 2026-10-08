@@ -229,8 +229,10 @@ Tout est dans `.claude/` (hooks, skills, agents) et documenté dans `.claude/hoo
 
 ## Intégrations externes
 
-- **Shopify Storefront API 2024-04** : Produits, collections, panier, checkout, clients
-- **Shopify Admin API 2024-04** : Inventory levels par location (Click & Collect), création de codes promo coaching
+- **Shopify Storefront API 2026-10** : Produits, collections, panier, checkout, clients
+- **Shopify Admin API 2026-10** : Inventory levels par location (Click & Collect), codes promo (parrainage, cagnotte, coaching), newsletter, flux Google
+  - Version unique `SHOPIFY_API_VERSION` dans `lib/shopify/client.ts` (épinglée le 08/10/2026 ; avant, 2024-04 n'était plus supportée et Shopify servait 2025-10 à la place). Le jeu de la roue et les politiques épinglent 2026-04. À remonter avant octobre 2027 : valider chaque requête contre le nouveau schéma (introspection Storefront, `validate_graphql_codeblocks` pour l'Admin), y compris les champs passés en variables (ex. `customerSelection` remplacé par `context` dans les codes promo).
+  - Restes dépréciés mais servis en 2026-10 : `Cart.discountAllocations` (panier), `Product.featuredImage`/`images` (flux Google), `Customer.emailMarketingConsent` (newsletter), `codeDiscountNodes` (coaching).
 - **Stripe** : Paiements coaching (Checkout Sessions, subscriptions, webhooks)
 - **Judge.me** : Avis clients (via API REST)
 - **Resend** : Emails transactionnels (contact, newsletter)

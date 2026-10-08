@@ -78,7 +78,7 @@ export async function createReferralDiscountCode(opts: {
       code: opts.referralCode,
       startsAt: new Date().toISOString(),
       // endsAt omis → code valide indefiniment
-      customerSelection: { all: true },
+      context: { all: 'ALL' }, // customerSelection retiré des versions récentes de l'API
       customerGets: {
         value: {
           discountAmount: {
@@ -135,7 +135,7 @@ export async function createAmbassadorDiscountCode(opts: {
       title: `Ambassadeur ${opts.code}${opts.ambassadorEmail ? ` (${opts.ambassadorEmail})` : ''}`,
       code: opts.code,
       startsAt: new Date().toISOString(),
-      customerSelection: { all: true },
+      context: { all: 'ALL' }, // customerSelection retiré des versions récentes de l'API
       customerGets: {
         value: { percentage: 0.1 },
         items: { all: true },
@@ -205,7 +205,7 @@ export async function createRedemptionDiscountCode(opts: {
       code,
       startsAt: new Date().toISOString(),
       endsAt: opts.expiresAt.toISOString(),
-      customerSelection: { all: true },
+      context: { all: 'ALL' }, // customerSelection retiré des versions récentes de l'API
       customerGets: {
         value: {
           discountAmount: {
@@ -287,7 +287,7 @@ export async function createAmbassadorRedemptionDiscountCode(opts: {
       code,
       startsAt: new Date().toISOString(),
       endsAt: opts.expiresAt.toISOString(),
-      customerSelection: { all: true },
+      context: { all: 'ALL' }, // customerSelection retiré des versions récentes de l'API
       customerGets: {
         value: { discountAmount: { amount: amountEuros, appliesOnEachItem: false } },
         items: { all: true },

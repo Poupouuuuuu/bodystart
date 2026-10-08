@@ -17,12 +17,18 @@ if (!domain || !storefrontAccessToken) {
   )
 }
 
-const STOREFRONT_URL = `https://${domain}/api/2024-04/graphql.json`
-// Version récente, réservée aux champs absents de 2024-04 (ex. shop.termsOfSale,
-// apparu en 2026-04). Le reste du site reste sur 2024-04.
+// Version d'API Shopify par défaut (Storefront et Admin), épinglée le 08/10/2026.
+// Avant : 2024-04, plus supportée ; Shopify servait à la place la plus ancienne
+// version encore supportée (2025-10), qui change en silence chaque trimestre.
+// 2026-10 est supportée au moins jusqu'en octobre 2027 : la remonter avant,
+// en revalidant toutes les requêtes contre le nouveau schéma (voir la PR).
+// Quelques appels épinglent leur propre version (jeu de la roue, politiques).
+export const SHOPIFY_API_VERSION = '2026-10'
+
+const STOREFRONT_URL = `https://${domain}/api/${SHOPIFY_API_VERSION}/graphql.json`
 const storefrontUrl = (apiVersion?: string) =>
   apiVersion ? `https://${domain}/api/${apiVersion}/graphql.json` : STOREFRONT_URL
-const ADMIN_URL = `https://${domain}/admin/api/2024-04/graphql.json`
+const ADMIN_URL = `https://${domain}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`
 const adminUrl = (apiVersion?: string) =>
   apiVersion ? `https://${domain}/admin/api/${apiVersion}/graphql.json` : ADMIN_URL
 

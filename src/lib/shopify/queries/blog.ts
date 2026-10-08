@@ -20,7 +20,7 @@ export const GET_BLOG_ARTICLES = `
               width
               height
             }
-            author {
+            author: authorV2 {
               name
             }
             tags
@@ -47,7 +47,7 @@ export const GET_ARTICLE_BY_HANDLE = `
           width
           height
         }
-        author {
+        author: authorV2 {
           name
         }
         tags
