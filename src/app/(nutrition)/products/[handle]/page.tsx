@@ -7,14 +7,14 @@ import { BODY_START_STORES } from '@/lib/shopify/types'
 import { isBundle, pickInitialBundleVariant } from '@/lib/shopify/bundle'
 import { pickDefaultVariant } from '@/lib/product-variant'
 import BackButton from '@/components/product/v2/BackButton'
-import BuyBoxIsland from '@/components/product/v2/BuyBoxIsland'
+import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
 import LeConseilBodyStartV2 from '@/components/product/v2/LeConseilBodyStartV2'
 import AQuoiCaSertV2 from '@/components/product/v2/AQuoiCaSertV2'
 import NutritionTableV2 from '@/components/product/v2/NutritionTableV2'
 import CompositionV2 from '@/components/product/v2/CompositionV2'
 import ProductDescriptionV2 from '@/components/product/v2/ProductDescriptionV2'
 import ReviewsV2 from '@/components/product/v2/ReviewsV2'
-import CrossSellIsland from '@/components/product/v2/CrossSellIsland'
+import CrossSellV2 from '@/components/product/v2/CrossSellV2'
 import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
 import { buildPageMetadata } from '@/lib/seo'
 import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
@@ -273,11 +273,11 @@ export default async function ProductPage({ params }: Props) {
       {/* ─── Buy box : galerie + panneau achat ─── */}
       <section className="bg-canvas">
         <div className="container py-10 md:py-14">
-          {/* PERF : îlot d'hydratation (React découpe le travail au lieu d'une
-              seule tâche de ~3 s sur mobile). La frontière Suspense est DANS
-              BuyBoxIsland (composant client) : posée ici, elle envoyait la zone
-              d'achat dans un bloc caché, invisible sans JS. */}
-          <BuyBoxIsland
+          {/* Sans <Suspense> (08/10/2026) : React sort toute frontière dont le
+              HTML dépasse ~12 Ko dans un bloc caché révélé par un script, même
+              prête. La zone d'achat (galerie, prix, bouton) était invisible sans
+              JS. Coût mesuré dans la PR : l'hydratation n'est plus découpée. */}
+          <BuyBoxV2
             images={images}
             variants={product.variants.nodes}
             title={product.title}
@@ -331,7 +331,7 @@ export default async function ProductPage({ params }: Props) {
 
       {/* ─── Cross-sell + nudge franco ─── */}
       {relatedProducts.length > 0 && (
-        <CrossSellIsland products={relatedProducts} currentHandle={product.handle} />
+        <CrossSellV2 products={relatedProducts} currentHandle={product.handle} />
       )}
 
       {/* ─── Précautions d'emploi des compléments alimentaires (statique, légal) ─── */}
