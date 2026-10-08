@@ -45,6 +45,10 @@ function descriptionLigne({ ligne, choisie }: LigneEffective): string {
   return `${ligne.titre}${details ? ` (${details})` : ''}${choisie ? ` : ${formatCents(choisie.prixCents)}` : ''}`
 }
 
+/** Mention obligatoire dès qu'une allégation santé est affichée (règlement CE 1924/2006, art. 10.2.a). */
+const MENTION_ALIMENTATION =
+  'Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée et à un mode de vie sain. Respecte la dose journalière indiquée sur chaque produit.'
+
 export default function ResultatConseil({ resultat, reponses, objectifLibelle, titreRef, onRetour, onRecommencer }: Props) {
   const { addItems, isOpen } = useCart()
   const [choix, setChoix] = useState<Record<string, string>>({})
@@ -221,6 +225,7 @@ export default function ResultatConseil({ resultat, reponses, objectifLibelle, t
               />
             ))}
           </ul>
+          <p className="mt-4 text-[13px] leading-[1.55] text-ink-mute">{MENTION_ALIMENTATION}</p>
 
           {shaker?.choisie && (
             <label className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-4 rounded-[20px] bg-white p-4 shadow-card sm:p-5">
@@ -296,6 +301,7 @@ export default function ResultatConseil({ resultat, reponses, objectifLibelle, t
               <CarteProduitConseil key={l.ligne.cle} ligne={l.ligne} variantes={l.variantes} choisie={l.choisie} />
             ))}
           </ul>
+          <p className="mt-4 text-[13px] leading-[1.55] text-ink-mute">{MENTION_ALIMENTATION}</p>
         </section>
       )}
 

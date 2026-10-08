@@ -173,6 +173,8 @@ describe('résultat', () => {
     expect(screen.getByText(/Un isolat de whey native/)).toBeTruthy()
     expect(screen.getByText(/Intolérance avérée/)).toBeTruthy()
     expect(prix('89,80').length).toBeGreaterThan(0)
+    // Mention obligatoire (CE 1924/2006, art. 10.2.a) dès que des allégations s'affichent
+    expect(screen.getByText(/ne se substituent pas à une alimentation variée et équilibrée/)).toBeTruthy()
     expect(window.location.search).toBe('?objectif=muscle&etape=resultat')
     expect(window.location.href).not.toMatch(/lactose|vegan|cafeine/)
   })
@@ -283,6 +285,7 @@ describe('résultat', () => {
     expect(etape()).toBe('resultat')
     expect(screen.getByText(/en 5 minutes, on fait le point ensemble/)).toBeTruthy()
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(3)
+    expect(screen.getByText(/ne se substituent pas à une alimentation variée et équilibrée/)).toBeTruthy()
     expect(screen.queryByRole('button', { name: /Je réserve/ })).toBeNull()
     expect(screen.getByRole('link', { name: /Itinéraire/ })).toBeTruthy()
     expect(screen.getByRole('link', { name: /Appeler/ }).getAttribute('href')).toBe('tel:+33761847580')

@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: FROM,
       to: email,
-      subject: 'Votre demande de conseil a bien été reçue (BodyStart)',
+      subject: 'Ta demande de rappel est bien reçue (BodyStart)',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #111827; padding: 32px; text-align: center;">
@@ -145,13 +145,13 @@ export async function POST(req: NextRequest) {
           </div>
           <div style="padding: 32px; background: #ffffff;">
             <h2 style="color: #111827; font-size: 20px; font-weight: 800; margin: 0 0 16px;">
-              Bonjour ${safeName} 👋
+              Bonjour ${safeName},
             </h2>
             <p style="color: #374151; font-size: 15px; line-height: 1.7; margin: 0 0 16px;">
-              Nous avons bien reçu votre demande de conseil pour l'objectif <strong style="color: #15803d;">${objectifLabel}</strong>.
+              On a bien reçu ta demande de conseil pour l'objectif <strong style="color: #15803d;">${objectifLabel}</strong>.
             </p>
             <p style="color: #374151; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
-              Notre équipe va vous contacter sous <strong>24 à 48h</strong> pour vous proposer un rendez-vous personnalisé en boutique.
+              On te rappelle pour en parler, aux heures d'ouverture de la boutique. Tu peux aussi passer directement, sans rendez-vous.
             </p>
             <div style="background: #f0fdf4; border: 2px solid #15803d; border-radius: 4px; padding: 20px; margin-bottom: 24px;">
               <p style="margin: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; color: #15803d; letter-spacing: 1px;">Notre boutique</p>
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
               <p style="margin: 4px 0 0; color: #6b7280; font-size: 13px;">Ouvert du lundi au samedi · 11h à 19h</p>
             </div>
             <p style="color: #9ca3af; font-size: 13px; margin: 0;">
-              Pour toute question urgente : <a href="tel:+33761847580" style="color: #15803d;">07 61 84 75 80</a>
+              Une question urgente ? Appelle-nous : <a href="tel:+33761847580" style="color: #15803d;">07 61 84 75 80</a>
             </p>
           </div>
         </div>
