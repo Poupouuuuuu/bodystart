@@ -16,6 +16,13 @@ import { GOOGLE_LISTING_URL, GOOGLE_RATING } from '@/lib/store-info'
  * Perf : la photo est le candidat LCP → `priority`, jamais masquée par une
  * animation. Seuls les éléments secondaires montent en cascade (.hero-rise).
  * Le h1 reste sans animation (règle V2).
+ * - `fetchPriority="high"` : `priority` seul précharge en priorité réseau
+ *   basse (Next 15), derrière les polices.
+ * - `sizes` à 70vw sous 640 px : le téléphone prend la variante 828 px
+ *   (67 Ko) au lieu de 1200 px (128 Ko). Sur mobile on ne voit que le haut de
+ *   la photo, sous un voile sombre : différence invisible (captures 390 px
+ *   ×3 comparées), LCP mobile −550 ms à lui seul (mesure du 08/10/2026,
+ *   4G lent + CPU ×4).
  */
 export default function HeroV3() {
   const note = GOOGLE_RATING.value.toLocaleString('fr-FR')
@@ -27,8 +34,9 @@ export default function HeroV3() {
         alt="Intérieur de la boutique BodyStart Nutrition à Coignières : rayons de compléments, mur végétal et comptoir"
         fill
         priority
+        fetchPriority="high"
         quality={72}
-        sizes="100vw"
+        sizes="(max-width: 640px) 70vw, 100vw"
         className="object-cover object-[50%_38%]"
       />
       {/* Voiles : sombre en bas (lisibilité du texte), plus léger en haut pour

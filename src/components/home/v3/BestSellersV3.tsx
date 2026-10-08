@@ -36,7 +36,7 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
         <div className="flex h-full flex-col overflow-hidden rounded-[calc(2rem-0.375rem)] bg-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)]">
           <div
             className="relative flex min-h-[300px] flex-1 items-center justify-center bg-cover bg-center sm:min-h-[380px] lg:min-h-0"
-            style={{ backgroundImage: "url('/bg-vegetal.webp')" }}
+            style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
           >
             <span className="absolute left-5 top-5 z-10 inline-flex items-center rounded-lg bg-mustard px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-mustard-ink shadow-soft">
               Best-seller

@@ -17,7 +17,7 @@ interface ProductGalleryV2Props {
 }
 
 /**
- * Galerie V2 — palette DA claire + fond vegetal bg-vegetal.webp (coherent /products + home).
+ * Galerie V2 — palette DA claire + fond vegetal bg-vegetal-800.webp (coherent /products + home).
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Fiche produit.1
  */
 export default function ProductGalleryV2({
@@ -109,17 +109,19 @@ export default function ProductGalleryV2({
             plutôt que celle d'un cadre administratif. */}
         {/* PERF : le fond vegetal etait un background CSS -> decouvert apres le
             CSS, non preload, et c'est LUI le plus grand element peint (LCP) sur
-            mobile. En <Image priority>, il est preload avec le HTML et servi
-            redimensionne (390 px -> ~40 Ko au lieu du 1200 px complet). */}
+            mobile. En <Image priority>, il est preload avec le HTML.
+            `unoptimized` : fichier deja leger (800 px, 20 Ko, flou qui ne
+            perd rien) et MEME URL que le fond des cartes produit plus bas
+            (cross-sell) : un seul telechargement par fiche au lieu de deux
+            (43 + 44 Ko avant le 08/10/2026). */}
         <div className="group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-sage shadow-card">
           <Image
-            src="/bg-vegetal.webp"
+            src="/bg-vegetal-800.webp"
             alt=""
             aria-hidden="true"
             fill
             priority
-            quality={70}
-            sizes="(max-width: 1024px) 100vw, 50vw"
+            unoptimized
             className="object-cover"
           />
           {currentImage ? (
@@ -143,6 +145,9 @@ export default function ProductGalleryV2({
                 // le fond végétal sous le produit.
                 className="object-contain [filter:drop-shadow(0_22px_28px_rgba(45,90,45,0.30))] transition-transform duration-500 ease-out-expo group-hover:scale-[1.06]"
                 priority={selectedIndex === priorityIndex}
+                // `priority` précharge sans priorité réseau haute (Next 15) :
+                // l'image produit est le LCP de la fiche, elle passe devant.
+                fetchPriority={selectedIndex === priorityIndex ? 'high' : undefined}
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
