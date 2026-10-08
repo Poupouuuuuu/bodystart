@@ -1,0 +1,4 @@
+version: STSv1
+mode: testing
+mx: mta-gw.infomaniak.ch
+max_age: 604800

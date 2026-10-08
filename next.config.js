@@ -159,6 +159,15 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // Sous-domaine MTA-STS (politique de chiffrement des e-mails reçus,
+      // public/.well-known/mta-sts.txt) : il ne sert que ce fichier, tout le
+      // reste renvoie au site principal (pas de doublon du site).
+      {
+        source: '/((?!\\.well-known/mta-sts\\.txt$).*)',
+        has: [{ type: 'host', value: 'mta-sts.bodystart-nutrition.fr' }],
+        destination: 'https://bodystart-nutrition.fr/',
+        permanent: false,
+      },
       // Section + routes /objectifs supprimées : 301 permanent vers le catalogue
       // pour ne pas casser les URLs indexées (étaient au sitemap).
       { source: '/objectifs', destination: '/products', permanent: true },
