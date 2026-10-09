@@ -35,12 +35,18 @@ export interface Lot {
   /** Variantes ciblées. */
   variants?: string[]
   /**
-   * Parfums couverts, dans l'ordre d'affichage, quand le lot ne couvre pas
-   * tous les parfums du produit (09/10/2026 : un gagnant Crunch Bar a pris un
-   * parfum hors lot, code refusé en caisse). Une entrée par variante ciblée
-   * (vérifié par lots.test.ts) : changer les variantes oblige à les tenir à jour.
+   * Parfums couverts, dans l'ordre d'affichage, quand le lot ne couvre que
+   * certaines variantes du produit (sans ce rappel, un gagnant peut prendre un
+   * parfum hors lot et voir son code refusé en caisse). Une entrée par
+   * variante ciblée (vérifié par lots.test.ts) : changer les variantes oblige
+   * à les tenir à jour. Inutile sur un lot qui cible le produit entier.
    */
   parfums?: Parfum[]
+  /**
+   * Libellés portés par les titres de remise des codes déjà créés, quand le
+   * libellé a changé depuis : le récap hebdo retrouve le lot de ces codes.
+   */
+  anciensLibelles?: string[]
   /** Montant de la remise en euros (repli si le prix Shopify est illisible). */
   amount: number
   /** Minimum d'achat en euros (remise sur commande). */
@@ -59,20 +65,14 @@ export const LOTS: Lot[] = [
   },
   {
     id: 'crunch-bar',
-    label: 'Une barre Crunch Bar',
+    // Tous les parfums depuis le 09/10/2026 (3 variantes avant, un gagnant
+    // avait pris un parfum hors lot, code refusé en caisse).
+    label: 'Une barre Crunch Bar (parfum au choix)',
     wheelLabel: 'Crunch Bar',
     weight: 25,
     type: 'product',
-    variants: [
-      'gid://shopify/ProductVariant/54097477534038',
-      'gid://shopify/ProductVariant/54130802786646',
-      'gid://shopify/ProductVariant/54401705804118',
-    ],
-    parfums: [
-      { variant: 'gid://shopify/ProductVariant/54097477534038', nom: 'Dark Chocolate Peanut Butter', court: 'Dark Choco PB' },
-      { variant: 'gid://shopify/ProductVariant/54401705804118', nom: 'Peanut Butter Cup', court: 'PB Cup' },
-      { variant: 'gid://shopify/ProductVariant/54130802786646', nom: 'Chocolate Chip Cookie Dough', court: 'Cookie Dough' },
-    ],
+    products: ['gid://shopify/Product/10832196010326'],
+    anciensLibelles: ['Une barre Crunch Bar', 'Une barre Crunch Bar (Dark Choco PB, PB Cup ou Cookie Dough)'],
     amount: 2.9,
   },
   {
@@ -150,16 +150,17 @@ export function lotParfums(lot: Lot): string | null {
   return lot.parfums?.length ? enumerer(lot.parfums.map((p) => p.nom)) : null
 }
 
-/** Libellé montré au client : « Une barre Crunch Bar au choix : A, B ou C ». */
+/** Libellé montré au client : « Une whey Protimuscle 1 kg au choix : A, B ou C ». */
 export function lotLabelClient(lot: Lot): string {
   const parfums = lotParfums(lot)
   return parfums ? `${lot.label} au choix : ${parfums}` : lot.label
 }
 
 /**
- * Libellé du titre de la remise (lu en caisse) : « Une barre Crunch Bar
- * (Dark Choco PB, PB Cup ou Cookie Dough) ». Le récap retrouve le lot par
- * ce titre (lotFromTitle), y compris pour les anciens codes sans parfums.
+ * Libellé du titre de la remise (lu en caisse) : « Une whey Protimuscle 1 kg
+ * (Chocolat, Vanille, Choco-cookie ou Fraise) ». Le récap retrouve le lot par
+ * ce titre (lotFromTitle), y compris pour les anciens codes (sans parfums, ou
+ * `anciensLibelles`).
  */
 export function lotLabelRemise(lot: Lot): string {
   return lot.parfums?.length ? `${lot.label} (${enumerer(lot.parfums.map((p) => p.court))})` : lot.label

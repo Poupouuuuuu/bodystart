@@ -29,7 +29,7 @@ describe('discountInput', () => {
   it('article offert : montant fixe une seule fois, limité aux cibles, 1 utilisation', () => {
     const input = discountInput(lotById('crunch-bar')!, 'ROUE-ABC234', 2.9, start, end)
     expect(input).toMatchObject({
-      title: 'Jeu roue : Une barre Crunch Bar (Dark Choco PB, PB Cup ou Cookie Dough) : ROUE-ABC234',
+      title: 'Jeu roue : Une barre Crunch Bar (parfum au choix) : ROUE-ABC234',
       code: 'ROUE-ABC234',
       startsAt: '2026-10-07T10:00:00.000Z',
       endsAt: '2026-11-06T10:00:00.000Z',
@@ -39,7 +39,7 @@ describe('discountInput', () => {
       combinesWith: { productDiscounts: false, orderDiscounts: true, shippingDiscounts: true },
       customerGets: {
         value: { discountAmount: { amount: '2.90', appliesOnEachItem: false } },
-        items: { products: { productsToAdd: [], productVariantsToAdd: lotById('crunch-bar')!.variants } },
+        items: { products: { productsToAdd: ['gid://shopify/Product/10832196010326'], productVariantsToAdd: [] } },
       },
     })
     expect(input).not.toHaveProperty('minimumRequirement')
@@ -72,7 +72,10 @@ describe('lotsAvailability', () => {
           { id: 'a', price: '3.10', inventoryItem: level(0) },
           { id: 'b', price: '3.10', inventoryItem: level(0) },
         ] } },
-        { __typename: 'ProductVariant', id: 'gid://shopify/ProductVariant/54097477534038', price: '2.90', inventoryItem: level(7) },
+        { __typename: 'Product', id: 'gid://shopify/Product/10832196010326', variants: { nodes: [
+          { id: 'd', price: '2.90', inventoryItem: level(4) },
+          { id: 'e', price: '2.90', inventoryItem: level(3) },
+        ] } },
         { __typename: 'Product', id: 'gid://shopify/Product/11139051290966', variants: { nodes: [{ id: 'c', price: '6.90', inventoryItem: level(53) }] } },
         { __typename: 'ProductVariant', id: 'gid://shopify/ProductVariant/53981935206742', price: '36.90', inventoryItem: { inventoryLevel: null } },
         { __typename: 'ProductVariant', id: 'gid://shopify/ProductVariant/54095546483030', price: '44.90', inventoryItem: level(6) },

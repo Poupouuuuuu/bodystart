@@ -98,9 +98,15 @@ describe('noteLine', () => {
     )
   })
   it('lot à parfums : la note rappelle les parfums couverts (lue en caisse)', () => {
+    const lot = LOTS.find((l) => l.id === 'whey')!
+    expect(noteLine({ lotId: 'whey', code: 'ROUE-ABC234', endsAt: '', playedAt: '2026-10-09T10:00:00Z' }, lot)).toBe(
+      'Jeu roue 09/10/2026 : Une whey Protimuscle 1 kg au choix : Chocolat, Vanille, Choco-cookie ou Fraise, code ROUE-ABC234'
+    )
+  })
+  it('Crunch Bar : parfum au choix, sans liste', () => {
     const lot = LOTS.find((l) => l.id === 'crunch-bar')!
     expect(noteLine({ lotId: 'crunch-bar', code: 'ROUE-ABC234', endsAt: '', playedAt: '2026-10-09T10:00:00Z' }, lot)).toBe(
-      'Jeu roue 09/10/2026 : Une barre Crunch Bar au choix : Dark Chocolate Peanut Butter, Peanut Butter Cup ou Chocolate Chip Cookie Dough, code ROUE-ABC234'
+      'Jeu roue 09/10/2026 : Une barre Crunch Bar (parfum au choix), code ROUE-ABC234'
     )
   })
 })
