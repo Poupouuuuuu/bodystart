@@ -114,6 +114,14 @@ export const LOTS: Lot[] = [
       'gid://shopify/ProductVariant/54095546548566',
       'gid://shopify/ProductVariant/54095546581334',
     ],
+    // Noms tels que dans Shopify (« Chocolat / 1 kg »…) ; Matcha Latte, Amande
+    // Pistache et Caramel Salé Pécan 1 kg ne sont pas dans le lot.
+    parfums: [
+      { variant: 'gid://shopify/ProductVariant/54095546483030', nom: 'Chocolat', court: 'Chocolat' },
+      { variant: 'gid://shopify/ProductVariant/54095546515798', nom: 'Vanille', court: 'Vanille' },
+      { variant: 'gid://shopify/ProductVariant/54095546548566', nom: 'Choco-cookie', court: 'Choco-cookie' },
+      { variant: 'gid://shopify/ProductVariant/54095546581334', nom: 'Fraise', court: 'Fraise' },
+    ],
     amount: 44.9,
   },
 ]

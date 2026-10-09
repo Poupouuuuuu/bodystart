@@ -116,7 +116,16 @@ describe('POST /api/jeu', () => {
     shop.getCustomerByEmail.mockResolvedValue(customer())
     shop.claimSpin.mockResolvedValue({ status: 'played', result: { lotId: 'whey', code: 'ROUE-WWW222', endsAt: 'e', playedAt: 'p' } })
     const r = await call({ ...form, action: 'spin', customerId: 'gid://shopify/Customer/7' })
-    expect(r.json).toEqual({ status: 'played', result: { lotId: 'whey', label: 'Une whey Protimuscle 1 kg', code: 'ROUE-WWW222', endsAt: 'e' } })
+    expect(r.json).toEqual({
+      status: 'played',
+      result: {
+        lotId: 'whey',
+        label: 'Une whey Protimuscle 1 kg',
+        parfums: 'Chocolat, Vanille, Choco-cookie ou Fraise',
+        code: 'ROUE-WWW222',
+        endsAt: 'e',
+      },
+    })
     expect(shop.createLotDiscount).not.toHaveBeenCalled()
   })
 
