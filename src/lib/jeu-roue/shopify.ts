@@ -11,7 +11,7 @@
 import { randomInt } from 'node:crypto'
 import { shopifyAdminFetch } from '@/lib/shopify/client'
 import { generateCode, noteLine, type Entry, type JeuResult } from './core'
-import { LOTS, JEU_LOCATION_ID, CODE_VALIDITY_DAYS, lotById, type Lot, type LotId } from './lots'
+import { LOTS, JEU_LOCATION_ID, CODE_VALIDITY_DAYS, lotById, lotLabelRemise, type Lot, type LotId } from './lots'
 
 const API = { apiVersion: '2026-04' }
 
@@ -320,7 +320,7 @@ export async function releaseSpin(customerId: string): Promise<void> {
 
 export function discountInput(lot: Lot, code: string, amount: number, startsAt: Date, endsAt: Date) {
   return {
-    title: `Jeu roue : ${lot.label} : ${code}`,
+    title: `Jeu roue : ${lotLabelRemise(lot)} : ${code}`,
     code,
     startsAt: startsAt.toISOString(),
     endsAt: endsAt.toISOString(),

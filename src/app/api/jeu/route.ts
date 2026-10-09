@@ -1,7 +1,7 @@
 import { randomInt } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { validateEntry, pickLot, type JeuResult } from '@/lib/jeu-roue/core'
-import { LOTS, lotById, type Lot } from '@/lib/jeu-roue/lots'
+import { LOTS, lotById, lotParfums, type Lot } from '@/lib/jeu-roue/lots'
 import {
   findParticipant,
   getCustomerByEmail,
@@ -31,13 +31,17 @@ export const runtime = 'nodejs'
 export interface PublicResult {
   lotId: string
   label: string
+  /** Parfums couverts (« A, B ou C »), affichés sous le lot. */
+  parfums?: string
   code: string
   endsAt: string
 }
 
 function toPublic(r: JeuResult | null): PublicResult | null {
   const lot = r && lotById(r.lotId)
-  return r && lot ? { lotId: r.lotId, label: lot.label, code: r.code, endsAt: r.endsAt } : null
+  return r && lot
+    ? { lotId: r.lotId, label: lot.label, parfums: lotParfums(lot) ?? undefined, code: r.code, endsAt: r.endsAt }
+    : null
 }
 
 const played = (r: JeuResult | null) => NextResponse.json({ status: 'played', result: toPublic(r) })

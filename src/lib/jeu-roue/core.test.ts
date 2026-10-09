@@ -97,4 +97,10 @@ describe('noteLine', () => {
       'Jeu roue 07/10/2026 : Un shaker, code ROUE-ABC234'
     )
   })
+  it('lot à parfums : la note rappelle les parfums couverts (lue en caisse)', () => {
+    const lot = LOTS.find((l) => l.id === 'crunch-bar')!
+    expect(noteLine({ lotId: 'crunch-bar', code: 'ROUE-ABC234', endsAt: '', playedAt: '2026-10-09T10:00:00Z' }, lot)).toBe(
+      'Jeu roue 09/10/2026 : Une barre Crunch Bar au choix : Dark Chocolate Peanut Butter, Peanut Butter Cup ou Chocolate Chip Cookie Dough, code ROUE-ABC234'
+    )
+  })
 })

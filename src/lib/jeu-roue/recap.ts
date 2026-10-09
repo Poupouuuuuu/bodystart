@@ -9,7 +9,7 @@
 // - le stock des lots à Coignières (même lecture que le tirage).
 
 import { shopifyAdminFetch } from '@/lib/shopify/client'
-import { LOTS, lotById, type Lot, type LotId } from './lots'
+import { LOTS, lotById, lotLabelRemise, type Lot, type LotId } from './lots'
 import { OPTIN_TAG, PARTICIPANT_TAG, lotsAvailability, readResult } from './shopify'
 
 const API = { apiVersion: '2026-04' }
@@ -52,10 +52,14 @@ export interface RecapData {
   stock: Map<LotId, number> | null
 }
 
-/** « Jeu roue : <libellé du lot> : ROUE-XXXXXX » → lot (titre posé par discountInput). */
+/**
+ * « Jeu roue : <libellé du lot> : ROUE-XXXXXX » → lot (titre posé par
+ * discountInput). Libellé avec parfums (depuis le 09/10/2026) ou sans
+ * (codes plus anciens).
+ */
 export function lotFromTitle(title: string): LotId | null {
   const label = title.split(' : ')[1]
-  return LOTS.find((l) => l.label === label)?.id ?? null
+  return LOTS.find((l) => l.label === label || lotLabelRemise(l) === label)?.id ?? null
 }
 
 /** Caisse = Shopify POS ; tout le reste (site headless, brouillon) = en ligne. */
