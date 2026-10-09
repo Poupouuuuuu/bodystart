@@ -2,19 +2,23 @@ import { describe, it, expect } from 'vitest'
 import { LOTS, lotById, lotLabelClient, lotLabelRemise } from './lots'
 
 describe('parfums des lots', () => {
-  it('une entrée par variante ciblée, ni plus ni moins (changer les variantes oblige à mettre les parfums à jour)', () => {
-    for (const lot of LOTS.filter((l) => l.parfums)) {
+  it('lots ciblés par variantes : une entrée par variante ciblée, ni plus ni moins (changer les variantes oblige à mettre les parfums à jour)', () => {
+    const parVariantes = LOTS.filter((l) => l.parfums)
+    expect(parVariantes.map((l) => l.id)).toEqual(['whey'])
+    for (const lot of parVariantes) {
+      expect(lot.products ?? []).toEqual([])
       expect([...lot.parfums!.map((p) => p.variant)].sort()).toEqual([...(lot.variants ?? [])].sort())
     }
   })
 
-  it('Crunch Bar : libellé client et titre de remise avec les parfums couverts', () => {
+  it('Crunch Bar : produit entier (tous parfums), libellé sans liste de parfums', () => {
     const crunch = lotById('crunch-bar')!
-    expect(lotLabelClient(crunch)).toBe(
-      'Une barre Crunch Bar au choix : Dark Chocolate Peanut Butter, Peanut Butter Cup ou Chocolate Chip Cookie Dough'
-    )
-    expect(lotLabelRemise(crunch)).toBe('Une barre Crunch Bar (Dark Choco PB, PB Cup ou Cookie Dough)')
+    expect(crunch.products).toEqual(['gid://shopify/Product/10832196010326'])
+    expect(crunch.variants).toBeUndefined()
+    expect(lotLabelClient(crunch)).toBe('Une barre Crunch Bar (parfum au choix)')
+    expect(lotLabelRemise(crunch)).toBe('Une barre Crunch Bar (parfum au choix)')
     expect(crunch.wheelLabel).toBe('Crunch Bar')
+    expect([crunch.amount, crunch.weight]).toEqual([2.9, 25])
   })
 
   it('whey : les 4 parfums du lot, noms tels que dans Shopify', () => {

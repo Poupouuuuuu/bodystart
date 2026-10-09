@@ -54,12 +54,15 @@ export interface RecapData {
 
 /**
  * « Jeu roue : <libellé du lot> : ROUE-XXXXXX » → lot (titre posé par
- * discountInput). Libellé avec parfums (depuis le 09/10/2026) ou sans
- * (codes plus anciens).
+ * discountInput). Libellé actuel, avec ou sans parfums, ou ancien libellé du
+ * lot (codes créés avant un changement, ex. Crunch Bar le 09/10/2026).
  */
 export function lotFromTitle(title: string): LotId | null {
   const label = title.split(' : ')[1]
-  return LOTS.find((l) => l.label === label || lotLabelRemise(l) === label)?.id ?? null
+  return (
+    LOTS.find((l) => l.label === label || lotLabelRemise(l) === label || l.anciensLibelles?.includes(label))?.id ??
+    null
+  )
 }
 
 /** Caisse = Shopify POS ; tout le reste (site headless, brouillon) = en ligne. */
