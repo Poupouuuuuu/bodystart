@@ -29,7 +29,7 @@ describe('discountInput', () => {
   it('article offert : montant fixe une seule fois, limité aux cibles, 1 utilisation', () => {
     const input = discountInput(lotById('crunch-bar')!, 'ROUE-ABC234', 2.9, start, end)
     expect(input).toMatchObject({
-      title: 'Jeu roue : Une barre Crunch Bar : ROUE-ABC234',
+      title: 'Jeu roue : Une barre Crunch Bar (Dark Choco PB, PB Cup ou Cookie Dough) : ROUE-ABC234',
       code: 'ROUE-ABC234',
       startsAt: '2026-10-07T10:00:00.000Z',
       endsAt: '2026-11-06T10:00:00.000Z',

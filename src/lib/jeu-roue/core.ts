@@ -1,7 +1,7 @@
 // Fonctions pures du jeu de la roue : validation, code, tirage. Sans réseau,
 // testées dans core.test.ts.
 
-import type { Lot, LotId } from './lots'
+import { lotLabelClient, type Lot, type LotId } from './lots'
 
 export interface Entry {
   firstName: string
@@ -97,5 +97,5 @@ export function formatDateFr(iso: string): string {
 
 /** Ligne ajoutée à la note client Shopify. */
 export function noteLine(result: JeuResult, lot: Lot): string {
-  return `Jeu roue ${formatDateFr(result.playedAt)} : ${lot.label}, code ${result.code}`
+  return `Jeu roue ${formatDateFr(result.playedAt)} : ${lotLabelClient(lot)}, code ${result.code}`
 }

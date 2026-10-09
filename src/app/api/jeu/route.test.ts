@@ -58,6 +58,18 @@ describe('POST /api/jeu', () => {
     expect(shop.upsertCustomer).not.toHaveBeenCalled()
   })
 
+  it('lot à parfums (Crunch Bar) : le résultat porte les parfums couverts', async () => {
+    store.getStoredResult.mockResolvedValue({ lotId: 'crunch-bar', code: 'ROUE-CCC333', endsAt: 'e', playedAt: 'p' })
+    const r = await call({ ...form, action: 'register' })
+    expect(r.json.result).toEqual({
+      lotId: 'crunch-bar',
+      label: 'Une barre Crunch Bar',
+      parfums: 'Dark Chocolate Peanut Butter, Peanut Butter Cup ou Chocolate Chip Cookie Dough',
+      code: 'ROUE-CCC333',
+      endsAt: 'e',
+    })
+  })
+
   it('register : nouveau joueur → fiche créée, prêt à tourner', async () => {
     shop.upsertCustomer.mockResolvedValue('gid://shopify/Customer/7')
     const r = await call({ ...form, action: 'register' })

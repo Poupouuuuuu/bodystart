@@ -53,6 +53,9 @@ describe('helpers', () => {
     expect(lotFromTitle('Jeu roue : 5 € dès 30 € d’achat : ROUE-NAARC6')).toBe('bon-5')
     expect(lotFromTitle('Jeu roue : Une canette ABE Energy : ROUE-ARJ8YK')).toBe('canette-abe')
     expect(lotFromTitle('Jeu roue : Lot disparu : ROUE-ARJ8YK')).toBeNull()
+    // Titre avec parfums (09/10/2026) et ancien titre sans parfums
+    expect(lotFromTitle('Jeu roue : Une barre Crunch Bar (Dark Choco PB, PB Cup ou Cookie Dough) : ROUE-ABC234')).toBe('crunch-bar')
+    expect(lotFromTitle('Jeu roue : Une barre Crunch Bar : ROUE-ECYEPX')).toBe('crunch-bar')
   })
 
   it('caisse = POS, tout le reste = en ligne', () => {

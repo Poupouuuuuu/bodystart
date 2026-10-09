@@ -21,6 +21,8 @@ import { cn } from '@/lib/utils'
 interface PublicResult {
   lotId: string
   label: string
+  /** Parfums couverts par le lot (« A, B ou C »), si le lot les précise. */
+  parfums?: string
   code: string
   endsAt: string
 }
@@ -575,6 +577,14 @@ function ResultScreen({
             {variant === 'won' ? frenchSpacing('Bravo, tu as gagné : ') : frenchSpacing('Ton cadeau : ')}
             <span className="text-ink">{frenchSpacing(result.label)}</span>
           </h1>
+          {/* Lot limité à certains parfums (09/10/2026) : sans ce rappel, un
+              gagnant a pris un autre parfum et le code a été refusé en caisse. */}
+          {result.parfums && (
+            <p className="mx-auto mt-3 max-w-[30ch] text-[15px] leading-snug text-ink">
+              {frenchSpacing('Au choix : ')}
+              <strong className="font-semibold">{result.parfums}</strong>
+            </p>
+          )}
 
           <div
             className={cn(
