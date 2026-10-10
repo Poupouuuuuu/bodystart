@@ -45,14 +45,14 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
         },
         {
           type: 'p',
-          text: "La **caféine** est présente dans beaucoup de formules « thermogéniques » : chaque fiche indique sa teneur par dose. Ses allégations sont encore en attente au niveau européen, on ne lui prête donc aucun effet ici, et elle ne « brûle » pas la graisse pour autant.",
+          text: "La **caféine** est présente dans beaucoup de formules de ce rayon : chaque fiche indique sa teneur par dose. Ses allégations sont encore en attente au niveau européen, on ne lui prête donc aucun effet ici, et elle ne « brûle » pas la graisse pour autant.",
         },
         {
           type: 'list',
           items: [
             'L-carnitine : classique autour de l\'entraînement ; aucune allégation santé autorisée.',
             'CLA : acide gras populaire en régime ; pas d\'allégation reconnue.',
-            'Caféine (formules thermogéniques) : teneur indiquée sur chaque fiche ; allégations encore en attente au niveau européen.',
+            'Formules avec caféine : teneur indiquée sur chaque fiche ; allégations encore en attente au niveau européen.',
             'Draineurs : formules à base de plantes, à ne pas confondre avec une perte de graisse.',
           ],
         },
@@ -63,11 +63,11 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: 'Pour t\'y retrouver, voici les quatre grandes catégories. La **L-carnitine**, le grand classique autour de l\'entraînement, en poudre, en boisson prête ou en shot. Le **CLA**, en capsules, choisi pendant les périodes de régime. Les **formules thermogéniques** à base de caféine et de plantes, pour les pratiquants avancés qui tolèrent bien les stimulants. Et les **draineurs**, des formules à base de plantes, à ne pas confondre avec la perte de graisse.',
+          text: 'Pour t\'y retrouver, voici les quatre grandes catégories. La **L-carnitine**, le grand classique autour de l\'entraînement, en poudre, en boisson prête ou en shot. Le **CLA**, en capsules, choisi pendant les périodes de régime. Les **formules** à base de caféine et de plantes, pour les pratiquants avancés qui tolèrent bien les stimulants. Et les **draineurs**, des formules à base de plantes, à ne pas confondre avec la perte de graisse.',
         },
         {
           type: 'p',
-          text: 'Aucune de ces familles n\'est indispensable. Elles se choisissent selon ta préférence et ta tolérance, une fois que les bases sont solides. Si tu débutes une sèche, le plus utile n\'est pas dans ce rayon : c\'est de sécuriser ton apport en protéines pour ne pas perdre de muscle, un point qu\'on détaille dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour).',
+          text: 'Aucune de ces familles n\'est indispensable. Elles se choisissent selon ta préférence et ta tolérance, une fois que les bases sont solides. Si tu débutes une sèche, la priorité est ton apport en protéines, pour ne pas perdre de muscle : un point qu\'on détaille dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour).',
         },
       ],
     },
@@ -106,7 +106,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Un brûleur peut avoir un petit intérêt pour quelqu'un dont la sèche est **déjà bien menée** : alimentation contrôlée, entraînement régulier, sommeil correct, et qui cherche un produit d'accompagnement ou un rituel qui l'aide à rester dans le cadre. C'est un confort, pas un moteur.",
+          text: "Un brûleur peut avoir sa place chez quelqu'un dont la sèche est **déjà bien menée** : alimentation contrôlée, entraînement régulier, sommeil correct, et qui cherche un produit d'accompagnement ou un rituel qui l'aide à rester dans le cadre. C'est un confort, pas un moteur.",
         },
         {
           type: 'p',

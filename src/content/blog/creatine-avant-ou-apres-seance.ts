@@ -99,7 +99,7 @@ export const creatineAvantOuApresSeance: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Deux termes à connaître. **Micronisée** : la poudre est réduite en particules plus fines, elle se dissout mieux et reste moins au fond du shaker. **Creapure** : c'est un label de qualité allemand qui garantit une créatine monohydrate d'une grande pureté, pas une forme différente. Un produit Creapure reste une monohydrate classique, simplement avec une traçabilité de fabrication premium."
+          "text": "Deux termes à connaître. **Micronisée** : la poudre est réduite en particules plus fines, elle se dissout mieux et reste moins au fond du shaker. **Creapure** : c'est un label de qualité allemand qui garantit une créatine monohydrate d'une grande pureté, pas une forme différente. Un produit Creapure reste une monohydrate classique, simplement avec une traçabilité de fabrication sérieuse."
         },
         {
           "type": "table",

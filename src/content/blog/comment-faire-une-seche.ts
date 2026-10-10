@@ -126,7 +126,7 @@ export const commentFaireUneSeche: BlogArticle = {
           items: [
             "**Une protéine en poudre** (whey ou isolate) : le plus utile de tous, pour tenir son quota de protéines avec peu de calories.",
             "**Une multivitamine** : en déficit, on mange moins, donc moins de micronutriments. Un [filet de sécurité pertinent](/blog/multivitamines-utile-comment-choisir) pendant la diète.",
-            "**Les classiques de sèche** (L-carnitine, CLA, formules thermogéniques) : en accompagnement, pour les pratiquants qui veulent tout mettre de leur côté, sans leur prêter de pouvoirs magiques. Les formules à base de caféine aident à maintenir la vigilance quand l'énergie baisse en fin de diète.",
+            "**Les classiques de sèche** (L-carnitine, CLA, formules avec caféine) : en accompagnement, sans leur prêter d'effet. Pour les formules avec caféine, la teneur est indiquée sur chaque fiche.",
           ],
         },
         {
@@ -187,7 +187,7 @@ export const commentFaireUneSeche: BlogArticle = {
     },
     {
       q: 'Quels compléments prendre pendant une sèche ?',
-      a: "Par ordre d'utilité : une protéine en poudre (whey ou isolate) pour tenir le quota de protéines avec peu de calories, une multivitamine pour couvrir les micronutriments en déficit, puis les classiques de sèche (L-carnitine, CLA, thermogéniques) en accompagnement. Aucun complément ne fait perdre de gras sans déficit calorique.",
+      a: "Par ordre d'utilité : une protéine en poudre (whey ou isolate) pour tenir le quota de protéines avec peu de calories, une multivitamine pour couvrir les micronutriments en déficit, puis les classiques de sèche (L-carnitine, CLA, formules avec caféine) en accompagnement. Aucun complément ne fait perdre de gras sans déficit calorique.",
     },
   ],
   products: [

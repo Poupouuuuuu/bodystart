@@ -14,7 +14,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
   metaDescription:
     'Le collagène en complément : ce qu\'on peut en dire, marin ou bovin, dose et format. Ce que permet la réglementation, et notre sélection.',
   excerpt:
-    "Le collagène est la protéine structurelle de la peau, des tendons et des os. En complément, il n'a pas d'allégation santé autorisée : c'est un produit d'entretien apprécié, qu'on choisit pour sa composition (origine, dose de peptides, format).",
+    "Le collagène est la protéine structurelle de la peau, des tendons et des os. En complément, il n'a pas d'allégation santé autorisée : c'est un complément apprécié, qu'on choisit pour sa composition (origine, dose de peptides, format).",
   datePublished: '2026-07-17',
   dateModified: '2026-10-10',
   sections: [
@@ -23,11 +23,11 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Le collagène est la protéine la plus abondante du corps : c'est la « charpente » de la peau, des tendons, des articulations, des os et des vaisseaux. Ton organisme le fabrique naturellement à partir des acides aminés de ton alimentation. Avec l'âge, cette production a tendance à ralentir, d'où l'intérêt que beaucoup lui portent, en particulier après 40 ans.",
+          text: "Le collagène est la protéine la plus abondante du corps : c'est la « charpente » de la peau, des tendons, des articulations, des os et des vaisseaux. Ton organisme le fabrique naturellement à partir des acides aminés de ton alimentation.",
         },
         {
           type: 'p',
-          text: 'En complément, on le trouve sous forme **hydrolysée** (peptides de collagène), une forme plus facile à consommer et à mélanger. C\'est un produit d\'entretien apprécié : on le choisit d\'abord pour sa composition et sa praticité.',
+          text: 'En complément, on le trouve sous forme **hydrolysée** (peptides de collagène), une forme plus facile à consommer et à mélanger. C\'est un complément apprécié : on le choisit d\'abord pour sa composition et sa praticité.',
         },
       ],
     },
@@ -40,7 +40,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Considère donc le collagène comme un produit d'entretien, à choisir pour sa composition et à intégrer dans une hygiène de vie globale, pas comme un traitement.",
+          text: "Considère donc le collagène comme un complément à choisir pour sa composition et à intégrer dans une hygiène de vie globale, pas comme un traitement.",
         },
       ],
     },
@@ -67,7 +67,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Le collagène se prend au quotidien, sur la durée, en respectant la dose indiquée sur l'étiquette. Une prise régulière est plus cohérente qu'une consommation ponctuelle. Le moment de la journée importe peu : choisis celui que tu tiendras.",
+          text: "Le collagène se prend au quotidien, sur la durée, en respectant la dose indiquée sur l'étiquette. Le moment de la journée importe peu : choisis celui que tu tiendras.",
         },
         {
           type: 'p',
@@ -110,7 +110,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: 'Chez le sportif, le collagène s\'inscrit dans une routine bien-être, comme produit d\'entretien. Il ne remplace pas les protéines « musculaires » : pour construire du muscle, ce sont la whey ou les protéines végétales qui comptent, car le collagène a un profil d\'acides aminés incomplet pour cet usage.',
+          text: 'Chez le sportif, le collagène s\'inscrit dans une routine bien-être, comme complément apprécié. Il ne remplace pas les protéines « musculaires » : pour construire du muscle, ce sont la whey ou les protéines végétales qui comptent, car le collagène a un profil d\'acides aminés incomplet pour cet usage.',
         },
         {
           type: 'p',
@@ -122,7 +122,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
   faq: [
     {
       q: 'Le collagène est-il vraiment efficace pour la peau ?',
-      a: "Le collagène ne bénéficie pas d'allégation santé autorisée en Europe : on ne peut pas affirmer qu'il « améliore la peau ». C'est un produit d'entretien apprécié, à choisir pour sa composition (dose de peptides, origine, format).",
+      a: "Le collagène ne bénéficie pas d'allégation santé autorisée en Europe : on ne peut pas affirmer qu'il « améliore la peau ». C'est un complément apprécié, à choisir pour sa composition (dose de peptides, origine, format).",
     },
     {
       q: 'Quel collagène choisir : marin ou bovin ?',
@@ -130,15 +130,15 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
     },
     {
       q: 'Combien de temps faut-il prendre du collagène ?',
-      a: "Le collagène se prend au quotidien, sur la durée, en respectant la dose indiquée. Une prise régulière est plus cohérente qu'une consommation ponctuelle. Le moment de la journée n'a pas d'importance.",
+      a: "Le collagène se prend au quotidien, sur la durée, en respectant la dose indiquée. Le moment de la journée n'a pas d'importance.",
     },
     {
       q: 'Le collagène aide-t-il à prendre du muscle ?',
-      a: "Non, le collagène n'est pas adapté à la construction musculaire : son profil d'acides aminés est incomplet pour cet usage. Pour le muscle, ce sont la whey ou les protéines végétales qui comptent. Le collagène se choisit comme produit d'entretien, pas pour la masse musculaire.",
+      a: "Non, le collagène n'est pas adapté à la construction musculaire : son profil d'acides aminés est incomplet pour cet usage. Pour le muscle, ce sont la whey ou les protéines végétales qui comptent. Le collagène se choisit pour sa composition, pas pour la masse musculaire.",
     },
     {
       q: 'Faut-il prendre du collagène avec de la vitamine C ?',
-      a: "Ce n'est pas obligatoire. Le collagène et la vitamine C sont deux choses différentes : le collagène n'a pas d'allégation santé autorisée, la vitamine C, apportée notamment par les fruits et légumes, en a plusieurs. Notre collagène Osavi n'en contient pas : il apporte 20 g de peptides de collagène par dose de 22 g.",
+      a: "Ce sont deux choses différentes : le collagène n'a pas d'allégation santé autorisée, la vitamine C, apportée notamment par les fruits et légumes, en a plusieurs. Notre collagène Osavi n'en contient pas : il apporte 20 g de peptides de collagène par dose de 22 g.",
     },
   ],
   products: [

@@ -60,7 +60,7 @@ export const complementsApres40Ans: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La logique est simple : peu d\'exposition au soleil d\'octobre à mars = supplémentation qui fait sens sur cette période. Deux formats dans notre sélection : la [Vitamine D3 + K2](/products/vitamin-d3-k2) en softgels (le duo D3-K2 est apprécié pour l\'os) et la [Vitamine D3 en gouttes](/products/vitamine-d3-gouttes), pratique et économique.',
+          text: 'La logique est simple : peu d\'exposition au soleil d\'octobre à mars = supplémentation qui fait sens sur cette période. Deux formats dans notre sélection : la [Vitamine D3 + K2](/products/vitamin-d3-k2) en softgels (vitamine D3 associée à de la vitamine K2) et la [Vitamine D3 en gouttes](/products/vitamine-d3-gouttes), pratique et économique.',
         },
       ],
     },
@@ -95,11 +95,11 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un produit d'entretien apprécié : on le choisit pour sa composition. À noter qu'officiellement, l'allégation autorisée porte sur la vitamine C : elle **contribue à la formation normale de collagène pour assurer la fonction normale de la peau et des cartilages**. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dosette, le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) se boit tel quel.",
+          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un complément apprécié, sans allégation santé autorisée : on le choisit pour sa composition. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dose de 22 g, le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) se boit tel quel.",
         },
         {
           type: 'p',
-          text: 'Côté cœur, les **oméga-3 (EPA/DHA) contribuent à une fonction cardiaque normale** : intéressant si tu manges peu de poisson gras. On les range dans le rayon [santé & bien-être](/categories/sante), avec les vitamines et minéraux. Là encore, la règle est : un produit à la fois, choisi pour une raison précise, pas une pile de pots « au cas où ».',
+          text: 'Côté cœur, les **oméga-3 (EPA/DHA) contribuent à une fonction cardiaque normale** (effet obtenu avec 250 mg d\'EPA et de DHA par jour) : intéressant si tu manges peu de poisson gras. On les range dans le rayon [santé & bien-être](/categories/sante), avec les vitamines et minéraux. Là encore, la règle est : un produit à la fois, choisi pour une raison précise, pas une pile de pots « au cas où ».',
         },
         {
           type: 'steps',
@@ -137,7 +137,7 @@ export const complementsApres40Ans: BlogArticle = {
     },
     {
       q: 'Le collagène est-il efficace pour la peau et les articulations ?',
-      a: 'Le collagène est un produit d\'entretien apprécié pour la peau et les articulations, à choisir pour sa composition. Sur le plan réglementaire, c\'est la vitamine C qui contribue à la formation normale de collagène, d\'où l\'intérêt des formules qui associent collagène et vitamine C.',
+      a: 'Le collagène n\'a pas d\'allégation santé autorisée, ni pour la peau ni pour les articulations : on le choisit pour sa composition (dose de peptides, origine, format).',
     },
   ],
   products: [

@@ -107,7 +107,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Oui. La créatine monohydrate est l'un des compléments les plus étudiés en nutrition sportive. À **3 à 5 g par jour**, la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation."
+          "text": "Oui. La créatine monohydrate est l'un des compléments les plus étudiés en nutrition sportive. À **3 à 5 g par jour**, la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation. L'effet bénéfique est obtenu avec 3 g de créatine par jour."
         },
         {
           "type": "p",
@@ -205,7 +205,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
     },
     {
       "name": "Prendre 3 à 5 g de créatine par jour",
-      "text": "La créatine monohydrate se prend à 3 à 5 g par jour, tous les jours, sans phase de charge obligatoire. Elle améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée."
+      "text": "La créatine monohydrate se prend à 3 à 5 g par jour, tous les jours, sans phase de charge obligatoire. Elle améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. L'effet bénéfique est obtenu avec 3 g de créatine par jour."
     },
     {
       "name": "S'entraîner en progression",

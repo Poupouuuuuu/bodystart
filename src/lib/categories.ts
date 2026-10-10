@@ -166,10 +166,10 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     slug: 'pre-workout',
     productType: 'Pré-workout',
     label: 'Pré-workout',
-    metaTitle: 'Pré-workout : énergie et focus, avec ou sans caféine',
+    metaTitle: 'Pré-workout : formules avec ou sans caféine, à Coignières',
     metaDescription:
-      'Pré-workout avec caféine pour l’énergie ou formules pump sans stimulant pour les séances du soir. Conseil en boutique à Coignières, livraison France.',
-    h1: 'Pré-workout : énergie, focus et congestion',
+      'Pré-workout avec caféine ou formules sans stimulant pour les séances du soir. Conseil en boutique à Coignières, livraison France.',
+    h1: 'Pré-workout : formules avec ou sans caféine',
     intro: [
       "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur chaque fiche), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
       "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine. En cas de doute, on t'aide à trancher en boutique.",
@@ -193,13 +193,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       'EAA complets, BCAA, glutamine, citrulline et bêta-alanine. Le rayon acides aminés au complet, à Coignières et en livraison partout en France.',
     h1: 'Acides aminés : EAA, BCAA, glutamine et citrulline',
     intro: [
-      "Les acides aminés sont les briques des protéines. En complément, on les utilise de façon ciblée : les EAA (9 acides aminés essentiels) comme boisson d'entraînement complète, les BCAA pour le goût et le confort pendant la séance, la citrulline et la bêta-alanine en soutien de la performance, la glutamine en récupération.",
-      "Comment choisir ? Si ton apport en protéines est déjà solide, les acides aminés sont un confort, pas une priorité. Si tu dois choisir un seul produit, la recherche récente donne l'avantage aux EAA, qui contiennent les BCAA plus les six autres essentiels. Entraînement à jeun ou alimentation végétarienne : c'est là qu'ils prennent le plus de sens.",
+      "Les acides aminés sont les briques des protéines. En complément, on les utilise de façon ciblée : les EAA (9 acides aminés essentiels) comme boisson d'entraînement complète, les BCAA en boisson pendant la séance, la citrulline et la bêta-alanine autour de l'entraînement, la glutamine après.",
+      "Comment choisir ? Si ton apport en protéines est déjà solide, les acides aminés sont un confort, pas une priorité. Si tu dois choisir un seul produit, les EAA contiennent les BCAA plus les six autres essentiels. Entraînement à jeun ou alimentation végétarienne : c'est là qu'ils prennent le plus de sens.",
     ],
     featured: [
       { handle: 'hit-eaa', label: 'HIT EAA DY Nutrition, les essentiels à 26,90 €' },
       { handle: 'yeaah-eaa', label: 'YEAAH EAA Dedicated' },
-      { handle: 'l-citrulline', label: 'L-Citrulline Dedicated, le pump à l’unité' },
+      { handle: 'l-citrulline', label: 'L-Citrulline Dedicated, la citrulline à l’unité' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },
@@ -213,10 +213,10 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     label: 'Brûleurs',
     metaTitle: 'Brûleurs et minceur : carnitine, CLA, draineurs',
     metaDescription:
-      'L-carnitine, CLA, formules thermogéniques et draineurs pour accompagner une sèche. À utiliser avec un déficit calorique. Conseil en boutique à Coignières.',
+      'L-carnitine, CLA, formules avec caféine et draineurs pour accompagner une sèche. À utiliser avec un déficit calorique. Conseil en boutique à Coignières.',
     h1: 'Brûleurs et compléments minceur',
     intro: [
-      "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon (L-carnitine, CLA, formules thermogéniques, draineurs) s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
+      "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon (L-carnitine, CLA, formules avec caféine, draineurs) s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
       "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras populaire en période de régime, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non.",
     ],
     featured: [
@@ -290,7 +290,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     h1: 'Santé & bien-être : vitamines, minéraux et essentiels',
     intro: [
       "Avant les compléments de performance, il y a les fondations : la vitamine D contribue au fonctionnement normal du système immunitaire, le magnésium contribue à réduire la fatigue et à une fonction musculaire normale, les oméga 3 EPA et DHA contribuent à une fonction cardiaque normale (effet obtenu avec 250 mg d'EPA et de DHA par jour). C'est le rayon qu'on recommande de regarder en premier, surtout l'hiver.",
-      "Comment choisir ? Pars de ton besoin réel : coup de fatigue et entraînement intense → magnésium bisglycinate ou ZMA ; peu d'exposition au soleil d'octobre à mars → vitamine D3 ; peu de poisson gras dans l'assiette → oméga 3. Pour le collagène, choisis-le sur sa composition (dose, origine, format). Côté allégations, c'est la vitamine C qui contribue à la formation normale de collagène pour assurer la fonction normale des cartilages et de la peau. Un produit à la fois, choisi pour une raison précise, en complément d'une alimentation variée et équilibrée et d'un mode de vie sain.",
+      "Comment choisir ? Pars de ton besoin réel : coup de fatigue et entraînement intense → magnésium bisglycinate ou ZMA ; peu d'exposition au soleil d'octobre à mars → vitamine D3 ; peu de poisson gras dans l'assiette → oméga 3. Pour le collagène, choisis-le sur sa composition (dose, origine, format). Un produit à la fois, choisi pour une raison précise, en complément d'une alimentation variée et équilibrée et d'un mode de vie sain.",
     ],
     featured: [
       { handle: 'vitamin-d3-k2-dy-60-softgels', label: 'Vitamine D3 + K2 DY Nutrition' },

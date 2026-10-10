@@ -27,7 +27,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Les compléments, eux, jouent un rôle de soutien : utile, mais secondaire. Ils peuvent aider à combler un manque (magnésium, protéines) ou à structurer une routine de fin de journée, à condition que les fondations soient là. On va voir lesquels ont un vrai intérêt, et lesquels sont surcotés.",
+          text: "Les compléments, eux, jouent un rôle de soutien : utile, mais secondaire. Ils peuvent aider à combler un manque (magnésium, protéines) ou à structurer une routine de fin de journée, à condition que les fondations soient là. On va voir lesquels ont un vrai intérêt, et dans quel ordre.",
         },
       ],
     },
@@ -40,7 +40,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Attention à la nuance réglementaire : on ne dit pas que le magnésium « fait dormir ». On dit qu\'il aide à réduire la fatigue et soutient le système nerveux, ce qui, dans une routine de fin de journée bien menée, accompagne le retour au calme. Pour le confort digestif, choisis une forme bien tolérée comme le **bisglycinate** plutôt que l\'oxyde bon marché : notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme ({{prix:magnesium-bisglycinate-dy-90-capsules|16,90 €}}).',
+          text: 'Attention à la nuance réglementaire : on ne dit pas que le magnésium « fait dormir ». On dit qu\'il contribue à réduire la fatigue et au fonctionnement normal du système nerveux. Pour le confort digestif, choisis une forme bien tolérée comme le **bisglycinate** plutôt que l\'oxyde bon marché : notre [Magnésium Bisglycinate DY](/products/magnesium-bisglycinate-dy-90-capsules) est sur cette forme ({{prix:magnesium-bisglycinate-dy-90-capsules|16,90 €}}).',
         },
       ],
     },
@@ -62,7 +62,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Après le sommeil, le deuxième levier de récupération, c'est l'apport en protéines. Les **protéines contribuent au maintien et au développement de la masse musculaire** : elles fournissent les briques dont le muscle a besoin pour se réparer après une séance. Un apport réparti sur la journée, y compris une source le soir, est une base solide, bien plus que n'importe quel « complément récup » à la mode.",
+          text: "Après le sommeil, le deuxième levier de récupération, c'est l'apport en protéines. Les **protéines contribuent au maintien et au développement de la masse musculaire**. Un apport réparti sur la journée, y compris une source le soir, est une base solide.",
         },
         {
           type: 'p',
@@ -85,7 +85,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Beaucoup de produits « sommeil » survendus reposent sur peu de preuves solides. Méfie-toi des formules empilant dix ingrédients « relaxants » à doses symboliques : mieux vaut un magnésium bien dosé et bien toléré qu'un cocktail marketing. Et rappelle-toi qu'aucun complément ne rattrape un mode de vie qui empêche de dormir.",
+          text: "Beaucoup de produits « sommeil » reposent sur peu de preuves solides. Méfie-toi des formules qui empilent dix ingrédients à doses symboliques : mieux vaut un magnésium bien dosé et bien toléré. Et rappelle-toi qu'aucun complément ne rattrape un mode de vie qui empêche de dormir.",
         },
         {
           type: 'p',
@@ -97,7 +97,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
             'Coupe la caféine (café, pré-workout, sodas) en fin de journée si tu es sensible.',
             'Baisse les écrans et la lumière forte à l\'approche du coucher.',
             'Garde des horaires de coucher réguliers, même le week-end.',
-            'Une chambre fraîche, sombre et calme fait plus qu\'un pot de « sleep formula ».',
+            'Une chambre fraîche, sombre et calme est la base d\'un bon sommeil.',
           ],
         },
       ],
@@ -125,11 +125,11 @@ export const mieuxDormirRecuperation: BlogArticle = {
   faq: [
     {
       q: 'Le magnésium aide-t-il à mieux dormir ?',
-      a: "On ne peut pas dire qu'un complément « améliore le sommeil » : ce n'est pas une allégation autorisée. Ce qu'on sait, c'est que le magnésium contribue à réduire la fatigue et au fonctionnement normal du système nerveux. Dans une routine de fin de journée bien menée, cet effet accompagne le retour au calme, mais l'hygiène du sommeil reste le vrai levier.",
+      a: "On ne peut pas dire qu'un complément « améliore le sommeil » : ce n'est pas une allégation autorisée. Ce qu'on sait, c'est que le magnésium contribue à réduire la fatigue et au fonctionnement normal du système nerveux. L'hygiène du sommeil reste le vrai levier.",
     },
     {
       q: 'Quel est le meilleur complément pour la récupération musculaire ?',
-      a: 'Les protéines, sans hésiter : elles contribuent au maintien et au développement de la masse musculaire et fournissent les briques de la réparation après l\'effort. Le sommeil et l\'hydratation complètent le tableau. Les acides aminés (EAA, glutamine) viennent en soutien, une fois ces bases posées.',
+      a: 'Les protéines, sans hésiter : elles contribuent au maintien et au développement de la masse musculaire. Le sommeil et l\'hydratation complètent le tableau. Les acides aminés (EAA, glutamine) viennent en soutien, une fois ces bases posées.',
     },
     {
       q: 'Quelle forme de magnésium choisir ?',
@@ -137,7 +137,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
     },
     {
       q: 'Le ZMA fait-il dormir ?',
-      a: 'Le ZMA (zinc, magnésium, vitamine B6) n\'est pas un somnifère et on ne peut pas lui prêter d\'effet direct sur le sommeil. C\'est un apport en minéraux et en B6 utile chez le sportif : le zinc soutient le système immunitaire, le magnésium et la B6 aident à réduire la fatigue. On le prend le soir, dans une routine de récupération.',
+      a: 'Le ZMA (zinc, magnésium, vitamine B6) n\'est pas un somnifère et on ne peut pas lui prêter d\'effet direct sur le sommeil. C\'est un apport en minéraux et en B6 utile chez le sportif : le zinc contribue au fonctionnement normal du système immunitaire, le magnésium et la B6 contribuent à réduire la fatigue. On le prend le soir, dans une routine de récupération.',
     },
     {
       q: 'Faut-il éviter le pré-workout le soir ?',

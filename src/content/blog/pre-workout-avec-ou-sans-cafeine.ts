@@ -7,8 +7,8 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
   "slug": "pre-workout-avec-ou-sans-cafeine",
   "title": "Pré-workout : avec ou sans caféine ? On t'aide à trancher",
   "metaTitle": "Pré-workout sans caféine ou avec : que choisir ?",
-  "metaDescription": "Caféine ou pas dans ton pré-workout ? Dosages réels du marché, demi-vie, sommeil et alternatives pump (citrulline, bêta-alanine) pour trancher.",
-  "excerpt": "Choisis un pré-workout avec caféine si tu t'entraînes le matin ou en début d'après-midi et que tu la tolères bien ; passe à une formule sans caféine (pump) pour les séances du soir, en cas de sensibilité ou d'hypertension. Attention à l'heure : la caféine a une demi-vie de 5 à 6 heures et peut gêner ton sommeil.",
+  "metaDescription": "Caféine ou pas dans ton pré-workout ? Dosages réels du marché, demi-vie, sommeil et formules sans stimulant (citrulline, bêta-alanine) pour trancher.",
+  "excerpt": "Choisis un pré-workout avec caféine si tu t'entraînes le matin ou en début d'après-midi et que tu la tolères bien ; passe à une formule sans caféine (pump) pour les séances du soir ou si tu es sensible à la caféine ; en cas d'hypertension, demande d'abord l'avis de ton médecin. Attention à l'heure : la caféine a une demi-vie de 5 à 6 heures et peut gêner ton sommeil.",
   "datePublished": "2026-06-12",
   "dateModified": "2026-10-10",
   "sections": [
@@ -64,11 +64,11 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "C'est une formule non stimulante construite autour de la **citrulline**, de l'**arginine** et souvent de la **bêta-alanine**, pensée pour la sensation de congestion musculaire (le fameux « pump ») et le confort de séance, sans toucher à ton sommeil."
+          "text": "C'est une formule sans stimulant, construite autour de la **citrulline**, de l'**arginine** et souvent de la **bêta-alanine**. Sans caféine, elle peut se prendre en fin de journée."
         },
         {
           "type": "p",
-          "text": "Côté dosages, la littérature scientifique travaille généralement avec la citrulline malate autour de **6 à 8 g par séance** et la bêta-alanine autour de **3,2 à 6,4 g par jour** en prise régulière : son intérêt est cumulatif, ce n'est pas un coup de fouet immédiat."
+          "text": "Côté dosages, les formules tournent généralement autour de **6 à 8 g de citrulline malate par séance** ; la bêta-alanine se prend autour de **3,2 à 6,4 g par jour**, tous les jours."
         },
         {
           "type": "p",
@@ -117,7 +117,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
             [
               "Sensibilité, hypertension",
               "À éviter, avis médical recommandé",
-              "Option par défaut"
+              "Avis médical recommandé aussi"
             ],
             [
               "Usage quotidien",
@@ -145,7 +145,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
             "**Lis l'étiquette** : repère la quantité de caféine par dose (pour un stim) et les dosages de citrulline et bêta-alanine.",
             "**Teste une demi-dose** lors de la première prise pour évaluer ta tolérance, surtout sur une formule stimulée.",
             "**Prends-le 20 à 30 minutes avant** le début de l'échauffement, dilué dans 300 à 500 ml d'eau.",
-            "**Additionne ta caféine du jour** (café, thé, boissons énergisantes) pour rester sous les 400 mg recommandés par l'EFSA.",
+            "**Additionne ta caféine du jour** (café, thé, boissons énergisantes) pour rester sous le repère de 400 mg par jour de l'EFSA.",
             "**Après 17-18 h, bascule sur une formule sans caféine** pour protéger ton sommeil, donc ta récupération."
           ]
         },
@@ -159,7 +159,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
   "faq": [
     {
       "q": "Un pré-workout sans caféine, ça marche vraiment ?",
-      "a": "Oui, mais il ne joue pas sur le même terrain qu'un stim. Une formule pump à base de citrulline, d'arginine et de bêta-alanine vise la sensation de congestion et le confort de séance, pas un effet réveil. Tu ne ressentiras pas de coup de fouet, et c'est normal : ce n'est pas son rôle. Pour la progression, l'entraînement, l'alimentation et le sommeil restent les facteurs décisifs."
+      "a": "Il ne joue pas sur le même terrain qu'un stim : pas de caféine, donc pas d'effet réveil, et il se prend aussi le soir. Aucune allégation n'est autorisée pour la citrulline, l'arginine ou la bêta-alanine : on le choisit pour sa composition et l'heure de ta séance. Pour la progression, l'entraînement, l'alimentation et le sommeil restent les facteurs décisifs."
     },
     {
       "q": "Combien de temps avant la séance faut-il prendre son pré-workout ?",
@@ -167,7 +167,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
     },
     {
       "q": "Est-ce qu'on peut prendre un pré-workout tous les jours ?",
-      "a": "Pour un pré-workout avec caféine, mieux vaut le réserver aux séances exigeantes : la tolérance s'installe avec l'usage quotidien et il faut rester sous 400 mg de caféine par jour toutes sources confondues, café compris. Une formule sans caféine peut s'utiliser plus librement, et la bêta-alanine se prend justement en continu puisque son intérêt est cumulatif."
+      "a": "Pour un pré-workout avec caféine, mieux vaut ne pas en prendre tous les jours : la tolérance s'installe avec l'usage quotidien et il faut rester sous 400 mg de caféine par jour toutes sources confondues, café compris. Une formule sans caféine peut s'utiliser plus librement, et la bêta-alanine se prend selon l'étiquette."
     },
     {
       "q": "Les picotements après un pré-workout, c'est dangereux ?",
