@@ -30,6 +30,8 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: '*', allow: '/', disallow: DISALLOW },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
+    // Pas de directive Host (spécifique à Yandex, ignorée par Google et Bing,
+    // signalée par l'audit du 10/10/2026) : le domaine canonique passe par
+    // les balises canonical.
   }
 }

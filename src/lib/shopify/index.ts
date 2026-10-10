@@ -5,6 +5,7 @@ import {
   GET_PRODUCTS,
   GET_PRODUCT_BY_HANDLE,
   GET_FEATURED_PRODUCTS,
+  GET_SITEMAP_PRODUCTS,
   SEARCH_PRODUCTS,
 } from './queries/products'
 import {
@@ -66,6 +67,28 @@ export async function getProducts(options?: {
     }
   )
   return { ...data.products, nodes: data.products.nodes.map(withCardPrice) }
+}
+
+export interface SitemapProduct {
+  handle: string
+  updatedAt: string
+  productType: string
+  tags: string[]
+}
+
+/** Toutes les fiches publiées sur le site (pages de 250, 4 pages au plus). */
+export async function getSitemapProducts(): Promise<SitemapProduct[]> {
+  const out: SitemapProduct[] = []
+  let after: string | null = null
+  for (let page = 0; page < 4; page++) {
+    const data: {
+      products: { pageInfo: { hasNextPage: boolean; endCursor: string | null }; nodes: SitemapProduct[] }
+    } = await shopifyFetch(GET_SITEMAP_PRODUCTS, { first: 250, after })
+    out.push(...data.products.nodes)
+    if (!data.products.pageInfo.hasNextPage) break
+    after = data.products.pageInfo.endCursor
+  }
+  return out
 }
 
 export async function searchProducts(query: string, first = 24) {

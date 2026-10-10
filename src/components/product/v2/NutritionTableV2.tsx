@@ -80,7 +80,7 @@ export default function NutritionTableV2({ metafields }: NutritionTableV2Props) 
   const table = content ? parseTable(content) : null
 
   return (
-    <section className="bg-white">
+    <section className="bg-canvas">
       <div className="container py-14 md:py-18">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">

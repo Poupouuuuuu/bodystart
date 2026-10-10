@@ -13,7 +13,7 @@ export const complementsApres40Ans: BlogArticle = {
   metaDescription:
     'Quels compléments après 40 ans ? Protéines, vitamine D, magnésium, créatine : l\'ordre logique pour rester en forme, sans se ruiner ni survendre.',
   excerpt:
-    "Après 40 ans, les priorités changent : les protéines pour préserver le muscle, la vitamine D et le magnésium comme fondations, la créatine pour la force. On te donne l'ordre logique, avec des allégations honnêtes : un complément à la fois, choisi pour une vraie raison.",
+    "Après 40 ans, les priorités changent : les protéines pour préserver le muscle, la vitamine D et le magnésium comme fondations, la créatine pour les efforts intenses et répétés. On te donne l'ordre logique, avec des allégations honnêtes : un complément à la fois, choisi pour une vraie raison.",
   datePublished: '2026-07-17',
   dateModified: '2026-07-17',
   sections: [
@@ -91,11 +91,11 @@ export const complementsApres40Ans: BlogArticle = {
       ],
     },
     {
-      h2: 'Articulations, peau, cœur : les compléments « confort »',
+      h2: 'Collagène et oméga-3 : les compléments « confort »',
       blocks: [
         {
           type: 'p',
-          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est populaire pour la peau et les articulations : c'est un produit plaisir et entretien, à choisir pour sa composition. À noter qu'officiellement, c'est la **vitamine C qui contribue à la formation normale de collagène**, d'où l'intérêt des formules qui associent les deux, comme le [Collagen Complex + Vitamine C](/products/collagen-complex-vitamine-c) ou le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide).",
+          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un produit d'entretien apprécié : on le choisit pour sa composition. À noter qu'officiellement, l'allégation autorisée porte sur la vitamine C : elle **contribue à la formation normale de collagène pour assurer la fonction normale de la peau et des cartilages**. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dosette, le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) se boit tel quel.",
         },
         {
           type: 'p',

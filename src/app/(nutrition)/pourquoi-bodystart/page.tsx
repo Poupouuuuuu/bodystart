@@ -196,7 +196,7 @@ export default function PourquoiBodystartPage() {
                 whey native Protimuscle
               </Link>{' '}
               pour ton quota de protéines, et une{' '}
-              <Link href="/products/creatine-100-monohydrate-micronisee" className="font-semibold text-spruce underline underline-offset-4 hover:text-fresh-deep">
+              <Link href="/products/dedicated-nutrition-micronized-creatine-monohydrate" className="font-semibold text-spruce underline underline-offset-4 hover:text-fresh-deep">
                 créatine monohydrate
               </Link>,{' '}
               le complément le plus étudié. Pour creuser :{' '}

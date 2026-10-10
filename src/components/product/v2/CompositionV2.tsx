@@ -30,7 +30,7 @@ export default function CompositionV2({ metafields }: CompositionV2Props) {
   if (!composition && !allergenes) return null
 
   return (
-    <section className="bg-canvas">
+    <section className="bg-white">
       <div className="container py-14 md:py-18">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">

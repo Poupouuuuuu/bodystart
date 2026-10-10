@@ -82,9 +82,9 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
           headers: ['Produit', 'Format', 'Prix'],
           rows: [
             [
-              '[Collagen Complex + Vitamine C](/products/collagen-complex-vitamine-c)',
-              'Poudre (collagène + vit. C)',
-              '{{prix:collagen-complex-vitamine-c|29,90 €}}',
+              '[Collagène Hydrolysé Osavi Type I & III](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g)',
+              'Poudre de collagène bovin aromatisée, 20 g de peptides par dose de 22 g',
+              '{{prix:collagene-hydrolyse-osavi-type-i-iii-poudre-660-g|44,90 €}}',
             ],
             [
               '[Collagène Marin Liquide](/products/pure-collagen-marin-liquide)',
@@ -100,7 +100,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Le [Collagen Complex + Vitamine C](/products/collagen-complex-vitamine-c) coche la case « collagène associé à la vitamine C » ; le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) mise sur la praticité ; le [Beauty & Shape](/products/beauty-shape-proteine-collagene) combine protéine et collagène pour celles et ceux qui veulent les deux en un. Tout le rayon est sur la page [santé & bien-être](/categories/sante).',
+          text: 'Le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) mise sur une dose franche de 20 g de peptides de collagène par dosette ; le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) mise sur la praticité ; le [Beauty & Shape](/products/beauty-shape-proteine-collagene) combine protéine et collagène pour celles et ceux qui veulent les deux en un. Tout le rayon est sur la page [santé & bien-être](/categories/sante).',
         },
       ],
     },
@@ -141,7 +141,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
     },
   ],
   products: [
-    { handle: 'collagen-complex-vitamine-c', label: 'Collagen Complex + Vitamine C' },
+    { handle: 'collagene-hydrolyse-osavi-type-i-iii-poudre-660-g', label: 'Collagène Hydrolysé Osavi Type I & III' },
     { handle: 'pure-collagen-marin-liquide', label: 'Collagène Marin Liquide' },
     { handle: 'beauty-shape-proteine-collagene', label: 'Beauty & Shape - Protéine & Collagène' },
   ],

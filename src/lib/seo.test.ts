@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildPageMetadata } from './seo'
+import { buildPageMetadata, plainTextFromHtml, truncateAtWord } from './seo'
 
 describe('buildPageMetadata', () => {
   it('alternates.canonical = path relatif', () => {
@@ -40,7 +40,8 @@ describe('buildPageMetadata', () => {
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const images = (meta.openGraph as any)?.images
-    expect(images).toEqual([{ url: '/assets/og/custom.jpg', width: 1200, height: 630 }])
+    // Image fournie : dimensions inconnues, donc non déclarées
+    expect(images).toEqual([{ url: '/assets/og/custom.jpg' }])
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((meta.twitter as any)?.images).toEqual(['/assets/og/custom.jpg'])
   })
@@ -60,5 +61,60 @@ describe('buildPageMetadata', () => {
     const meta = buildPageMetadata({ path: '/x', ogType: 'article' })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((meta.openGraph as any)?.type).toBe('article')
+  })
+})
+
+describe('openGraph commun', () => {
+  it('site_name, locale et dimensions du visuel par défaut', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const og = buildPageMetadata({ path: '/x', title: 'X' }).openGraph as any
+    expect(og.siteName).toBe('BodyStart Nutrition')
+    expect(og.locale).toBe('fr_FR')
+    expect(og.images).toEqual([{ url: '/assets/logos/logo-v2-og.png', width: 1200, height: 630 }])
+  })
+})
+
+describe('plainTextFromHtml', () => {
+  it('espace entre les paragraphes, entités décodées', () => {
+    expect(plainTextFromHtml('<p>Pot de 500 g.</p><p>La créatine&nbsp;: 3 g &amp; plus</p>')).toBe(
+      'Pot de 500 g. La créatine : 3 g & plus'
+    )
+    expect(plainTextFromHtml('<ul><li>Un</li><li>Deux</li></ul>Fin&#39;s')).toBe("Un Deux Fin's")
+    expect(plainTextFromHtml(null)).toBe('')
+  })
+})
+
+describe('truncateAtWord', () => {
+  it('texte court : inchangé', () => {
+    expect(truncateAtWord('Whey native, 1 kg.')).toBe('Whey native, 1 kg.')
+  })
+  it('coupe au dernier mot entier avant 155 caractères, puis « … »', () => {
+    const text =
+      "Iso Zero, une whey isolate à 85 % de protéines, sans acides aminés ajoutés, quasi zéro sucre (0,7 g) et zéro matière grasse ajoutée, en pot de 2 kg pour 66 doses."
+    const out = truncateAtWord(text)
+    expect(out.length).toBeLessThanOrEqual(156)
+    expect(out.endsWith('…')).toBe(true)
+    expect(text.startsWith(out.slice(0, -1))).toBe(true)
+    expect(out).not.toMatch(/\sz…$/)
+    expect(out).toBe(
+      'Iso Zero, une whey isolate à 85 % de protéines, sans acides aminés ajoutés, quasi zéro sucre (0,7 g) et zéro matière grasse ajoutée, en pot de 2 kg pour…'
+    )
+  })
+})
+
+describe('truncateAtWord, parenthèse', () => {
+  it('ne laisse pas une parenthèse ouverte en fin de coupe', () => {
+    const text =
+      "L'Iso Zero d'Eric Favre, c'est la whey qu'on conseille en boutique quand tu veux du propre : 25,4 g de protéines par dose de 30 g, quasi zéro sucre (0,7 g) et zéro graisse."
+    expect(truncateAtWord(text)).toBe(
+      "L'Iso Zero d'Eric Favre, c'est la whey qu'on conseille en boutique quand tu veux du propre : 25,4 g de protéines par dose de 30 g, quasi zéro sucre…"
+    )
+  })
+})
+
+describe('og:type product', () => {
+  it('pas de type dans openGraph (la page rend la balise elle-même)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((buildPageMetadata({ path: '/products/x', ogType: 'product' }).openGraph as any).type).toBeUndefined()
   })
 })

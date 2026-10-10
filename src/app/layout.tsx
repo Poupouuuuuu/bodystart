@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   // n'emet pas de balise canonical heritee qui polluerait toutes les pages
   // sans override.
   openGraph: {
-    siteName: 'BodyStart',
+    siteName: 'BodyStart Nutrition',
     locale: 'fr_FR',
     type: 'website',
     title: 'BodyStart, compléments sport et santé à Coignières',

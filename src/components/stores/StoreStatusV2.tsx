@@ -64,18 +64,26 @@ export default function StoreStatusV2({ hours }: StoreStatusV2Props) {
     return () => clearInterval(id)
   }, [hours])
 
-  // Avant hydratation : "Ouvert" par défaut, recalculé au montage selon le
-  // jour/heure de Paris (un éventuel flash "Ouvert" un dimanche se corrige
-  // dès le 1er effet, avant peinture perceptible).
-  const open = status?.open ?? true
-  const label = open ? 'Ouvert' : status?.reopen ? `Fermé · ${status.reopen}` : 'Fermé'
+  // Rendu serveur (et sans JS) : les horaires, jamais « Ouvert ». La page est
+  // en cache : le HTML affichait « Ouvert » la nuit et le dimanche (audit du
+  // 10/10/2026). Le statut réel n'apparaît qu'une fois calculé dans le navigateur.
+  if (!status) {
+    return (
+      <span className="inline-flex self-start items-center gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full">
+        <span className="w-1.5 h-1.5 rounded-full bg-spruce/40" />
+        Lun. au sam. · 11&nbsp;h à 19&nbsp;h
+      </span>
+    )
+  }
+  const open = status.open
+  const label = open ? 'Ouvert' : status.reopen ? `Fermé · ${status.reopen}` : 'Fermé'
 
   return (
     <span
       className={
         open
-          ? 'inline-flex items-center gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full'
-          : 'inline-flex items-center gap-2 bg-terracotta/10 text-terracotta text-[12px] font-semibold px-3 py-1 rounded-full'
+          ? 'inline-flex self-start items-center gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full'
+          : 'inline-flex self-start items-center gap-2 bg-terracotta/10 text-terracotta text-[12px] font-semibold px-3 py-1 rounded-full'
       }
     >
       <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-fresh' : 'bg-terracotta'}`} />

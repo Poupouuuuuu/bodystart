@@ -1,5 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
+
+// Même règle que la 404 racine : une seule balise robots (le noindex de Next).
+export const metadata: Metadata = {
+  title: 'Page introuvable',
+  robots: null,
+}
 
 /**
  * 404 — déclenchée par notFound() (ex. fiche produit avec handle inexistant)

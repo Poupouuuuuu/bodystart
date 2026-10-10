@@ -329,3 +329,14 @@ export const GET_FEATURED_PRODUCTS = `
     }
   }
 `
+
+// Sitemap : adresse et date de dernière modification de chaque fiche publiée
+// (lastmod réel au lieu de la date de génération), + de quoi repérer un pack.
+export const GET_SITEMAP_PRODUCTS = `
+  query SitemapProducts($first: Int!, $after: String) {
+    products(first: $first, after: $after, sortKey: BEST_SELLING) {
+      pageInfo { hasNextPage endCursor }
+      nodes { handle updatedAt productType tags }
+    }
+  }
+`

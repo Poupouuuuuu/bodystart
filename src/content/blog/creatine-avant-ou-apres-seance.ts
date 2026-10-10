@@ -64,7 +64,7 @@ export const creatineAvantOuApresSeance: BlogArticle = {
         {
           "type": "steps",
           "items": [
-            "Choisis une créatine monohydrate, comme la [Créatine 100 % Monohydrate Micronisée French Nutrition](/products/creatine-100-monohydrate-micronisee).",
+            "Choisis une créatine monohydrate, comme la [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate).",
             "Prends 3 à 5 g par jour, tous les jours, au moment qui t'arrange.",
             "Mélange-la dans de l'eau, un jus ou ton shaker de protéines.",
             "Continue les jours de repos sans changer la dose.",
@@ -110,19 +110,9 @@ export const creatineAvantOuApresSeance: BlogArticle = {
           ],
           "rows": [
             [
-              "[Créatine 100 % Monohydrate Micronisée French Nutrition](/products/creatine-100-monohydrate-micronisee)",
-              "Poudre micronisée",
-              "{{prix:creatine-100-monohydrate-micronisee|29,90 €}}"
-            ],
-            [
               "[Micronized Creatine Monohydrate Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate)",
               "Poudre micronisée",
               "{{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}}"
-            ],
-            [
-              "[Creatine Pro Zero Eric Favre](/products/creatine-pro-zero)",
-              "Poudre",
-              "{{prix:creatine-pro-zero|29,90 €}}"
             ],
             [
               "[Clear Pro Creatine Eric Favre](/products/clear-pro-creatine)",
@@ -200,10 +190,6 @@ export const creatineAvantOuApresSeance: BlogArticle = {
     }
   ],
   "products": [
-    {
-      "handle": "creatine-100-monohydrate-micronisee",
-      "label": "Créatine 100 % Monohydrate Micronisée (French Nutrition)"
-    },
     {
       "handle": "dedicated-nutrition-micronized-creatine-monohydrate",
       "label": "Micronized Creatine Monohydrate (Dedicated)"

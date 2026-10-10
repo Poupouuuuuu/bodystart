@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     ...buildPageMetadata({
       path: '/packs',
-      title: 'Nos packs, BodyStart Nutrition',
+      title: 'Nos packs',
       description:
         'Nos meilleurs produits regroupés pour t’aider à économiser. Une routine complète, un seul prix.',
     }),

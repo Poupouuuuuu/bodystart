@@ -6,11 +6,13 @@ import {
   Clock,
   Navigation,
   ChevronDown,
+  Star,
 } from 'lucide-react'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import StoreStatusV2 from '@/components/stores/StoreStatusV2'
 import { buildPageMetadata } from '@/lib/seo'
-import { CONTACT_EMAIL } from '@/lib/store-info'
+import { CONTACT_EMAIL, GOOGLE_DIRECTIONS_URL, GOOGLE_LISTING_URL } from '@/lib/store-info'
+import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
 
 // ─── SEO ──────────────────────────────────────────────────────────
 export const metadata: Metadata = {
@@ -33,49 +35,39 @@ const PHONE_DISPLAY = '07 61 84 75 80'
 const PHONE_TEL = '+33761847580'
 const EMAIL = CONTACT_EMAIL
 const HOURS_DISPLAY = 'Du lundi au samedi · 11h à 19h (fermé le dimanche)'
-const MAPS_DIRECTIONS = 'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'
+const MAPS_DIRECTIONS = GOOGLE_DIRECTIONS_URL
 const MAPS_EMBED =
   'https://maps.google.com/maps?q=48.736836,1.909592&z=17&ie=UTF8&iwloc=&output=embed'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app'
+// Le Store lui-même est déclaré une seule fois, dans le layout (même @id sur
+// toutes les pages, src/lib/jsonld/local.ts). Ici : la FAQ visible, mot pour mot.
+const FAQ = [
+  {
+    q: 'C’est bien l’ancienne boutique BodyFit ?',
+    a: 'Oui. Même adresse à Coignières, même passion du conseil. On a simplement changé de nom pour BodyStart Nutrition.',
+  },
+  {
+    q: 'Où se garer ?',
+    a: 'Un grand parking est disponible devant la boutique.',
+  },
+  {
+    q: 'Quels moyens de paiement acceptez-vous ?',
+    a: 'Carte bancaire (CB, Visa, Mastercard) et espèces en boutique.',
+  },
+  {
+    q: 'Le Click & Collect est-il vraiment gratuit ?',
+    a: 'Oui, 100 % gratuit. Tu commandes en ligne, tu récupères en boutique sans frais.',
+  },
+]
 
-// JSON-LD LocalBusiness (Store)
-const STORE_JSONLD = {
+const FAQ_JSONLD = {
   '@context': 'https://schema.org',
-  '@type': 'Store',
-  name: 'BodyStart Nutrition',
-  alternateName: 'BodyFit Coignières',
-  description:
-    'Boutique de compléments alimentaires (protéines, créatine, vitamines) à Coignières. Conseil gratuit, Click & Collect.',
-  url: `${SITE_URL}/stores`,
-  telephone: PHONE_TEL,
-  email: EMAIL,
-  priceRange: '€€',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '8 Rue du Pont des Landes',
-    postalCode: '78310',
-    addressLocality: 'Coignières',
-    addressRegion: 'Île-de-France',
-    addressCountry: 'FR',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 48.736836,
-    longitude: 1.909592,
-  },
-  hasMap: MAPS_DIRECTIONS,
-  // Fermé le dimanche (MAJ 2026-07) : Sunday retiré → Google affiche les
-  // bons horaires. Ces jours DOIVENT rester alignés avec la fiche Google
-  // Business Profile (action Adam) et le layout global.
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      opens: '11:00',
-      closes: '19:00',
-    },
-  ],
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
 }
 
 const BTN_PRIMARY =
@@ -86,14 +78,15 @@ const BTN_OUTLINE =
 // mustard = fond de badge uniquement, jamais couleur de texte sur surface claire.
 const EYEBROW = 'text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink mb-3'
 
-export default function StoresPage() {
+export default async function StoresPage() {
   const store = BODY_START_STORES[0]
+  const rating = await getGoogleRating()
 
   return (
     <div className="bg-canvas min-h-screen">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(STORE_JSONLD) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
       />
 
       {/* ─── 1. Hero court (sans photo) ─── */}
@@ -101,8 +94,8 @@ export default function StoresPage() {
         <div className="container">
           <div className="max-w-2xl">
             <p className={EYEBROW}>Coignières · 78</p>
-            <h1 className="font-display text-[34px] sm:text-[42px] lg:text-[52px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
-              Notre boutique
+            <h1 className="font-display text-[34px] sm:text-[42px] lg:text-[52px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5 [text-wrap:balance]">
+              Boutique de compléments alimentaires à Coignières (78)
             </h1>
             <p className="text-ink-mute text-[16px] md:text-[18px] leading-[1.6]">
               Sport &amp; santé, le bon conseil près de chez toi, ouvert du lundi au
@@ -166,6 +159,16 @@ export default function StoresPage() {
                 </a>
               </div>
 
+              <a
+                href={GOOGLE_LISTING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex min-h-[44px] items-center gap-2 self-start text-[14px] font-semibold text-spruce underline underline-offset-4 hover:text-fresh-deep"
+              >
+                <Star className="h-4 w-4 fill-mustard text-mustard" aria-hidden="true" />
+                {formatRating(rating)}/5 · Lire nos {rating.count} avis Google
+              </a>
+
               <ul className="flex flex-wrap gap-2 mt-7 pt-6 border-t border-spruce/10">
                 {['Vente sur place', 'Click & Collect', 'Paiement CB'].map((s) => (
                   <li
@@ -223,24 +226,7 @@ export default function StoresPage() {
             </div>
 
             <div className="space-y-3">
-              {[
-                {
-                  q: 'C’est bien l’ancienne boutique BodyFit ?',
-                  a: 'Oui. Même adresse à Coignières, même passion du conseil. On a simplement changé de nom pour BodyStart Nutrition.',
-                },
-                {
-                  q: 'Où se garer ?',
-                  a: 'Un grand parking est disponible devant la boutique.',
-                },
-                {
-                  q: 'Quels moyens de paiement acceptez-vous ?',
-                  a: 'Carte bancaire (CB, Visa, Mastercard) et espèces en boutique.',
-                },
-                {
-                  q: 'Le Click & Collect est-il vraiment gratuit ?',
-                  a: 'Oui, 100 % gratuit. Tu commandes en ligne, tu récupères en boutique sans frais.',
-                },
-              ].map(({ q, a }) => (
+              {FAQ.map(({ q, a }) => (
                 <details
                   key={q}
                   className="group bg-white rounded-2xl border border-spruce/10 px-5 md:px-6"

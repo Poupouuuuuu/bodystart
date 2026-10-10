@@ -28,7 +28,7 @@ export default function ProductDescriptionV2({
   const content = raw.replace(/&nbsp;/gi, ' ').replace(/ /g, ' ')
 
   return (
-    <section className="bg-canvas">
+    <section className="bg-white">
       <div className="container py-14 md:py-18">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">

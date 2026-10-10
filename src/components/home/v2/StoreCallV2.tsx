@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { MapPin, Clock, Phone, ArrowRight, Truck } from 'lucide-react'
 import { BODY_START_STORES } from '@/lib/shopify/types'
+import { GOOGLE_DIRECTIONS_URL } from '@/lib/store-info'
 
 /**
  * Boutique & Click & Collect.
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Home.7
  *      tech-specs/site-rewrite-copy-v1.md §3.7
  */
-const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592'
 
 export default function StoreCallV2() {
   const store = BODY_START_STORES.find((s) => s.isActive) ?? BODY_START_STORES[0]
@@ -65,7 +65,7 @@ export default function StoreCallV2() {
 
             <div className="flex flex-col sm:flex-row gap-3">
               <a
-                href={GOOGLE_MAPS_URL}
+                href={GOOGLE_DIRECTIONS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[14px] px-5 py-3 rounded-full transition-colors hover:bg-fresh-deep flex-1"

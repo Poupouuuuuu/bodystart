@@ -115,7 +115,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Si tu cherches la forme la plus documentée, notre [Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee) ({{prix:creatine-100-monohydrate-micronisee|29,90 €}}) va à l'essentiel : du monohydrate, sans superflu."
+          "text": "Côté produit, la [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate) ({{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}}) va à l'essentiel : du monohydrate, la forme la plus documentée, micronisé et sans arôme. Les autres références sont dans notre rayon [créatine](/categories/creatine)."
         }
       ]
     },
@@ -226,8 +226,8 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
       "label": "Crème de Riz (Nutrimuscle)"
     },
     {
-      "handle": "creatine-100-monohydrate-micronisee",
-      "label": "Créatine 100 % Monohydrate Micronisée"
+      "handle": "dedicated-nutrition-micronized-creatine-monohydrate",
+      "label": "Micronized Creatine Monohydrate (Dedicated)"
     }
   ],
   "categories": [

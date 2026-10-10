@@ -10,25 +10,10 @@ import VenometteBanner from '@/components/marketing/VenometteBanner'
 import NavigationTracker from '@/components/layout/NavigationTracker'
 import { getCollections } from '@/lib/shopify'
 import type { ShopifyCollection } from '@/lib/shopify/types'
+import { organizationJsonLd, storeJsonLd } from '@/lib/jsonld/local'
 
 // Fallback : domaine reel actuel (Vercel), pas un domaine devine. Cf. root layout.
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app').replace(/\/$/, '')
-
-const organizationJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'BodyStart Nutrition',
-  url: SITE_URL,
-  logo: `${SITE_URL}/assets/logos/logo-v2-carre.png`,
-  description: 'Compléments alimentaires premium pour sportifs. Livraison rapide, Click & Collect en boutique.',
-  contactPoint: {
-    '@type': 'ContactPoint',
-    telephone: '+33761847580',
-    contactType: 'customer service',
-    availableLanguage: 'French',
-  },
-  sameAs: [],
-}
 
 // Sitelinks searchbox + identite du site pour Google et les moteurs generatifs.
 const webSiteJsonLd = {
@@ -38,6 +23,7 @@ const webSiteJsonLd = {
   url: SITE_URL,
   name: 'BodyStart Nutrition',
   inLanguage: 'fr-FR',
+  publisher: { '@id': `${SITE_URL}/#organization` },
   potentialAction: {
     '@type': 'SearchAction',
     target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/search?q={search_term_string}` },
@@ -45,34 +31,9 @@ const webSiteJsonLd = {
   },
 }
 
-const localBusinessJsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    '@id': `${SITE_URL}/#boutique-coignieres`,
-    name: 'BodyStart Nutrition, Coignières',
-    // Ancien nom de la boutique (reprise à 100 % de BodyFit Coignières) : aide Google à relier les deux.
-    alternateName: 'BodyFit Coignières',
-    image: `${SITE_URL}/assets/logos/logo-v2-og.png`,
-    telephone: '+33761847580',
-    url: `${SITE_URL}/stores`,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: '8 Rue du Pont des Landes',
-      addressLocality: 'Coignières',
-      postalCode: '78310',
-      addressCountry: 'FR',
-    },
-    // Fermé le dimanche (MAJ 2026-07) — aligné avec /stores et la fiche GBP.
-    openingHoursSpecification: {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      opens: '11:00',
-      closes: '19:00',
-    },
-    priceRange: '€€',
-  },
-]
+// Organization + Store (même @id partout) : src/lib/jsonld/local.ts
+const organizationLd = organizationJsonLd(SITE_URL)
+const storeLd = storeJsonLd(SITE_URL)
 
 export default async function NutritionLayout({ children }: { children: React.ReactNode }) {
   let collections: ShopifyCollection[] = []
@@ -86,7 +47,7 @@ export default async function NutritionLayout({ children }: { children: React.Re
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
       />
       <script
         type="application/ld+json"
@@ -94,7 +55,7 @@ export default async function NutritionLayout({ children }: { children: React.Re
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(storeLd) }}
       />
       {/* A11y : skip-link — 1er élément focusable, visible uniquement au focus
           clavier. Évite de retraverser bandeau + nav (~10 tab stops) par page. */}

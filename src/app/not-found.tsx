@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Search } from 'lucide-react'
 import Header from '@/components/layout/Header'
@@ -16,6 +17,14 @@ const QUICK_LINKS = [
   { label: 'Packs', href: '/packs' },
   { label: 'FAQ', href: '/faq' },
 ]
+
+// Une seule balise robots sur la 404 : le `noindex` que Next ajoute de
+// lui-même. `robots: null` retire l'« index, follow » hérité du layout
+// (deux balises contradictoires relevées par l'audit du 10/10/2026).
+export const metadata: Metadata = {
+  title: 'Page introuvable',
+  robots: null,
+}
 
 /**
  * 404 — PREMIUM V2. L'ancienne version était encore dans le style V1
@@ -39,9 +48,8 @@ export default async function NotFound() {
 
   return (
     <>
-      <Suspense fallback={<div className="h-[104px] bg-white border-b border-spruce/10" />}>
-        <Header collections={collections} />
-      </Suspense>
+      {/* Header et Footer hors <Suspense> : visibles sans JS (cf. layout Nutrition). */}
+      <Header collections={collections} />
       <Suspense fallback={null}>
         <CartDrawerLazy />
       </Suspense>
@@ -98,9 +106,7 @@ export default async function NotFound() {
           </div>
         </div>
       </main>
-      <Suspense fallback={null}>
-        <Footer />
-      </Suspense>
+      <Footer />
     </>
   )
 }

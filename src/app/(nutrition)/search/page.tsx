@@ -11,8 +11,8 @@ import { buildPageMetadata } from '@/lib/seo'
 // Page noindex : pas d'interet SEO (resultats varient par query, page mince).
 export const metadata: Metadata = buildPageMetadata({
   path: '/search',
-  title: 'Recherche, BodyStart Nutrition',
-  description: 'Recherchez parmi tous les produits BodyStart Nutrition.',
+  title: 'Recherche',
+  description: 'Cherche parmi tous les produits BodyStart Nutrition.',
   noIndex: true,
 })
 

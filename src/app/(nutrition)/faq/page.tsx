@@ -26,7 +26,7 @@ const FAQ_ITEMS = [
     category: 'Produits & Conseils',
     questions: [
       { q: 'Vos produits conviennent-ils aux végétariens/végétaliens ?', a: 'Certains de nos produits sont végétariens ou végétaliens. Chaque fiche produit précise les informations relatives au régime alimentaire.' },
-      { q: 'Comment choisir le bon complément pour mon objectif ?', a: 'Parcours nos catégories (Protéines, Créatine, …) depuis le pied de page ou la page Tous les produits, ou utilise la recherche. Tu peux aussi venir en boutique, où nos conseillers te guideront personnellement.' },
+      { q: 'Comment choisir le bon complément pour mon objectif ?', a: 'Fais le point en une minute avec notre guide conseil\u00a0: ton objectif, ton budget et ta fréquence d\'entraînement, et il te propose une sélection en stock à la boutique. Tu peux aussi parcourir nos catégories (Protéines, Créatine, …) ou venir en boutique, où nos conseillers te guideront personnellement.' },
       { q: 'Les produits sont-ils contrôlés antidopage ?', a: 'Nous sélectionnons des produits de qualité. Consulte les fiches produits pour les certifications spécifiques. En cas de doute, consulte la liste de l\'AFLD.' },
       { q: 'Peut-on cumuler plusieurs compléments ?', a: 'Oui, mais nous recommandons de demander l\'avis d\'un professionnel de santé avant d\'associer plusieurs produits. Nos conseillers en boutique peuvent t\'aider.' },
     ],
@@ -93,7 +93,11 @@ export default function FAQPage() {
           Questions fréquentes
         </h1>
         <p className="text-ink-mute text-[16px] leading-[1.6] mb-12">
-          Tu ne trouves pas la réponse ?{' '}
+          Pour choisir un produit, fais le point en une minute avec{' '}
+          <Link href="/conseil" className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep">
+            notre guide conseil
+          </Link>
+          . Tu ne trouves pas la réponse&nbsp;?{' '}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="text-spruce font-semibold hover:underline underline-offset-4"
@@ -105,10 +109,11 @@ export default function FAQPage() {
         <div className="space-y-12 md:space-y-14">
           {FAQ_ITEMS.map(({ category, questions }) => (
             <section key={category}>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-5 flex items-center gap-3">
-                <span className="w-8 h-px bg-spruce/20" />
+              {/* Thème en H2, questions en H3 (audit SEO du 10/10/2026). */}
+              <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-5 flex items-center gap-3">
+                <span className="w-8 h-px bg-spruce/20" aria-hidden="true" />
                 {category}
-              </p>
+              </h2>
               <div className="space-y-3">
                 {questions.map(({ q, a }) => (
                   <details
@@ -116,7 +121,7 @@ export default function FAQPage() {
                     className="group bg-white rounded-2xl border border-spruce/10 px-5 md:px-6"
                   >
                     <summary className="flex items-center justify-between gap-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden py-4 md:py-5 text-[15px] font-semibold text-ink">
-                      {q}
+                      <h3 className="text-[15px] font-semibold text-ink">{q}</h3>
                       <ChevronDown className="w-4 h-4 text-spruce flex-shrink-0 transition-transform group-open:rotate-180" />
                     </summary>
                     <p className="text-[14px] text-ink-mute leading-[1.65] pb-5">{a}</p>

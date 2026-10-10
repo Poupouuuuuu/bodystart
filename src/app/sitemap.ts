@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getProducts } from '@/lib/shopify'
+import { getSitemapProducts } from '@/lib/shopify'
 import { isPackProduct } from '@/lib/shopify/bundle'
 import { CATEGORY_PAGES } from '@/lib/categories'
 import { BLOG_ARTICLES } from '@/content/blog'
@@ -7,9 +7,15 @@ import { BLOG_ARTICLES } from '@/content/blog'
 // Fallback : domaine reel actuel (Vercel), pas un domaine devine.
 const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app').replace(/\/$/, '')
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date()
+// Régénéré toutes les heures (10/10/2026). Sans ça, le sitemap restait figé
+// au dernier déploiement : fiches retirées encore listées (404), nouvelles
+// fiches absentes.
+export const revalidate = 3600
 
+// lastmod : seulement une date réelle (fiche : updatedAt Shopify ; guide :
+// dateModified). Pages fixes et catégories sans lastmod : avant, toutes
+// portaient la date de génération, signal que Google apprend à ignorer.
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, priority: 1.0, changeFrequency: 'daily' },
     { url: `${BASE_URL}/products`, priority: 0.9, changeFrequency: 'daily' },
@@ -46,26 +52,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Routes produits — fetch dynamique
-  let productRoutes: MetadataRoute.Sitemap = []
   // /packs seulement s'il existe un pack publié : sans pack, la page est en
   // noindex (cf. packs/page.tsx) et ne doit pas figurer au sitemap.
   let packRoutes: MetadataRoute.Sitemap = []
-  try {
-    const result = await getProducts({ first: 250 })
-    if (result.nodes.some(isPackProduct)) {
-      packRoutes = [{ url: `${BASE_URL}/packs`, priority: 0.85, changeFrequency: 'weekly' }]
-    }
-    productRoutes = result.nodes.map((p) => ({
-      url: `${BASE_URL}/products/${p.handle}`,
-      priority: 0.75,
-      changeFrequency: 'weekly' as const,
-    }))
-  } catch {
-    // Shopify indisponible
+  const products = await getSitemapProducts().catch((err) => {
+    // Shopify indisponible. Au build : sitemap sans fiches plutôt qu'un
+    // déploiement en échec (régénéré dans l'heure). En production : on lève,
+    // l'ISR garde la version précédente au lieu de publier un sitemap vide.
+    if (process.env.NEXT_PHASE === 'phase-production-build') return []
+    throw new Error(`[sitemap] lecture des produits en échec : ${err}`)
+  })
+  if (products.some(isPackProduct)) {
+    packRoutes = [{ url: `${BASE_URL}/packs`, priority: 0.85, changeFrequency: 'weekly' }]
   }
-
-  return [...staticRoutes, ...packRoutes, ...categoryRoutes, ...blogRoutes, ...productRoutes].map((route) => ({
-    ...route,
-    lastModified: route.lastModified ?? now,
+  const productRoutes: MetadataRoute.Sitemap = products.map((p) => ({
+    url: `${BASE_URL}/products/${p.handle}`,
+    priority: 0.75,
+    changeFrequency: 'weekly' as const,
+    lastModified: new Date(p.updatedAt),
   }))
+
+  return [...staticRoutes, ...packRoutes, ...categoryRoutes, ...blogRoutes, ...productRoutes]
 }
