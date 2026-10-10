@@ -21,16 +21,16 @@ import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 export const metadata: Metadata = {
   ...buildPageMetadata({
     path: '/',
-    title: 'Compléments alimentaires à Coignières | BodyStart Nutrition',
+    title: 'Compléments alimentaires Coignières (ex-BodyFit) | BodyStart',
     description:
       'BodyStart Nutrition, anciennement BodyFit Coignières : compléments sport et santé (78). Conseil gratuit en boutique, Click & Collect gratuit.',
   }),
-  // <title> exact (59 caractères, audit SEO du 10/10/2026 : l'ancien en
-  // faisait 79, coupé dans Google), bypass du template. « anciennement BodyFit »
-  // (demande d'Adam du 25/09/2026) reste dans la description, la phrase
-  // d'ouverture du hero et l'alternateName du JSON-LD.
+  // <title> exact (60 caractères, audit SEO du 10/10/2026 : l'ancien en
+  // faisait 79, coupé dans Google), bypass du template. « ex-BodyFit » gardé
+  // (demande d'Adam du 25/09/2026 ; « bodyfit coignières » : 62 impressions,
+  // 7 clics en 90 jours, position 3,6), choisi avec Claude Gestion.
   title: {
-    absolute: 'Compléments alimentaires à Coignières | BodyStart Nutrition',
+    absolute: 'Compléments alimentaires Coignières (ex-BodyFit) | BodyStart',
   },
 }
 

@@ -4,16 +4,16 @@ import { BLOG_ARTICLES } from '@/content/blog'
 
 /**
  * « Nos guides » sur l'accueil (audit SEO du 10/10/2026) : maillage direct
- * vers les guides les plus utiles, rendu côté serveur. Slugs choisis avec
- * Claude Gestion ; un slug absent du registre est simplement ignoré.
+ * vers les guides qui ont de la demande dans la Search Console (choix de
+ * Claude Gestion), rendu côté serveur. Un slug absent du registre est ignoré.
  */
 const GUIDES = [
   'quelle-whey-choisir-debutant',
-  'combien-de-proteines-par-jour',
+  'whey-ou-isolate-quelle-difference',
   'creatine-avant-ou-apres-seance',
-  'complements-debutant-musculation',
-  'prise-de-masse-complements-et-organisation',
-  'multivitamines-utile-comment-choisir',
+  'creatine-pour-les-femmes',
+  'complements-apres-40-ans',
+  'magnesium-bienfaits-quelle-forme-choisir',
 ]
 
 export default function NosGuidesV3() {
