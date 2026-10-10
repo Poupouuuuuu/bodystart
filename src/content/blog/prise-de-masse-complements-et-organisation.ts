@@ -10,7 +10,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
   "metaDescription": "Gainer, créatine, glucides : quels compléments pour la prise de masse et comment les organiser ? Plan en 7 étapes, dosages concrets et conseils boutique.",
   "excerpt": "Aucun complément ne remplace un surplus calorique de 300 à 500 kcal par jour et 1,6 à 2,2 g de protéines par kilo : c'est la base de la prise de masse. Les compléments utiles viennent ensuite : un gainer si l'appétit ne suit pas, des glucides autour de l'entraînement et 3 à 5 g de créatine par jour.",
   "datePublished": "2026-06-12",
-  "dateModified": "2026-06-12",
+  "dateModified": "2026-10-10",
   "sections": [
     {
       "h2": "Quels compléments sont vraiment utiles pour la prise de masse ?",

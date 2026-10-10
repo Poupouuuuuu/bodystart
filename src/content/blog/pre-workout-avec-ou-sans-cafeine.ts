@@ -8,20 +8,20 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
   "title": "Pré-workout : avec ou sans caféine ? On t'aide à trancher",
   "metaTitle": "Pré-workout sans caféine ou avec : que choisir ?",
   "metaDescription": "Caféine ou pas dans ton pré-workout ? Dosages réels du marché, demi-vie, sommeil et alternatives pump (citrulline, bêta-alanine) pour trancher.",
-  "excerpt": "Choisis un pré-workout avec caféine si tu t'entraînes le matin ou en début d'après-midi et que tu la tolères bien ; passe à une formule sans caféine (pump) pour les séances du soir, en cas de sensibilité ou d'hypertension. La caféine aide à augmenter la vigilance, mais sa demi-vie de 5 à 6 heures peut coûter cher à ton sommeil.",
+  "excerpt": "Choisis un pré-workout avec caféine si tu t'entraînes le matin ou en début d'après-midi et que tu la tolères bien ; passe à une formule sans caféine (pump) pour les séances du soir, en cas de sensibilité ou d'hypertension. Attention à l'heure : la caféine a une demi-vie de 5 à 6 heures et peut gêner ton sommeil.",
   "datePublished": "2026-06-12",
-  "dateModified": "2026-06-12",
+  "dateModified": "2026-10-10",
   "sections": [
     {
-      "h2": "À quoi sert la caféine dans un pré-workout ?",
+      "h2": "La caféine dans un pré-workout : ce qu'on peut en dire",
       "blocks": [
         {
           "type": "p",
-          "text": "La caféine est le moteur des pré-workout stimulés : elle aide à augmenter la vigilance, ce qui te met dans de meilleures dispositions pour attaquer ta séance. C'est l'effet retenu au niveau européen, et c'est déjà beaucoup."
+          "text": "La caféine est l'ingrédient central des pré-workout stimulés : chaque fiche indique sa teneur par dose. Ses allégations sont encore en attente au niveau européen : on ne lui prête donc pas d'effet ici, et on regarde surtout la dose et l'heure de prise."
         },
         {
           "type": "p",
-          "text": "Concrètement, la séance paraît plus facile à démarrer, surtout en fin de journée de travail. La caféine est aussi l'un des ingrédients les plus étudiés en nutrition sportive, notamment sur la perception de l'effort. Mais soyons clairs : elle ne construit pas de muscle. Ce travail-là revient à l'entraînement, aux **protéines** et au sommeil. La caféine modifie ton état d'éveil, rien de plus. Le reste de la formule (citrulline, bêta-alanine, parfois créatine selon les marques) joue sur d'autres tableaux."
+          "text": "Soyons clairs : elle ne construit pas de muscle. Ce travail-là revient à l'entraînement, aux **protéines** et au sommeil. Le reste de la formule (citrulline, bêta-alanine, parfois créatine selon les marques) est détaillé plus bas."
         }
       ]
     },
@@ -100,9 +100,9 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
           ],
           "rows": [
             [
-              "Énergie perçue",
-              "Coup de fouet net, vigilance en hausse",
-              "Pas d'effet « réveil », sensation de congestion"
+              "Composition",
+              "Caféine (teneur indiquée sur la fiche)",
+              "Sans stimulant (citrulline, bêta-alanine…)"
             ],
             [
               "Séance après 17-18 h",

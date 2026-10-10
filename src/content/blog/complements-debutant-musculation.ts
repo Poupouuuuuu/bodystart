@@ -10,7 +10,7 @@ export const complementsDebutantMusculation: BlogArticle = {
   "metaDescription": "Débutant en musculation ? Commence par 2 compléments prouvés : whey (20-25 g/dose) et créatine (3-5 g/j). Budget, dosages et conseils pour bien démarrer.",
   "excerpt": "Pour débuter en musculation, deux compléments suffisent : une whey si tu n'atteins pas tes apports en protéines (1,6 à 2,2 g/kg/j) et de la créatine monohydrate à 3-5 g par jour. Tout le reste vient après, et seulement si ton assiette, ton sommeil et ton entraînement suivent déjà.",
   "datePublished": "2026-06-12",
-  "dateModified": "2026-09-30",
+  "dateModified": "2026-10-10",
   "sections": [
     {
       "h2": "Faut-il des compléments pour débuter la musculation ?",
@@ -89,13 +89,13 @@ export const complementsDebutantMusculation: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Les brûleurs, les boosters pre-workout et les BCAA peuvent attendre. Aucun des trois n'apporte quelque chose d'essentiel quand on commence."
+          "text": "Les brûleurs, les boosters pre-workout et les BCAA peuvent attendre : aucun des trois n'est indispensable au début, on peut s'en passer les premiers mois."
         },
         {
           "type": "list",
           "items": [
             "**Les brûleurs** : des formules à base de caféine ou d'extraits de plantes. Aucune poudre ne remplace un déficit calorique. Garde ton budget pour les bases.",
-            "**Les boosters pre-workout** : de la caféine et des ingrédients de congestion pensés pour les séances difficiles. Au début, ta motivation suffit, et un café avant la séance fait très bien l'affaire.",
+            "**Les boosters pre-workout** : de la caféine et des ingrédients de congestion pensés pour les séances difficiles. Pas indispensable au début : on peut s'en passer les premiers mois, et y revenir quand les séances deviennent plus exigeantes.",
             "**Les BCAA** : si tu atteins déjà tes protéines quotidiennes (whey comprise), ils font double emploi. On explique pourquoi dans [EAA ou BCAA : lequel prendre](/blog/eaa-ou-bcaa-lequel-prendre)."
           ]
         }

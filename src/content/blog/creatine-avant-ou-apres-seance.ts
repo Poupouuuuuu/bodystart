@@ -10,7 +10,7 @@ export const creatineAvantOuApresSeance: BlogArticle = {
   "metaDescription": "Avant ou après l'entraînement ? La science est claire : 3-5 g de créatine par jour, tous les jours. Timing, durée, mythes : on t'explique tout.",
   "excerpt": "Le timing de la créatine importe peu : ce qui compte, c'est d'en prendre 3 à 5 g chaque jour, y compris les jours de repos. La créatine agit par saturation progressive des stocks musculaires, pas par effet immédiat avant ou après la séance.",
   "datePublished": "2026-06-12",
-  "dateModified": "2026-06-12",
+  "dateModified": "2026-10-10",
   "sections": [
     {
       "h2": "Faut-il prendre la créatine avant ou après l'entraînement ?",

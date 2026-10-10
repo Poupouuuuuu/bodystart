@@ -171,8 +171,8 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       'Pré-workout avec caféine pour l’énergie ou formules pump sans stimulant pour les séances du soir. Conseil en boutique à Coignières, livraison France.',
     h1: 'Pré-workout : énergie, focus et congestion',
     intro: [
-      "Un pré-workout se prend 20 à 30 minutes avant la séance pour attaquer l'entraînement dans les meilleures conditions. Deux familles : les formules avec caféine (la caféine aide à augmenter la vigilance) pour l'énergie et le focus, et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, pour la congestion, idéales si tu t'entraînes le soir.",
-      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, un pré-workout stimulant classique fonctionne très bien. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine. En cas de doute, on t'aide à trancher en boutique.",
+      "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur chaque fiche), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
+      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine. En cas de doute, on t'aide à trancher en boutique.",
     ],
     featured: [
       { handle: 'french-pump-pre-workout', label: 'French Pump French Nutrition, avec caféine' },

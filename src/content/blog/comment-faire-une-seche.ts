@@ -5,7 +5,8 @@ import type { BlogArticle } from '@/lib/blog'
 // COMPLIANCE UE 1924/2006 : le moteur = déficit calorique (cohérent avec
 // bruleurs-de-graisse-ca-marche : « aucun brûleur ne fait maigrir sans
 // déficit ») ; protéines = « contribuent au maintien et au développement de la
-// masse musculaire » (autorisée) ; caféine = vigilance (autorisée) ;
+// masse musculaire » (autorisée) ; caféine : allégations en attente au niveau
+// UE, on cite la teneur, jamais un effet (10/10/2026) ;
 // L-carnitine/CLA présentés SANS allégation minceur. Chiffres cohérents avec
 // combien-de-proteines-par-jour (1,6-2,2 g/kg → haut de fourchette en sèche).
 // Handles + prix vérifiés Shopify 2026-08-05. Packs Sèche NON liés (DRAFT).

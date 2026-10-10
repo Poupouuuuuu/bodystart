@@ -16,7 +16,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
   excerpt:
     "Le sommeil est ton premier levier de récupération : aucun complément ne le remplace. À côté, le magnésium contribue à réduire la fatigue et au fonctionnement normal du système nerveux, et un bon apport en protéines soutient le muscle. Le reste, c'est surtout de l'hygiène de vie.",
   datePublished: '2026-07-17',
-  dateModified: '2026-09-30',
+  dateModified: '2026-10-10',
   sections: [
     {
       h2: 'Le sommeil : ta meilleure récupération, et elle est gratuite',
@@ -89,7 +89,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'L\'erreur la plus fréquente chez les sportifs, c\'est le **pré-workout ou le café pris trop tard**. La caféine aide à la vigilance… ce qui est exactement l\'inverse de ce que tu veux le soir. Si tu t\'entraînes après 18 h, oriente-toi vers une formule sans caféine : on explique tout dans [pré-workout avec ou sans caféine](/blog/pre-workout-avec-ou-sans-cafeine).',
+          text: 'L\'erreur la plus fréquente chez les sportifs, c\'est le **pré-workout ou le café pris trop tard**. La caféine a une demi-vie de 5 à 6 heures : prise tard, elle peut gêner l\'endormissement. Si tu t\'entraînes après 18 h, oriente-toi vers une formule sans caféine : on explique tout dans [pré-workout avec ou sans caféine](/blog/pre-workout-avec-ou-sans-cafeine).',
         },
         {
           type: 'list',
@@ -141,7 +141,7 @@ export const mieuxDormirRecuperation: BlogArticle = {
     },
     {
       q: 'Faut-il éviter le pré-workout le soir ?',
-      a: 'Si ton pré-workout contient de la caféine et que tu t\'entraînes tard, oui : la caféine augmente la vigilance, ce qui peut gêner l\'endormissement. Dans ce cas, oriente-toi vers une formule « pump » sans caféine. Les créneaux du matin ou de journée conviennent mieux aux versions stimulantes.',
+      a: 'Si ton pré-workout contient de la caféine et que tu t\'entraînes tard, oui : la caféine a une demi-vie de 5 à 6 heures et peut gêner l\'endormissement. Dans ce cas, oriente-toi vers une formule « pump » sans caféine. Les créneaux du matin ou de journée conviennent mieux aux versions stimulantes.',
     },
   ],
   products: [
