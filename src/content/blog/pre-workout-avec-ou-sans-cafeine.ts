@@ -159,7 +159,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
   "faq": [
     {
       "q": "Un pré-workout sans caféine, ça marche vraiment ?",
-      "a": "Il ne joue pas sur le même terrain qu'un stim : pas de caféine, donc pas d'effet réveil, et il se prend aussi le soir. Aucune allégation n'est autorisée pour la citrulline, l'arginine ou la bêta-alanine : on le choisit pour sa composition et l'heure de ta séance. Pour la progression, l'entraînement, l'alimentation et le sommeil restent les facteurs décisifs."
+      "a": "Il ne joue pas sur le même terrain qu'un stim : pas de caféine, et il se prend aussi le soir. Aucune allégation n'est autorisée pour la citrulline, l'arginine ou la bêta-alanine : on le choisit pour sa composition et l'heure de ta séance. Pour la progression, l'entraînement, l'alimentation et le sommeil restent les facteurs décisifs."
     },
     {
       "q": "Combien de temps avant la séance faut-il prendre son pré-workout ?",
