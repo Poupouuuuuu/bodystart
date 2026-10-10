@@ -14,7 +14,7 @@ export const creatinePourLesFemmes: BlogArticle = {
   excerpt:
     "La créatine est aussi efficace et sûre chez la femme que chez l'homme : à 3 à 5 g de monohydrate par jour, la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. Non, elle ne « fait pas gonfler » et ne masculinise pas : la petite prise de poids du début, c'est de l'eau dans le muscle, pas de la graisse.",
   datePublished: '2026-07-17',
-  dateModified: '2026-09-30',
+  dateModified: '2026-10-10',
   sections: [
     {
       h2: 'La créatine, est-ce que c\'est vraiment pour les femmes ?',
@@ -25,7 +25,7 @@ export const creatinePourLesFemmes: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Si la créatine reste souvent perçue comme « un truc de mecs », c'est culturel, pas scientifique. Au comptoir à Coignières, c'est la question qui revient le plus chez nos clientes, et la réponse est toujours la même : c'est le complément au meilleur rapport efficacité-prix pour progresser en force, quel que soit ton sexe.",
+          text: "Si la créatine reste souvent perçue comme « un truc de mecs », c'est culturel, pas scientifique. Au comptoir à Coignières, c'est la question qui revient le plus chez nos clientes, et la réponse est toujours la même : c'est un complément simple et abordable pour les efforts intenses et répétés, quel que soit ton sexe.",
         },
         {
           type: 'p',
@@ -38,14 +38,12 @@ export const creatinePourLesFemmes: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Le bénéfice principal est la performance sur les efforts courts et intenses : tu tiens une répétition ou deux de plus sur tes séries lourdes, tu récupères un peu mieux entre les séries. Sur la durée, cette capacité à en faire un peu plus à chaque séance se traduit par une meilleure progression en force.",
+          text: "Le bénéfice reconnu porte sur les efforts courts et intenses : la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. L'effet bénéfique est obtenu avec 3 g de créatine par jour.",
         },
         {
           type: 'list',
           items: [
-            'Plus de répétitions de qualité sur les séries lourdes (squat, hip thrust, développé).',
-            'Une meilleure tenue sur les efforts répétés (circuits, HIIT, sprints).',
-            'Une progression en force plus régulière séance après séance.',
+            'Le type d\'effort concerné : séries lourdes répétées (squat, hip thrust, développé), circuits, HIIT, sprints.',
             'Un complément qui se combine sans souci avec la whey et la routine du quotidien.',
           ],
         },

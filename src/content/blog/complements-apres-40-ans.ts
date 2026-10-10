@@ -15,7 +15,7 @@ export const complementsApres40Ans: BlogArticle = {
   excerpt:
     "Après 40 ans, les priorités changent : les protéines pour préserver le muscle, la vitamine D et le magnésium comme fondations, la créatine pour les efforts intenses et répétés. On te donne l'ordre logique, avec des allégations honnêtes : un complément à la fois, choisi pour une vraie raison.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-10-10',
   sections: [
     {
       h2: 'Qu\'est-ce qui change vraiment après 40 ans ?',
@@ -60,7 +60,7 @@ export const complementsApres40Ans: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La logique est simple : peu d\'exposition au soleil d\'octobre à mars = supplémentation qui fait sens sur cette période. Deux formats dans notre sélection : la [Vitamine D3 + K2](/products/vitamin-d3-k2) en softgels (le duo D3-K2 est apprécié pour l\'os) et la [Vitamine D3 en gouttes](/products/vitamine-d3-gouttes), pratique et économique.',
+          text: 'La logique est simple : peu d\'exposition au soleil d\'octobre à mars = supplémentation qui fait sens sur cette période. Deux formats dans notre sélection : la [Vitamine D3 + K2](/products/vitamin-d3-k2) en softgels (vitamine D3 associée à de la vitamine K2) et la [Vitamine D3 en gouttes](/products/vitamine-d3-gouttes), pratique et économique.',
         },
       ],
     },
@@ -82,11 +82,11 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "On l'associe à tort aux vingtenaires en salle. Pourtant, la créatine est un des rares compléments dont l'intérêt est justement bien documenté chez les personnes actives qui prennent de l'âge, en soutien de la force. Rappel de l'allégation autorisée : la créatine **améliore les capacités physiques lors de séries successives d'exercices très intenses et de courte durée**.",
+          text: "On l'associe à tort aux vingtenaires en salle. Pourtant, la créatine garde son intérêt à tout âge chez les personnes qui s'entraînent de façon intense. Rappel de l'allégation autorisée : la créatine **améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée**.",
         },
         {
           type: 'p',
-          text: 'Même dosage à tout âge : **3 à 5 g de monohydrate par jour**, tous les jours. Associée à un entraînement en résistance, c\'est un excellent partenaire de la force. Le rayon [créatine](/categories/creatine) rassemble nos formats ; le protocole précis est dans notre article [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance).',
+          text: 'Même dosage à tout âge : **3 à 5 g de monohydrate par jour**, tous les jours. L\'effet bénéfique est obtenu avec 3 g de créatine par jour, en cas de séries successives d\'exercices très intenses de courte durée, comme en musculation. Le rayon [créatine](/categories/creatine) rassemble nos formats ; le protocole précis est dans notre article [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance).',
         },
       ],
     },
@@ -95,11 +95,11 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un produit d'entretien apprécié : on le choisit pour sa composition. À noter qu'officiellement, l'allégation autorisée porte sur la vitamine C : elle **contribue à la formation normale de collagène pour assurer la fonction normale de la peau et des cartilages**. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dosette, le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) se boit tel quel.",
+          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un complément apprécié, sans allégation santé autorisée : on le choisit pour sa composition. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dose de 22 g, le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) se boit tel quel.",
         },
         {
           type: 'p',
-          text: 'Côté cœur, les **oméga-3 (EPA/DHA) contribuent à une fonction cardiaque normale** : intéressant si tu manges peu de poisson gras. On les range dans le rayon [santé & bien-être](/categories/sante), avec les vitamines et minéraux. Là encore, la règle est : un produit à la fois, choisi pour une raison précise, pas une pile de pots « au cas où ».',
+          text: 'Côté cœur, les **oméga-3 (EPA/DHA) contribuent à une fonction cardiaque normale** (effet obtenu avec 250 mg d\'EPA et de DHA par jour) : intéressant si tu manges peu de poisson gras. On les range dans le rayon [santé & bien-être](/categories/sante), avec les vitamines et minéraux. Là encore, la règle est : un produit à la fois, choisi pour une raison précise, pas une pile de pots « au cas où ».',
         },
         {
           type: 'steps',
@@ -129,7 +129,7 @@ export const complementsApres40Ans: BlogArticle = {
     },
     {
       q: 'La créatine est-elle utile passé 40 ans ?',
-      a: 'Oui. La créatine améliore les capacités physiques lors de séries d\'exercices intenses et courts, à tout âge, avec le même dosage de 3 à 5 g par jour. Associée à un entraînement en résistance, c\'est un bon soutien de la force chez les personnes actives qui prennent de l\'âge.',
+      a: 'Oui, si tu fais des efforts intenses. La créatine améliore les capacités physiques en cas de séries successives d\'exercices très intenses de courte durée, à tout âge ; l\'effet bénéfique est obtenu avec 3 g de créatine par jour.',
     },
     {
       q: 'Faut-il prendre de la vitamine D toute l\'année ?',
@@ -137,7 +137,7 @@ export const complementsApres40Ans: BlogArticle = {
     },
     {
       q: 'Le collagène est-il efficace pour la peau et les articulations ?',
-      a: 'Le collagène est un produit d\'entretien apprécié pour la peau et les articulations, à choisir pour sa composition. Sur le plan réglementaire, c\'est la vitamine C qui contribue à la formation normale de collagène, d\'où l\'intérêt des formules qui associent collagène et vitamine C.',
+      a: 'Le collagène n\'a pas d\'allégation santé autorisée, ni pour la peau ni pour les articulations : on le choisit pour sa composition (dose de peptides, origine, format).',
     },
   ],
   products: [

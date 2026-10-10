@@ -7,10 +7,10 @@ export const complementsDebutantMusculation: BlogArticle = {
   "slug": "complements-debutant-musculation",
   "title": "Compléments alimentaires : par quoi commencer en musculation ?",
   "metaTitle": "Compléments alimentaires débutant musculation : le guide",
-  "metaDescription": "Débutant en musculation ? Commence par 2 compléments prouvés : whey (20-25 g/dose) et créatine (3-5 g/j). Budget, dosages et conseils pour bien démarrer.",
+  "metaDescription": "Débutant en musculation ? Commence par 2 compléments de base : whey (20-25 g/dose) et créatine (3-5 g/j). Budget, dosages et conseils pour bien démarrer.",
   "excerpt": "Pour débuter en musculation, deux compléments suffisent : une whey si tu n'atteins pas tes apports en protéines (1,6 à 2,2 g/kg/j) et de la créatine monohydrate à 3-5 g par jour. Tout le reste vient après, et seulement si ton assiette, ton sommeil et ton entraînement suivent déjà.",
   "datePublished": "2026-06-12",
-  "dateModified": "2026-09-30",
+  "dateModified": "2026-10-10",
   "sections": [
     {
       "h2": "Faut-il des compléments pour débuter la musculation ?",
@@ -55,7 +55,7 @@ export const complementsDebutantMusculation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation. La dose de référence : **3 à 5 g par jour**, entraînement ou pas. Pas besoin de phase de charge ni de timing précis. La [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate) à {{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}} correspond à ce profil : du monohydrate (la forme la plus étudiée), micronisé et sans arôme. Pour la question du moment de prise, on a tranché dans [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance)."
+          "text": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation. L'effet bénéfique est obtenu avec 3 g de créatine par jour. La dose de référence : **3 à 5 g par jour**, entraînement ou pas. Pas besoin de phase de charge ni de timing précis. La [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate) à {{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}} correspond à ce profil : du monohydrate (la forme la plus étudiée), micronisé et sans arôme. Pour la question du moment de prise, on a tranché dans [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance)."
         },
         {
           "type": "p",
@@ -89,14 +89,14 @@ export const complementsDebutantMusculation: BlogArticle = {
       "blocks": [
         {
           "type": "p",
-          "text": "Les brûleurs, les boosters pre-workout et les BCAA peuvent attendre. Aucun des trois n'apporte quelque chose d'essentiel quand on commence."
+          "text": "Les brûleurs, les pré-workout et les BCAA peuvent attendre : aucun des trois n'est indispensable au début, on peut s'en passer les premiers mois."
         },
         {
           "type": "list",
           "items": [
-            "**Les brûleurs** : des formules à base de caféine ou d'extraits de plantes. Aucune poudre ne remplace un déficit calorique. Garde ton budget pour les bases.",
-            "**Les boosters pre-workout** : de la caféine et des ingrédients de congestion pensés pour les séances difficiles. Au début, ta motivation suffit, et un café avant la séance fait très bien l'affaire.",
-            "**Les BCAA** : si tu atteins déjà tes protéines quotidiennes (whey comprise), ils font double emploi. On explique pourquoi dans [EAA ou BCAA : lequel prendre](/blog/eaa-ou-bcaa-lequel-prendre)."
+            "**Les brûleurs** : des formules à base de caféine ou d'extraits de plantes. Aucune poudre ne remplace un déficit calorique. Ils viennent après les bases.",
+            "**Les pré-workout** : de la caféine (teneur indiquée sur chaque fiche) et d'autres ingrédients comme la citrulline ou la bêta-alanine. Pas indispensable au début : on peut s'en passer les premiers mois, et y revenir plus tard si tu le souhaites.",
+            "**Les BCAA** : si tu atteins déjà tes protéines quotidiennes (whey comprise), ils sont moins prioritaires. On explique pourquoi dans [EAA ou BCAA : lequel prendre](/blog/eaa-ou-bcaa-lequel-prendre)."
           ]
         }
       ]
@@ -171,7 +171,7 @@ export const complementsDebutantMusculation: BlogArticle = {
   "faq": [
     {
       "q": "La créatine, c'est réservé aux pratiquants confirmés ?",
-      "a": "Non. La créatine monohydrate est l'un des compléments les plus étudiés en nutrition sportive et son usage ne dépend pas du niveau. La dose de référence est la même pour tout le monde : 3 à 5 g par jour, en continu. Elle améliore les capacités physiques lors de séries successives d'exercices très intenses de courte durée, ce qui correspond exactement au travail en séries de la musculation."
+      "a": "Non. La créatine monohydrate est l'un des compléments les plus étudiés en nutrition sportive et son usage ne dépend pas du niveau. La dose de référence est la même pour tout le monde : 3 à 5 g par jour, en continu. Elle améliore les capacités physiques lors de séries successives d'exercices très intenses de courte durée, ce qui correspond exactement au travail en séries de la musculation. L'effet bénéfique est obtenu avec 3 g de créatine par jour."
     },
     {
       "q": "Combien de protéines par jour pour prendre du muscle ?",

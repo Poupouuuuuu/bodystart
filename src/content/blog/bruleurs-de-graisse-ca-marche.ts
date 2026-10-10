@@ -3,9 +3,11 @@ import type { BlogArticle } from '@/lib/blog'
 // Article SEO/GEO — cible « brûleur de graisse efficace / est-ce que ça marche ».
 // ⚠️ COMPLIANCE UE 1924/2006 STRICTE : AUCUNE allégation « brûle les graisses »
 // ou « fait maigrir ». La L-carnitine et le CLA n'ont PAS d'allégation santé
-// autorisée (rejetées par l'EFSA). Seule la caféine a des allégations (vigilance,
-// concentration) → mentionnée prudemment. Angle honnête = le déficit calorique
-// fait tout le travail. Handles + prix vérifiés Shopify 2026-07-17.
+// autorisée (rejetées par l'EFSA), pas d'effet prêté (ni « transport des
+// acides gras »). Caféine : allégations encore en attente au niveau UE, on cite
+// la présence ou la teneur, jamais un effet (relecture CG du 10/10/2026). Angle
+// honnête = le déficit calorique fait tout le travail, sans moquer le produit.
+// Handles + prix vérifiés Shopify 2026-07-17.
 export const bruleursDeGraisseCaMarche: BlogArticle = {
   slug: 'bruleurs-de-graisse-ca-marche',
   title: 'Brûleurs de graisse : est-ce que ça marche vraiment ?',
@@ -13,9 +15,9 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
   metaDescription:
     'Les brûleurs de graisse sont-ils efficaces ? La vérité : aucun ne fait maigrir sans déficit calorique. Ce qu\'ils font, pour qui, et notre avis honnête.',
   excerpt:
-    "La vérité d'abord : aucun brûleur ne fait maigrir sans déficit calorique. La L-carnitine, le CLA ou les formules à la caféine s'utilisent en accompagnement d'une sèche déjà structurée, jamais à sa place. On t'explique ce qu'ils font réellement, et quand ils n'ont aucun intérêt.",
+    "La vérité d'abord : aucun brûleur ne fait maigrir sans déficit calorique. La L-carnitine, le CLA ou les formules à la caféine s'utilisent en accompagnement d'une sèche déjà structurée, jamais à sa place. On t'explique ce qu'on peut en dire, et à quel moment ils ont leur place.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-10-10',
   sections: [
     {
       h2: 'La vérité qui dérange : le déficit calorique fait tout le travail',
@@ -26,11 +28,11 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
         },
         {
           type: 'p',
-          text: "C'est le message qu'on donne honnêtement au comptoir à Coignières, quitte à ne pas vendre : si ton alimentation et ton entraînement ne sont pas déjà en place, un brûleur ne servira à rien. Les produits de ce rayon sont des **accompagnements** d'une sèche structurée, pas des solutions miracles.",
+          text: "C'est le message qu'on donne au comptoir à Coignières : un brûleur s'ajoute à une alimentation et un entraînement déjà en place, il ne les remplace pas. Les produits de ce rayon sont des **accompagnements** d'une sèche structurée.",
         },
         {
           type: 'p',
-          text: 'Dit autrement : les fondations, ce sont le déficit calorique, un apport en protéines suffisant pour préserver le muscle, l\'activité physique et le sommeil. Le complément vient en dernier, et son effet est marginal comparé à ces piliers.',
+          text: 'Dit autrement : les fondations, ce sont le déficit calorique, un apport en protéines suffisant pour préserver le muscle, l\'activité physique et le sommeil. Le complément vient en dernier, après ces piliers.',
         },
       ],
     },
@@ -39,19 +41,19 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Soyons précis, car la réglementation l'est aussi. La **L-carnitine** joue un rôle dans le transport des acides gras dans la cellule, mais aucune allégation santé de perte de poids n'est autorisée à son sujet : on ne peut donc pas lui prêter d'effet minceur. Le **CLA** (un acide gras) est populaire en période de régime, là encore sans allégation reconnue. Ce sont des produits d'accompagnement, pas des actifs amaigrissants.",
+          text: "Soyons précis, car la réglementation l'est aussi. La **L-carnitine** est un classique autour de l'entraînement, mais aucune allégation santé n'est autorisée à son sujet : on ne peut donc lui prêter aucun effet, minceur compris. Le **CLA** (un acide gras) est populaire en période de régime, là encore sans allégation reconnue. Ce sont des produits d'accompagnement, pas des actifs amaigrissants.",
         },
         {
           type: 'p',
-          text: "Le seul ingrédient de ce rayon avec des allégations autorisées, c'est la **caféine**, présente dans beaucoup de formules « thermogéniques » : elle **contribue à augmenter la vigilance et à améliorer la concentration**. Concrètement, ça peut aider à attaquer une séance avec plus d'énergie quand on s'entraîne en déficit, mais ça ne « brûle » pas la graisse pour autant.",
+          text: "La **caféine** est présente dans beaucoup de formules de ce rayon : chaque fiche indique sa teneur par dose. Ses allégations sont encore en attente au niveau européen, on ne lui prête donc aucun effet ici, et elle ne « brûle » pas la graisse pour autant.",
         },
         {
           type: 'list',
           items: [
-            'L-carnitine : rôle dans le transport des acides gras ; pas d\'allégation minceur autorisée.',
+            'L-carnitine : classique autour de l\'entraînement ; aucune allégation santé autorisée.',
             'CLA : acide gras populaire en régime ; pas d\'allégation reconnue.',
-            'Caféine (formules thermogéniques) : contribue à la vigilance et à la concentration.',
-            'Draineurs : agissent sur l\'eau, pas sur la masse grasse. À ne pas confondre avec « maigrir ».',
+            'Formules avec caféine : teneur indiquée sur chaque fiche ; allégations encore en attente au niveau européen.',
+            'Draineurs : formules à base de plantes, à ne pas confondre avec une perte de graisse.',
           ],
         },
       ],
@@ -61,11 +63,11 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: 'Pour t\'y retrouver, voici les quatre grandes catégories. La **L-carnitine**, le grand classique autour de l\'entraînement, en poudre, en boisson prête ou en shot. Le **CLA**, en capsules, choisi pendant les périodes de régime. Les **formules thermogéniques** à base de caféine et de plantes, pour les pratiquants avancés qui tolèrent bien les stimulants. Et les **draineurs**, qui agissent sur la rétention d\'eau, un axe différent, à ne pas confondre avec la perte de graisse.',
+          text: 'Pour t\'y retrouver, voici les quatre grandes catégories. La **L-carnitine**, le grand classique autour de l\'entraînement, en poudre, en boisson prête ou en shot. Le **CLA**, en capsules, choisi pendant les périodes de régime. Les **formules** à base de caféine et de plantes, pour les pratiquants avancés qui tolèrent bien les stimulants. Et les **draineurs**, des formules à base de plantes, à ne pas confondre avec la perte de graisse.',
         },
         {
           type: 'p',
-          text: 'Aucune de ces familles n\'est indispensable. Elles se choisissent selon ta préférence et ta tolérance, une fois que les bases sont solides. Si tu débutes une sèche, le plus utile n\'est pas dans ce rayon : c\'est de sécuriser ton apport en protéines pour ne pas perdre de muscle, un point qu\'on détaille dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour).',
+          text: 'Aucune de ces familles n\'est indispensable. Elles se choisissent selon ta préférence et ta tolérance, une fois que les bases sont solides. Si tu débutes une sèche, la priorité est ton apport en protéines, pour ne pas perdre de muscle : un point qu\'on détaille dans [combien de protéines par jour](/blog/combien-de-proteines-par-jour).',
         },
       ],
     },
@@ -104,11 +106,11 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Un brûleur peut avoir un petit intérêt pour quelqu'un dont la sèche est **déjà bien menée** : alimentation contrôlée, entraînement régulier, sommeil correct, et qui cherche un coup de pouce d'énergie à l'entraînement (via la caféine) ou un rituel qui l'aide à rester dans le cadre. C'est un confort, pas un moteur.",
+          text: "Un brûleur peut avoir sa place chez quelqu'un dont la sèche est **déjà bien menée** : alimentation contrôlée, entraînement régulier, sommeil correct, et qui cherche un produit d'accompagnement ou un rituel qui l'aide à rester dans le cadre. C'est un confort, pas un moteur.",
         },
         {
           type: 'p',
-          text: 'Il n\'a en revanche aucun intérêt si tu attends de lui qu\'il compense une alimentation non maîtrisée, ou si tu débutes ta démarche : tu dépenserais de l\'argent sans résultat. Et il est à éviter le soir s\'il contient de la caféine, pour ne pas gêner ton sommeil, sujet qu\'on aborde dans [mieux dormir et récupérer](/blog/mieux-dormir-recuperation).',
+          text: 'En revanche, il ne compensera pas une alimentation non maîtrisée, et si tu débutes ta démarche, ce n\'est pas la priorité : commence par les bases ci-dessous. Et il est à éviter le soir s\'il contient de la caféine, pour ne pas gêner ton sommeil, sujet qu\'on aborde dans [mieux dormir et récupérer](/blog/mieux-dormir-recuperation).',
         },
         {
           type: 'steps',
@@ -134,11 +136,11 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
     },
     {
       q: 'La L-carnitine fait-elle perdre du poids ?',
-      a: 'La L-carnitine joue un rôle dans le transport des acides gras, mais aucune allégation de perte de poids n\'est autorisée à son sujet. On ne peut donc pas lui prêter d\'effet minceur. C\'est un produit d\'accompagnement classique autour de l\'entraînement, sans plus.',
+      a: 'Aucune allégation de perte de poids n\'est autorisée pour la L-carnitine : on ne peut donc pas lui prêter d\'effet minceur. C\'est un produit d\'accompagnement classique autour de l\'entraînement.',
     },
     {
       q: 'Quel est le brûleur de graisse le plus efficace ?',
-      a: 'La question est mal posée : aucun brûleur ne remplace un déficit calorique. Les formules à base de caféine peuvent apporter un coup d\'énergie à l\'entraînement (la caféine contribue à la vigilance et à la concentration), mais l\'efficacité réelle vient de ton alimentation et de ton activité, pas du produit.',
+      a: 'Aucun brûleur ne remplace un déficit calorique : le résultat vient de ton alimentation et de ton activité. Le choix dépend surtout de ta tolérance aux stimulants : sans caféine (L-carnitine, CLA) ou formule complète avec caféine, à éviter en fin de journée. En boutique, on t\'aide à choisir.',
     },
     {
       q: 'Faut-il prendre un brûleur quand on débute une sèche ?',

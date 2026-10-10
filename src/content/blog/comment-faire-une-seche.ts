@@ -5,7 +5,8 @@ import type { BlogArticle } from '@/lib/blog'
 // COMPLIANCE UE 1924/2006 : le moteur = déficit calorique (cohérent avec
 // bruleurs-de-graisse-ca-marche : « aucun brûleur ne fait maigrir sans
 // déficit ») ; protéines = « contribuent au maintien et au développement de la
-// masse musculaire » (autorisée) ; caféine = vigilance (autorisée) ;
+// masse musculaire » (autorisée) ; caféine : allégations en attente au niveau
+// UE, on cite la teneur, jamais un effet (10/10/2026) ;
 // L-carnitine/CLA présentés SANS allégation minceur. Chiffres cohérents avec
 // combien-de-proteines-par-jour (1,6-2,2 g/kg → haut de fourchette en sèche).
 // Handles + prix vérifiés Shopify 2026-08-05. Packs Sèche NON liés (DRAFT).
@@ -125,7 +126,7 @@ export const commentFaireUneSeche: BlogArticle = {
           items: [
             "**Une protéine en poudre** (whey ou isolate) : le plus utile de tous, pour tenir son quota de protéines avec peu de calories.",
             "**Une multivitamine** : en déficit, on mange moins, donc moins de micronutriments. Un [filet de sécurité pertinent](/blog/multivitamines-utile-comment-choisir) pendant la diète.",
-            "**Les classiques de sèche** (L-carnitine, CLA, formules thermogéniques) : en accompagnement, pour les pratiquants qui veulent tout mettre de leur côté, sans leur prêter de pouvoirs magiques. Les formules à base de caféine aident à maintenir la vigilance quand l'énergie baisse en fin de diète.",
+            "**Les classiques de sèche** (L-carnitine, CLA, formules avec caféine) : en accompagnement, sans leur prêter d'effet. Pour les formules avec caféine, la teneur est indiquée sur chaque fiche.",
           ],
         },
         {
@@ -186,7 +187,7 @@ export const commentFaireUneSeche: BlogArticle = {
     },
     {
       q: 'Quels compléments prendre pendant une sèche ?',
-      a: "Par ordre d'utilité : une protéine en poudre (whey ou isolate) pour tenir le quota de protéines avec peu de calories, une multivitamine pour couvrir les micronutriments en déficit, puis les classiques de sèche (L-carnitine, CLA, thermogéniques) en accompagnement. Aucun complément ne fait perdre de gras sans déficit calorique.",
+      a: "Par ordre d'utilité : une protéine en poudre (whey ou isolate) pour tenir le quota de protéines avec peu de calories, une multivitamine pour couvrir les micronutriments en déficit, puis les classiques de sèche (L-carnitine, CLA, formules avec caféine) en accompagnement. Aucun complément ne fait perdre de gras sans déficit calorique.",
     },
   ],
   products: [
