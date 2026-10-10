@@ -95,7 +95,7 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est populaire pour la peau et les articulations : c'est un produit plaisir et entretien, à choisir pour sa composition. À noter qu'officiellement, c'est la **vitamine C qui contribue à la formation normale de collagène**, d'où l'intérêt des formules qui associent les deux, comme le [Collagen Complex + Vitamine C](/products/collagen-complex-vitamine-c) ou le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide).",
+          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est populaire pour la peau et les articulations : c'est un produit plaisir et entretien, à choisir pour sa composition. À noter qu'officiellement, c'est la **vitamine C qui contribue à la formation normale de collagène** : associe ton collagène à une source de vitamine C. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dosette, le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) se boit tel quel.",
         },
         {
           type: 'p',

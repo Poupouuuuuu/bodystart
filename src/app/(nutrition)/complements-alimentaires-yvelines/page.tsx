@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, Store, Clock, MapPin, Phone, ShoppingBag, MessageCircle, Truck } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES } from '@/lib/categories'
+import { GOOGLE_DIRECTIONS_URL } from '@/lib/store-info'
 
 // Landing SEO locale à l'échelle du DÉPARTEMENT (intention « compléments
 // alimentaires Yvelines / 78 / près de moi ») — COMPLÉMENTAIRE de la page
@@ -203,7 +204,7 @@ export default function YvelinesLandingPage() {
             </ul>
             <div className="flex flex-col gap-3">
               <a
-                href="https://www.google.com/maps/dir/?api=1&destination=48.736836,1.909592"
+                href={GOOGLE_DIRECTIONS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-white text-spruce font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-white/90 transition-colors"

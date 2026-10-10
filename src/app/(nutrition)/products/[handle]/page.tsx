@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getProductByHandle, getProducts } from '@/lib/shopify'
 import { pickComplements } from '@/lib/merchandising'
@@ -8,18 +8,18 @@ import { isBundle, pickInitialBundleVariant } from '@/lib/shopify/bundle'
 import { pickDefaultVariant } from '@/lib/product-variant'
 import BackButton from '@/components/product/v2/BackButton'
 import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
-import LeConseilBodyStartV2 from '@/components/product/v2/LeConseilBodyStartV2'
-import AQuoiCaSertV2 from '@/components/product/v2/AQuoiCaSertV2'
 import NutritionTableV2 from '@/components/product/v2/NutritionTableV2'
 import CompositionV2 from '@/components/product/v2/CompositionV2'
 import ProductDescriptionV2 from '@/components/product/v2/ProductDescriptionV2'
+import QuestionProduitV2 from '@/components/product/v2/QuestionProduitV2'
 import ReviewsV2 from '@/components/product/v2/ReviewsV2'
 import CrossSellV2 from '@/components/product/v2/CrossSellV2'
 import PrecautionsEmploiV2 from '@/components/product/v2/PrecautionsEmploiV2'
-import { buildPageMetadata } from '@/lib/seo'
+import { buildPageMetadata, plainTextFromHtml, truncateAtWord } from '@/lib/seo'
 import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
 import { ratingFromMetafields, buildAggregateRating } from '@/lib/reviews'
 import { getGoogleRating } from '@/lib/shopify/google-rating'
+import { getProductRedirect } from '@/lib/shopify/product-redirects'
 
 // ISR 3 min (sprint perf 2026-07-04) : la page était en revalidate=0 +
 // force-no-store « pour le stock C&C temps réel » → TTFB ~600 ms mesuré en prod
@@ -72,7 +72,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // Les seo.title Shopify sont rédigés SANS suffixe : le template global
     // « %s | BodyStart Nutrition » s'applique ensuite via buildPageMetadata.
     const title = product.seo?.title?.trim() || product.title
-    const description = product.seo?.description?.trim() || product.description?.slice(0, 160) || ''
+    const description =
+      product.seo?.description?.trim() ||
+      truncateAtWord(plainTextFromHtml(product.descriptionHtml) || product.description || '')
     const image = product.featuredImage?.url
 
     return buildPageMetadata({
@@ -80,9 +82,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       ogImage: image,
-      // Next.js 14.2 Metadata supporte 'website' | 'article' uniquement (pas 'product').
-      // Le rich snippet produit est gere via le schema.org JSON-LD ci-dessous.
-      ogType: 'website',
+      // og:type product : rendu par la page (Next ne connaît pas ce type).
+      ogType: 'product',
     })
   } catch {
     return { title: 'Produit' }
@@ -128,8 +129,14 @@ export default async function ProductPage({ params }: Props) {
     throw err
   }
 
-  // API OK mais produit réellement introuvable → vrai 404.
-  if (!product) notFound()
+  // API OK mais produit introuvable : fiche retirée listée dans le métachamp
+  // des redirections → redirection permanente (308 en App Router, traitée
+  // comme un 301 par Google) ; sinon vrai 404.
+  if (!product) {
+    const destination = await getProductRedirect(handle)
+    if (destination) permanentRedirect(destination)
+    notFound()
+  }
 
   // Stock boutique physique : fetché CÔTÉ CLIENT par BuyBoxV2 (/api/inventory
   // ?productId=…) — temps réel même avec la page en ISR. On ne passe plus que
@@ -251,6 +258,8 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <>
+      {/* Hissée dans <head> par React 19 ; buildPageMetadata n'émet pas de og:type ici. */}
+      <meta property="og:type" content="product" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
@@ -297,17 +306,16 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ─── Le conseil BodyStart (place haut, juste apres buy box) ─── */}
-      <section className="bg-white">
-        <div className="container py-12 md:py-16">
-          <div className="max-w-4xl mx-auto">
-            <LeConseilBodyStartV2 handle={product.handle} />
-          </div>
-        </div>
-      </section>
-
-      {/* ─── A quoi ca sert (3 cartes) ─── */}
-      <AQuoiCaSertV2 />
+      {/* ─── Description Shopify, juste sous la zone d'achat (10/10/2026) ───
+          Avant : deux blocs génériques identiques sur toutes les fiches
+          (« Le conseil BodyStart », « Ce qu'on vérifie ») passaient devant,
+          dont une allégation santé non autorisée affichée partout. Aucune
+          allégation dans le code : elles ne viennent que des descriptions
+          Shopify, relues avant publication. */}
+      <ProductDescriptionV2
+        descriptionHtml={product.descriptionHtml}
+        description={product.description}
+      />
 
       {/* ─── Valeurs nutritionnelles (metafield custom.valeurs_nutritionnelles) ─── */}
       {/* Masquee pour les bundles : un pack n'a pas de valeurs nutritionnelles
@@ -318,11 +326,7 @@ export default async function ProductPage({ params }: Props) {
       {/* ─── Composition + Allergenes (metafields custom.composition + custom.allergenes) ─── */}
       <CompositionV2 metafields={product.metafields} />
 
-      {/* ─── Description longue ─── */}
-      <ProductDescriptionV2
-        descriptionHtml={product.descriptionHtml}
-        description={product.description}
-      />
+      <QuestionProduitV2 />
 
       {/* ─── Avis ─── */}
       {/* Sans <Suspense> : composant serveur (note Google), rien à hydrater ;

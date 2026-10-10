@@ -13,6 +13,7 @@ import Reveal from '@/components/ui/Reveal'
 import { getFeaturedProducts, getProductByHandle } from '@/lib/shopify'
 import { HOME_FEATURED_HANDLE, homeBestSellers } from '@/lib/merchandising'
 import { buildPageMetadata } from '@/lib/seo'
+import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 
 // REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
 // Ordre des sections : §B.Home.1-8 (avis retire, cf. site-rewrite-copy-v1.md §3.6)
@@ -20,15 +21,16 @@ import { buildPageMetadata } from '@/lib/seo'
 export const metadata: Metadata = {
   ...buildPageMetadata({
     path: '/',
-    title: 'BodyStart Nutrition, anciennement BodyFit Coignières : compléments alimentaires',
+    title: 'Compléments alimentaires à Coignières | BodyStart Nutrition',
     description:
       'BodyStart Nutrition, anciennement BodyFit Coignières : compléments sport et santé (78). Conseil gratuit en boutique, Click & Collect gratuit.',
   }),
-  // <title> exact demandé : bypass du template '%s | BodyStart Nutrition'
-  // (le og:title / twitter:title gardent ce même libellé via buildPageMetadata).
-  // « anciennement BodyFit Coignières » : capte les recherches sur l'ancien nom (demande Adam, 25/09/2026).
+  // <title> exact (59 caractères, audit SEO du 10/10/2026 : l'ancien en
+  // faisait 79, coupé dans Google), bypass du template. « anciennement BodyFit »
+  // (demande d'Adam du 25/09/2026) reste dans la description, la phrase
+  // d'ouverture du hero et l'alternateName du JSON-LD.
   title: {
-    absolute: 'BodyStart Nutrition, anciennement BodyFit Coignières : compléments alimentaires',
+    absolute: 'Compléments alimentaires à Coignières | BodyStart Nutrition',
   },
 }
 
@@ -90,6 +92,11 @@ export default function HomePage() {
       {/* 5. Le conseil qu'aucun site n'a (differenciateur) */}
       <Reveal>
         <ConseilV3 />
+      </Reveal>
+
+      {/* 5a. Nos guides : maillage vers le blog (audit SEO du 10/10/2026) */}
+      <Reveal>
+        <NosGuidesV3 />
       </Reveal>
 
       {/* 5b. Preuves — chiffres geants sur vert sapin (chapitre) */}

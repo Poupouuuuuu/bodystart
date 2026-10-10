@@ -106,9 +106,9 @@ export const creatinePourLesFemmes: BlogArticle = {
           headers: ['Produit', 'Type', 'Prix'],
           rows: [
             [
-              '[Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee)',
+              '[Micronized Creatine Monohydrate Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate)',
               'Poudre neutre micronisée',
-              '{{prix:creatine-100-monohydrate-micronisee|29,90 €}}',
+              '{{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}}',
             ],
             [
               '[Clear Pro Creatine Eric Favre](/products/clear-pro-creatine)',
@@ -142,7 +142,7 @@ export const creatinePourLesFemmes: BlogArticle = {
         {
           type: 'steps',
           items: [
-            'Choisis une créatine monohydrate, comme la [Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee).',
+            'Choisis une créatine monohydrate, comme la [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate).',
             'Prends 3 à 5 g par jour, tous les jours, au moment qui t\'arrange.',
             'Mélange-la dans de l\'eau, un jus ou ton shaker de protéines.',
             'Continue les jours de repos : la saturation se maintient par la prise quotidienne.',
@@ -179,7 +179,7 @@ export const creatinePourLesFemmes: BlogArticle = {
     },
   ],
   products: [
-    { handle: 'creatine-100-monohydrate-micronisee', label: 'Créatine 100 % Monohydrate Micronisée (French Nutrition)' },
+    { handle: 'dedicated-nutrition-micronized-creatine-monohydrate', label: 'Micronized Creatine Monohydrate (Dedicated)' },
     { handle: 'clear-pro-creatine', label: 'Clear Pro Creatine (Eric Favre)' },
     { handle: 'beauty-shape-proteine-collagene', label: 'Beauty & Shape - Protéine & Collagène' },
   ],

@@ -55,11 +55,14 @@ export default async function HeroV3() {
         <div className="grid items-end gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
           {/* ─── Titre ─── */}
           <div className="max-w-[920px]">
+            {/* h1 = la requête visée (audit SEO du 10/10/2026), en surtitre ; le
+                slogan reste l'élément dominant (et l'élément LCP texte), en <p>.
+                Pas d'animation sur le h1 (règle V2). */}
+            <h1 className="mb-5 max-w-[640px] text-[14px] font-semibold leading-snug text-white/85 md:text-[15px]">
+              Compléments alimentaires et nutrition sportive à Coignières
+            </h1>
+
             <div className="hero-rise mb-6 flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-white/85 backdrop-blur-md">
-                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-mustard" />
-                Coignières · Yvelines
-              </span>
               {/* Cible tactile de 44 px ; la pastille visible garde ses 36 px et -my-1
                   laisse la ligne à la même hauteur. */}
               <a
@@ -75,16 +78,16 @@ export default async function HeroV3() {
               </a>
             </div>
 
-            <h1 className="display-hero font-display text-[46px] font-extrabold leading-[0.94] tracking-[-0.025em] text-canvas sm:text-[60px] md:text-[76px] lg:text-[92px] xl:text-[104px]">
+            <p className="display-hero font-display text-[46px] font-extrabold leading-[0.94] tracking-[-0.025em] text-canvas sm:text-[60px] md:text-[76px] lg:text-[92px] xl:text-[104px]">
               Les bons compléments.
               <br />
               <span className="text-sage">Le bon conseil.</span>
-            </h1>
+            </p>
 
             <p className="hero-rise hero-rise-1 mt-7 max-w-[560px] text-[17px] leading-[1.6] text-white/80 md:text-[19px]">
-              Que tu veuilles prendre du muscle ou juste te sentir mieux au quotidien, on
-              t&apos;aide à choisir ce qui te sert vraiment, et à zapper le reste. Produits
-              propres, bien dosés, testés par nous.
+              BodyStart Nutrition est une boutique de compléments alimentaires et de
+              nutrition sportive à Coignières (78), anciennement BodyFit&nbsp;: conseil en
+              boutique, Click &amp; Collect et livraison partout en France.
             </p>
 
             <div className="hero-rise hero-rise-2 mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">

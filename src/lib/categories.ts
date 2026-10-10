@@ -7,7 +7,7 @@
  * choisir), voix de marque, allégations UE 1924/2006 propres.
  *
  * Consommé par : /categories/[slug], le sitemap, le footer (maillage entrant),
- * et public/llms.txt (liens catégories).
+ * et /llms.txt (src/lib/llms.ts).
  */
 
 export interface CategoryPage {
@@ -45,7 +45,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Si tu débutes ou que tu cherches le meilleur rapport qualité-prix, une whey concentrée (~70-80 % de protéines) fait parfaitement le travail. Si tu digères mal le lactose ou que tu veux le produit le plus pur en sèche, passe sur une isolate (≥ 90 % de protéines, quasi sans lactose). Et si ton problème est de manger assez en prise de masse, un gainer ajoute des calories pratiques à ta journée.",
     ],
     featured: [
-      { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle, la valeur sûre à 21,90 €' },
+      { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle, la valeur sûre' },
       { handle: 'iso-fusion-protein', label: 'Iso Fusion Protein, pois, œuf et lait' },
       { handle: 'mutant-mass', label: 'Mutant Mass, le gainer prise de masse' },
     ],
@@ -78,7 +78,6 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Toutes nos créatines sont de la créatine monohydrate en poudre : la différence se joue sur le goût (neutre, à mélanger à ta boisson, ou aromatisée) et la finesse de mouture (micronisée, elle se dissout mieux). L'une des versions aromatisées ajoute aussi bêta-alanine, taurine et vitamines B. Pas besoin de phase de charge : la régularité fait tout. Comme tout complément, elle s'utilise dans le cadre d'une alimentation variée et équilibrée et d'un mode de vie sain. Elle s'adresse aux adultes qui s'entraînent de façon intense.",
     ],
     featured: [
-      { handle: 'creatine-100-monohydrate-micronisee', label: 'Créatine 100 % Monohydrate Micronisée French Nutrition' },
       { handle: 'dedicated-nutrition-micronized-creatine-monohydrate', label: 'Micronized Creatine Monohydrate Dedicated, sans arôme' },
       { handle: 'clear-pro-creatine', label: 'Clear Pro Creatine Eric Favre, version aromatisée' },
     ],
@@ -291,12 +290,12 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     h1: 'Santé & bien-être : vitamines, minéraux et essentiels',
     intro: [
       "Avant les compléments de performance, il y a les fondations : la vitamine D contribue au fonctionnement normal du système immunitaire, le magnésium contribue à réduire la fatigue et à une fonction musculaire normale, les oméga 3 EPA et DHA contribuent à une fonction cardiaque normale (effet obtenu avec 250 mg d'EPA et de DHA par jour). C'est le rayon qu'on recommande de regarder en premier, surtout l'hiver.",
-      "Comment choisir ? Pars de ton besoin réel : coup de fatigue et entraînement intense → magnésium bisglycinate ou ZMA ; peu d'exposition au soleil d'octobre à mars → vitamine D3 ; peu de poisson gras dans l'assiette → oméga 3. Pour le collagène, prends une formule avec vitamine C : la vitamine C contribue à la formation normale de collagène pour assurer la fonction normale des cartilages et de la peau. Un produit à la fois, choisi pour une raison précise, en complément d'une alimentation variée et équilibrée et d'un mode de vie sain.",
+      "Comment choisir ? Pars de ton besoin réel : coup de fatigue et entraînement intense → magnésium bisglycinate ou ZMA ; peu d'exposition au soleil d'octobre à mars → vitamine D3 ; peu de poisson gras dans l'assiette → oméga 3. Pour le collagène, associe-le à une source de vitamine C : la vitamine C contribue à la formation normale de collagène pour assurer la fonction normale des cartilages et de la peau. Un produit à la fois, choisi pour une raison précise, en complément d'une alimentation variée et équilibrée et d'un mode de vie sain.",
     ],
     featured: [
       { handle: 'vitamin-d3-k2-dy-60-softgels', label: 'Vitamine D3 + K2 DY Nutrition' },
       { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY Nutrition' },
-      { handle: 'collagen-complex-vitamine-c', label: 'Collagen Complex + Vitamine C Eric Favre' },
+      { handle: 'collagene-hydrolyse-osavi-type-i-iii-poudre-660-g', label: 'Collagène Hydrolysé Osavi Type I & III' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },

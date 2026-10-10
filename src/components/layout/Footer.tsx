@@ -227,7 +227,7 @@ export default function Footer() {
           {/* ─── Bottom Bar ─── */}
           <div className="border-t border-spruce/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-ink-mute">
-              © {new Date().getFullYear()} BodyStart. Tous droits réservés.
+              © {new Date().getFullYear()} BodyStart Nutrition. Tous droits réservés.
             </p>
             <div className="flex flex-wrap justify-center gap-4 md:gap-6">
               {FOOTER_LINKS.legal.map((link) => (

@@ -55,7 +55,7 @@ export const complementsDebutantMusculation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation. La dose de référence : **3 à 5 g par jour**, entraînement ou pas. Pas besoin de phase de charge ni de timing précis. La [Créatine 100 % Monohydrate Micronisée](/products/creatine-100-monohydrate-micronisee) à {{prix:creatine-100-monohydrate-micronisee|29,90 €}} correspond à ce profil : du monohydrate pur, la forme la plus étudiée. Pour la question du moment de prise, on a tranché dans [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance)."
+          "text": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation. La dose de référence : **3 à 5 g par jour**, entraînement ou pas. Pas besoin de phase de charge ni de timing précis. La [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate) à {{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}} correspond à ce profil : du monohydrate micronisé sans arôme, la forme la plus étudiée. Pour la question du moment de prise, on a tranché dans [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance)."
         },
         {
           "type": "p",
@@ -124,7 +124,7 @@ export const complementsDebutantMusculation: BlogArticle = {
             [
               "Créatine monohydrate",
               "3-5 g par jour",
-              "Créatine 100 % Monohydrate Micronisée ({{prix:creatine-100-monohydrate-micronisee|29,90 €}})"
+              "Micronized Creatine Monohydrate Dedicated ({{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}})"
             ],
             [
               "Vitamine D (optionnel, en hiver)",
@@ -196,8 +196,8 @@ export const complementsDebutantMusculation: BlogArticle = {
       "label": "Whey Native Protimuscle (Nutrimuscle)"
     },
     {
-      "handle": "creatine-100-monohydrate-micronisee",
-      "label": "Créatine 100 % Monohydrate Micronisée"
+      "handle": "dedicated-nutrition-micronized-creatine-monohydrate",
+      "label": "Micronized Creatine Monohydrate (Dedicated)"
     },
     {
       "handle": "vitamin-d3-k2",
