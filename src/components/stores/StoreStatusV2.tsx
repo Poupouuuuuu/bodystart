@@ -69,7 +69,7 @@ export default function StoreStatusV2({ hours }: StoreStatusV2Props) {
   // 10/10/2026). Le statut réel n'apparaît qu'une fois calculé dans le navigateur.
   if (!status) {
     return (
-      <span className="inline-flex items-center gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full">
+      <span className="inline-flex self-start items-center gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full">
         <span className="w-1.5 h-1.5 rounded-full bg-spruce/40" />
         Lun-sam · 11h-19h
       </span>
@@ -82,8 +82,8 @@ export default function StoreStatusV2({ hours }: StoreStatusV2Props) {
     <span
       className={
         open
-          ? 'inline-flex items-center gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full'
-          : 'inline-flex items-center gap-2 bg-terracotta/10 text-terracotta text-[12px] font-semibold px-3 py-1 rounded-full'
+          ? 'inline-flex self-start items-center gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full'
+          : 'inline-flex self-start items-center gap-2 bg-terracotta/10 text-terracotta text-[12px] font-semibold px-3 py-1 rounded-full'
       }
     >
       <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-fresh' : 'bg-terracotta'}`} />

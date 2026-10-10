@@ -102,6 +102,16 @@ describe('truncateAtWord', () => {
   })
 })
 
+describe('truncateAtWord, parenthèse', () => {
+  it('ne laisse pas une parenthèse ouverte en fin de coupe', () => {
+    const text =
+      "L'Iso Zero d'Eric Favre, c'est la whey qu'on conseille en boutique quand tu veux du propre : 25,4 g de protéines par dose de 30 g, quasi zéro sucre (0,7 g) et zéro graisse."
+    expect(truncateAtWord(text)).toBe(
+      "L'Iso Zero d'Eric Favre, c'est la whey qu'on conseille en boutique quand tu veux du propre : 25,4 g de protéines par dose de 30 g, quasi zéro sucre…"
+    )
+  })
+})
+
 describe('og:type product', () => {
   it('pas de type dans openGraph (la page rend la balise elle-même)', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

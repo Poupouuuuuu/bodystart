@@ -118,6 +118,9 @@ export function truncateAtWord(text: string, max = 155): string {
   if (clean.length <= max) return clean
   const cut = clean.slice(0, max)
   const lastSpace = cut.lastIndexOf(' ')
-  const head = (lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).replace(/[\s,;:.(«-]+$/, '')
-  return `${head}…`
+  let head = lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut
+  // Parenthèse ouverte et non refermée (« sucre (0,7… ») : on coupe avant.
+  const open = head.lastIndexOf('(')
+  if (open > head.lastIndexOf(')') && open > max * 0.6) head = head.slice(0, open)
+  return `${head.replace(/[\s,;:.(«-]+$/, '')}…`
 }
