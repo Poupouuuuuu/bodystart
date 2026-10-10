@@ -71,7 +71,7 @@ export default function StoreStatusV2({ hours }: StoreStatusV2Props) {
     return (
       <span className="inline-flex self-start items-center gap-2 bg-sage text-spruce text-[12px] font-semibold px-3 py-1 rounded-full">
         <span className="w-1.5 h-1.5 rounded-full bg-spruce/40" />
-        Lun-sam · 11h-19h
+        Lun. au sam. · 11&nbsp;h à 19&nbsp;h
       </span>
     )
   }

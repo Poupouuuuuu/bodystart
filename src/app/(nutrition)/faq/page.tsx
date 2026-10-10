@@ -26,7 +26,7 @@ const FAQ_ITEMS = [
     category: 'Produits & Conseils',
     questions: [
       { q: 'Vos produits conviennent-ils aux végétariens/végétaliens ?', a: 'Certains de nos produits sont végétariens ou végétaliens. Chaque fiche produit précise les informations relatives au régime alimentaire.' },
-      { q: 'Comment choisir le bon complément pour mon objectif ?', a: 'Fais le point en une minute avec notre guide conseil : ton objectif, ton budget et ta fréquence d\'entraînement, et il te propose une sélection en stock à la boutique. Tu peux aussi parcourir nos catégories (Protéines, Créatine, …) ou venir en boutique, où nos conseillers te guideront personnellement.' },
+      { q: 'Comment choisir le bon complément pour mon objectif ?', a: 'Fais le point en une minute avec notre guide conseil\u00a0: ton objectif, ton budget et ta fréquence d\'entraînement, et il te propose une sélection en stock à la boutique. Tu peux aussi parcourir nos catégories (Protéines, Créatine, …) ou venir en boutique, où nos conseillers te guideront personnellement.' },
       { q: 'Les produits sont-ils contrôlés antidopage ?', a: 'Nous sélectionnons des produits de qualité. Consulte les fiches produits pour les certifications spécifiques. En cas de doute, consulte la liste de l\'AFLD.' },
       { q: 'Peut-on cumuler plusieurs compléments ?', a: 'Oui, mais nous recommandons de demander l\'avis d\'un professionnel de santé avant d\'associer plusieurs produits. Nos conseillers en boutique peuvent t\'aider.' },
     ],
@@ -97,7 +97,7 @@ export default function FAQPage() {
           <Link href="/conseil" className="text-spruce font-semibold underline underline-offset-4 hover:text-fresh-deep">
             notre guide conseil
           </Link>
-          . Tu ne trouves pas la réponse ?{' '}
+          . Tu ne trouves pas la réponse&nbsp;?{' '}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="text-spruce font-semibold hover:underline underline-offset-4"

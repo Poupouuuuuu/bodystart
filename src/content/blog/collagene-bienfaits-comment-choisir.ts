@@ -83,7 +83,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
           rows: [
             [
               '[Collagène Hydrolysé Osavi Type I & III](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g)',
-              'Poudre aromatisée, 20 g par dose',
+              'Poudre de collagène bovin aromatisée, 20 g de peptides par dose de 22 g',
               '{{prix:collagene-hydrolyse-osavi-type-i-iii-poudre-660-g|44,90 €}}',
             ],
             [

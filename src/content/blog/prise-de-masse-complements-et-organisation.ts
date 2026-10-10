@@ -115,7 +115,7 @@ export const priseDeMasseComplementsEtOrganisation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Si tu cherches la forme la plus documentée, la [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate) ({{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}}) va à l'essentiel : du monohydrate micronisé, sans arôme."
+          "text": "Côté produit, la [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate) ({{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}}) va à l'essentiel : du monohydrate, la forme la plus documentée, micronisé et sans arôme. Les autres références sont dans notre rayon [créatine](/categories/creatine)."
         }
       ]
     },

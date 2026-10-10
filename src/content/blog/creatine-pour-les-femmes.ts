@@ -12,7 +12,7 @@ export const creatinePourLesFemmes: BlogArticle = {
   metaDescription:
     'La créatine est-elle bonne pour les femmes ? Oui : 3 à 5 g/jour, mêmes bénéfices, sans faire « gonfler » ni masculiniser. On démonte les mythes.',
   excerpt:
-    "La créatine est aussi efficace et sûre chez la femme que chez l'homme : 3 à 5 g de monohydrate par jour améliorent la performance sur les efforts intenses et courts. Non, elle ne « fait pas gonfler » et ne masculinise pas : la petite prise de poids du début, c'est de l'eau dans le muscle, pas de la graisse.",
+    "La créatine est aussi efficace et sûre chez la femme que chez l'homme : à 3 à 5 g de monohydrate par jour, la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. Non, elle ne « fait pas gonfler » et ne masculinise pas : la petite prise de poids du début, c'est de l'eau dans le muscle, pas de la graisse.",
   datePublished: '2026-07-17',
   dateModified: '2026-09-30',
   sections: [

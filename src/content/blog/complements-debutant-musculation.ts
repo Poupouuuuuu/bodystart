@@ -55,7 +55,7 @@ export const complementsDebutantMusculation: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation. La dose de référence : **3 à 5 g par jour**, entraînement ou pas. Pas besoin de phase de charge ni de timing précis. La [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate) à {{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}} correspond à ce profil : du monohydrate micronisé sans arôme, la forme la plus étudiée. Pour la question du moment de prise, on a tranché dans [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance)."
+          "text": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée, exactement le format d'une séance de musculation. La dose de référence : **3 à 5 g par jour**, entraînement ou pas. Pas besoin de phase de charge ni de timing précis. La [Micronized Creatine Monohydrate de Dedicated](/products/dedicated-nutrition-micronized-creatine-monohydrate) à {{prix:dedicated-nutrition-micronized-creatine-monohydrate|36,90 €}} correspond à ce profil : du monohydrate (la forme la plus étudiée), micronisé et sans arôme. Pour la question du moment de prise, on a tranché dans [créatine avant ou après la séance](/blog/creatine-avant-ou-apres-seance)."
         },
         {
           "type": "p",
