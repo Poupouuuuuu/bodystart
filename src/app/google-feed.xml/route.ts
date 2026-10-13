@@ -3,12 +3,16 @@
  *
  * - Source : Admin API (status ACTIVE, publié online store, hors tag
  *   `exclu-google`), paginée par curseur → tout le catalogue.
+ * - Disponibilité : API Storefront (emplacements des ventes en ligne). Le
+ *   stock Admin additionne les dépôts : un produit présent seulement au
+ *   dépôt était annoncé « in_stock » à Google.
  * - 1 <item> par variante achetable ; logique de mapping dans
  *   src/lib/google-feed.ts (pure, testée).
  * - Cache : ISR 1h (revalidate) + Cache-Control pour les CDN/Google.
  */
 import { shopifyAdminFetch } from '@/lib/shopify/client'
-import { buildGoogleFeedXml, EXCLUDE_TAG, type FeedProduct } from '@/lib/google-feed'
+import { buildGoogleFeedXml, EXCLUDE_TAG, type FeedProduct, type FeedVariant } from '@/lib/google-feed'
+import { disponibiliteEnLigne } from '@/lib/shopify/disponibilite'
 
 export const revalidate = 3600
 export const runtime = 'nodejs'
@@ -36,8 +40,6 @@ const FEED_QUERY = `
             barcode
             price
             compareAtPrice
-            inventoryQuantity
-            inventoryPolicy
             image { url }
           }
         }
@@ -46,15 +48,17 @@ const FEED_QUERY = `
   }
 `
 
+type AdminProduct = Omit<FeedProduct, 'variants'> & { variants: { nodes: Omit<FeedVariant, 'availableForSale'>[] } }
+
 interface FeedQueryResponse {
   products: {
     pageInfo: { hasNextPage: boolean; endCursor: string | null }
-    nodes: FeedProduct[]
+    nodes: AdminProduct[]
   }
 }
 
 async function fetchAllProducts(): Promise<FeedProduct[]> {
-  const all: FeedProduct[] = []
+  const all: AdminProduct[] = []
   let cursor: string | null = null
   // Garde-fou : 40 pages × 50 = 2000 produits max (catalogue actuel ~112)
   for (let page = 0; page < 40; page++) {
@@ -63,7 +67,11 @@ async function fetchAllProducts(): Promise<FeedProduct[]> {
     if (!data.products.pageInfo.hasNextPage) break
     cursor = data.products.pageInfo.endCursor
   }
-  return all
+  const dispo = await disponibiliteEnLigne(all.flatMap((p) => p.variants.nodes.map((v) => v.id)))
+  return all.map((p) => ({
+    ...p,
+    variants: { nodes: p.variants.nodes.map((v) => ({ ...v, availableForSale: dispo[v.id] === true })) },
+  }))
 }
 
 export async function GET() {

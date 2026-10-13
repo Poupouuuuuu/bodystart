@@ -75,22 +75,22 @@ export function isAuthorizedCron(authHeader: string | null | undefined, secret: 
   return diff === 0
 }
 
-export interface VariantAvailabilityNode {
-  id: string
-  availableForSale: boolean
-  product: { status: string } | null
+/**
+ * Ids des variantes de nouveau achetables en ligne. `dispo` vient de l'API
+ * Storefront (lib/shopify/disponibilite) : produit publié sur le site et
+ * stock dans un emplacement des ventes en ligne. Variante absente = non.
+ */
+export function selectBackInStockVariantIds(ids: string[], dispo: Readonly<Record<string, boolean>>): string[] {
+  return [...new Set(ids)].filter((id) => VARIANT_GID_RE.test(id) && dispo[id] === true)
 }
 
-/** Ids des variantes de nouveau achetables (dispo + produit actif). Les nœuds null (variante supprimée) sont ignorés. */
-export function selectBackInStockVariantIds(nodes: Array<VariantAvailabilityNode | null | undefined>): string[] {
-  const out: string[] = []
-  for (const n of nodes) {
-    if (!n || !n.availableForSale) continue
-    if (n.product?.status !== 'ACTIVE') continue
-    if (!VARIANT_GID_RE.test(n.id)) continue
-    out.push(n.id)
-  }
-  return out
+/**
+ * Le webhook `inventory_levels/update` part pour chaque emplacement. Seul un
+ * emplacement des ventes en ligne (une boutique, jamais un dépôt) peut
+ * déclencher « De retour en stock ». `emplacements` : gids des boutiques.
+ */
+export function estEmplacementEnLigne(locationId: string | null, emplacements: ReadonlySet<string>): boolean {
+  return locationId !== null && /^\d+$/.test(locationId) && emplacements.has(`gid://shopify/Location/${locationId}`)
 }
 
 function escapeHtml(str: string): string {

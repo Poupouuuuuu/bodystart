@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { shopifyAdminFetch } from '@/lib/shopify/client'
 import { getProductInventoryByLocation, getInventoryForVariants } from '@/lib/shopify'
+import { EMPLACEMENTS_BOUTIQUES } from '@/lib/shopify/disponibilite'
 
 // Lit les query params → forcer le rendu dynamique pour éviter le warning au build
 export const dynamic = 'force-dynamic'
@@ -69,6 +70,10 @@ export async function GET(req: NextRequest) {
         { error: 'Paramètres (variantId, productId OU variantIds) et locationId requis.' },
         { status: 400 }
       )
+    }
+    // Stock d'une boutique seulement : celui des dépôts (GymCoach, SDCL) ne se lit jamais en ligne.
+    if (!EMPLACEMENTS_BOUTIQUES.has(locationId)) {
+      return NextResponse.json({ error: 'Emplacement inconnu.' }, { status: 400 })
     }
 
     // ─── Mode LISTE : quelques variantes en 1 appel Admin ───
