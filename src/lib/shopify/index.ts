@@ -177,7 +177,7 @@ export async function createCart(lines?: { merchandiseId: string; quantity: numb
 
 export async function addToCart(
   cartId: string,
-  lines: { merchandiseId: string; quantity: number }[]
+  lines: { merchandiseId: string; quantity: number; attributes?: { key: string; value: string }[] }[]
 ) {
   const data = await shopifyFetch<{ cartLinesAdd: { cart: ShopifyCart } }>(
     ADD_TO_CART,
@@ -188,7 +188,7 @@ export async function addToCart(
 
 export async function updateCartLine(
   cartId: string,
-  lines: { id: string; quantity: number }[]
+  lines: { id: string; quantity: number; merchandiseId?: string; attributes?: { key: string; value: string }[] }[]
 ): Promise<{ cart: ShopifyCart | null; userErrors: { field: string[] | null; message: string }[] }> {
   const data = await shopifyFetch<{
     cartLinesUpdate: {

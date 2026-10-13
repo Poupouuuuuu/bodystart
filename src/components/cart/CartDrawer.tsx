@@ -8,8 +8,10 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { X, Minus, Plus, ArrowRight, Package, Store, Truck, CheckCircle2, ShieldCheck, RotateCcw } from 'lucide-react'
+import { X, Minus, Plus, ArrowRight, Package, Store, Truck, CheckCircle2, ShieldCheck, RotateCcw, Gift } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
+import { useCadeaux } from '@/hooks/useCadeaux'
+import { CADEAU_ATTR } from '@/lib/paliers'
 import { formatPrice, cn } from '@/lib/utils'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { getCartLineComponentImages } from '@/lib/shopify/bundle'
@@ -20,6 +22,7 @@ import { formatPoids } from '@/lib/typo'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
+import PaliersCadeaux from './PaliersCadeaux'
 import { gaBeginCheckout } from '@/lib/analytics'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
@@ -115,6 +118,10 @@ export default function CartDrawer() {
   useEffect(() => {
     setIsClickAndCollect(cartClickAndCollect)
   }, [cartClickAndCollect])
+
+  // Paliers cadeaux (métachamp bodystart.paliers_cadeaux) : barre de
+  // progression + lignes cadeaux tenues à jour. Masqué si /api/paliers échoue.
+  const cadeaux = useCadeaux({ retraitBoutique: isClickAndCollect })
 
   // Verrou scroll quand le panier est ouvert : sinon la molette scrolle
   // l'arrière-plan. On verrouille <html> ET <body> car l'élément scrollable du
@@ -346,8 +353,10 @@ export default function CartDrawer() {
           <>
             {/* ─── Zone scrollable (flex-1 min-h-0) : barre livraison + articles + cagnotte ─── */}
             <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-              {/* Barre livraison gratuite */}
-              {!isClickAndCollect && (
+              {/* Paliers cadeaux (dont la livraison offerte) ; à défaut, l'ancienne barre livraison seule */}
+              {cadeaux.visible ? (
+                <PaliersCadeaux etat={cadeaux.etat} onAjouter={cadeaux.ajouterCadeau} />
+              ) : !isClickAndCollect && (
                 <div className="px-8 pb-5">
                   <div className="bg-white border border-spruce/10 rounded-xl p-4">
                     {hasFreeShipping ? (
@@ -398,6 +407,10 @@ export default function CartDrawer() {
               // le prix de la ligne s'estompe tant que le serveur n'a pas confirmé.
               const displayQty = pendingQty[item.id] ?? item.quantity
               const lineBusy = pendingQty[item.id] != null || !!syncingLines[item.id]
+              // Ligne cadeau d'un palier : quantité fixe, prix « Offert », choix du parfum.
+              const montantCadeau = Number(item.attributes?.find((a) => a.key === CADEAU_ATTR)?.value) || null
+              const etatCadeau = montantCadeau ? cadeaux.etat.etats.find((e) => e.palier.type === 'cadeau' && e.palier.montant === montantCadeau) : undefined
+              const offert = montantCadeau !== null && parseFloat(item.cost.totalAmount.amount) === 0
 
               return (
                 <div
@@ -465,7 +478,8 @@ export default function CartDrawer() {
                               delete n[item.id]
                               return n
                             })
-                            void removeItem(item.id)
+                            if (montantCadeau) cadeaux.retirerCadeau(item.id, montantCadeau)
+                            else void removeItem(item.id)
                           }}
                           aria-label={`Retirer ${product.title} du panier`}
                           className="text-[12px] font-medium text-ink-mute underline underline-offset-2 hover:text-terracotta mt-1 py-1.5 transition-colors"
@@ -473,20 +487,53 @@ export default function CartDrawer() {
                           Retirer
                         </button>
                       </div>
-                      <span
-                        className={cn(
-                          'font-semibold text-spruce text-sm whitespace-nowrap transition-opacity',
-                          lineBusy && 'opacity-50'
-                        )}
-                      >
-                        {formatPrice(item.cost.totalAmount)}
-                      </span>
+                      {offert ? (
+                        <span className="flex flex-col items-end whitespace-nowrap">
+                          <span className="text-sm font-semibold text-fresh-deep">Offert</span>
+                          {item.cost.subtotalAmount && (
+                            <span className="text-[11px] text-ink-mute line-through">{formatPrice(item.cost.subtotalAmount)}</span>
+                          )}
+                        </span>
+                      ) : (
+                        <span
+                          className={cn(
+                            'font-semibold text-spruce text-sm whitespace-nowrap transition-opacity',
+                            lineBusy && 'opacity-50'
+                          )}
+                        >
+                          {formatPrice(item.cost.totalAmount)}
+                        </span>
+                      )}
                     </div>
 
                     {/* pt-3 SANS mt-auto : `mt-auto` poussait le pill de quantite
                         au bas de la colonne, creusant une bande vide entre
                         l'article et le bloc livraison. Il se lit mieux collé
                         sous « Retirer ». */}
+                    {montantCadeau ? (
+                      <div className="flex flex-wrap items-center gap-2 pt-3">
+                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-sage px-2.5 py-1 text-[11px] font-semibold text-spruce">
+                          <Gift className="h-3 w-3" aria-hidden="true" />
+                          Cadeau
+                        </span>
+                        {etatCadeau && etatCadeau.variantesDispo.length > 1 && (
+                          <label className="flex items-center gap-1.5 text-[12px] text-ink-mute">
+                            <span className="sr-only">Parfum de ton cadeau</span>
+                            <select
+                              value={item.merchandise.id}
+                              onChange={(e) => cadeaux.choisirVariante(montantCadeau, e.target.value, item.id)}
+                              className="h-11 max-w-[190px] rounded-lg border border-spruce/15 bg-white px-2 text-[16px] text-ink md:h-9 md:text-[13px]"
+                            >
+                              {etatCadeau.variantesDispo.map((v) => (
+                                <option key={v.id} value={v.id}>
+                                  {v.nom}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                        )}
+                      </div>
+                    ) : (
                     <div className="pt-3">
                       {/* Quantité pill */}
                       {/* Cibles tactiles : w-6 (24px) → w-10 (40px, ~44 avec le
@@ -512,6 +559,7 @@ export default function CartDrawer() {
                         </button>
                       </div>
                     </div>
+                    )}
                   </div>
                 </div>
               )
@@ -732,7 +780,8 @@ export default function CartDrawer() {
                   // (no-op sans consentement ; n'empêche jamais la navigation).
                   try {
                     gaBeginCheckout(
-                      cart.lines.nodes.map((l) => ({
+                      // Cadeaux des paliers exclus : ce ne sont pas des achats.
+                      cart.lines.nodes.filter((l) => !l.attributes?.some((a) => a.key === CADEAU_ATTR)).map((l) => ({
                         item_id: l.merchandise.product.handle,
                         item_name: l.merchandise.product.title,
                         price: parseFloat(l.merchandise.price.amount),

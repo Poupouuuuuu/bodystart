@@ -9,6 +9,10 @@ import { RELAY_ATTRIBUTE_KEYS, buildRelayAttributes, readRelayPickup, type Parce
 import { gaAddToCart } from '@/lib/analytics'
 import { metaAddToCart } from '@/lib/meta-pixel'
 import { toast } from '@/lib/toast'
+import { CADEAU_ATTR, type ActionCadeau } from '@/lib/paliers'
+
+/** Changement de parfum d'un cadeau (même ligne, autre variante). */
+export type MutationCadeau = ActionCadeau | { type: 'variante'; lineId: string; variantId: string; montant: number }
 
 interface CartContextType {
   cart: ShopifyCart | null
@@ -41,6 +45,8 @@ interface CartContextType {
   setCartAttributes: (attributes: { key: string; value: string }[], options?: { remove?: string[] }) => Promise<void>
   applyDiscountCode: (code: string) => Promise<void>
   removeDiscountCode: (code: string) => Promise<void>
+  /** Lignes cadeaux (paliers) : `planifier` est rappelé sur le panier à jour, dans la file des mutations. */
+  syncCadeaux: (planifier: (cart: ShopifyCart) => MutationCadeau[]) => Promise<void>
   // Mondial Relay (point relais)
   relayPickup: RelayPickup | null
   selectRelayPickup: (shop: ParcelShop) => Promise<void>
@@ -314,6 +320,54 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return chained
   }, [])
 
+  // Cadeaux des paliers : dans la même file que les quantités, pour ne jamais
+  // croiser une mutation du client. Le plan est recalculé sur le panier À JOUR
+  // (cartRef), pas sur celui du rendu qui a déclenché l'appel. Silencieux :
+  // pas de toast, pas de suivi « ajout au panier » (ce n'est pas un achat).
+  const syncCadeaux = useCallback((planifier: (cart: ShopifyCart) => MutationCadeau[]): Promise<void> => {
+    const run = async () => {
+      let current = cartRef.current
+      if (!current) return
+      const ops = planifier(current)
+      if (ops.length === 0) return
+      const attrs = (montant: number) => [{ key: CADEAU_ATTR, value: String(montant) }]
+      try {
+        const retirer = ops.flatMap((o) => (o.type === 'retirer' ? [o.lineId] : []))
+        if (retirer.length) {
+          current = await removeFromCart(current.id, [...new Set(retirer)])
+          setCart(current)
+        }
+        const maj = ops.flatMap((o) =>
+          o.type === 'quantite1'
+            ? [{ id: o.lineId, quantity: 1 }]
+            : o.type === 'variante'
+              ? [{ id: o.lineId, quantity: 1, merchandiseId: o.variantId, attributes: attrs(o.montant) }]
+              : []
+        )
+        if (maj.length) {
+          const { cart: updated } = await updateCartLine(current.id, maj)
+          if (updated) {
+            current = updated
+            setCart(current)
+          }
+        }
+        const ajouter = ops.flatMap((o) =>
+          o.type === 'ajouter' ? [{ merchandiseId: o.variantId, quantity: 1, attributes: attrs(o.montant) }] : []
+        )
+        if (ajouter.length) {
+          current = await addToCart(current.id, ajouter)
+          setCart(current)
+        }
+      } catch (err) {
+        // Non bloquant : le panier reste utilisable, la barre se recalcule au prochain changement.
+        console.warn('[cart] synchronisation des cadeaux en échec :', err)
+      }
+    }
+    const chained = updateQueueRef.current.then(run, run)
+    updateQueueRef.current = chained
+    return chained
+  }, [])
+
   // Barrière : résout quand toutes les mutations quantité en file sont parties
   // ET revenues — à attendre avant la redirection checkout.
   const flushCartUpdates = useCallback(() => updateQueueRef.current, [])
@@ -444,7 +498,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     <CartContext.Provider value={{
       cart, isLoading, isInitializing, isOpen, totalQuantity,
       openCart, closeCart, addItem, addItems, updateItem, flushCartUpdates, removeItem, setCartAttributes,
-      applyDiscountCode, removeDiscountCode,
+      applyDiscountCode, removeDiscountCode, syncCadeaux,
       relayPickup, selectRelayPickup, clearRelayPickup,
     }}>
       {children}

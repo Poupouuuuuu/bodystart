@@ -10,6 +10,11 @@ const CART_FRAGMENT = `
       nodes {
         id
         quantity
+        # Attribut _cadeau (montant du palier) : ligne cadeau du panier, cf. lib/paliers.
+        attributes {
+          key
+          value
+        }
         merchandise {
           ... on ProductVariant {
             id
@@ -61,9 +66,27 @@ const CART_FRAGMENT = `
           }
         }
         cost {
+          # Avant remises de ligne : base des paliers cadeaux.
+          subtotalAmount {
+            amount
+            currencyCode
+          }
           totalAmount {
             amount
             currencyCode
+          }
+        }
+        # Remises de la ligne (cadeau passé à 0 € par la remise automatique).
+        discountAllocations {
+          discountedAmount {
+            amount
+            currencyCode
+          }
+          ... on CartAutomaticDiscountAllocation {
+            title
+          }
+          ... on CartCodeDiscountAllocation {
+            code
           }
         }
       }
