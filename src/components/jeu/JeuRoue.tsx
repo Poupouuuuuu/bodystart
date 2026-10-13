@@ -15,6 +15,7 @@ import { AlertCircle, CheckCircle2, ChevronDown, Loader2, Lock } from 'lucide-re
 import Wheel, { type WheelSegment } from './Wheel'
 import { LOTS, GOOGLE_REVIEW_URL, type LotId } from '@/lib/jeu-roue/lots'
 import { validateEntry, formatDateFr, type EntryField } from '@/lib/jeu-roue/core'
+import { MESSAGE_RESEAU, MESSAGE_SERVEUR, lireReponse, relancerInscription, type EchecPage } from '@/lib/jeu-roue/reponse'
 import { frenchSpacing } from '@/lib/typo'
 import { cn } from '@/lib/utils'
 
@@ -43,7 +44,7 @@ const STEP_KEY = 'bs_jeu_etape'
 const REVIEW_MIN_MS = 15_000 // délai minimal entre le clic sur l'avis et le retour
 const STEP_TTL_MS = 24 * 3600 * 1000
 const MIN_SPIN_MS = 1200 // suspense minimal avant la décélération
-const GENERIC_ERROR = 'Petit souci de connexion. Vérifie ton réseau et réessaie.'
+const GENERIC_ERROR = MESSAGE_RESEAU
 
 const COLORS: Record<LotId, { fill: string; text: string }> = {
   'canette-abe': { fill: '#3B7A3F', text: '#FFFFFF' },
@@ -66,18 +67,38 @@ interface JeuResponse {
   field?: EntryField
 }
 
-async function postJeu(body: Record<string, unknown>): Promise<JeuResponse> {
+/** Signale au journal des erreurs un échec que le serveur n'a pas vu (réseau, réponse illisible). */
+function signaler(etape: unknown, echec: EchecPage) {
   try {
-    const res = await fetch('/api/jeu', {
+    const corps = JSON.stringify({ action: 'signal', etape, ...echec })
+    const blob = new Blob([corps], { type: 'application/json' })
+    if (!navigator.sendBeacon?.('/api/jeu', blob)) {
+      void fetch('/api/jeu', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: corps, keepalive: true }).catch(() => {})
+    }
+  } catch {
+    /* le jeu passe avant le journal */
+  }
+}
+
+async function postJeu(body: Record<string, unknown>): Promise<JeuResponse & { echec: EchecPage | null }> {
+  let res: Response
+  try {
+    res = await fetch('/api/jeu', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     })
-    const json = (await res.json().catch(() => ({}))) as Omit<JeuResponse, 'httpStatus'>
-    return { ...json, httpStatus: res.status }
   } catch {
-    return { httpStatus: 0, error: GENERIC_ERROR }
+    const echec: EchecPage = { type: 'reseau', http: 0, extrait: '' }
+    signaler(body.action, echec)
+    return { httpStatus: 0, error: MESSAGE_RESEAU, echec }
   }
+  const { json, echec } = lireReponse<Omit<JeuResponse, 'httpStatus'>>(res.status, await res.text().catch(() => ''))
+  if (echec) {
+    signaler(body.action, echec)
+    return { httpStatus: res.status, error: MESSAGE_SERVEUR, echec }
+  }
+  return { ...json, httpStatus: res.status, echec: null }
 }
 
 function saveResult(result: PublicResult, variant: Variant) {
@@ -236,7 +257,12 @@ export default function JeuRoue() {
       return
     }
     setBusy(true)
-    const r = await postJeu({ action: 'register', ...form })
+    let r = await postJeu({ action: 'register', ...form })
+    // Inscription relancée une fois (mise à jour de fiche, sans risque) avant d'afficher une erreur.
+    if (relancerInscription(r, r.echec)) {
+      await new Promise((ok) => window.setTimeout(ok, 1500))
+      r = await postJeu({ action: 'register', ...form })
+    }
     setBusy(false)
     if (r.status === 'ready' && r.customerId) {
       setCustomerId(r.customerId)

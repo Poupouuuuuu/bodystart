@@ -36,6 +36,7 @@ src/
 │       ├── newsletter/     # Inscription newsletter (Resend contacts)
 │       ├── inventory/      # Stock en temps réel par variante/location (Admin API + rate limit)
 │       ├── jeu/            # Jeu de la roue en boutique (/jeu, QR code) : register puis spin, Admin API 2026-04, limite par IP
+│       │   └── erreurs/    # GET journal des 50 dernières erreurs du jeu (Upstash, sans données perso ; Bearer CRON_SECRET)
 │       ├── stock-alert/    # POST « me prévenir quand c'est de retour » (Supabase stock_alerts) + webhook/ inventory_levels/update → email Resend
 │       │   └── sweep/      # GET cron Vercel quotidien (07:00 UTC) : rattrape les alertes que le webhook a manquées (Bearer CRON_SECRET)
 │       ├── version/        # GET { sha, env } : quel commit sert la prod (skill verif-prod)

@@ -15,18 +15,25 @@ import {
   releaseSpin,
 } from '@/lib/jeu-roue/shopify'
 import { getStoredResult, storeResult, allowRequest } from '@/lib/jeu-roue/store'
+import { noterErreur, type Etape } from '@/lib/jeu-roue/journal'
 
 // ============================================================
 // Jeu de la roue en boutique (/jeu) : deux étapes
 //   register : valide, repère un joueur déjà passé, crée ou met à jour la
 //              fiche client Shopify (sans étiquette du jeu à ce stade)
 //   spin     : tirage côté serveur, code de remise unique, marquage client
+//   signal   : la page signale un échec que le serveur n'a pas vu (réseau,
+//              réponse illisible), pour le journal des erreurs
 // Une participation par personne (e-mail ou téléphone). Le lot ne dépend
-// jamais d'un avis Google.
+// jamais d'un avis Google. Toute erreur attrapée part au journal
+// (lib/jeu-roue/journal, lisible par /api/jeu/erreurs).
 // ============================================================
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+// Délai explicite : au-delà, la plateforme répond sans JSON et la page ne sait
+// plus quoi afficher (inscription : 2 à 3 s en temps normal).
+export const maxDuration = 30
 
 export interface PublicResult {
   lotId: string
@@ -56,12 +63,30 @@ const debugDetail = (err: unknown) =>
     ? undefined
     : String(err instanceof Error ? err.message : err).slice(0, 500)
 
+/** Échec vu par la page : étape, type, statut HTTP et début du corps reçu. Rien de personnel. */
+async function signal(body: Record<string, unknown>, ip: string) {
+  const etape = body.etape === 'spin' ? 'spin' : body.etape === 'register' ? 'register' : null
+  const type = body.type === 'reseau' || body.type === 'reponse' ? body.type : null
+  const http = typeof body.http === 'number' && Number.isInteger(body.http) && body.http >= 0 && body.http < 600 ? body.http : null
+  if (!etape || !type || http === null) return fail(400, 'Requête invalide.')
+  if (!(await allowRequest(ip, 'signal').catch(() => true))) return new NextResponse(null, { status: 204 })
+  const extrait = typeof body.extrait === 'string' ? body.extrait.slice(0, 120) : ''
+  await noterErreur({
+    etape,
+    source: 'page',
+    niveau: 'erreur',
+    http,
+    message: type === 'reseau' ? 'requête sans réponse (réseau)' : `réponse illisible${extrait ? ` : ${extrait}` : ''}`,
+  })
+  return new NextResponse(null, { status: 204 })
+}
+
 export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null
-  const step = body?.action === 'spin' ? 'spin' : body?.action === 'register' ? 'register' : null
-  if (!body || !step) return fail(400, 'Requête invalide.')
-
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local'
+  if (body?.action === 'signal') return signal(body, ip)
+  const step: Etape | null = body?.action === 'spin' ? 'spin' : body?.action === 'register' ? 'register' : null
+  if (!body || !step) return fail(400, 'Requête invalide.')
   try {
     if (!(await allowRequest(ip, step))) return fail(429, 'Trop de tentatives. Réessaie dans quelques minutes.')
   } catch (err) {
@@ -122,6 +147,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: 'won', result: toPublic(result) })
   } catch (err) {
     console.error(`[jeu-roue] ${step} :`, err)
+    await noterErreur({ etape: step, source: 'serveur', niveau: 'erreur', http: 503, message: String(err instanceof Error ? err.message : err) })
     return fail(503, 'Petit souci de connexion avec la boutique. Réessaie dans un instant.', undefined, debugDetail(err))
   }
 }
