@@ -14,7 +14,7 @@ const donnees: DonneesPaliers = {
   stock: { [DCPB]: true, [SHAKER]: true, 'gid://shopify/ProductVariant/54401705804118': true },
 }
 const money = (n: number) => ({ amount: n.toFixed(2), currencyCode: 'EUR' })
-type L = { id: string; variant?: string; product?: string; qty?: number; prix: number; total?: number; cadeau?: number }
+type L = { id: string; variant?: string; product?: string; qty?: number; prix: number; total?: number; cadeau?: number; remises?: { titre: string; montant: number }[] }
 function panier(lignes: L[], extra: Partial<ShopifyCart> = {}): ShopifyCart {
   const nodes = lignes.map((l) => ({
     id: l.id,
@@ -22,6 +22,7 @@ function panier(lignes: L[], extra: Partial<ShopifyCart> = {}): ShopifyCart {
     attributes: l.cadeau ? [{ key: '_cadeau', value: String(l.cadeau) }] : [],
     merchandise: { id: l.variant ?? 'gid://shopify/ProductVariant/1', title: 'x', price: money(l.prix), selectedOptions: [], product: { id: `gid://shopify/Product/${l.product ?? '100'}`, handle: 'x', title: 'x', featuredImage: null } },
     cost: { subtotalAmount: money(l.prix * (l.qty ?? 1)), totalAmount: money(l.total ?? l.prix * (l.qty ?? 1)) },
+    discountAllocations: (l.remises ?? []).map((r) => ({ discountedAmount: money(r.montant), title: r.titre })),
   }))
   const sub = nodes.reduce((s, n) => s + Number(n.cost.totalAmount.amount), 0)
   return {
@@ -76,8 +77,8 @@ describe('calculerCadeaux', () => {
     expect(r.refuser).toEqual([])
     expect(r.nonAccorder).toEqual({ 60: '60||' })
   })
-  it('au-delà de 100 € Shopify ne garde qu\'un cadeau : Crunch Bar retirée, ni réajoutée ni proposée, tant que le contexte tient', () => {
-    // Shopify : shaker à 0 €, Crunch Bar repassée à 2,90 € (constaté sur la preview le 13/10/2026).
+  it('cadeau refusé par Shopify : retiré, ni réajouté ni proposé, tant que le contexte tient', () => {
+    // Constaté le 13/10/2026 avant la remise unique à 100 € : shaker à 0 €, Crunch Bar repassée à 2,90 €.
     const avant = panier([
       { id: 'a', prix: 105 },
       { id: 'g60', variant: DCPB, prix: 2.9, total: 2.9, cadeau: 60 },
@@ -101,6 +102,65 @@ describe('calculerCadeaux', () => {
     const sous100 = calculerCadeaux(panier([{ id: 'a', prix: 80 }, { id: 'g100', variant: SHAKER, prix: 6.9, total: 6.9, cadeau: 100 }]), donnees, memo)
     expect(sous100.actions).toEqual([{ type: 'ajouter', variantId: DCPB, montant: 60 }, { type: 'retirer', lineId: 'g100' }])
     expect(sous100.nonAccorder).toEqual({})
+  })
+  describe('gratuité posée sur un article acheté (paniers mesurés le 13/10/2026)', () => {
+    const R60 = 'Cadeau dès 60 € : Crunch Bar offerte'
+    const R100 = 'Cadeaux dès 100 € : shaker et Crunch Bar offerts'
+    const avecTitres = { ...donnees, titres: [R60, R100] }
+    const PBC = 'gid://shopify/ProductVariant/54401705804118'
+
+    it('60 € : Crunch DCPB achetée remisée, cadeau à 2,90 € → cadeau gardé, affiché offert', () => {
+      const cart = panier([
+        { id: 'a', prix: 60.8 },
+        { id: 'achat', variant: DCPB, prix: 2.9, total: 0, remises: [{ titre: R60, montant: 2.9 }] },
+        { id: 'g', variant: DCPB, prix: 2.9, total: 2.9, cadeau: 60, remises: [{ titre: R60, montant: 0 }] },
+      ])
+      const r = calculerCadeaux(cart, avecTitres, opts)
+      expect(r.actions).toEqual([])
+      expect(r.nonAccorder).toEqual({})
+      expect(r.affiches).toEqual({ g: 0, achat: 2.9 })
+    })
+    it('100 € : Crunch PB Cup achetée remisée à la place de la DCPB offerte → même règle', () => {
+      const cart = panier([
+        { id: 'a', prix: 98.7 },
+        { id: 'achat', variant: PBC, prix: 2.9, total: 0, remises: [{ titre: R100, montant: 2.9 }] },
+        { id: 'g60', variant: DCPB, prix: 2.9, total: 2.9, cadeau: 60 },
+        { id: 'g100', variant: SHAKER, prix: 6.9, total: 0, cadeau: 100, remises: [{ titre: R100, montant: 6.9 }] },
+      ])
+      const r = calculerCadeaux(cart, avecTitres, opts)
+      expect(r.actions).toEqual([])
+      expect(r.affiches).toEqual({ g60: 0, achat: 2.9 })
+    })
+    it('100 € : 2 Crunch remisées et shaker à 6,90 € → shaker retiré (une Crunch ne vaut pas un shaker)', () => {
+      const cart = panier([
+        { id: 'a', prix: 98.7 },
+        { id: 'achat', variant: DCPB, prix: 2.9, total: 0, remises: [{ titre: R100, montant: 2.9 }] },
+        { id: 'g60', variant: DCPB, prix: 2.9, total: 0, cadeau: 60, remises: [{ titre: R100, montant: 2.9 }] },
+        { id: 'g100', variant: SHAKER, prix: 6.9, total: 6.9, cadeau: 100 },
+      ])
+      const r = calculerCadeaux(cart, avecTitres, opts)
+      expect(r.actions).toEqual([{ type: 'retirer', lineId: 'g100' }])
+      expect(Object.keys(r.nonAccorder)).toEqual(['100'])
+      expect(r.affiches).toEqual({})
+    })
+    it('une autre promo automatique (3 achetées, 1 offerte) ne couvre jamais un cadeau', () => {
+      const cart = panier([
+        { id: 'a', prix: 60.8 },
+        { id: 'achat', variant: DCPB, qty: 3, prix: 2.9, total: 5.8, remises: [{ titre: '3 Crunch achetées, 1 offerte', montant: 2.9 }] },
+        { id: 'g', variant: DCPB, prix: 2.9, total: 2.9, cadeau: 60 },
+      ])
+      const r = calculerCadeaux(cart, avecTitres, opts)
+      expect(r.actions).toEqual([{ type: 'retirer', lineId: 'g' }])
+      expect(r.affiches).toEqual({})
+    })
+    it('sans les titres (ancienne réponse de /api/paliers) : protection inchangée, cadeau facturé retiré', () => {
+      const cart = panier([
+        { id: 'a', prix: 60.8 },
+        { id: 'achat', variant: DCPB, prix: 2.9, total: 0, remises: [{ titre: R60, montant: 2.9 }] },
+        { id: 'g', variant: DCPB, prix: 2.9, total: 2.9, cadeau: 60 },
+      ])
+      expect(calculerCadeaux(cart, donnees, opts).actions).toEqual([{ type: 'retirer', lineId: 'g' }])
+    })
   })
   it('base livraison après remises de commande', () => {
     const cart = panier([{ id: 'a', prix: 88 }], { discountAllocations: [{ discountedAmount: money(4.4), code: 'LY-X' }] })

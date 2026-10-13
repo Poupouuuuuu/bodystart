@@ -9,17 +9,18 @@
 // pas de cadeau. Un code refusé alors qu'un cadeau est au panier : on retire
 // le cadeau une fois, pour voir si le code passe. Jamais de cadeau facturé.
 //
-// Cadeau facturé sans code : Shopify ne l'accorde pas avec ce panier. Constaté
-// le 13/10/2026 : deux remises « achetez X, obtenez Y » sur la même collection
-// ne se cumulent pas (Shopify garde la plus forte : le shaker à 100 €, la
-// Crunch Bar repasse à 2,90 €). La ligne est retirée et le palier marqué « non
+// Cadeau facturé sans code : Shopify ne l'accorde pas avec ce panier (deux
+// remises « achetez X, obtenez Y » sur la même base ne se cumulent pas,
+// remise pas encore active…). La ligne est retirée et le palier marqué « non
 // accordé » pour ce contexte (paliers atteints, codes, autres cadeaux) : ni
 // ajout automatique ni bouton, sinon le bouton tournerait en boucle. Le contexte
-// change (panier sous 100 €, shaker retiré…) : le palier redevient normal.
+// change (panier sous le seuil, autre cadeau retiré…) : le palier redevient normal.
+// Exception : la gratuité tombée sur un article acheté identique compte comme
+// accordée (transfertsCadeaux).
 
 import type { ShopifyCart } from '@/lib/shopify/types'
 import {
-  CADEAU_ATTR, baseCadeaux, baseLivraison, cadeauxPayants, etatPaliers, idNumerique, periodeActive, planCadeaux,
+  CADEAU_ATTR, baseCadeaux, baseLivraison, cadeauxPayants, etatPaliers, idNumerique, periodeActive, planCadeaux, transfertsCadeaux,
   type ActionCadeau, type EtatPalier, type LigneCadeau, type Palier, type Periode,
 } from './index'
 
@@ -27,6 +28,8 @@ export interface DonneesPaliers {
   periodes: (Omit<Periode, 'paliers'> & { paliers: (Palier & { ensemble?: number })[] })[]
   ensembles: string[][]
   stock: Record<string, boolean>
+  /** Titres des remises Shopify qui accordent les cadeaux (affichés au paiement). Absent = aucun transfert reconnu. */
+  titres?: string[]
 }
 
 export function lignesDuPanier(cart: ShopifyCart | null): LigneCadeau[] {
@@ -42,6 +45,9 @@ export function lignesDuPanier(cart: ShopifyCart | null): LigneCadeau[] {
       subtotal: Number(l.cost.subtotalAmount?.amount ?? total),
       total,
       cadeau: Number.isFinite(montant) && montant > 0 ? montant : null,
+      remises: (l.discountAllocations ?? [])
+        .filter((a): a is typeof a & { title: string } => typeof a.title === 'string')
+        .map((a) => ({ titre: a.title, montant: Number(a.discountedAmount.amount) })),
     }
   })
 }
@@ -65,6 +71,8 @@ export interface EtatCadeaux {
   codesATester: string | null
   /** Paliers que Shopify vient de refuser, avec leur contexte (à garder dans le navigateur). */
   nonAccorder: Record<number, string>
+  /** Montants à afficher quand la gratuité du cadeau est tombée sur un article acheté identique. */
+  affiches: Readonly<Record<string, number>>
 }
 
 /** Contexte d'un refus de Shopify : paliers cadeaux atteints, codes, autres cadeaux au panier. */
@@ -89,6 +97,7 @@ export function calculerCadeaux(
 ): EtatCadeaux {
   const vide: EtatCadeaux = {
     periode: null, etats: [], baseCadeaux: 0, codeBloquant: null, horsBase: false, actions: [], refuser: [], codesATester: null, nonAccorder: {},
+    affiches: {},
   }
   if (!cart || !donnees) return vide
   const periode = periodeActive(donnees as { periodes: Periode[] }, options.now)
@@ -122,6 +131,7 @@ export function calculerCadeaux(
   const codes = cart.discountCodes ?? []
   const codeBloquant = codes.find((c) => c.applicable)?.code ?? null
   const lignesCadeaux = lignes.filter((l) => l.cadeau !== null)
+  const transferts = transfertsCadeaux(lignes, new Set(donnees.titres ?? []))
 
   // Code refusé avec un cadeau au panier : on retire le cadeau une fois pour
   // laisser le code s'appliquer (le code du client est prioritaire).
@@ -142,7 +152,7 @@ export function calculerCadeaux(
       // Jamais de cadeau facturé : une ligne cadeau que Shopify ne passe pas à 0 € est retirée,
       // et le palier n'est plus proposé tant que le contexte ne change pas.
       const dejaRetirees = new Set(actions.filter((a) => a.type === 'retirer').map((a) => (a as { lineId: string }).lineId))
-      for (const l of cadeauxPayants(lignes)) {
+      for (const l of cadeauxPayants(lignes, transferts.couverts)) {
         if (dejaRetirees.has(l.id)) continue // palier plus atteint, doublon… : pas un refus de Shopify
         actions.push({ type: 'retirer', lineId: l.id })
         nonAccorder[l.cadeau!] = contexteDe(l.cadeau!, etats, lignes, signature)
@@ -163,6 +173,7 @@ export function calculerCadeaux(
     refuser: [...refuser],
     codesATester: aTester ? signature : null,
     nonAccorder,
+    affiches: transferts.affiches,
   }
 }
 

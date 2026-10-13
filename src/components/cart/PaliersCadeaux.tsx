@@ -105,9 +105,7 @@ export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux;
                 ) : e.atteint && !codeBloquant ? (
                   dansPanier ? (
                     <span className="font-semibold text-fresh-deep">Dans ton panier</span>
-                  ) : e.nonAccorde ? (
-                    <span className="text-ink-mute">Non cumulable</span>
-                  ) : e.refuse ? (
+                  ) : e.nonAccorde ? null : e.refuse ? (
                     <button
                       type="button"
                       onClick={() => onAjouter(e.palier.montant)}

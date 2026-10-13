@@ -2,7 +2,8 @@
 // quitte jamais le serveur : la réponse ne contient que les périodes du
 // métachamp (sans les identifiants de remise), les produits de la base de
 // chaque palier (identifiants numériques) et un simple « en stock » par
-// variante cadeau.
+// variante cadeau et le titre des remises cadeaux (celui que le client voit
+// déjà au paiement).
 //
 // Base d'un palier cadeau = la collection du critère « le client achète » de
 // la remise Shopify citée par le métachamp (aujourd'hui « Produits TVA 5,5% ») :
@@ -27,7 +28,9 @@ const GET_REMISES = /* GraphQL */ `
         id
         automaticDiscount {
           __typename
+          ... on DiscountAutomaticBasic { title }
           ... on DiscountAutomaticBxgy {
+            title
             customerBuys {
               items {
                 __typename
@@ -67,7 +70,14 @@ type Items =
   | { __typename: string }
 
 interface RemisesResponse {
-  nodes: ({ id: string; automaticDiscount: { __typename: string; customerBuys?: { items: Items } } | null } | null)[]
+  nodes: ({ id: string; automaticDiscount: { __typename: string; title?: string; customerBuys?: { items: Items } } | null } | null)[]
+}
+
+interface Remises {
+  /** Produits de la base de chaque remise (identifiants numériques). */
+  bases: Record<string, string[]>
+  /** Titres des remises (pour reconnaître leurs lignes au panier). */
+  titres: string[]
 }
 
 async function produitsCollection(id: string): Promise<string[]> {
@@ -85,12 +95,13 @@ async function produitsCollection(id: string): Promise<string[]> {
   return out
 }
 
-/** Produits de la base de chaque remise (identifiants numériques), lus par l'API Admin. */
-async function basesDesRemises(remises: string[]): Promise<Record<string, string[]>> {
-  if (remises.length === 0) return {}
+/** Base et titre de chaque remise, lus par l'API Admin. */
+async function lireRemises(remises: string[]): Promise<Remises> {
+  if (remises.length === 0) return { bases: {}, titres: [] }
   const data = await shopifyAdminFetch<RemisesResponse>(GET_REMISES, { ids: remises })
   const parCollection = new Map<string, Promise<string[]>>()
   const out: Record<string, string[]> = {}
+  const titres = data.nodes.map((n) => n?.automaticDiscount?.title).filter((t): t is string => !!t)
   for (const node of data.nodes) {
     const items = node?.automaticDiscount?.customerBuys?.items
     if (!node || !items) continue
@@ -106,11 +117,11 @@ async function basesDesRemises(remises: string[]): Promise<Record<string, string
       out[node.id] = items.products.nodes.map((p) => idNumerique(p.id))
     }
   }
-  return out
+  return { bases: out, titres: [...new Set(titres)] }
 }
 
 // Collection : relue au plus toutes les 15 min. Stock : au plus toutes les 5 min.
-const basesEnCache = unstable_cache(basesDesRemises, ['paliers-bases'], { revalidate: 900 })
+const remisesEnCache = unstable_cache(lireRemises, ['paliers-remises'], { revalidate: 900 })
 const stockEnCache = unstable_cache(
   async (ids: string[]): Promise<Record<string, boolean>> => {
     if (ids.length === 0) return {}
@@ -131,6 +142,8 @@ export interface PaliersPublics {
   ensembles: string[][]
   /** Variante cadeau → en stock. */
   stock: Record<string, boolean>
+  /** Titres des remises cadeaux. */
+  titres: string[]
   /** `?paliers_date=` accepté (hors production seulement). */
   dateForcable: boolean
 }
@@ -143,7 +156,7 @@ export async function chargerPaliers(): Promise<PaliersPublics | null> {
   const cadeaux = config.periodes.flatMap((p) => p.paliers).filter((p) => p.type === 'cadeau')
   const remises = [...new Set(cadeaux.map((p) => p.remise_shopify).filter((x): x is string => !!x))].sort()
   const variantes = [...new Set(cadeaux.flatMap((p) => p.variantes ?? []).map((v) => v.id))].sort()
-  const [bases, stock] = await Promise.all([basesEnCache(remises), stockEnCache(variantes)])
+  const [{ bases, titres }, stock] = await Promise.all([remisesEnCache(remises), stockEnCache(variantes)])
 
   // Une base par liste distincte de produits (aujourd'hui une seule pour tous les paliers).
   const ensembles: string[][] = []
@@ -170,5 +183,5 @@ export async function chargerPaliers(): Promise<PaliersPublics | null> {
     }),
   }))
 
-  return { periodes, ensembles, stock, dateForcable: process.env.VERCEL_ENV !== 'production' }
+  return { periodes, ensembles, stock, titres, dateForcable: process.env.VERCEL_ENV !== 'production' }
 }

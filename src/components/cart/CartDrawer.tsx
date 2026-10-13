@@ -410,7 +410,9 @@ export default function CartDrawer() {
               // Ligne cadeau d'un palier : quantité fixe, prix « Offert », choix du parfum.
               const montantCadeau = Number(item.attributes?.find((a) => a.key === CADEAU_ATTR)?.value) || null
               const etatCadeau = montantCadeau ? cadeaux.etat.etats.find((e) => e.palier.type === 'cadeau' && e.palier.montant === montantCadeau) : undefined
-              const offert = montantCadeau !== null && parseFloat(item.cost.totalAmount.amount) === 0
+              // Gratuité posée par Shopify sur un article acheté identique : affichée sur le cadeau (lib/paliers).
+              const prixAffiche = cadeaux.etat.affiches[item.id]
+              const offert = montantCadeau !== null && (parseFloat(item.cost.totalAmount.amount) === 0 || prixAffiche === 0)
 
               return (
                 <div
@@ -501,7 +503,11 @@ export default function CartDrawer() {
                             lineBusy && 'opacity-50'
                           )}
                         >
-                          {formatPrice(item.cost.totalAmount)}
+                          {formatPrice(
+                            prixAffiche !== undefined
+                              ? { amount: prixAffiche.toFixed(2), currencyCode: item.cost.totalAmount.currencyCode }
+                              : item.cost.totalAmount
+                          )}
                         </span>
                       )}
                     </div>

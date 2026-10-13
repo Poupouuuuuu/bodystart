@@ -128,6 +128,8 @@ export interface LigneCadeau {
   total: number
   /** Montant du palier si la ligne est un cadeau, sinon null. */
   cadeau: number | null
+  /** Remises automatiques posées sur la ligne (titre de la remise Shopify, montant). Absent = aucune. */
+  remises?: { titre: string; montant: number }[]
 }
 
 export const idNumerique = (gid: string) => gid.split('/').pop() ?? gid
@@ -253,9 +255,52 @@ export function planCadeaux(
   return actions
 }
 
+export interface Transferts {
+  /** Lignes cadeaux facturées dont la gratuité est passée sur un article acheté identique. */
+  couverts: ReadonlySet<string>
+  /** Montant affiché par ligne quand il diffère du montant Shopify (cadeau : 0 ; article acheté : son prix). */
+  affiches: Readonly<Record<string, number>>
+}
+
+/**
+ * Shopify offre les articles éligibles les moins chers, sans regarder lequel
+ * est le cadeau : si le client achète aussi une Crunch Bar, la remise peut
+ * tomber sur la sienne et laisser la ligne cadeau à 2,90 € (constaté le
+ * 13/10/2026). Le cadeau est alors bien accordé : une remise cadeau
+ * (`titres`, celles du métachamp) rend gratuit un article acheté entier, au
+ * même prix que le cadeau. On garde la ligne cadeau et on affiche la
+ * gratuité sur elle. Une autre promo automatique (3 achetées, 1 offerte…)
+ * n'a pas un titre de la liste : elle ne couvre jamais un cadeau.
+ */
+export function transfertsCadeaux(lignes: LigneCadeau[], titres: ReadonlySet<string>): Transferts {
+  const libres: { lineId: string; prix: number; n: number }[] = []
+  for (const l of lignes) {
+    if (l.cadeau !== null || l.quantity <= 0) continue
+    const prix = l.subtotal / l.quantity
+    for (const r of l.remises ?? []) {
+      if (!titres.has(r.titre)) continue
+      const n = Math.floor((r.montant + 0.005) / prix)
+      if (n > 0) libres.push({ lineId: l.id, prix, n })
+    }
+  }
+  const couverts = new Set<string>()
+  const affiches: Record<string, number> = {}
+  for (const g of lignes) {
+    if (g.cadeau === null || g.total <= 0.005) continue
+    const libre = libres.find((x) => x.n > 0 && Math.abs(x.prix - g.total) < 0.005)
+    if (!libre) continue
+    libre.n--
+    couverts.add(g.id)
+    affiches[g.id] = 0
+    const achetee = lignes.find((l) => l.id === libre.lineId)!
+    affiches[libre.lineId] = arrondi((affiches[libre.lineId] ?? achetee.total) + g.total)
+  }
+  return { couverts, affiches }
+}
+
 /** Lignes cadeaux que Shopify ne passe pas à 0 € (code non cumulable, remise inactive…) : à retirer, jamais à faire payer. */
-export function cadeauxPayants(lignes: LigneCadeau[]): LigneCadeau[] {
-  return lignes.filter((l) => l.cadeau !== null && l.total > 0.005)
+export function cadeauxPayants(lignes: LigneCadeau[], couverts: ReadonlySet<string> = new Set()): LigneCadeau[] {
+  return lignes.filter((l) => l.cadeau !== null && l.total > 0.005 && !couverts.has(l.id))
 }
 
 /** Prochain palier à atteindre (le plus bas non atteint), ou null si tout est débloqué. */
