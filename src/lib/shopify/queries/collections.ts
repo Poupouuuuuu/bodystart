@@ -34,6 +34,7 @@ export const GET_COLLECTION_BY_HANDLE = `
         nodes {
           id
           handle
+          availableForSale
           title
           description
           tags

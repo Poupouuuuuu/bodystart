@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
-import { formatPrice } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 import { HOME_FEATURED_HANDLE } from '@/lib/merchandising'
 import { cardPriceOf } from '@/lib/product-price'
 
@@ -23,6 +23,7 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
   // Même prix que la carte catalogue : variante en stock la moins chère,
   // « dès » si les prix varient, prix barré seulement sur cette variante.
   const prix = cardPriceOf(product)
+  const soldOut = product.availableForSale === false
   const image = product.featuredImage
   const blurb = product.description?.trim().split(/[.\n]/)[0]?.trim()
 
@@ -39,9 +40,16 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
             className="relative flex min-h-[300px] flex-1 items-center justify-center bg-cover bg-center sm:min-h-[380px] lg:min-h-0"
             style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
           >
-            <span className="absolute left-5 top-5 z-10 inline-flex items-center rounded-lg bg-mustard px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-mustard-ink shadow-soft">
-              Best-seller
-            </span>
+            {/* Même badge « Épuisé » que la carte catalogue (ProductCardShop). */}
+            {soldOut ? (
+              <span className="absolute left-5 top-5 z-10 inline-flex items-center rounded-lg bg-ink/90 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white backdrop-blur-sm">
+                Épuisé
+              </span>
+            ) : (
+              <span className="absolute left-5 top-5 z-10 inline-flex items-center rounded-lg bg-mustard px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-mustard-ink shadow-soft">
+                Best-seller
+              </span>
+            )}
             {image ? (
               <div className="relative h-[78%] w-[78%]">
                 <Image
@@ -49,7 +57,10 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
                   alt={image.altText ?? product.title}
                   fill
                   sizes="(max-width: 1024px) 90vw, 560px"
-                  className="object-contain transition-transform duration-700 ease-out-expo [filter:drop-shadow(0_28px_32px_rgba(45,90,45,0.32))] group-hover:scale-[1.05]"
+                  className={cn(
+                    'object-contain transition-transform duration-700 ease-out-expo [filter:drop-shadow(0_28px_32px_rgba(45,90,45,0.32))] group-hover:scale-[1.05]',
+                    soldOut && 'opacity-60 saturate-[0.55]'
+                  )}
                 />
               </div>
             ) : null}
@@ -99,11 +110,14 @@ export default function BestSellersV3({ products }: BestSellersV3Props) {
   // à la main (HOME_FEATURED_HANDLE, 08/10/2026), sinon un produit tagué
   // best-seller, sinon le plus cher des 5 (un pot de whey ou de créatine, pas
   // une barre à 2,90 € perdue dans 600 px de fond végétal).
+  // Un produit épuisé ne prend la grande tuile que s'il n'y a rien d'autre.
   const priceOf = (p: ShopifyProduct) => parseFloat(cardPriceOf(p)?.price.amount ?? '0')
+  const enStock = items.filter((p) => p.availableForSale !== false)
+  const candidats = enStock.length ? enStock : items
   const featured =
-    items.find((p) => p.handle === HOME_FEATURED_HANDLE) ??
-    items.find((p) => (p.tags ?? []).some((t) => /best.?seller/i.test(t))) ??
-    [...items].sort((a, b) => priceOf(b) - priceOf(a))[0]
+    candidats.find((p) => p.handle === HOME_FEATURED_HANDLE) ??
+    candidats.find((p) => (p.tags ?? []).some((t) => /best.?seller/i.test(t))) ??
+    [...candidats].sort((a, b) => priceOf(b) - priceOf(a))[0]
   const rest = items.filter((p) => p.id !== featured.id).slice(0, 4)
 
   return (
