@@ -11,6 +11,7 @@
 import { randomInt } from 'node:crypto'
 import { shopifyAdminFetch } from '@/lib/shopify/client'
 import { generateCode, noteLine, type Entry, type JeuResult } from './core'
+import { noterErreur } from './journal'
 import { LOTS, JEU_LOCATION_ID, CODE_VALIDITY_DAYS, lotById, lotLabelRemise, type Lot, type LotId } from './lots'
 
 const API = { apiVersion: '2026-04' }
@@ -123,7 +124,7 @@ export async function upsertCustomer(entry: Entry): Promise<string> {
     let errs = await update(true)
     const phoneOk = errs.length === 0
     if (errs.length && isPhoneError(errs)) errs = await update(false)
-    if (errs.length) console.warn('[jeu-roue] customerUpdate userErrors:', JSON.stringify(errs))
+    if (errs.length) await avertir('customerUpdate', errs)
 
     if (entry.optIn) await subscribe(existing.id, now, phoneOk)
     return existing.id
@@ -164,7 +165,7 @@ async function subscribe(customerId: string, now: string, withSms: boolean) {
     API
   )
   if (email.customerEmailMarketingConsentUpdate.userErrors.length) {
-    console.warn('[jeu-roue] email consent:', JSON.stringify(email.customerEmailMarketingConsentUpdate.userErrors))
+    await avertir('accord e-mail', email.customerEmailMarketingConsentUpdate.userErrors)
   }
   if (!withSms) return
   const sms = await shopifyAdminFetch<{ customerSmsMarketingConsentUpdate: { userErrors: UserError[] } }>(
@@ -173,8 +174,14 @@ async function subscribe(customerId: string, now: string, withSms: boolean) {
     API
   )
   if (sms.customerSmsMarketingConsentUpdate.userErrors.length) {
-    console.warn('[jeu-roue] sms consent:', JSON.stringify(sms.customerSmsMarketingConsentUpdate.userErrors))
+    await avertir('accord SMS', sms.customerSmsMarketingConsentUpdate.userErrors)
   }
+}
+
+/** Erreur Shopify qui ne bloque pas l'inscription : console et journal (avertissement). */
+async function avertir(quoi: string, errs: UserError[]) {
+  console.warn(`[jeu-roue] ${quoi} userErrors:`, JSON.stringify(errs))
+  await noterErreur({ etape: 'register', source: 'serveur', niveau: 'avertissement', message: `${quoi} : ${errs.map((e) => e.message).join(' | ')}` })
 }
 
 // ─── Stock et prix des lots ───────────────────────────────────

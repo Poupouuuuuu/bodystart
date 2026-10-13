@@ -24,6 +24,7 @@ const limiters = redis
   ? {
       register: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, '10 m'), prefix: `ratelimit:${PREFIX}:register` }),
       spin: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, '10 m'), prefix: `ratelimit:${PREFIX}:spin` }),
+      signal: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, '10 m'), prefix: `ratelimit:${PREFIX}:signal` }),
     }
   : null
 
@@ -40,7 +41,7 @@ export async function storeResult(email: string, phone: string, result: JeuResul
   await Promise.all(resultKeys(email, phone).map((k) => redis.set(k, result, { ex: RESULT_TTL_S })))
 }
 
-export async function allowRequest(ip: string, step: 'register' | 'spin'): Promise<boolean> {
+export async function allowRequest(ip: string, step: 'register' | 'spin' | 'signal'): Promise<boolean> {
   if (!limiters) return true
   return (await limiters[step].limit(ip)).success
 }
