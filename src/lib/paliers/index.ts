@@ -160,6 +160,8 @@ export interface EtatPalier {
   lignes: LigneCadeau[]
   /** Le client a retiré ce cadeau : on ne le remet pas de force. */
   refuse: boolean
+  /** Shopify ne l'accorde pas avec ce panier (deux remises « achetez X » sur les mêmes produits ne se cumulent pas) : ni ajout ni bouton. */
+  nonAccorde: boolean
 }
 
 export interface ContextePaliers {
@@ -171,6 +173,8 @@ export interface ContextePaliers {
   lignes: LigneCadeau[]
   /** Montants des paliers dont le client a retiré le cadeau. */
   refuses: ReadonlySet<number>
+  /** Montants des paliers que Shopify n'accorde pas avec ce panier. Absent = aucun. */
+  nonAccordes?: ReadonlySet<number>
   /** Retrait en boutique : le palier livraison n'a pas de sens. */
   retraitBoutique: boolean
 }
@@ -183,7 +187,7 @@ export function etatPaliers(periode: Periode | null, ctx: ContextePaliers): Etat
     if (palier.type === 'livraison') {
       if (ctx.retraitBoutique) continue
       const reste = arrondi(Math.max(0, palier.montant - ctx.baseLivraison))
-      out.push({ palier, base: ctx.baseLivraison, atteint: reste === 0, reste, variantesDispo: [], lignes: [], refuse: false })
+      out.push({ palier, base: ctx.baseLivraison, atteint: reste === 0, reste, variantesDispo: [], lignes: [], refuse: false, nonAccorde: false })
       continue
     }
     const variantesDispo = (palier.variantes ?? []).filter((v) => ctx.stock[v.id] === true)
@@ -199,6 +203,7 @@ export function etatPaliers(periode: Periode | null, ctx: ContextePaliers): Etat
       variantesDispo,
       lignes,
       refuse: ctx.refuses.has(palier.montant),
+      nonAccorde: ctx.nonAccordes?.has(palier.montant) ?? false,
     })
   }
   return out
@@ -240,7 +245,7 @@ export function planCadeaux(
       if (garde.quantity !== 1) actions.push({ type: 'quantite1', lineId: garde.id })
       continue
     }
-    if (e.refuse || e.variantesDispo.length === 0) continue
+    if (e.refuse || e.nonAccorde || e.variantesDispo.length === 0) continue
     const prefere = options.choix?.[e.palier.montant]
     const variante = e.variantesDispo.find((v) => v.id === prefere) ?? e.variantesDispo[0]
     actions.push({ type: 'ajouter', variantId: variante.id, montant: e.palier.montant })

@@ -73,7 +73,34 @@ describe('calculerCadeaux', () => {
     const cart = panier([{ id: 'a', prix: 70 }, { id: 'g', variant: DCPB, prix: 2.9, total: 2.9, cadeau: 60 }])
     const r = calculerCadeaux(cart, donnees, opts)
     expect(r.actions).toEqual([{ type: 'retirer', lineId: 'g' }])
-    expect(r.refuser).toEqual([60])
+    expect(r.refuser).toEqual([])
+    expect(r.nonAccorder).toEqual({ 60: '60||' })
+  })
+  it('au-delà de 100 € Shopify ne garde qu\'un cadeau : Crunch Bar retirée, ni réajoutée ni proposée, tant que le contexte tient', () => {
+    // Shopify : shaker à 0 €, Crunch Bar repassée à 2,90 € (constaté sur la preview le 13/10/2026).
+    const avant = panier([
+      { id: 'a', prix: 105 },
+      { id: 'g60', variant: DCPB, prix: 2.9, total: 2.9, cadeau: 60 },
+      { id: 'g100', variant: SHAKER, prix: 6.9, total: 0, cadeau: 100 },
+    ])
+    const r = calculerCadeaux(avant, donnees, opts)
+    expect(r.actions).toEqual([{ type: 'retirer', lineId: 'g60' }])
+    expect(r.nonAccorder).toEqual({ 60: '60,100||100' })
+
+    const memo = { ...opts, nonAccordes: r.nonAccorder }
+    const apres = calculerCadeaux(panier([{ id: 'a', prix: 105 }, { id: 'g100', variant: SHAKER, prix: 6.9, total: 0, cadeau: 100 }]), donnees, memo)
+    expect(apres.actions).toEqual([])
+    const crunch = apres.etats.find((e) => e.palier.montant === 60)!
+    expect(crunch.nonAccorde).toBe(true)
+    expect(crunch.refuse).toBe(false)
+
+    // Shaker retiré par le client : la Crunch Bar redevient possible.
+    const sansShaker = calculerCadeaux(panier([{ id: 'a', prix: 105 }]), donnees, { ...memo, refuses: new Set([100]) })
+    expect(sansShaker.actions).toEqual([{ type: 'ajouter', variantId: DCPB, montant: 60 }])
+    // Panier repassé sous 100 € : idem.
+    const sous100 = calculerCadeaux(panier([{ id: 'a', prix: 80 }, { id: 'g100', variant: SHAKER, prix: 6.9, total: 6.9, cadeau: 100 }]), donnees, memo)
+    expect(sous100.actions).toEqual([{ type: 'ajouter', variantId: DCPB, montant: 60 }, { type: 'retirer', lineId: 'g100' }])
+    expect(sous100.nonAccorder).toEqual({})
   })
   it('base livraison après remises de commande', () => {
     const cart = panier([{ id: 'a', prix: 88 }], { discountAllocations: [{ discountedAmount: money(4.4), code: 'LY-X' }] })
