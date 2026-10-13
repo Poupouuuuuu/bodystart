@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { shopifyAdminFetch } from '@/lib/shopify/client'
+import { disponibiliteEnLigne } from '@/lib/shopify/disponibilite'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { gidToNumericId, isValidEmail, isValidVariantGid } from '@/lib/stock-alerts/core'
 
@@ -10,6 +11,8 @@ import { gidToNumericId, isValidEmail, isValidVariantGid } from '@/lib/stock-ale
 // inventory_item_id sont résolus ici via l'Admin API (jamais de texte libre
 // venant du navigateur en base). L'envoi de l'email se fait plus tard, par
 // le webhook inventory_levels/update (voir ./webhook/route.ts).
+// « Déjà disponible ? » se lit par l'API Storefront : l'Admin compte aussi le
+// stock des dépôts, qui ne se vend pas en ligne (lib/shopify/disponibilite).
 
 export const dynamic = 'force-dynamic'
 
@@ -30,7 +33,6 @@ const VARIANT_QUERY = `
     productVariant(id: $id) {
       id
       title
-      availableForSale
       inventoryItem { id }
       product { handle title status }
     }
@@ -41,7 +43,6 @@ interface VariantResult {
   productVariant: {
     id: string
     title: string
-    availableForSale: boolean
     inventoryItem: { id: string } | null
     product: { handle: string; title: string; status: string }
   } | null
@@ -73,8 +74,9 @@ export async function POST(req: NextRequest) {
     if (!variant || variant.product.status !== 'ACTIVE') {
       return NextResponse.json({ error: 'Produit inconnu.' }, { status: 404 })
     }
-    // Déjà disponible : rien à enregistrer, le front rafraîchit son état.
-    if (variant.availableForSale) {
+    // Déjà achetable en ligne : rien à enregistrer, le front rafraîchit son état.
+    const dispo = await disponibiliteEnLigne([variant.id])
+    if (dispo[variant.id]) {
       return NextResponse.json({ ok: true, available: true })
     }
 

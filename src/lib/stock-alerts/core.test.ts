@@ -5,6 +5,7 @@ import {
   isAuthorizedCron,
   selectBackInStockVariantIds,
   displayVariantTitle,
+  estEmplacementEnLigne,
   gidToNumericId,
   isValidEmail,
   isValidVariantGid,
@@ -91,15 +92,30 @@ describe('cron de rattrapage (sweep)', () => {
     expect(isAuthorizedCron('Bearer court', 'court')).toBe(false)
   })
 
-  it('ne retient que les variantes disponibles de produits actifs', () => {
-    const ids = selectBackInStockVariantIds([
-      { id: 'gid://shopify/ProductVariant/1', availableForSale: true, product: { status: 'ACTIVE' } },
-      { id: 'gid://shopify/ProductVariant/2', availableForSale: false, product: { status: 'ACTIVE' } },
-      { id: 'gid://shopify/ProductVariant/3', availableForSale: true, product: { status: 'ARCHIVED' } },
-      { id: 'gid://shopify/ProductVariant/4', availableForSale: true, product: null },
-      null,
-      { id: 'gid://shopify/Product/5', availableForSale: true, product: { status: 'ACTIVE' } },
-    ])
+  it('ne retient que les variantes achetables en ligne (API Storefront)', () => {
+    const ids = selectBackInStockVariantIds(
+      [
+        'gid://shopify/ProductVariant/1',
+        'gid://shopify/ProductVariant/1',
+        'gid://shopify/ProductVariant/2',
+        'gid://shopify/ProductVariant/3',
+        'gid://shopify/Product/5',
+      ],
+      {
+        'gid://shopify/ProductVariant/1': true,
+        'gid://shopify/ProductVariant/2': false, // stock au dépôt seulement
+        'gid://shopify/Product/5': true,
+      }
+    )
     expect(ids).toEqual(['gid://shopify/ProductVariant/1'])
+  })
+
+  it('webhook : seul un emplacement de boutique peut déclencher « De retour en stock »', () => {
+    const boutiques = new Set(['gid://shopify/Location/119350657366'])
+    expect(estEmplacementEnLigne('119350657366', boutiques)).toBe(true)
+    expect(estEmplacementEnLigne('123652374870', boutiques)).toBe(false) // dépôt GymCoach
+    expect(estEmplacementEnLigne('123702214998', boutiques)).toBe(false) // dépôt SDCL
+    expect(estEmplacementEnLigne(null, boutiques)).toBe(false)
+    expect(estEmplacementEnLigne('119350657366/../x', boutiques)).toBe(false)
   })
 })

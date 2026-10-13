@@ -50,8 +50,7 @@ function makeProduct(overrides: Partial<FeedProduct> = {}): FeedProduct {
           barcode: '7340224405384',
           price: '29.9',
           compareAtPrice: null,
-          inventoryQuantity: 5,
-          inventoryPolicy: 'DENY',
+          availableForSale: true,
           image: null,
         },
       ],
@@ -147,7 +146,7 @@ describe('buildGoogleFeedXml', () => {
     expect(counters.skippedNoPrice).toBe(1)
   })
 
-  it('multi-variantes : un item par variante, titre suffixé, out_of_stock si épuisé+DENY', () => {
+  it('multi-variantes : un item par variante, titre suffixé, out_of_stock si non achetable en ligne', () => {
     const p = makeProduct()
     p.variants.nodes = [
       { ...p.variants.nodes[0], id: 'gid://shopify/ProductVariant/1', title: 'Vanille / 810g' },
@@ -156,7 +155,7 @@ describe('buildGoogleFeedXml', () => {
         id: 'gid://shopify/ProductVariant/2',
         title: 'Choco / 2kg',
         barcode: null,
-        inventoryQuantity: 0,
+        availableForSale: false,
         price: '49.9',
       },
     ]
@@ -167,11 +166,12 @@ describe('buildGoogleFeedXml', () => {
     expect(xml).toContain('<g:availability>out_of_stock</g:availability>')
   })
 
-  it('inventoryPolicy CONTINUE → in_stock même à 0', () => {
+  it('disponibilité = API Storefront : non achetable en ligne → out_of_stock, même avec du stock au dépôt', () => {
+    // Protein Water ON Tropical le 13/10/2026 : 0 à Coignières, 11 au dépôt GymCoach.
     const p = makeProduct()
-    p.variants.nodes[0].inventoryQuantity = 0
-    p.variants.nodes[0].inventoryPolicy = 'CONTINUE'
+    p.variants.nodes[0].availableForSale = false
     const { xml } = buildGoogleFeedXml([p], SITE)
-    expect(xml).toContain('<g:availability>in_stock</g:availability>')
+    expect(xml).toContain('<g:availability>out_of_stock</g:availability>')
+    expect(xml).not.toContain('in_stock')
   })
 })
