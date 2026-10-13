@@ -36,7 +36,7 @@ describe('discountInput', () => {
       context: { all: 'ALL' },
       usageLimit: 1,
       appliesOncePerCustomer: false,
-      combinesWith: { productDiscounts: false, orderDiscounts: true, shippingDiscounts: true },
+      combinesWith: { productDiscounts: true, orderDiscounts: true, shippingDiscounts: true },
       customerGets: {
         value: { discountAmount: { amount: '2.90', appliesOnEachItem: false } },
         items: { products: { productsToAdd: ['gid://shopify/Product/10832196010326'], productVariantsToAdd: [] } },

@@ -412,7 +412,9 @@ export default function CartDrawer() {
               const etatCadeau = montantCadeau ? cadeaux.etat.etats.find((e) => e.palier.type === 'cadeau' && e.palier.montant === montantCadeau) : undefined
               // Gratuité posée par Shopify sur un article acheté identique : affichée sur le cadeau (lib/paliers).
               const prixAffiche = cadeaux.etat.affiches[item.id]
-              const offert = montantCadeau !== null && (parseFloat(item.cost.totalAmount.amount) === 0 || prixAffiche === 0)
+              const offert =
+                (montantCadeau !== null && (parseFloat(item.cost.totalAmount.amount) === 0 || prixAffiche === 0)) ||
+                cadeaux.etat.lignesOffertes.includes(item.id)
 
               return (
                 <div

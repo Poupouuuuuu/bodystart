@@ -1,9 +1,9 @@
 'use client'
 
-import { Gift, Truck, Check, Info } from 'lucide-react'
+import { Gift, Truck, Check } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
 import { prochainPalier, type EtatPalier } from '@/lib/paliers'
-import { avecLeCode, type EtatCadeaux } from '@/lib/paliers/panier'
+import type { EtatCadeaux } from '@/lib/paliers/panier'
 
 const euros = (n: number) => formatPrice({ amount: n.toFixed(2), currencyCode: 'EUR' })
 
@@ -25,23 +25,20 @@ function phraseReste(e: EtatPalier) {
  * viennent du métachamp (via useCadeaux) ; ce composant ne fait qu'afficher.
  */
 export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux; onAjouter: (montant: number) => void }) {
-  const { etats, codeBloquant, horsBase, baseCadeaux } = etat
+  const { etats, horsBase, baseCadeaux, offertsParAchat } = etat
   const max = Math.max(...etats.map((e) => e.palier.montant))
   const aCadeaux = etats.some((e) => e.palier.type === 'cadeau')
   const remplissage = aCadeaux ? baseCadeaux : (etats[0]?.base ?? 0)
   const pct = Math.min(100, (remplissage / max) * 100)
   const prochain = prochainPalier(etats)
+  // Palier cadeau atteint sans son cadeau au panier : Shopify a offert les articles achetés à sa place.
+  const cadeauSuperieurPerdu = etats.some((e) => e.palier.type === 'cadeau' && e.atteint && e.parAchat === 0 && e.lignes.length === 0)
 
   return (
     <div className="px-8 pb-5">
       <div className="rounded-xl border border-spruce/10 bg-white p-4">
         <p className="mb-3 text-[12px] font-medium leading-snug text-ink-mute" aria-live="polite">
-          {codeBloquant ? (
-            <span className="inline-flex items-start gap-1.5">
-              <Info className="mt-px h-3.5 w-3.5 flex-shrink-0 text-spruce" aria-hidden="true" />
-              Les cadeaux ne se cumulent pas {avecLeCode(codeBloquant)}.
-            </span>
-          ) : prochain ? (
+          {prochain ? (
             phraseReste(prochain)
           ) : (
             <span className="inline-flex items-center gap-1.5 font-semibold text-spruce">
@@ -102,8 +99,8 @@ export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux;
                 </span>
                 {e.palier.type === 'livraison' ? (
                   e.atteint && <span className="font-semibold text-fresh-deep">Atteint</span>
-                ) : e.atteint && !codeBloquant ? (
-                  dansPanier ? (
+                ) : e.atteint ? (
+                  dansPanier || e.parAchat > 0 ? (
                     <span className="font-semibold text-fresh-deep">Dans ton panier</span>
                   ) : e.nonAccorde ? null : e.refuse ? (
                     <button
@@ -120,7 +117,14 @@ export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux;
           })}
         </ul>
 
-        {horsBase && aCadeaux && !codeBloquant && prochain?.palier.type === 'cadeau' && (
+        {/* Textes validés par Claude Gestion le 13/10/2026 pour l'échelle Crunch Bar / shaker (lib/paliers/panier). */}
+        {(offertsParAchat === 1 || (offertsParAchat > 1 && cadeauSuperieurPerdu)) && (
+          <p className="mt-2 text-[11px] leading-snug text-ink-mute">
+            {offertsParAchat === 1 ? 'Ta Crunch Bar est offerte.' : 'Tes Crunch Bar sont offertes à la place du shaker.'}
+          </p>
+        )}
+
+        {horsBase && aCadeaux && prochain?.palier.type === 'cadeau' && (
           <p className="mt-2 text-[11px] leading-snug text-ink-mute">
             Les cadeaux se calculent sur les compléments et les barres, hors accessoires.
           </p>

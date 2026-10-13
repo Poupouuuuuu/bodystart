@@ -339,7 +339,7 @@ export function discountInput(lot: Lot, code: string, amount: number, startsAt: 
       : {}),
     usageLimit: 1,
     appliesOncePerCustomer: false,
-    combinesWith: { productDiscounts: false, orderDiscounts: true, shippingDiscounts: true },
+    combinesWith: { productDiscounts: true, orderDiscounts: true, shippingDiscounts: true },
   }
 }
 

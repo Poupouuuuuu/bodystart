@@ -13,12 +13,10 @@ interface Memo {
   refuses: number[]
   /** Variante choisie par palier (parfum de la Crunch Bar). */
   choix: Record<number, string>
-  /** Combinaisons de codes déjà testées (cadeau retiré une fois pour laisser passer le code). */
-  codesTestes: string[]
   /** Paliers que Shopify n'a pas accordés, avec le contexte du refus (voir lib/paliers/panier). */
   nonAccordes: Record<number, string>
 }
-const VIDE: Memo = { refuses: [], choix: {}, codesTestes: [], nonAccordes: {} }
+const VIDE: Memo = { refuses: [], choix: {}, nonAccordes: {} }
 const cle = (cartId: string) => `bs-cadeaux:${cartId}`
 
 function lire(cartId: string): Memo {
@@ -88,7 +86,6 @@ export function useCadeaux({ retraitBoutique }: { retraitBoutique: boolean }) {
       now,
       refuses: new Set(memo.refuses),
       choix: memo.choix,
-      codesTestes: new Set(memo.codesTestes),
       nonAccordes: memo.nonAccordes,
       retraitBoutique,
     }),
@@ -102,21 +99,15 @@ export function useCadeaux({ retraitBoutique }: { retraitBoutique: boolean }) {
 
   useEffect(() => {
     if (!donnees || !cart) return
-    const nouveauxRefus = Object.entries(etat.nonAccorder).some(([k, c]) => memo.nonAccordes[Number(k)] !== c)
-    if (etat.refuser.some((m) => !memo.refuses.includes(m)) || etat.codesATester || nouveauxRefus) {
-      majMemo((m) => ({
-        ...m,
-        refuses: [...new Set([...m.refuses, ...etat.refuser])],
-        codesTestes: etat.codesATester ? [...new Set([...m.codesTestes, etat.codesATester])] : m.codesTestes,
-        nonAccordes: { ...m.nonAccordes, ...etat.nonAccorder },
-      }))
+    if (Object.entries(etat.nonAccorder).some(([k, c]) => memo.nonAccordes[Number(k)] !== c)) {
+      majMemo((m) => ({ ...m, nonAccordes: { ...m.nonAccordes, ...etat.nonAccorder } }))
     }
     if (etat.actions.length === 0) return
     void syncCadeaux((frais) => {
       const { donnees: d, options: o } = derniers.current
       return calculerCadeaux(frais, d, o).actions
     })
-  }, [etat, donnees, cart, memo.refuses, memo.nonAccordes, majMemo, syncCadeaux])
+  }, [etat, donnees, cart, memo.nonAccordes, majMemo, syncCadeaux])
 
   /** Le client retire son cadeau : on ne le remettra pas de force. */
   const retirerCadeau = useCallback(

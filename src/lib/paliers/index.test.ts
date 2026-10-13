@@ -66,47 +66,48 @@ describe('bases', () => {
 describe('états et plan', () => {
   it('55 € : rien à ajouter, prochain palier à 5 €', () => {
     const etats = etatPaliers(octobre, ctx({ baseCadeaux: 55, baseLivraison: 55 }))
-    expect(planCadeaux(etats, [], { bloque: false })).toEqual([])
+    expect(planCadeaux(etats, [], {})).toEqual([])
     expect(prochainPalier(etats)).toMatchObject({ reste: 5, palier: { libelle: 'Crunch Bar offerte' } })
   })
   it('61 € : Crunch Bar ajoutée, première variante en stock', () => {
     const etats = etatPaliers(octobre, ctx({ baseCadeaux: 61, baseLivraison: 61 }))
-    expect(planCadeaux(etats, [], { bloque: false })).toEqual([{ type: 'ajouter', variantId: DCPB, montant: 60 }])
+    expect(planCadeaux(etats, [], {})).toEqual([{ type: 'ajouter', variantId: DCPB, montant: 60 }])
     const sansDcpb = etatPaliers(octobre, ctx({ baseCadeaux: 61, stock: { ...stock, [DCPB]: false } }))
-    expect(planCadeaux(sansDcpb, [], { bloque: false })).toEqual([{ type: 'ajouter', variantId: PBC, montant: 60 }])
+    expect(planCadeaux(sansDcpb, [], {})).toEqual([{ type: 'ajouter', variantId: PBC, montant: 60 }])
   })
   it('choix du parfum respecté', () => {
     const etats = etatPaliers(octobre, ctx({ baseCadeaux: 61 }))
-    expect(planCadeaux(etats, [], { bloque: false, choix: { 60: PBC } })[0]).toMatchObject({ variantId: PBC })
+    expect(planCadeaux(etats, [], { choix: { 60: PBC } })[0]).toMatchObject({ variantId: PBC })
   })
   it('101 € : shaker ajouté, Crunch Bar déjà là gardée', () => {
     const lignes = [ligne({ id: 'g', merchandiseId: DCPB, cadeau: 60 })]
     const etats = etatPaliers(octobre, ctx({ baseCadeaux: 101, baseLivraison: 101, lignes }))
-    expect(planCadeaux(etats, lignes, { bloque: false })).toEqual([{ type: 'ajouter', variantId: SHAKER, montant: 100 }])
+    expect(planCadeaux(etats, lignes, {})).toEqual([{ type: 'ajouter', variantId: SHAKER, montant: 100 }])
     expect(prochainPalier(etats)).toBeNull()
   })
   it('retour à 58 € : les deux cadeaux retirés', () => {
     const lignes = [ligne({ id: 'g', merchandiseId: DCPB, cadeau: 60 }), ligne({ id: 's', merchandiseId: SHAKER, cadeau: 100 })]
     const etats = etatPaliers(octobre, ctx({ baseCadeaux: 58, lignes }))
-    expect(planCadeaux(etats, lignes, { bloque: false })).toEqual([
+    expect(planCadeaux(etats, lignes, {})).toEqual([
       { type: 'retirer', lineId: 'g' },
       { type: 'retirer', lineId: 's' },
     ])
   })
   it('cadeau retiré par le client : pas remis de force', () => {
     const etats = etatPaliers(octobre, ctx({ baseCadeaux: 70, refuses: new Set([60]) }))
-    expect(planCadeaux(etats, [], { bloque: false })).toEqual([])
+    expect(planCadeaux(etats, [], {})).toEqual([])
     expect(etats[0].refuse).toBe(true)
   })
-  it('code non cumulable : aucun cadeau ajouté, les présents retirés', () => {
+  it('cadeau tenu par un article acheté (parAchat) : ligne cadeau retirée, aucun ajout', () => {
     const lignes = [ligne({ id: 'g', merchandiseId: DCPB, cadeau: 60 })]
-    const etats = etatPaliers(octobre, ctx({ baseCadeaux: 70, lignes }))
-    expect(planCadeaux(etats, lignes, { bloque: true })).toEqual([{ type: 'retirer', lineId: 'g' }])
+    const etats = etatPaliers(octobre, ctx({ baseCadeaux: 70, lignes })).map((e) => (e.palier.montant === 60 ? { ...e, parAchat: 1 } : e))
+    expect(planCadeaux(etats, lignes)).toEqual([{ type: 'retirer', lineId: 'g' }])
+    expect(planCadeaux(etats.map((e) => ({ ...e, lignes: [] })), [])).toEqual([])
   })
   it('quantité forcée à 1, doublon retiré', () => {
     const lignes = [ligne({ id: 'g', merchandiseId: DCPB, cadeau: 60, quantity: 3 }), ligne({ id: 'h', merchandiseId: PBC, cadeau: 60 })]
     const etats = etatPaliers(octobre, ctx({ baseCadeaux: 70, lignes }))
-    expect(planCadeaux(etats, lignes, { bloque: false })).toEqual([
+    expect(planCadeaux(etats, lignes, {})).toEqual([
       { type: 'retirer', lineId: 'h' },
       { type: 'quantite1', lineId: 'g' },
     ])
@@ -118,7 +119,7 @@ describe('états et plan', () => {
   it('Black Week : créatine à 100 €, Crunch Bar d’octobre retirée', () => {
     const lignes = [ligne({ id: 'g', merchandiseId: DCPB, cadeau: 60 })]
     const etats = etatPaliers(blackWeek, ctx({ baseCadeaux: 120, baseLivraison: 120, lignes }))
-    expect(planCadeaux(etats, lignes, { bloque: false })).toEqual([
+    expect(planCadeaux(etats, lignes, {})).toEqual([
       { type: 'retirer', lineId: 'g' },
       { type: 'ajouter', variantId: CREA, montant: 100 },
     ])

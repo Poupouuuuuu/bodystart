@@ -162,8 +162,10 @@ export interface EtatPalier {
   lignes: LigneCadeau[]
   /** Le client a retiré ce cadeau : on ne le remet pas de force. */
   refuse: boolean
-  /** Shopify ne l'accorde pas avec ce panier (deux remises « achetez X » sur les mêmes produits ne se cumulent pas) : ni ajout ni bouton. */
+  /** Shopify ne l'accorde pas avec ce panier (cadeau refacturé) : ni ajout ni bouton. */
   nonAccorde: boolean
+  /** Articles de ce cadeau achetés par le client, quand ils tiennent lieu de cadeau (voir calculerCadeaux) : pas de ligne cadeau. */
+  parAchat: number
 }
 
 export interface ContextePaliers {
@@ -189,7 +191,7 @@ export function etatPaliers(periode: Periode | null, ctx: ContextePaliers): Etat
     if (palier.type === 'livraison') {
       if (ctx.retraitBoutique) continue
       const reste = arrondi(Math.max(0, palier.montant - ctx.baseLivraison))
-      out.push({ palier, base: ctx.baseLivraison, atteint: reste === 0, reste, variantesDispo: [], lignes: [], refuse: false, nonAccorde: false })
+      out.push({ palier, base: ctx.baseLivraison, atteint: reste === 0, reste, variantesDispo: [], lignes: [], refuse: false, nonAccorde: false, parAchat: 0 })
       continue
     }
     const variantesDispo = (palier.variantes ?? []).filter((v) => ctx.stock[v.id] === true)
@@ -206,6 +208,7 @@ export function etatPaliers(periode: Periode | null, ctx: ContextePaliers): Etat
       lignes,
       refuse: ctx.refuses.has(palier.montant),
       nonAccorde: ctx.nonAccordes?.has(palier.montant) ?? false,
+      parAchat: 0,
     })
   }
   return out
@@ -218,15 +221,16 @@ export type ActionCadeau =
 
 /**
  * Ce qu'il faut changer au panier pour qu'il colle aux paliers :
- * - cadeau d'un palier atteint absent (et non refusé, ni bloqué par un code) → l'ajouter ;
- * - cadeau d'un palier non atteint, d'un palier masqué ou d'une autre période → le retirer ;
+ * - cadeau d'un palier atteint absent (et non refusé, ni refusé par Shopify) → l'ajouter ;
+ * - cadeau d'un palier non atteint, d'un palier masqué ou d'une autre période,
+ *   ou remplacé par un article acheté (parAchat) → le retirer ;
  * - doublon ou quantité > 1 sur une ligne cadeau → ramener à une seule unité.
  * `choix` : variante préférée par palier (choix du parfum), sinon la première en stock.
  */
 export function planCadeaux(
   etats: EtatPalier[],
   lignes: LigneCadeau[],
-  options: { bloque: boolean; choix?: Readonly<Record<number, string>> }
+  options: { choix?: Readonly<Record<number, string>> } = {}
 ): ActionCadeau[] {
   const actions: ActionCadeau[] = []
   const montantsActifs = new Set(etats.filter((e) => e.palier.type === 'cadeau').map((e) => e.palier.montant))
@@ -237,7 +241,7 @@ export function planCadeaux(
 
   for (const e of etats) {
     if (e.palier.type !== 'cadeau') continue
-    if (!e.atteint || options.bloque) {
+    if (!e.atteint || e.parAchat > 0) {
       for (const l of e.lignes) actions.push({ type: 'retirer', lineId: l.id })
       continue
     }
