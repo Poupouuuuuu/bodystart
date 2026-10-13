@@ -101,6 +101,7 @@ export const GET_PRODUCT_BY_HANDLE = `
     product(handle: $handle) {
       id
       handle
+      availableForSale
       title
       description
       descriptionHtml
