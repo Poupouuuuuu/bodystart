@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { shopifyAdminFetch } from '@/lib/shopify/client'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
-import { chunk, isAuthorizedCron, selectBackInStockVariantIds, type VariantAvailabilityNode } from '@/lib/stock-alerts/core'
+import { disponibiliteEnLigne } from '@/lib/shopify/disponibilite'
+import { isAuthorizedCron, selectBackInStockVariantIds } from '@/lib/stock-alerts/core'
 import { MAX_BATCH, sendAlerts, type AlertRow } from '@/lib/stock-alerts/notify'
 
 // ============================================================
@@ -11,7 +11,8 @@ import { MAX_BATCH, sendAlerts, type AlertRow } from '@/lib/stock-alerts/notify'
 // n'a pas déclenché d'email (webhook manqué, Resend en panne au mauvais moment,
 // stock rentré par un canal qui n'émet pas l'événement), on relit les alertes
 // en attente, on demande à Shopify quelles variantes sont de nouveau
-// disponibles, et on envoie.
+// achetables en ligne (API Storefront : le stock des dépôts ne compte pas),
+// et on envoie.
 //
 // Auth : Vercel appelle la route avec « Authorization: Bearer <CRON_SECRET> ».
 // Sans CRON_SECRET configuré, la route refuse tout (fail closed).
@@ -22,22 +23,6 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 const MAX_PENDING = 500
-
-const VARIANTS_QUERY = `
-  query SweepVariants($ids: [ID!]!) {
-    nodes(ids: $ids) {
-      ... on ProductVariant {
-        id
-        availableForSale
-        product { status }
-      }
-    }
-  }
-`
-
-interface VariantsResult {
-  nodes: Array<VariantAvailabilityNode | null>
-}
 
 export async function GET(req: Request) {
   if (!isAuthorizedCron(req.headers.get('authorization'), process.env.CRON_SECRET)) {
@@ -58,17 +43,14 @@ export async function GET(req: Request) {
   if (rows.length === 0) return NextResponse.json({ ok: true, pending: 0, back: 0, sent: 0 })
 
   const variantIds = [...new Set(rows.map((r) => r.variant_id))]
-  const nodes: Array<VariantAvailabilityNode | null> = []
+  let dispo: Record<string, boolean>
   try {
-    for (const ids of chunk(variantIds, 50)) {
-      const data = await shopifyAdminFetch<VariantsResult>(VARIANTS_QUERY, { ids })
-      nodes.push(...data.nodes)
-    }
+    dispo = await disponibiliteEnLigne(variantIds)
   } catch (err) {
     console.error('[stock-alert/sweep] shopify', err)
     return NextResponse.json({ error: 'shopify' }, { status: 502 })
   }
-  const back = selectBackInStockVariantIds(nodes)
+  const back = selectBackInStockVariantIds(variantIds, dispo)
   if (back.length === 0) return NextResponse.json({ ok: true, pending: rows.length, back: 0, sent: 0 })
 
   // Réclamation atomique (même garde que le webhook) : pas de doublon si le

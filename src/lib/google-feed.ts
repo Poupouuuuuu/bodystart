@@ -3,7 +3,8 @@
  *
  * RSS 2.0 + namespace g: (http://base.google.com/ns/1.0), un <item> par
  * VARIANTE achetable. Source : Admin API (le barcode/GTIN n'existe pas en
- * Storefront). Règles anti-suspension :
+ * Storefront), disponibilité lue par l'API Storefront (lib/shopify/disponibilite :
+ * l'Admin additionne les dépôts). Règles anti-suspension :
  *   - aucun item sans prix, sans image ou sans lien ;
  *   - prix = prix Shopify (le même que la fiche produit → concordance) ;
  *   - exclusion des produits taggés `exclu-google` et des non-publiés
@@ -19,8 +20,8 @@ export interface FeedVariant {
   barcode: string | null
   price: string // "29.9"
   compareAtPrice: string | null
-  inventoryQuantity: number | null
-  inventoryPolicy: 'CONTINUE' | 'DENY' | null
+  /** Achetable en ligne (API Storefront, emplacements des ventes en ligne seulement). */
+  availableForSale: boolean
   image: { url: string } | null
 }
 
@@ -178,8 +179,7 @@ export function buildGoogleFeedXml(
         multiVariant && v.title && v.title !== 'Default Title' ? `${p.title} - ${v.title}` : p.title
       const sku = v.sku?.trim() || null
       const gtin = isValidGtin(v.barcode) ? v.barcode.trim() : null
-      const inStock =
-        (v.inventoryQuantity ?? 0) > 0 || v.inventoryPolicy === 'CONTINUE'
+      const inStock = v.availableForSale === true
 
       const fields = [
         `<g:id>${escapeXml(sku ?? numericId(v.id))}</g:id>`,

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getLoyaltyAdminClient } from '@/lib/loyalty/supabase-admin'
 import { verifyShopifyHmac } from '@/lib/loyalty/verify-hmac'
-import { parseInventoryLevelPayload } from '@/lib/stock-alerts/core'
+import { EMPLACEMENTS_BOUTIQUES } from '@/lib/shopify/disponibilite'
+import { estEmplacementEnLigne, parseInventoryLevelPayload } from '@/lib/stock-alerts/core'
 import { MAX_BATCH, sendAlerts, type AlertRow } from '@/lib/stock-alerts/notify'
 
 // ============================================================
@@ -13,7 +14,8 @@ import { MAX_BATCH, sendAlerts, type AlertRow } from '@/lib/stock-alerts/notify'
 // comprises) : le chemin « rien à faire » doit rester très court.
 //
 // 1. Raw body + HMAC → 401 si invalide.
-// 2. available <= 0 → 200 (rien à faire).
+// 2. Emplacement qui ne vend pas en ligne (dépôt GymCoach, SDCL…) ou
+//    available <= 0 → 200 (rien à faire).
 // 3. Réclamation atomique des alertes en attente sur cet inventory_item
 //    (UPDATE … WHERE notified_at IS NULL RETURNING) → pas de doublon si deux
 //    webhooks arrivent en même temps.
@@ -40,6 +42,9 @@ export async function POST(req: Request) {
   }
   const level = parseInventoryLevelPayload(payload)
   if (!level) return NextResponse.json({ error: 'invalid_payload' }, { status: 400 })
+  if (!estEmplacementEnLigne(level.locationId, EMPLACEMENTS_BOUTIQUES)) {
+    return NextResponse.json({ ok: true, skipped: 'not_online_location' })
+  }
   if (level.available === null || level.available <= 0) {
     return NextResponse.json({ ok: true, skipped: 'not_available' })
   }
