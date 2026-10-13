@@ -75,11 +75,19 @@ export interface EtatCadeaux {
   affiches: Readonly<Record<string, number>>
 }
 
-/** Contexte d'un refus de Shopify : paliers cadeaux atteints, codes, autres cadeaux au panier. */
+/**
+ * Contexte d'un refus de Shopify : paliers cadeaux atteints, codes, autres
+ * cadeaux et articles achetés (variante × quantité). Shopify offre les
+ * articles éligibles les moins chers : une Crunch Bar achetée peut prendre la
+ * place du shaker, et la retirer doit le faire revenir.
+ */
 function contexteDe(montant: number, etats: EtatPalier[], lignes: LigneCadeau[], codes: string): string {
   const atteints = etats.filter((e) => e.palier.type === 'cadeau' && e.atteint).map((e) => e.palier.montant).sort((a, b) => a - b)
   const autres = [...new Set(lignes.filter((l) => l.cadeau !== null && l.cadeau !== montant).map((l) => l.cadeau!))].sort((a, b) => a - b)
-  return `${atteints.join(',')}|${codes}|${autres.join(',')}`
+  const quantites = new Map<string, number>()
+  for (const l of lignes) if (l.cadeau === null) quantites.set(l.merchandiseId, (quantites.get(l.merchandiseId) ?? 0) + l.quantity)
+  const achats = [...quantites].map(([v, q]) => `${idNumerique(v)}x${q}`).sort()
+  return `${atteints.join(',')}|${codes}|${autres.join(',')}|${achats.join(',')}`
 }
 
 export function calculerCadeaux(
