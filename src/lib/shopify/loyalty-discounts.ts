@@ -61,7 +61,8 @@ interface DeleteResponse {
  *   - appliesOncePerCustomer = true : Shopify empeche la reutilisation par
  *     le meme compte client connecte (defense partielle vs guest fraud).
  *   - usageLimit = null : le code doit pouvoir servir a plusieurs filleuls.
- *   - combinesWith : shipping OK, le reste interdit (la commission parrain
+ *   - combinesWith : livraison et remises produit (cadeaux des paliers du
+ *     panier, 13/10/2026) ; pas les remises commande (la commission parrain
  *     vit cote Supabase, pas besoin de cumul cote Shopify).
  *
  * @returns GID Shopify du code cree (ex: gid://shopify/DiscountCodeNode/123)
@@ -94,10 +95,10 @@ export async function createReferralDiscountCode(opts: {
       // 1 fois par filleul (1re commande) ; usable par plusieurs filleuls.
       appliesOncePerCustomer: true,
       usageLimit: null,
-      // Aucune combinaison → NON cumulable avec BIENVENUE5 ni autre code.
+      // Pas de remise commande → NON cumulable avec BIENVENUE5 ni autre code ; cumulable avec les cadeaux.
       combinesWith: {
         orderDiscounts: false,
-        productDiscounts: false,
+        productDiscounts: true, // cadeaux des paliers du panier cumulables (13/10/2026)
         shippingDiscounts: true,
       },
     },
@@ -119,7 +120,8 @@ export async function createReferralDiscountCode(opts: {
  *
  * Recette EXACTE validée (cf. test E2EAMBA10) :
  *   - code manuel (saisi au checkout), -10% sur TOUS les articles,
- *   - NON combinable (order/product/shipping = false),
+ *   - cumulable seulement avec les remises produit (cadeaux des paliers du
+ *     panier, 13/10/2026) ; pas avec les remises commande ni la livraison,
  *   - SANS minimum d'achat, SANS limite d'usage, appliesOncePerCustomer = false,
  *   - pas d'endsAt → actif tant que l'ambassadeur l'est.
  *
@@ -144,7 +146,7 @@ export async function createAmbassadorDiscountCode(opts: {
       usageLimit: null,
       combinesWith: {
         orderDiscounts: false,
-        productDiscounts: false,
+        productDiscounts: true, // cadeaux des paliers du panier cumulables (13/10/2026)
         shippingDiscounts: false,
       },
     },
@@ -175,7 +177,7 @@ export async function createAmbassadorDiscountCode(opts: {
  *   - endsAt = now + 1h : Shopify rejette le code apres → anti-fuite
  *   - usageLimit = 1
  *   - appliesOncePerCustomer = true
- *   - combinesWith : shipping OK, rien d'autre
+ *   - combinesWith : livraison et remises produit (cadeaux des paliers), pas les remises commande
  *
  * @returns { gid, code } — le code Shopify a appliquer au panier
  * @throws si userErrors non vide
@@ -229,7 +231,7 @@ export async function createRedemptionDiscountCode(opts: {
       usageLimit: 1,
       combinesWith: {
         orderDiscounts: false,
-        productDiscounts: false,
+        productDiscounts: true, // cadeaux des paliers du panier cumulables (13/10/2026)
         shippingDiscounts: true,
       },
     },
@@ -257,8 +259,9 @@ export async function createRedemptionDiscountCode(opts: {
  *     TOUJOURS en entier (jamais tronquée) et respecte le cap 50% du panier.
  *   - endsAt = now + 1h (anti-fuite : Shopify rejette le code après).
  *   - usageLimit = 1, appliesOncePerCustomer = true.
- *   - combinesWith : shipping uniquement → NON cumulable (ni BIENVENUE5, ni
- *     code -10% ambassadeur, ni autre remise produit/commande).
+ *   - combinesWith : livraison et remises produit (cadeaux des paliers,
+ *     13/10/2026) → NON cumulable avec les remises commande (ni BIENVENUE5,
+ *     ni code -10% ambassadeur).
  *
  * @returns { shopifyDiscountNodeId, discountCode }
  * @throws si userErrors non vide
@@ -299,7 +302,7 @@ export async function createAmbassadorRedemptionDiscountCode(opts: {
       usageLimit: 1,
       combinesWith: {
         orderDiscounts: false,
-        productDiscounts: false,
+        productDiscounts: true, // cadeaux des paliers du panier cumulables (13/10/2026)
         shippingDiscounts: true,
       },
     },

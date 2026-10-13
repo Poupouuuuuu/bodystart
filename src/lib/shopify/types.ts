@@ -165,9 +165,15 @@ export interface CartItem {
       }[]
     } | null
   }
+  /** Attributs de ligne (dont `_cadeau`, cf. lib/paliers). */
+  attributes?: { key: string; value: string | null }[]
   cost: {
+    /** Avant remises de ligne. */
+    subtotalAmount?: ShopifyMoney
     totalAmount: ShopifyMoney
   }
+  /** Remises appliquées à la ligne (remise automatique d'un cadeau, codes produit). */
+  discountAllocations?: { discountedAmount: ShopifyMoney; title?: string; code?: string }[]
 }
 
 export interface CartDiscountCode {

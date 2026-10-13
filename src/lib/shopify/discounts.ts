@@ -92,7 +92,7 @@ export async function createCoachingDiscount(
       appliesOncePerCustomer: false,
       combinesWith: {
         orderDiscounts: false,
-        productDiscounts: false,
+        productDiscounts: true, // cadeaux des paliers du panier cumulables (13/10/2026)
         shippingDiscounts: true,
       },
     },
