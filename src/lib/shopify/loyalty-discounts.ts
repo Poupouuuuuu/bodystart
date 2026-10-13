@@ -95,7 +95,7 @@ export async function createReferralDiscountCode(opts: {
       // 1 fois par filleul (1re commande) ; usable par plusieurs filleuls.
       appliesOncePerCustomer: true,
       usageLimit: null,
-      // Aucune combinaison → NON cumulable avec BIENVENUE5 ni autre code.
+      // Pas de remise commande → NON cumulable avec BIENVENUE5 ni autre code ; cumulable avec les cadeaux.
       combinesWith: {
         orderDiscounts: false,
         productDiscounts: true, // cadeaux des paliers du panier cumulables (13/10/2026)

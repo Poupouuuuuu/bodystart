@@ -129,15 +129,29 @@ describe('calculerCadeaux', () => {
       expect(r.actions).toEqual([])
       expect(r.affiches).toEqual({ g60: 0, achat: 2.9 })
     })
-    it('100 € : Crunch achetée et Crunch offerte remisées, shaker à 6,90 € → on retire la Crunch offerte et on juge le shaker au tour suivant', () => {
+    it('juste au-dessus de 100 € (sous 100 € sans la Crunch achetée) : la Crunch cadeau est gardée, tout est offert (mesuré, cas F3)', () => {
       const cart = panier([
         { id: 'a', prix: 98.7 },
-        { id: 'achat', variant: DCPB, prix: 2.9, total: 0, remises: [{ titre: R100, montant: 2.9 }] },
+        { id: 'achat', variant: PBC, prix: 2.9, remises: [{ titre: R100, montant: 0 }] },
         { id: 'g60', variant: DCPB, prix: 2.9, total: 0, cadeau: 60, remises: [{ titre: R100, montant: 2.9 }] },
+        { id: 'g100', variant: SHAKER, prix: 6.9, total: 0, cadeau: 100, remises: [{ titre: R100, montant: 6.9 }] },
+      ])
+      const r = calculerCadeaux(cart, avecTitres, opts)
+      expect(r.actions).toEqual([])
+      expect(r.etats.find((e) => e.palier.montant === 60)!.parAchat).toBe(0)
+      expect(r.offertsParAchat).toBe(0)
+    })
+    it('même panier sans la Crunch cadeau (mesuré, cas F) : on la remet, le shaker facturé sort sans être marqué refusé', () => {
+      const cart = panier([
+        { id: 'a', prix: 98.7 },
+        { id: 'achat', variant: PBC, prix: 2.9, total: 0, remises: [{ titre: R60, montant: 2.9 }] },
         { id: 'g100', variant: SHAKER, prix: 6.9, total: 6.9, cadeau: 100 },
       ])
       const r = calculerCadeaux(cart, avecTitres, opts)
-      expect(r.actions).toEqual([{ type: 'retirer', lineId: 'g60' }])
+      expect(r.actions).toEqual([
+        { type: 'ajouter', variantId: DCPB, montant: 60 },
+        { type: 'retirer', lineId: 'g100' },
+      ])
       expect(r.nonAccorder).toEqual({})
     })
     it('une autre promo automatique (3 achetées, 1 offerte) ne couvre jamais un cadeau', () => {
@@ -183,8 +197,8 @@ describe('calculerCadeaux', () => {
         { type: 'retirer', lineId: 'g60' },
         { type: 'ajouter', variantId: SHAKER, montant: 100 },
       ])
-      expect(r.offertsParAchat).toBe(1)
       expect(r.etats.find((e) => e.palier.montant === 60)!.parAchat).toBe(1)
+      expect(r.offertsParAchat).toBe(0) // pas encore offerte par Shopify
     })
     it('1 Crunch achetée, Shopify offre la Crunch et le shaker : rien à faire, la Crunch achetée s\'affiche offerte', () => {
       const r = calculerCadeaux(
@@ -198,6 +212,7 @@ describe('calculerCadeaux', () => {
       )
       expect(r.actions).toEqual([])
       expect(r.lignesOffertes).toEqual(['achat'])
+      expect(r.offertsParAchat).toBe(1)
     })
     it('2 Crunch achetées : Shopify les offre, shaker refacturé et retiré, message « à la place du shaker »', () => {
       const r = calculerCadeaux(

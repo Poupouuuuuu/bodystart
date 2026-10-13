@@ -16,12 +16,14 @@
 //
 // Article acheté qui tient lieu de cadeau (Claude Gestion, 13/10/2026) : la
 // remise du palier supérieur (100 €) offre 2 articles parmi les cadeaux des
-// deux paliers, et Shopify prend toujours les moins chers. Avec une Crunch
-// Bar éligible achetée, elle passerait devant le shaker. Donc, dès qu'un
-// palier supérieur est atteint, une Crunch éligible achetée devient le
-// cadeau du palier inférieur : pas de ligne cadeau, et la remise tombe sur
-// la Crunch achetée et le shaker. À partir de 2 achetées, Shopify offre les
-// 2 Crunch et le shaker saute (accepté, message dans le tiroir).
+// deux paliers. Shopify prend les moins chers, sans compter dans le minimum
+// les articles qu'il offre (mesuré). Avec une Crunch Bar éligible achetée et
+// un panier qui reste à 100 € sans elle, elle passerait devant le shaker :
+// elle devient alors le cadeau du palier inférieur (pas de ligne cadeau), et
+// la remise tombe sur elle et le shaker. Si le panier passe sous 100 € sans
+// elle, elle reste dans le minimum et la ligne cadeau est gardée (Crunch
+// cadeau et shaker offerts). Si le panier reste à 100 € sans 2 Crunch
+// achetées, Shopify offre les 2 Crunch et le shaker saute (accepté, message).
 
 import type { ShopifyCart } from '@/lib/shopify/types'
 import {
@@ -74,7 +76,7 @@ export interface EtatCadeaux {
   affiches: Readonly<Record<string, number>>
   /** Lignes achetées rendues gratuites par une remise cadeau (affichées « Offert »). */
   lignesOffertes: string[]
-  /** Articles achetés qui tiennent lieu de cadeau : 1 → « Ta Crunch Bar est offerte. », 2 et plus → à la place du cadeau supérieur. */
+  /** Articles achetés offerts à la place d'une ligne cadeau : 1 → « Ta Crunch Bar est offerte. », 2 et plus → à la place du cadeau supérieur. */
   offertsParAchat: number
 }
 
@@ -137,37 +139,51 @@ export function calculerCadeaux(
   )
   const etatsShopify = nonAccordes.size ? etatPaliers(periode, { ...ctx, nonAccordes }) : provisoires
 
-  // Article acheté qui tient lieu de cadeau : palier cadeau atteint, palier cadeau supérieur atteint aussi.
-  const achetes = (e: EtatPalier) => {
-    const ids = new Set((e.palier.variantes ?? []).map((v) => v.id))
-    return lignes.filter((l) => l.cadeau === null && ids.has(l.merchandiseId)).reduce((n, l) => n + l.quantity, 0)
-  }
+  // Article acheté qui tient lieu de cadeau : palier atteint, et un palier cadeau supérieur qui reste
+  // atteint sans cet article (sinon il doit rester dans le minimum de Shopify).
   const etats = etatsShopify.map((e) => {
     if (e.palier.type !== 'cadeau' || !e.atteint) return e
-    const superieur = etatsShopify.some((q) => q.palier.type === 'cadeau' && q.palier.montant > e.palier.montant && q.atteint)
-    const n = superieur ? achetes(e) : 0
-    return n > 0 ? { ...e, parAchat: n } : e
+    const ids = new Set((e.palier.variantes ?? []).map((v) => v.id))
+    const achats = lignes.filter((l) => l.cadeau === null && l.quantity > 0 && ids.has(l.merchandiseId))
+    if (achats.length === 0) return e
+    const prixMin = Math.min(...achats.map((l) => l.subtotal / l.quantity))
+    const superieur = etatsShopify.some(
+      (q) => q.palier.type === 'cadeau' && q.palier.montant > e.palier.montant && q.atteint && q.base - prixMin + 0.005 >= q.palier.montant
+    )
+    return superieur ? { ...e, parAchat: achats.reduce((n, l) => n + l.quantity, 0) } : e
   })
 
   const titres = new Set(donnees.titres ?? [])
   const transferts = transfertsCadeaux(lignes, titres)
   const nonAccorder: Record<number, string> = {}
   let actions = planCadeaux(etats, lignes, { choix: options.choix })
-  // Jamais de cadeau facturé : une ligne cadeau que Shopify ne passe pas à 0 € est retirée,
-  // et le palier n'est plus proposé tant que le contexte ne change pas. Si ce tour retire déjà
-  // une ligne cadeau (palier plus atteint, doublon, article acheté à la place), le cadeau facturé
-  // vient sans doute d'elle : on juge au tour suivant, qui suit immédiatement la mise à jour.
-  const retraitsPrevus = actions.some((a) => a.type === 'retirer')
-  for (const l of retraitsPrevus ? [] : cadeauxPayants(lignes, transferts.couverts)) {
+  // Jamais de cadeau facturé : une ligne cadeau que Shopify ne passe pas à 0 € est retirée.
+  // Le palier n'est marqué « non accordé » (plus proposé tant que le contexte tient) que si ce
+  // tour ne change rien d'autre : sinon Shopify va tout recalculer (ajout, retrait, article
+  // acheté à la place) et le cadeau sera de nouveau proposé au tour suivant.
+  const autresChangements = actions.length > 0
+  const dejaRetirees = new Set(actions.filter((a) => a.type === 'retirer').map((a) => (a as { lineId: string }).lineId))
+  for (const l of cadeauxPayants(lignes, transferts.couverts)) {
+    if (dejaRetirees.has(l.id)) continue
     actions.push({ type: 'retirer', lineId: l.id })
-    nonAccorder[l.cadeau!] = contexteDe(l.cadeau!, etats, lignes, signature)
+    if (!autresChangements) nonAccorder[l.cadeau!] = contexteDe(l.cadeau!, etats, lignes, signature)
   }
   // Pas d'ajout d'un cadeau qu'on vient de retirer parce qu'il était facturé.
   if (Object.keys(nonAccorder).length) actions = actions.filter((a) => a.type !== 'ajouter' || !(a.montant in nonAccorder))
 
+  // Ligne achetée rendue gratuite par une remise cadeau (sauf si sa gratuité est affichée sur le cadeau).
   const lignesOffertes = lignes
-    .filter((l) => l.cadeau === null && l.total <= 0.005 && (l.remises ?? []).some((r) => titres.has(r.titre) && r.montant > 0))
+    .filter((l) => l.cadeau === null && l.total <= 0.005 && !(l.id in transferts.affiches))
+    .filter((l) => (l.remises ?? []).some((r) => titres.has(r.titre) && r.montant > 0))
     .map((l) => l.id)
+  // Articles achetés réellement offerts à la place d'une ligne cadeau (pour le message du tiroir).
+  const variantesParAchat = new Set(etats.filter((e) => e.parAchat > 0).flatMap((e) => (e.palier.variantes ?? []).map((v) => v.id)))
+  const offertsParAchat = lignes
+    .filter((l) => l.cadeau === null && l.quantity > 0 && variantesParAchat.has(l.merchandiseId))
+    .reduce((n, l) => {
+      const remise = (l.remises ?? []).filter((r) => titres.has(r.titre)).reduce((s, r) => s + r.montant, 0)
+      return n + Math.floor((remise + 0.005) / (l.subtotal / l.quantity))
+    }, 0)
 
   const premier = etats.find((e) => e.palier.type === 'cadeau')
   return {
@@ -179,6 +195,6 @@ export function calculerCadeaux(
     nonAccorder,
     affiches: transferts.affiches,
     lignesOffertes,
-    offertsParAchat: Math.max(0, ...etats.map((e) => e.parAchat)),
+    offertsParAchat,
   }
 }
