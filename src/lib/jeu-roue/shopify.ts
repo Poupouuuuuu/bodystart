@@ -17,7 +17,7 @@ import { LOTS, JEU_LOCATION_ID, CODE_VALIDITY_DAYS, lotById, lotLabelRemise, typ
 const API = { apiVersion: '2026-04' }
 
 export const PARTICIPANT_TAG = 'jeu-roue'
-/** Case « offres par e-mail et SMS » cochée : compté dans le récap hebdo
+/** Case « offres par SMS et e-mail » cochée : compté dans le récap hebdo
  *  (le filtre de recherche Shopify par abonnement e-mail est ignoré). */
 export const OPTIN_TAG = 'jeu-roue-optin'
 const MF_NAMESPACE = 'bodystart'
@@ -97,8 +97,10 @@ function consent(now: string) {
 /**
  * Crée la fiche client, ou met à jour celle qui existe déjà (prénom, nom,
  * téléphone). Si le téléphone appartient déjà à une autre fiche, il est
- * ignoré sans bloquer. Case cochée : accord e-mail et SMS (opt-in simple).
- * Case décochée : on ne touche pas aux accords existants.
+ * ignoré sans bloquer. Case cochée : accords SMS et e-mail (opt-in simple).
+ * Case décochée : on ne touche pas aux accords existants, on ne désabonne
+ * jamais. Case cochée mais téléphone refusé : pas d'accord SMS possible,
+ * noté au journal.
  */
 export async function upsertCustomer(entry: Entry): Promise<string> {
   const now = new Date().toISOString()
@@ -123,10 +125,14 @@ export async function upsertCustomer(entry: Entry): Promise<string> {
     // Téléphone actuel illisible (cf. en-tête) : on tente avec, puis sans.
     let errs = await update(true)
     const phoneOk = errs.length === 0
-    if (errs.length && isPhoneError(errs)) errs = await update(false)
+    const telephoneRefuse = !phoneOk && isPhoneError(errs) ? errs : null
+    if (telephoneRefuse) errs = await update(false)
     if (errs.length) await avertir('customerUpdate', errs)
 
-    if (entry.optIn) await subscribe(existing.id, now, phoneOk)
+    if (entry.optIn) {
+      await subscribe(existing.id, now, phoneOk)
+      if (telephoneRefuse) await smsSansTelephone(telephoneRefuse)
+    }
     return existing.id
   }
 
@@ -149,7 +155,11 @@ export async function upsertCustomer(entry: Entry): Promise<string> {
     ).customerCreate
 
   let res = await create(true)
-  if (res.userErrors.length && isPhoneError(res.userErrors)) res = await create(false)
+  if (res.userErrors.length && isPhoneError(res.userErrors)) {
+    const telephoneRefuse = res.userErrors
+    res = await create(false)
+    if (res.customer && entry.optIn) await smsSansTelephone(telephoneRefuse)
+  }
   if (res.customer) return res.customer.id
 
   // Fiche créée entre-temps (double envoi) : on la relit.
@@ -176,6 +186,13 @@ async function subscribe(customerId: string, now: string, withSms: boolean) {
   if (sms.customerSmsMarketingConsentUpdate.userErrors.length) {
     await avertir('accord SMS', sms.customerSmsMarketingConsentUpdate.userErrors)
   }
+}
+
+/** Case cochée, téléphone refusé (souvent déjà sur une autre fiche) : l'accord SMS ne peut pas être enregistré. */
+async function smsSansTelephone(errs: UserError[]) {
+  const message = `accord SMS non enregistré, téléphone refusé : ${errs.map((e) => e.message).join(' | ')}`
+  console.warn(`[jeu-roue] ${message}`)
+  await noterErreur({ etape: 'register', source: 'serveur', niveau: 'avertissement', message })
 }
 
 /** Erreur Shopify qui ne bloque pas l'inscription : console et journal (avertissement). */

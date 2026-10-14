@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const adminFetch = vi.fn()
 vi.mock('@/lib/shopify/client', () => ({ shopifyAdminFetch: (...a: unknown[]) => adminFetch(...a) }))
+const noterErreur = vi.fn()
+vi.mock('./journal', () => ({ noterErreur: (...a: unknown[]) => noterErreur(...a) }))
 
 import {
   discountInput,
@@ -20,6 +22,8 @@ const entry = { firstName: 'Léa', lastName: 'Dupont', email: 'lea@exemple.fr', 
 
 beforeEach(() => {
   adminFetch.mockReset()
+  noterErreur.mockReset()
+  vi.spyOn(console, 'warn').mockImplementation(() => {})
 })
 
 describe('discountInput', () => {
@@ -94,21 +98,23 @@ describe('lotsAvailability', () => {
 })
 
 describe('upsertCustomer', () => {
-  it('nouveau client : téléphone déjà pris ailleurs → recréé sans téléphone ni accord SMS', async () => {
+  const existante = { customerByIdentifier: { id: 'gid://shopify/Customer/3', tags: [], jeuRoue: null } }
+  const SUBSCRIBED = { marketingState: 'SUBSCRIBED', marketingOptInLevel: 'SINGLE_OPT_IN' }
+  const pris = { field: ['phone'], message: 'Phone has already been taken' }
+  const mutations = () => adminFetch.mock.calls.map((c) => (c[0] as string).match(/\{\s*(\w+)\(/)?.[1])
+
+  it('nouveau client, case cochée : accords SMS et e-mail à la création', async () => {
     adminFetch
       .mockResolvedValueOnce({ customerByIdentifier: null })
-      .mockResolvedValueOnce({ customerCreate: { customer: null, userErrors: [{ field: ['phone'], message: 'Phone has already been taken' }] } })
-      .mockResolvedValueOnce({ customerCreate: { customer: { id: 'gid://shopify/Customer/1' }, userErrors: [] } })
-    expect(await upsertCustomer(entry)).toBe('gid://shopify/Customer/1')
-    const first = adminFetch.mock.calls[1][1].input
-    const second = adminFetch.mock.calls[2][1].input
-    expect(first).toMatchObject({ phone: '+33612345678', smsMarketingConsent: { marketingState: 'SUBSCRIBED' } })
-    expect(second).not.toHaveProperty('phone')
-    expect(second).not.toHaveProperty('smsMarketingConsent')
-    expect(second.emailMarketingConsent).toMatchObject({ marketingState: 'SUBSCRIBED', marketingOptInLevel: 'SINGLE_OPT_IN' })
+      .mockResolvedValueOnce({ customerCreate: { customer: { id: 'gid://shopify/Customer/2' }, userErrors: [] } })
+    await upsertCustomer(entry)
+    const input = adminFetch.mock.calls[1][1].input
+    expect(input).toMatchObject({ phone: '+33612345678', smsMarketingConsent: SUBSCRIBED, emailMarketingConsent: SUBSCRIBED })
+    expect(input.smsMarketingConsent.consentUpdatedAt).toBe(input.emailMarketingConsent.consentUpdatedAt)
+    expect(noterErreur).not.toHaveBeenCalled()
   })
 
-  it('case décochée : aucun accord marketing envoyé', async () => {
+  it('nouveau client, case décochée : aucun accord marketing envoyé', async () => {
     adminFetch
       .mockResolvedValueOnce({ customerByIdentifier: null })
       .mockResolvedValueOnce({ customerCreate: { customer: { id: 'gid://shopify/Customer/2' }, userErrors: [] } })
@@ -118,27 +124,78 @@ describe('upsertCustomer', () => {
     expect(input).not.toHaveProperty('smsMarketingConsent')
   })
 
-  it('client existant : mise à jour puis accords e-mail et SMS', async () => {
+  it('client existant, case cochée : mise à jour puis accords e-mail et SMS', async () => {
     adminFetch
-      .mockResolvedValueOnce({ customerByIdentifier: { id: 'gid://shopify/Customer/3', tags: [], jeuRoue: null } })
+      .mockResolvedValueOnce(existante)
       .mockResolvedValueOnce({ customerUpdate: { userErrors: [] } })
       .mockResolvedValueOnce({ customerEmailMarketingConsentUpdate: { userErrors: [] } })
       .mockResolvedValueOnce({ customerSmsMarketingConsentUpdate: { userErrors: [] } })
     expect(await upsertCustomer(entry)).toBe('gid://shopify/Customer/3')
     expect(adminFetch.mock.calls[1][1].input).toMatchObject({ id: 'gid://shopify/Customer/3', firstName: 'Léa', phone: '+33612345678' })
-    expect(adminFetch).toHaveBeenCalledTimes(4)
+    expect(mutations()).toEqual(['customerByIdentifier', 'customerUpdate', 'customerEmailMarketingConsentUpdate', 'customerSmsMarketingConsentUpdate'])
+    expect(adminFetch.mock.calls[2][1].input.emailMarketingConsent).toMatchObject(SUBSCRIBED)
+    expect(adminFetch.mock.calls[3][1].input.smsMarketingConsent).toMatchObject(SUBSCRIBED)
   })
 
-  it('client existant, téléphone pris ailleurs : mis à jour sans téléphone, pas d’accord SMS', async () => {
+  it('fiche déjà abonnée, case décochée : aucun accord touché, jamais de désabonnement', async () => {
+    adminFetch.mockResolvedValueOnce(existante).mockResolvedValueOnce({ customerUpdate: { userErrors: [] } })
+    await upsertCustomer({ ...entry, optIn: false })
+    expect(mutations()).toEqual(['customerByIdentifier', 'customerUpdate'])
+    expect(JSON.stringify(adminFetch.mock.calls)).not.toMatch(/MarketingConsent|UNSUBSCRIBED|NOT_SUBSCRIBED/)
+  })
+
+  it('nouveau client, téléphone déjà pris ailleurs, case cochée : recréé sans téléphone ni accord SMS, noté au journal', async () => {
     adminFetch
-      .mockResolvedValueOnce({ customerByIdentifier: { id: 'gid://shopify/Customer/3', tags: [], jeuRoue: null } })
-      .mockResolvedValueOnce({ customerUpdate: { userErrors: [{ field: ['phone'], message: 'Phone has already been taken' }] } })
+      .mockResolvedValueOnce({ customerByIdentifier: null })
+      .mockResolvedValueOnce({ customerCreate: { customer: null, userErrors: [pris] } })
+      .mockResolvedValueOnce({ customerCreate: { customer: { id: 'gid://shopify/Customer/1' }, userErrors: [] } })
+    expect(await upsertCustomer(entry)).toBe('gid://shopify/Customer/1')
+    const first = adminFetch.mock.calls[1][1].input
+    const second = adminFetch.mock.calls[2][1].input
+    expect(first).toMatchObject({ phone: '+33612345678', smsMarketingConsent: SUBSCRIBED })
+    expect(second).not.toHaveProperty('phone')
+    expect(second).not.toHaveProperty('smsMarketingConsent')
+    expect(second.emailMarketingConsent).toMatchObject(SUBSCRIBED)
+    expect(noterErreur).toHaveBeenCalledTimes(1)
+    expect(noterErreur.mock.calls[0][0]).toEqual({
+      etape: 'register',
+      source: 'serveur',
+      niveau: 'avertissement',
+      message: 'accord SMS non enregistré, téléphone refusé : Phone has already been taken',
+    })
+  })
+
+  it('téléphone déjà pris, case décochée : rien au journal', async () => {
+    adminFetch
+      .mockResolvedValueOnce({ customerByIdentifier: null })
+      .mockResolvedValueOnce({ customerCreate: { customer: null, userErrors: [pris] } })
+      .mockResolvedValueOnce({ customerCreate: { customer: { id: 'gid://shopify/Customer/1' }, userErrors: [] } })
+    await upsertCustomer({ ...entry, optIn: false })
+    expect(noterErreur).not.toHaveBeenCalled()
+  })
+
+  it('client existant, téléphone pris ailleurs, case cochée : mis à jour sans téléphone, accord e-mail seul, noté au journal', async () => {
+    adminFetch
+      .mockResolvedValueOnce(existante)
+      .mockResolvedValueOnce({ customerUpdate: { userErrors: [pris] } })
       .mockResolvedValueOnce({ customerUpdate: { userErrors: [] } })
       .mockResolvedValueOnce({ customerEmailMarketingConsentUpdate: { userErrors: [] } })
     expect(await upsertCustomer(entry)).toBe('gid://shopify/Customer/3')
     expect(adminFetch.mock.calls[2][1].input).not.toHaveProperty('phone')
-    expect(adminFetch).toHaveBeenCalledTimes(4)
-    expect(adminFetch.mock.calls[3][0]).toContain('customerEmailMarketingConsentUpdate')
+    expect(mutations()).toEqual(['customerByIdentifier', 'customerUpdate', 'customerUpdate', 'customerEmailMarketingConsentUpdate'])
+    expect(noterErreur).toHaveBeenCalledTimes(1)
+    expect(noterErreur.mock.calls[0][0].message).toBe('accord SMS non enregistré, téléphone refusé : Phone has already been taken')
+  })
+
+  it('client existant, autre erreur que le téléphone : pas présentée comme un conflit de téléphone', async () => {
+    adminFetch
+      .mockResolvedValueOnce(existante)
+      .mockResolvedValueOnce({ customerUpdate: { userErrors: [{ field: ['lastName'], message: 'Last name is invalid' }] } })
+      .mockResolvedValueOnce({ customerEmailMarketingConsentUpdate: { userErrors: [] } })
+    await upsertCustomer(entry)
+    expect(mutations()).toEqual(['customerByIdentifier', 'customerUpdate', 'customerEmailMarketingConsentUpdate'])
+    expect(noterErreur).toHaveBeenCalledTimes(1)
+    expect(noterErreur.mock.calls[0][0].message).toContain('customerUpdate')
   })
 
   it('ne relit jamais nom, e-mail ni téléphone (interdit sur le forfait actuel)', async () => {

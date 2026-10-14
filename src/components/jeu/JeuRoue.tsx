@@ -421,7 +421,9 @@ export default function JeuRoue() {
               className="mt-3"
             />
 
-            <label htmlFor="jeu-optin" className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-3 rounded-xl bg-canvas p-3">
+            {/* Case facultative, non cochée, sans fond ni couleur d'appel : le bouton
+                marche cochée ou non, rien ne pousse à cocher (exigence CNIL). */}
+            <label htmlFor="jeu-optin" className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-3 py-2">
               <input
                 id="jeu-optin"
                 type="checkbox"
@@ -430,7 +432,8 @@ export default function JeuRoue() {
                 className="mt-0.5 h-5 w-5 flex-shrink-0 cursor-pointer rounded border-spruce/30 accent-fresh"
               />
               <span className="text-[14px] leading-snug text-ink">
-                J&apos;accepte de recevoir les offres et nouveautés BodyStart par e-mail et SMS
+                <span aria-hidden="true">📲 </span>
+                Préviens-moi par SMS et e-mail des arrivages et des offres flash réservées aux abonnés
               </span>
             </label>
 
@@ -448,7 +451,8 @@ export default function JeuRoue() {
             </button>
             <p className="mt-3 text-[12.5px] leading-relaxed text-ink-mute">
               Une participation par personne. Cadeau à retirer en boutique sous 30 jours. Tes coordonnées servent à
-              gérer le jeu et, si tu as coché la case, à t&apos;envoyer nos offres.
+              gérer le jeu et, si tu as coché la case, à t&apos;envoyer nos offres par SMS ou e-mail. Désinscription à
+              tout moment : réponds STOP au SMS ou clique sur le lien en bas de l&apos;e-mail.
             </p>
           </form>
 
