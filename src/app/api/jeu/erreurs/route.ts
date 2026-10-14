@@ -9,6 +9,8 @@ import { JOURNAL_MAX, lireJournal } from '@/lib/jeu-roue/journal'
 // /api/jeu, avertissements Shopify qui ne bloquent pas, et échecs vus par la
 // page (réseau, réponse illisible). Heure, étape, message, sans e-mail ni
 // téléphone. Remplace les journaux Vercel, auxquels on n'a pas accès.
+// Même contenu, sans secret, dans le métachamp boutique bodystart.jeu_erreurs
+// (lecture par le connecteur Shopify), cf. lib/jeu-roue/journal.
 //
 // Auth : « Authorization: Bearer <CRON_SECRET> », comme le récap hebdo.
 // Sans CRON_SECRET configuré, la route refuse tout (fail closed).
