@@ -10,59 +10,44 @@ import { cn } from '@/lib/utils'
  *
  * Objectif (retour consultant + review) : le site disait « voici une boutique
  * de compléments » sans jamais la MONTRER. Cette section montre les rayons
- * pleins et l'allée réelle juste avant la carte pratique StoreCallV2.
+ * pleins juste avant la carte pratique StoreCallV2.
  *
- * Layout :
- *  - mobile : piste horizontale scroll-snap (le geste natif) ;
- *  - desktop : bento CSS grid 4 colonnes. ⚠️ Les images sont en `fill`
- *    (position absolue) : la grille DOIT donner une hauteur explicite aux
- *    rangées (`auto-rows`), sinon les cellules s'effondrent à ~0 px (bug
- *    corrigé le 16/07 : `grid-rows-2` sans hauteur = mosaïque écrasée).
+ * Layout : les photos sont toutes verticales, donc toutes les cases aussi
+ * (3:4, même format sur mobile et ordinateur, un seul cadrage par photo).
+ *  - mobile et tablette : piste horizontale scroll-snap (le geste natif) ;
+ *  - ordinateur (lg) : une rangée de 4 cases.
+ * Les cases larges de l'ancienne mosaïque coupaient les photos en bandes
+ * (retour du 14/10/2026) : ne pas y revenir.
  */
-// Photos du 14/10/2026, toutes en portrait. `position` : cadrage
-// (object-position) choisi pour le format de la case, carte 3:4 sur mobile,
-// bande 3:1 ou pilier sur ordinateur (simulé avant l'intégration).
+// Photos du 14/10/2026. Quatre sujets distincts, alternance clair / sombre.
+// L'allée des acides aminés n'y est plus : elle illustre déjà le bloc conseil,
+// plus haut sur l'accueil. `position` : cadrage (object-position) dans la case 3:4,
+// simulé photo par photo avant l'intégration.
 const PHOTOS = [
   {
-    src: '/boutique/allee-acides-amines.webp',
-    alt: 'Allée de la boutique BodyStart Nutrition à Coignières : rayons acides aminés, créatine et gainers',
-    // pilier gauche (portrait) sur 2 rangées ; enseigne « Acides aminés » visible
-    span: 'md:col-span-1 md:row-span-2',
-    position: 'object-[50%_30%]',
-  },
-  {
-    src: '/boutique/mur-nutrimuscle.webp',
-    alt: 'Mur Nutrimuscle de la boutique BodyStart Nutrition : Protimuscle, Isolate Native Whey Mix, crème de riz et muesli devant le mur végétal',
-    span: 'md:col-span-2 md:row-span-1',
-    position: 'object-[50%_40%]',
-  },
-  {
-    src: '/boutique/rayon-snacks-boissons.webp',
-    alt: 'Rayon snacks et boissons de la boutique BodyStart Nutrition à Coignières : canettes ABE et barres Crunch Warrior',
-    // pilier droit (portrait) sur 2 rangées. Fichier déjà coupé au-dessus des
-    // étagères basses (vides) : seuls les canettes et les barres restent.
-    span: 'md:col-span-1 md:row-span-2',
+    src: '/boutique/presentoir-nutrimuscle.webp',
+    alt: "Présentoir Nutrimuscle au centre de la boutique BodyStart Nutrition à Coignières : Native Iso Blend, Protimuscle, protéine d'œuf et crème de riz",
+    // photo déjà en 3:4 : rien n'est coupé
     position: 'object-center',
   },
   {
     src: '/boutique/rayon-creatine-gainer.webp',
     alt: 'Rayon créatine et gainer de la boutique BodyStart Nutrition à Coignières',
-    span: 'md:col-span-2 md:row-span-1',
-    // enseigne « Créatine » et première étagère
+    // enseigne « Créatine » et tous ses produits, puis l'enseigne « Gainer »
     position: 'object-[50%_15%]',
   },
   {
-    src: '/boutique/protimuscle-detail.webp',
-    alt: 'Gros plan sur les pots de Native Whey Protimuscle Nutrimuscle en rayon chez BodyStart Nutrition',
-    span: 'md:col-span-2 md:row-span-1',
-    position: 'object-[50%_62%]',
+    src: '/boutique/rayon-snacks-boissons.webp',
+    alt: 'Rayon snacks et boissons de la boutique BodyStart Nutrition à Coignières : canettes ABE et barres Crunch Warrior',
+    // fichier déjà coupé au-dessus des étagères basses (vides) : seuls les
+    // canettes et les barres restent
+    position: 'object-center',
   },
   {
     src: '/boutique/pyramide-creatine.webp',
     alt: 'Pyramide de pots de créatine Dedicated en rayon chez BodyStart Nutrition à Coignières',
-    span: 'md:col-span-2 md:row-span-1',
-    // mobile : toute la pyramide ; bande ordinateur : une rangée de pots
-    position: 'object-[50%_40%] md:object-[50%_62%]',
+    // pyramide entière, du pot du haut à la dernière rangée
+    position: 'object-[50%_30%]',
   },
 ] as const
 
@@ -99,28 +84,24 @@ export default function BoutiqueGalleryV2() {
           </p>
         </div>
 
-        {/* Piste snap mobile / bento desktop (auto-rows = hauteur des rangées) */}
+        {/* Piste snap mobile et tablette / rangée de 4 sur ordinateur. Chaque
+            case garde son aspect 3:4 : la hauteur ne dépend pas de la grille. */}
         <div
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-4 md:auto-rows-[190px] md:overflow-visible"
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:pb-0 lg:grid lg:grid-cols-4 lg:overflow-visible"
           aria-label="Photos de la boutique"
         >
           {PHOTOS.map((photo) => (
             <div
               key={photo.src}
-              className={cn(
-                'relative flex-shrink-0 w-[72%] sm:w-[46%] snap-center aspect-[3/4] rounded-2xl overflow-hidden border border-spruce/10',
-                // desktop : la taille vient de la grille (largeur auto, hauteur
-                // via row-span × auto-rows) → on annule l'aspect-ratio mobile.
-                'md:w-auto md:aspect-auto',
-                photo.span
-              )}
+              className="relative flex-shrink-0 w-[72%] sm:w-[46%] lg:w-auto snap-center aspect-[3/4] rounded-2xl overflow-hidden border border-spruce/10"
             >
               <Image
                 src={photo.src}
                 alt={photo.alt}
                 fill
                 className={cn('object-cover', photo.position)}
-                sizes="(min-width: 768px) 50vw, 72vw"
+                // ordinateur : 4 cases de 272 px au plus (conteneur de 1200 px)
+                sizes="(min-width: 1024px) 272px, (min-width: 640px) 46vw, 72vw"
               />
             </div>
           ))}
