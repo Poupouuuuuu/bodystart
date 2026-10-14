@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import {
   MapPin,
   Phone,
@@ -108,9 +109,11 @@ export default async function StoresPage() {
       {/* ─── 2. La boutique (cœur de la page) ─── */}
       <section className="pb-16 md:pb-20">
         <div className="container">
-          {/* Une seule boutique (la 2ᵉ n'est plus d'actualité, 08/10/2026). */}
-          <div className="max-w-3xl">
-            <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-8 flex flex-col">
+          {/* Une seule boutique (la 2ᵉ n'est plus d'actualité, 08/10/2026).
+              Photo de la boutique à droite de la carte sur ordinateur, à sa
+              hauteur ; dessous sur mobile (adresse et horaires d'abord). */}
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div className="max-w-3xl bg-white rounded-2xl border border-spruce/10 p-6 md:p-8 flex flex-col">
               <StoreStatusV2 hours={store.hours} />
 
               <h2 className="font-display text-[22px] md:text-[26px] font-extrabold text-spruce leading-[1.15] tracking-tight mt-4">
@@ -179,6 +182,19 @@ export default async function StoresPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+
+            {/* Case verticale : 4:5 sous la carte, hauteur de la carte à côté
+                (22rem de large, environ 2:3). Chargement différé : sous le pli
+                sur mobile, où le titre reste l'élément LCP. */}
+            <div className="relative aspect-[4/5] w-full sm:max-w-sm lg:max-w-none lg:aspect-auto rounded-2xl overflow-hidden border border-spruce/10">
+              <Image
+                src="/boutique/presentoir-nutrimuscle.webp"
+                alt="Présentoir Nutrimuscle au centre de la boutique BodyStart Nutrition à Coignières : Native Iso Blend, Protimuscle, protéine d'œuf et crème de riz"
+                fill
+                sizes="(min-width: 1024px) 352px, (min-width: 640px) 384px, calc(100vw - 32px)"
+                className="object-cover object-[50%_40%]"
+              />
             </div>
           </div>
         </div>
