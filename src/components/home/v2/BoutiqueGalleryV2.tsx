@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import CarrouselBoutique from './CarrouselBoutique'
 
 /**
  * Galerie boutique — VRAIES photos du magasin (fournies par Adam, 07/2026,
@@ -12,17 +13,20 @@ import { cn } from '@/lib/utils'
  * de compléments » sans jamais la MONTRER. Cette section montre les rayons
  * pleins juste avant la carte pratique StoreCallV2.
  *
- * Layout : les photos sont toutes verticales, donc toutes les cases aussi
- * (3:4, même format sur mobile et ordinateur, un seul cadrage par photo).
- *  - mobile et tablette : piste horizontale scroll-snap (le geste natif) ;
- *  - ordinateur (lg) : une rangée de 4 cases.
- * Les cases larges de l'ancienne mosaïque coupaient les photos en bandes
- * (retour du 14/10/2026) : ne pas y revenir.
+ * Layout : carrousel (CarrouselBoutique), sur mobile comme sur ordinateur.
+ * Les photos sont toutes verticales, donc toutes les cartes aussi (3:4, un
+ * seul cadrage par photo, valable à toutes les tailles) : environ 1,5 carte
+ * visible sur mobile, 4 sur ordinateur, flèches à partir de md. Les cases
+ * larges de l'ancienne mosaïque coupaient les photos en bandes (retour du
+ * 14/10/2026) : ne pas y revenir.
+ *
+ * Images en chargement différé : la section est loin sous le pli, et les
+ * cartes hors de la piste visible ne se chargent qu'en approchant.
  */
-// Photos du 14/10/2026. Quatre sujets distincts, alternance clair / sombre.
-// L'allée des acides aminés n'y est plus : elle illustre déjà le bloc conseil,
-// plus haut sur l'accueil. `position` : cadrage (object-position) dans la case 3:4,
-// simulé photo par photo avant l'intégration.
+// Photos du 14/10/2026, dans l'ordre demandé (alternance clair / sombre).
+// L'allée des acides aminés n'y est pas : elle illustre déjà le bloc conseil,
+// plus haut sur l'accueil. `position` : cadrage (object-position) dans la
+// carte 3:4, simulé photo par photo avant l'intégration.
 const PHOTOS = [
   {
     src: '/boutique/presentoir-nutrimuscle.webp',
@@ -37,6 +41,18 @@ const PHOTOS = [
     position: 'object-[50%_15%]',
   },
   {
+    src: '/boutique/mur-nutrimuscle.webp',
+    alt: 'Mur Nutrimuscle de la boutique BodyStart Nutrition : Protimuscle, Isolate Native Whey Mix, crème de riz et muesli devant le mur végétal',
+    // étagère du haut entière, peu de sol
+    position: 'object-[50%_55%]',
+  },
+  {
+    src: '/boutique/pyramide-creatine.webp',
+    alt: 'Pyramide de pots de créatine Dedicated en rayon chez BodyStart Nutrition à Coignières',
+    // pyramide entière, du pot du haut à la dernière rangée
+    position: 'object-[50%_30%]',
+  },
+  {
     src: '/boutique/rayon-snacks-boissons.webp',
     alt: 'Rayon snacks et boissons de la boutique BodyStart Nutrition à Coignières : canettes ABE et barres Crunch Warrior',
     // fichier déjà coupé au-dessus des étagères basses (vides) : seuls les
@@ -44,10 +60,22 @@ const PHOTOS = [
     position: 'object-center',
   },
   {
-    src: '/boutique/pyramide-creatine.webp',
-    alt: 'Pyramide de pots de créatine Dedicated en rayon chez BodyStart Nutrition à Coignières',
-    // pyramide entière, du pot du haut à la dernière rangée
-    position: 'object-[50%_30%]',
+    src: '/boutique/protimuscle-detail.webp',
+    alt: 'Gros plan sur les pots de Native Whey Protimuscle Nutrimuscle en rayon chez BodyStart Nutrition',
+    // étiquettes Native Whey Mix et Protimuscle lisibles
+    position: 'object-[50%_25%]',
+  },
+  {
+    src: '/boutique/presentoir-gainer.webp',
+    alt: 'Présentoir gainers, crèmes de riz et clear whey devant le rayon gainer de la boutique BodyStart Nutrition',
+    // fichier déjà recadré en 3:4 au-dessus du sol (84 % du haut de la photo)
+    position: 'object-center',
+  },
+  {
+    src: '/boutique/mur-nutrimuscle-2.webp',
+    alt: 'Mur Nutrimuscle vu de près dans la boutique BodyStart Nutrition : Native Whey Protimuscle, Cluster Dextrin et muesli protéiné dans les étagères blanches',
+    // photo déjà en 3:4 : rien n'est coupé
+    position: 'object-center',
   },
 ] as const
 
@@ -68,44 +96,44 @@ export default function BoutiqueGalleryV2() {
       {/* Section narrative (photos du magasin) : même respiration large que le
           bloc conseil. */}
       <div className="container py-16 md:py-24">
-        {/* En-tête */}
-        <div className="max-w-[640px] mb-9">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
-            La boutique
-          </p>
-          <h2 className="font-display text-[32px] md:text-[42px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
-            Une vraie boutique, pas un entrepôt.
-          </h2>
-          <p className="text-ink-mute text-[17px] leading-[1.65]">
-            Des rayons pleins, des produits que tu peux prendre en main, et
-            quelqu&apos;un derrière le comptoir qui les utilise vraiment. Ça fait
-            13 ans qu&apos;on conseille des sportifs à Coignières. Viens voir,
-            c&apos;est mieux en vrai.
-          </p>
-        </div>
-
-        {/* Piste snap mobile et tablette / rangée de 4 sur ordinateur. Chaque
-            case garde son aspect 3:4 : la hauteur ne dépend pas de la grille. */}
-        <div
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:pb-0 lg:grid lg:grid-cols-4 lg:overflow-visible"
-          aria-label="Photos de la boutique"
+        <CarrouselBoutique
+          label="Photos de la boutique"
+          entete={
+            <div className="max-w-[640px]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+                La boutique
+              </p>
+              <h2 className="font-display text-[32px] md:text-[42px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
+                Une vraie boutique, pas un entrepôt.
+              </h2>
+              <p className="text-ink-mute text-[17px] leading-[1.65]">
+                Des rayons pleins, des produits que tu peux prendre en main, et
+                quelqu&apos;un derrière le comptoir qui les utilise vraiment. Ça fait
+                13 ans qu&apos;on conseille des sportifs à Coignières. Viens voir,
+                c&apos;est mieux en vrai.
+              </p>
+            </div>
+          }
         >
-          {PHOTOS.map((photo) => (
+          {PHOTOS.map((photo, i) => (
             <div
               key={photo.src}
-              className="relative flex-shrink-0 w-[72%] sm:w-[46%] lg:w-auto snap-center aspect-[3/4] rounded-2xl overflow-hidden border border-spruce/10"
+              role="group"
+              aria-roledescription="diapositive"
+              aria-label={`${i + 1} sur ${PHOTOS.length}`}
+              className="relative flex-shrink-0 w-[62%] sm:w-[40%] md:w-[30%] lg:w-[calc((100%-3rem)/4)] snap-start aspect-[3/4] rounded-2xl overflow-hidden border border-spruce/10"
             >
               <Image
                 src={photo.src}
                 alt={photo.alt}
                 fill
                 className={cn('object-cover', photo.position)}
-                // ordinateur : 4 cases de 272 px au plus (conteneur de 1200 px)
-                sizes="(min-width: 1024px) 272px, (min-width: 640px) 46vw, 72vw"
+                // ordinateur : 4 cartes de 272 px au plus (conteneur de 1200 px)
+                sizes="(min-width: 1024px) 272px, (min-width: 768px) 30vw, (min-width: 640px) 40vw, 62vw"
               />
             </div>
           ))}
-        </div>
+        </CarrouselBoutique>
 
         {/* Chiffres + lien « Pourquoi BodyStart ? » */}
         <div className="mt-9 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
