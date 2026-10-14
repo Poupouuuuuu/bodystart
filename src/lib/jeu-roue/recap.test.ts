@@ -28,12 +28,12 @@ const DATA: RecapData = {
     code('ROUE-EEE666', 'crunch-bar', '2026-09-20T10:00:00Z', '2026-10-20T10:00:00Z', 2.9, true),
   ],
   participants: [
-    { playedAt: '2026-10-06T10:00:00Z', code: 'ROUE-AAA222', lotId: 'canette-abe', optInSms: true, optInEmail: true },
-    { playedAt: '2026-10-08T10:00:00Z', code: 'ROUE-BBB333', lotId: 'bon-5', optInSms: false, optInEmail: false },
-    { playedAt: '2026-10-10T10:00:00Z', code: 'ROUE-CCC444', lotId: 'shaker', optInSms: true, optInEmail: false },
-    { playedAt: '2026-10-11T10:00:00Z', code: 'ROUE-FFF999', lotId: 'creatine', optInSms: false, optInEmail: true },
-    { playedAt: '2026-09-01T10:00:00Z', code: 'ROUE-DDD555', lotId: 'whey', optInSms: false, optInEmail: false },
-    { playedAt: null, code: null, lotId: null, optInSms: true, optInEmail: true },
+    { playedAt: '2026-10-06T10:00:00Z', code: 'ROUE-AAA222', lotId: 'canette-abe', optIn: true },
+    { playedAt: '2026-10-08T10:00:00Z', code: 'ROUE-BBB333', lotId: 'bon-5', optIn: false },
+    { playedAt: '2026-10-10T10:00:00Z', code: 'ROUE-CCC444', lotId: 'shaker', optIn: true },
+    { playedAt: '2026-10-11T10:00:00Z', code: 'ROUE-FFF999', lotId: 'creatine', optIn: false },
+    { playedAt: '2026-09-01T10:00:00Z', code: 'ROUE-DDD555', lotId: 'whey', optIn: false },
+    { playedAt: null, code: null, lotId: null, optIn: true },
   ],
   uses: [
     { code: 'ROUE-BBB333', order: '#1901', at: '2026-10-09T15:00:00Z', channel: 'en ligne' },
@@ -78,12 +78,12 @@ describe('buildRecap', () => {
     expect(r.to).toBe(NOW)
   })
 
-  it('semaine : participations, lots, cases SMS et e-mail, codes utilisés, valeur', () => {
+  it('semaine : participations, lots, case offres, codes utilisés, valeur', () => {
     expect(r.week.plays).toBe(4)
     expect(Object.fromEntries(r.week.byLot.map((l) => [l.lot.id, l.count]))).toEqual({
       'canette-abe': 1, 'crunch-bar': 0, shaker: 1, 'bon-5': 1, creatine: 1, whey: 0,
     })
-    expect([r.week.smsOptIns, r.week.emailOptIns, r.week.dated]).toEqual([2, 2, 4])
+    expect([r.week.optIns, r.week.dated]).toEqual([2, 4])
     // Triés par date d'utilisation, lot rattaché
     expect(r.week.uses.map((u) => [u.code, u.channel, u.lot?.id])).toEqual([
       ['ROUE-AAA222', 'caisse', 'canette-abe'],
@@ -96,8 +96,7 @@ describe('buildRecap', () => {
     expect(r.total).toEqual({
       plays: 6,
       participants: 6,
-      smsOptIns: 3,
-      emailOptIns: 3,
+      optIns: 3,
       used: 3,
       caisse: 1,
       enLigne: 1,
@@ -147,8 +146,7 @@ describe('renderRecapEmail', () => {
     expect(mail.subject).toBe('Jeu de la roue : 4 participations du lundi 5 octobre au lundi 12 octobre')
     for (const s of [
       'Participations : 4',
-      'Case SMS cochée : 2 sur 4 (50 %)',
-      'Case e-mail cochée : 2 sur 4 (50 %)',
+      'Case « offres par e-mail et SMS » cochée : 2 sur 4 (50 %)',
       'Codes utilisés : 2 (1 en caisse, 1 en ligne)',
       'Canette ABE : 1 (chance : 35 %)',
       'ROUE-AAA222 · Canette ABE · caisse · commande #1900',
@@ -168,8 +166,7 @@ describe('renderRecapEmail', () => {
   it('semaine vide : le récap part quand même', () => {
     const mail = renderRecapEmail(buildRecap({ codes: [], participants: [], uses: [], stock: new Map() }, NOW))
     expect(mail.subject).toContain('0 participation du')
-    expect(mail.text).toContain('Case SMS cochée : 0 sur 0 (n/a)')
-    expect(mail.text).toContain('Case e-mail cochée : 0 sur 0 (n/a)')
+    expect(mail.text).toContain('Case « offres par e-mail et SMS » cochée : 0 sur 0 (n/a)')
     expect(mail.text).not.toContain('Lots tirés cette semaine')
   })
 
@@ -214,7 +211,6 @@ describe('loadRecapData', () => {
             pageInfo: { hasNextPage: false, endCursor: null },
             nodes: [
               { tags: ['jeu-roue', 'jeu-roue-bon-5', 'jeu-roue-optin'], jeuRoue: { value: JSON.stringify({ lotId: 'bon-5', code: 'ROUE-NAARC6', endsAt: 'e', playedAt: '2026-10-08T13:40:37Z' }) } },
-              { tags: ['jeu-roue', 'jeu-roue-shaker', 'jeu-roue-optin-sms'], jeuRoue: { value: JSON.stringify({ lotId: 'shaker', code: 'ROUE-SSS222', endsAt: 'e', playedAt: '2026-10-09T10:00:00Z' }) } },
               { tags: ['autre'], jeuRoue: null },
             ],
           },
@@ -239,11 +235,7 @@ describe('loadRecapData', () => {
       ['ROUE-NAARC6', 'bon-5', true, 5],
       ['ROUE-SSS222', 'shaker', false, 5],
     ])
-    expect(data.participants).toEqual([
-      // Ancienne case unique : vaut les deux accords
-      { playedAt: '2026-10-08T13:40:37Z', code: 'ROUE-NAARC6', lotId: 'bon-5', optInSms: true, optInEmail: true },
-      { playedAt: '2026-10-09T10:00:00Z', code: 'ROUE-SSS222', lotId: 'shaker', optInSms: true, optInEmail: false },
-    ])
+    expect(data.participants).toEqual([{ playedAt: '2026-10-08T13:40:37Z', code: 'ROUE-NAARC6', lotId: 'bon-5', optIn: true }])
     expect(data.uses).toEqual([{ code: 'ROUE-NAARC6', order: '#1890', at: '2026-10-09T10:00:00Z', channel: 'caisse' }])
     expect(data.stock).toBeNull()
 

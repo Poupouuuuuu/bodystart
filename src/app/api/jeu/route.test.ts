@@ -29,7 +29,7 @@ vi.mock('@/lib/jeu-roue/store', () =>
 
 import { POST } from './route'
 
-const form = { firstName: 'Léa', lastName: 'Dupont', email: 'Lea@Exemple.fr', phone: '06 12 34 56 78', optInSms: true, optInEmail: false }
+const form = { firstName: 'Léa', lastName: 'Dupont', email: 'Lea@Exemple.fr', phone: '06 12 34 56 78', optIn: true }
 const call = async (body: Record<string, unknown>) => {
   const res = await POST(new Request('http://x/api/jeu', { method: 'POST', body: JSON.stringify(body) }) as never)
   const texte = await res.text()
@@ -77,7 +77,7 @@ describe('POST /api/jeu', () => {
     shop.upsertCustomer.mockResolvedValue('gid://shopify/Customer/7')
     const r = await call({ ...form, action: 'register' })
     expect(r.json).toEqual({ status: 'ready', customerId: 'gid://shopify/Customer/7' })
-    expect(shop.upsertCustomer.mock.calls[0][0]).toMatchObject({ email: 'lea@exemple.fr', phone: '+33612345678', optInSms: true, optInEmail: false })
+    expect(shop.upsertCustomer.mock.calls[0][0]).toMatchObject({ email: 'lea@exemple.fr', phone: '+33612345678', optIn: true })
   })
 
   it('spin : refusé si la fiche de cet e-mail n’est pas celle de l’étape register', async () => {
@@ -97,8 +97,8 @@ describe('POST /api/jeu', () => {
       result: { lotId: 'bon-5', label: '5 € dès 30 € d’achat', code: 'ROUE-XYZ789', endsAt: '2026-11-06T10:00:00.000Z' },
     })
     expect(shop.createLotDiscount.mock.calls[0][1]).toBe(5)
-    // Cases cochées transmises au marquage (une étiquette par case)
-    expect(shop.markParticipant.mock.calls[0][3]).toEqual({ sms: true, email: false })
+    // Case offres cochée transmise au marquage (étiquette jeu-roue-optin)
+    expect(shop.markParticipant.mock.calls[0][3]).toBe(true)
     // Résultat gardé AVANT le marquage Shopify
     expect(store.storeResult.mock.invocationCallOrder[0]).toBeLessThan(shop.markParticipant.mock.invocationCallOrder[0])
     expect(shop.claimSpin.mock.invocationCallOrder[0]).toBeLessThan(shop.createLotDiscount.mock.invocationCallOrder[0])

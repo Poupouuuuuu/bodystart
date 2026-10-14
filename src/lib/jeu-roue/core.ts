@@ -9,10 +9,7 @@ export interface Entry {
   email: string
   /** Portable français normalisé : +33 suivi de 9 chiffres (6 ou 7 en tête). */
   phone: string
-  /** Case « SMS » cochée : accord SMS (arrivages, offres flash). */
-  optInSms: boolean
-  /** Case « e-mail » cochée : accord e-mail (nouveautés). */
-  optInEmail: boolean
+  optIn: boolean
 }
 
 /** Résultat d'une participation, conservé (Shopify + Redis) et réaffiché. */
@@ -63,13 +60,7 @@ export function validateEntry(
   if (!phone) {
     return { ok: false, field: 'phone', error: 'Indique un portable français (06 ou 07).' }
   }
-  // `optIn` : case unique « e-mail et SMS » d'avant le 14/10/2026, encore
-  // envoyée par une page restée ouverte ou en cache : elle valait les deux.
-  const ancienne = body.optIn === true
-  return {
-    ok: true,
-    entry: { firstName, lastName, email, phone, optInSms: body.optInSms === true || ancienne, optInEmail: body.optInEmail === true || ancienne },
-  }
+  return { ok: true, entry: { firstName, lastName, email, phone, optIn: body.optIn === true } }
 }
 
 // Sans O, I, 0 ni 1 (confusions à la lecture en caisse).

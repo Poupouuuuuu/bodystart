@@ -36,8 +36,7 @@ interface FormState {
   lastName: string
   email: string
   phone: string
-  optInSms: boolean
-  optInEmail: boolean
+  optIn: boolean
 }
 
 const STORAGE_KEY = 'bs_jeu_resultat'
@@ -151,7 +150,7 @@ const reviewDone = (clickedAt: number | null) => clickedAt !== null && Date.now(
 
 export default function JeuRoue() {
   const [screen, setScreen] = useState<Screen>('form')
-  const [form, setForm] = useState<FormState>({ firstName: '', lastName: '', email: '', phone: '', optInSms: false, optInEmail: false })
+  const [form, setForm] = useState<FormState>({ firstName: '', lastName: '', email: '', phone: '', optIn: false })
   const [fieldError, setFieldError] = useState<{ field: EntryField; message: string } | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -342,7 +341,7 @@ export default function JeuRoue() {
     setReviewClickedAt(null)
     setUnlocked(false)
     setTooEarly(false)
-    setForm({ firstName: '', lastName: '', email: '', phone: '', optInSms: false, optInEmail: false })
+    setForm({ firstName: '', lastName: '', email: '', phone: '', optIn: false })
     setCustomerId(null)
     setResult(null)
     setTarget(null)
@@ -422,17 +421,21 @@ export default function JeuRoue() {
               className="mt-3"
             />
 
-            {/* Deux accords distincts, facultatifs, non cochés, sans mise en avant :
-                le bouton marche avec 0, 1 ou 2 cases (exigence CNIL). */}
-            <fieldset className="mt-4">
-              <legend className="sr-only">Offres BodyStart (facultatif)</legend>
-              <Accord id="jeu-optin-sms" icone="📲" checked={form.optInSms} onChange={update('optInSms')}>
-                Préviens-moi par SMS des arrivages et des offres flash réservées aux abonnés
-              </Accord>
-              <Accord id="jeu-optin-email" icone="📧" checked={form.optInEmail} onChange={update('optInEmail')}>
-                Je veux aussi recevoir les nouveautés par e-mail
-              </Accord>
-            </fieldset>
+            {/* Case facultative, non cochée, sans fond ni couleur d'appel : le bouton
+                marche cochée ou non, rien ne pousse à cocher (exigence CNIL). */}
+            <label htmlFor="jeu-optin" className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-3 py-2">
+              <input
+                id="jeu-optin"
+                type="checkbox"
+                checked={form.optIn}
+                onChange={(e) => update('optIn')(e.target.checked)}
+                className="mt-0.5 h-5 w-5 flex-shrink-0 cursor-pointer rounded border-spruce/30 accent-fresh"
+              />
+              <span className="text-[14px] leading-snug text-ink">
+                <span aria-hidden="true">📲 </span>
+                Préviens-moi par SMS et e-mail des arrivages et des offres flash réservées aux abonnés
+              </span>
+            </label>
 
             {formError && <ErrorLine className="mt-4">{formError}</ErrorLine>}
 
@@ -448,7 +451,7 @@ export default function JeuRoue() {
             </button>
             <p className="mt-3 text-[12.5px] leading-relaxed text-ink-mute">
               Une participation par personne. Cadeau à retirer en boutique sous 30 jours. Tes coordonnées servent à
-              gérer le jeu et, si tu as coché une case, à t&apos;envoyer nos offres par SMS ou e-mail. Désinscription à
+              gérer le jeu et, si tu as coché la case, à t&apos;envoyer nos offres par SMS ou e-mail. Désinscription à
               tout moment : réponds STOP au SMS ou clique sur le lien en bas de l&apos;e-mail.
             </p>
           </form>
@@ -775,37 +778,6 @@ function Field({
         </p>
       )}
     </div>
-  )
-}
-
-/** Case d'accord facultative : même style que le texte du formulaire, sans fond ni couleur d'appel. */
-function Accord({
-  id,
-  icone,
-  checked,
-  onChange,
-  children,
-}: {
-  id: string
-  icone: string
-  checked: boolean
-  onChange: (v: boolean) => void
-  children: ReactNode
-}) {
-  return (
-    <label htmlFor={id} className="flex min-h-[44px] cursor-pointer items-start gap-3 py-2">
-      <input
-        id={id}
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="mt-0.5 h-5 w-5 flex-shrink-0 cursor-pointer rounded border-spruce/30 accent-fresh"
-      />
-      <span className="text-[14px] leading-snug text-ink">
-        <span aria-hidden="true">{icone} </span>
-        {children}
-      </span>
-    </label>
   )
 }
 
