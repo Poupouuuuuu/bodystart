@@ -31,14 +31,14 @@ export default async function HeroV3() {
   return (
     <section className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-[#0f160f]">
       <Image
-        src="/assets/interieur.webp"
-        alt="Intérieur de la boutique BodyStart Nutrition à Coignières : rayons de compléments, mur végétal et comptoir"
+        src="/boutique/presentoir-nutrimuscle.webp"
+        alt="Présentoir Nutrimuscle au centre de la boutique BodyStart Nutrition à Coignières : Native Iso Blend, Protimuscle, protéine d'œuf et crème de riz"
         fill
         priority
         fetchPriority="high"
         quality={72}
         sizes="(max-width: 640px) 70vw, 100vw"
-        className="object-cover object-[50%_38%]"
+        className="object-cover object-[50%_18%]"
       />
       {/* Voiles : sombre en bas (lisibilité du texte), plus léger en haut pour
           laisser respirer la photo ; second voile latéral côté texte. */}

@@ -19,12 +19,12 @@ export default function ConseilV3() {
             <div className="rounded-[2rem] bg-white/60 p-1.5 ring-1 ring-spruce/10">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[calc(2rem-0.375rem)]">
                 <Image
-                  src="/boutique/allee.webp"
-                  alt="Les rayons de la boutique BodyStart Nutrition à Coignières"
+                  src="/boutique/allee-acides-amines.webp"
+                  alt="Allée de la boutique BodyStart Nutrition à Coignières : rayons acides aminés, créatine et gainers"
                   fill
                   sizes="(max-width: 1024px) 100vw, 600px"
                   quality={68}
-                  className="object-cover transition-transform duration-[1200ms] ease-out-expo hover:scale-[1.03]"
+                  className="object-cover object-[50%_30%] transition-transform duration-[1200ms] ease-out-expo hover:scale-[1.03]"
                 />
               </div>
             </div>

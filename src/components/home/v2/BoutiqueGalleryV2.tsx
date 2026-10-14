@@ -5,7 +5,8 @@ import { cn } from '@/lib/utils'
 
 /**
  * Galerie boutique — VRAIES photos du magasin (fournies par Adam, 07/2026,
- * optimisées en webp dans public/boutique/).
+ * remplacées par celles du 14/10/2026, optimisées en webp dans
+ * public/boutique/).
  *
  * Objectif (retour consultant + review) : le site disait « voici une boutique
  * de compléments » sans jamais la MONTRER. Cette section montre les rayons
@@ -18,38 +19,50 @@ import { cn } from '@/lib/utils'
  *    rangées (`auto-rows`), sinon les cellules s'effondrent à ~0 px (bug
  *    corrigé le 16/07 : `grid-rows-2` sans hauteur = mosaïque écrasée).
  */
+// Photos du 14/10/2026, toutes en portrait. `position` : cadrage
+// (object-position) choisi pour le format de la case, carte 3:4 sur mobile,
+// bande 3:1 ou pilier sur ordinateur (simulé avant l'intégration).
 const PHOTOS = [
   {
-    src: '/boutique/allee.webp',
-    alt: "L'allée centrale de la boutique BodyStart Nutrition à Coignières, rayons de compléments alimentaires pleins",
-    // pilier gauche (portrait) sur 2 rangées
+    src: '/boutique/allee-acides-amines.webp',
+    alt: 'Allée de la boutique BodyStart Nutrition à Coignières : rayons acides aminés, créatine et gainers',
+    // pilier gauche (portrait) sur 2 rangées ; enseigne « Acides aminés » visible
     span: 'md:col-span-1 md:row-span-2',
+    position: 'object-[50%_30%]',
   },
   {
-    src: '/boutique/rayon-proteines.webp',
-    alt: 'Le rayon protéines de la boutique BodyStart : whey, isolate et caséine en libre accès',
+    src: '/boutique/mur-nutrimuscle.webp',
+    alt: 'Mur Nutrimuscle de la boutique BodyStart Nutrition : Protimuscle, Isolate Native Whey Mix, crème de riz et muesli devant le mur végétal',
     span: 'md:col-span-2 md:row-span-1',
+    position: 'object-[50%_40%]',
   },
   {
-    src: '/boutique/comptoir.webp',
-    alt: 'Le comptoir de la boutique BodyStart Nutrition avec les barres protéinées',
-    // pilier droit (portrait) sur 2 rangées
+    src: '/boutique/rayon-snacks-boissons.webp',
+    alt: 'Rayon snacks et boissons de la boutique BodyStart Nutrition à Coignières : canettes ABE et barres Crunch Warrior',
+    // pilier droit (portrait) sur 2 rangées. Fichier déjà coupé au-dessus des
+    // étagères basses (vides) : seuls les canettes et les barres restent.
     span: 'md:col-span-1 md:row-span-2',
+    position: 'object-center',
   },
   {
-    src: '/boutique/rayon-preworkout.webp',
-    alt: 'Le rayon pré-workout, BCAA et créatine de la boutique BodyStart à Coignières',
+    src: '/boutique/rayon-creatine-gainer.webp',
+    alt: 'Rayon créatine et gainer de la boutique BodyStart Nutrition à Coignières',
     span: 'md:col-span-2 md:row-span-1',
+    // enseigne « Créatine » et première étagère
+    position: 'object-[50%_15%]',
   },
   {
-    src: '/boutique/collagen-detail.webp',
-    alt: 'Gros plan sur les pots Collagen Complex Eric Favre en rayon à la boutique BodyStart',
+    src: '/boutique/protimuscle-detail.webp',
+    alt: 'Gros plan sur les pots de Native Whey Protimuscle Nutrimuscle en rayon chez BodyStart Nutrition',
     span: 'md:col-span-2 md:row-span-1',
+    position: 'object-[50%_62%]',
   },
   {
-    src: '/boutique/gainer-detail.webp',
-    alt: 'Sacs de gainer Mutant Mass en rayon à la boutique BodyStart Coignières',
+    src: '/boutique/pyramide-creatine.webp',
+    alt: 'Pyramide de pots de créatine Dedicated en rayon chez BodyStart Nutrition à Coignières',
     span: 'md:col-span-2 md:row-span-1',
+    // mobile : toute la pyramide ; bande ordinateur : une rangée de pots
+    position: 'object-[50%_40%] md:object-[50%_62%]',
   },
 ] as const
 
@@ -106,7 +119,7 @@ export default function BoutiqueGalleryV2() {
                 src={photo.src}
                 alt={photo.alt}
                 fill
-                className="object-cover"
+                className={cn('object-cover', photo.position)}
                 sizes="(min-width: 768px) 50vw, 72vw"
               />
             </div>
