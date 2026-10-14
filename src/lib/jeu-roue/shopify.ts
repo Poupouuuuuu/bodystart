@@ -17,8 +17,12 @@ import { LOTS, JEU_LOCATION_ID, CODE_VALIDITY_DAYS, lotById, lotLabelRemise, typ
 const API = { apiVersion: '2026-04' }
 
 export const PARTICIPANT_TAG = 'jeu-roue'
-/** Case « offres par e-mail et SMS » cochée : compté dans le récap hebdo
- *  (le filtre de recherche Shopify par abonnement e-mail est ignoré). */
+/** Cases cochées, comptées dans le récap hebdo (le filtre de recherche
+ *  Shopify par abonnement est ignoré). Une étiquette par case. */
+export const OPTIN_SMS_TAG = 'jeu-roue-optin-sms'
+export const OPTIN_EMAIL_TAG = 'jeu-roue-optin-email'
+/** Ancienne case unique « offres par e-mail et SMS » (avant le 14/10/2026) :
+ *  vaut les deux accords. Plus posée, seulement lue par le récap. */
 export const OPTIN_TAG = 'jeu-roue-optin'
 const MF_NAMESPACE = 'bodystart'
 const MF_KEY = 'jeu_roue'
@@ -97,8 +101,10 @@ function consent(now: string) {
 /**
  * Crée la fiche client, ou met à jour celle qui existe déjà (prénom, nom,
  * téléphone). Si le téléphone appartient déjà à une autre fiche, il est
- * ignoré sans bloquer. Case cochée : accord e-mail et SMS (opt-in simple).
- * Case décochée : on ne touche pas aux accords existants.
+ * ignoré sans bloquer. Chaque case cochée donne son accord (opt-in simple) :
+ * SMS, e-mail. Une case décochée ne touche pas aux accords existants : on ne
+ * désabonne jamais. Case SMS cochée mais téléphone refusé : pas d'accord SMS
+ * possible, noté au journal.
  */
 export async function upsertCustomer(entry: Entry): Promise<string> {
   const now = new Date().toISOString()
@@ -126,7 +132,11 @@ export async function upsertCustomer(entry: Entry): Promise<string> {
     if (errs.length && isPhoneError(errs)) errs = await update(false)
     if (errs.length) await avertir('customerUpdate', errs)
 
-    if (entry.optIn) await subscribe(existing.id, now, phoneOk)
+    if (entry.optInEmail) await accordEmail(existing.id, now)
+    if (entry.optInSms) {
+      if (phoneOk) await accordSms(existing.id, now)
+      else await smsSansTelephone()
+    }
     return existing.id
   }
 
@@ -140,8 +150,8 @@ export async function upsertCustomer(entry: Entry): Promise<string> {
             lastName: entry.lastName,
             email: entry.email,
             ...(withPhone ? { phone: entry.phone } : {}),
-            ...(entry.optIn ? { emailMarketingConsent: consent(now) } : {}),
-            ...(entry.optIn && withPhone ? { smsMarketingConsent: consent(now) } : {}),
+            ...(entry.optInEmail ? { emailMarketingConsent: consent(now) } : {}),
+            ...(entry.optInSms && withPhone ? { smsMarketingConsent: consent(now) } : {}),
           },
         },
         API
@@ -149,7 +159,10 @@ export async function upsertCustomer(entry: Entry): Promise<string> {
     ).customerCreate
 
   let res = await create(true)
-  if (res.userErrors.length && isPhoneError(res.userErrors)) res = await create(false)
+  if (res.userErrors.length && isPhoneError(res.userErrors)) {
+    res = await create(false)
+    if (res.customer && entry.optInSms) await smsSansTelephone()
+  }
   if (res.customer) return res.customer.id
 
   // Fiche créée entre-temps (double envoi) : on la relit.
@@ -158,7 +171,7 @@ export async function upsertCustomer(entry: Entry): Promise<string> {
   throw new Error(`[jeu-roue] customerCreate userErrors: ${JSON.stringify(res.userErrors)}`)
 }
 
-async function subscribe(customerId: string, now: string, withSms: boolean) {
+async function accordEmail(customerId: string, now: string) {
   const email = await shopifyAdminFetch<{ customerEmailMarketingConsentUpdate: { userErrors: UserError[] } }>(
     `mutation EmailConsent($input: CustomerEmailMarketingConsentUpdateInput!) { customerEmailMarketingConsentUpdate(input: $input) { userErrors { field message } } }`,
     { input: { customerId, emailMarketingConsent: consent(now) } },
@@ -167,7 +180,9 @@ async function subscribe(customerId: string, now: string, withSms: boolean) {
   if (email.customerEmailMarketingConsentUpdate.userErrors.length) {
     await avertir('accord e-mail', email.customerEmailMarketingConsentUpdate.userErrors)
   }
-  if (!withSms) return
+}
+
+async function accordSms(customerId: string, now: string) {
   const sms = await shopifyAdminFetch<{ customerSmsMarketingConsentUpdate: { userErrors: UserError[] } }>(
     `mutation SmsConsent($input: CustomerSmsMarketingConsentUpdateInput!) { customerSmsMarketingConsentUpdate(input: $input) { userErrors { field message } } }`,
     { input: { customerId, smsMarketingConsent: consent(now) } },
@@ -176,6 +191,17 @@ async function subscribe(customerId: string, now: string, withSms: boolean) {
   if (sms.customerSmsMarketingConsentUpdate.userErrors.length) {
     await avertir('accord SMS', sms.customerSmsMarketingConsentUpdate.userErrors)
   }
+}
+
+/** Case SMS cochée, téléphone déjà sur une autre fiche : l'accord SMS ne peut pas être enregistré. */
+async function smsSansTelephone() {
+  console.warn('[jeu-roue] accord SMS non enregistré : téléphone déjà utilisé par une autre fiche')
+  await noterErreur({
+    etape: 'register',
+    source: 'serveur',
+    niveau: 'avertissement',
+    message: 'accord SMS non enregistré : téléphone déjà utilisé par une autre fiche',
+  })
 }
 
 /** Erreur Shopify qui ne bloque pas l'inscription : console et journal (avertissement). */
@@ -375,11 +401,17 @@ export async function createLotDiscount(lot: Lot, amount: number): Promise<{ cod
 
 /**
  * Résultat en métachamp (remplace la réservation, sert à réafficher le lot),
- * étiquettes `jeu-roue` et `jeu-roue-<lot>`, ligne ajoutée à la note. Chaque
- * étape est indépendante : un échec est journalisé sans bloquer, le code est
- * déjà créé. Note illisible : on n'y écrit rien plutôt que d'écraser.
+ * étiquettes `jeu-roue`, `jeu-roue-<lot>` et une par case cochée, ligne
+ * ajoutée à la note. Chaque étape est indépendante : un échec est journalisé
+ * sans bloquer, le code est déjà créé. Note illisible : on n'y écrit rien
+ * plutôt que d'écraser.
  */
-export async function markParticipant(customer: ShopCustomer, lot: Lot, result: JeuResult, optIn = false): Promise<void> {
+export async function markParticipant(
+  customer: ShopCustomer,
+  lot: Lot,
+  result: JeuResult,
+  accords: { sms: boolean; email: boolean } = { sms: false, email: false }
+): Promise<void> {
   const steps: [string, () => Promise<UserError[]>][] = [
     ['metafield', () => setJeuMetafield(customer.id, JSON.stringify(result))],
     [
@@ -388,7 +420,15 @@ export async function markParticipant(customer: ShopCustomer, lot: Lot, result: 
         (
           await shopifyAdminFetch<{ tagsAdd: { userErrors: UserError[] } }>(
             `mutation AddTags($id: ID!, $tags: [String!]!) { tagsAdd(id: $id, tags: $tags) { userErrors { field message } } }`,
-            { id: customer.id, tags: [PARTICIPANT_TAG, `${PARTICIPANT_TAG}-${lot.id}`, ...(optIn ? [OPTIN_TAG] : [])] },
+            {
+              id: customer.id,
+              tags: [
+                PARTICIPANT_TAG,
+                `${PARTICIPANT_TAG}-${lot.id}`,
+                ...(accords.sms ? [OPTIN_SMS_TAG] : []),
+                ...(accords.email ? [OPTIN_EMAIL_TAG] : []),
+              ],
+            },
             API
           )
         ).tagsAdd.userErrors,

@@ -3,14 +3,15 @@
 //
 // Sources, toutes lisibles sur le forfait Basic (aucune donnée personnelle) :
 // - les codes « Jeu roue » : un par participation (date, lot, utilisé ou non) ;
-// - les clients étiquetés `jeu-roue` : date de jeu (métachamp) et case
-//   « offres par e-mail et SMS » (étiquette `jeu-roue-optin`) ;
+// - les clients étiquetés `jeu-roue` : date de jeu (métachamp) et cases
+//   cochées (étiquettes `jeu-roue-optin-sms`, `jeu-roue-optin-email` ;
+//   ancienne case unique `jeu-roue-optin` = les deux) ;
 // - les commandes qui ont utilisé un code : en caisse (POS) ou en ligne ;
 // - le stock des lots à Coignières (même lecture que le tirage).
 
 import { shopifyAdminFetch } from '@/lib/shopify/client'
 import { LOTS, lotById, lotLabelRemise, type Lot, type LotId } from './lots'
-import { OPTIN_TAG, PARTICIPANT_TAG, lotsAvailability, readResult } from './shopify'
+import { OPTIN_EMAIL_TAG, OPTIN_SMS_TAG, OPTIN_TAG, PARTICIPANT_TAG, lotsAvailability, readResult } from './shopify'
 
 const API = { apiVersion: '2026-04' }
 const DAY_MS = 24 * 3600 * 1000
@@ -33,7 +34,10 @@ export interface RecapParticipant {
   playedAt: string | null
   code: string | null
   lotId: LotId | null
-  optIn: boolean
+  /** Case SMS cochée (ou ancienne case unique e-mail et SMS). */
+  optInSms: boolean
+  /** Case e-mail cochée (ou ancienne case unique e-mail et SMS). */
+  optInEmail: boolean
 }
 
 export interface RecapUse {
@@ -150,7 +154,8 @@ async function fetchParticipants(): Promise<RecapParticipant[]> {
         playedAt: r?.playedAt || null,
         code: r?.code ?? null,
         lotId: r?.lotId ?? null,
-        optIn: c.tags.includes(OPTIN_TAG),
+        optInSms: c.tags.includes(OPTIN_SMS_TAG) || c.tags.includes(OPTIN_TAG),
+        optInEmail: c.tags.includes(OPTIN_EMAIL_TAG) || c.tags.includes(OPTIN_TAG),
       })
     }
     after = page.customers.pageInfo.hasNextPage ? page.customers.pageInfo.endCursor : null
@@ -217,9 +222,10 @@ export interface Recap {
   to: Date
   week: {
     plays: number
-    /** Participants de la semaine (métachamp daté) et, parmi eux, opt-in. */
+    /** Participants de la semaine (métachamp daté) et, parmi eux, accords SMS et e-mail. */
     dated: number
-    optIns: number
+    smsOptIns: number
+    emailOptIns: number
     byLot: Array<{ lot: Lot; count: number }>
     uses: Array<RecapUse & { lot: Lot | null }>
     value: number
@@ -227,7 +233,8 @@ export interface Recap {
   total: {
     plays: number
     participants: number
-    optIns: number
+    smsOptIns: number
+    emailOptIns: number
     used: number
     caisse: number
     enLigne: number
@@ -294,7 +301,8 @@ export function buildRecap(data: RecapData, now: Date): Recap {
     week: {
       plays: weekCodes.length,
       dated: weekPlayers.length,
-      optIns: weekPlayers.filter((p) => p.optIn).length,
+      smsOptIns: weekPlayers.filter((p) => p.optInSms).length,
+      emailOptIns: weekPlayers.filter((p) => p.optInEmail).length,
       byLot,
       uses: weekUses,
       value: round2(weekUses.reduce((s, u) => s + (byCode.get(u.code)?.amount ?? 0), 0)),
@@ -302,7 +310,8 @@ export function buildRecap(data: RecapData, now: Date): Recap {
     total: {
       plays: codes.length,
       participants: data.participants.length,
-      optIns: data.participants.filter((p) => p.optIn).length,
+      smsOptIns: data.participants.filter((p) => p.optInSms).length,
+      emailOptIns: data.participants.filter((p) => p.optInEmail).length,
       used: used.length,
       caisse: uses.filter((u) => u.channel === 'caisse').length,
       enLigne: uses.filter((u) => u.channel === 'en ligne').length,
@@ -358,7 +367,8 @@ function sections(r: Recap): Array<{ title: string; lines: Array<{ text: string;
       title: 'Cette semaine',
       lines: [
         { text: `Participations : ${w.plays}` },
-        { text: `Case « offres par e-mail et SMS » cochée : ${w.optIns} sur ${w.dated} (${pct(w.optIns, w.dated)})` },
+        { text: `Case SMS cochée : ${w.smsOptIns} sur ${w.dated} (${pct(w.smsOptIns, w.dated)})` },
+        { text: `Case e-mail cochée : ${w.emailOptIns} sur ${w.dated} (${pct(w.emailOptIns, w.dated)})` },
         { text: `Codes utilisés : ${r.ordersReadable ? weekUsesLine : 'commandes illisibles cette fois'}` },
         { text: `Valeur offerte : ${fmtEur(w.value)}` },
       ],
@@ -387,7 +397,8 @@ function sections(r: Recap): Array<{ title: string; lines: Array<{ text: string;
     title: 'Depuis le lancement',
     lines: [
       { text: `Participations : ${t.plays}` },
-      { text: `Case offres cochée : ${t.optIns} sur ${t.participants} (${pct(t.optIns, t.participants)})` },
+      { text: `Case SMS cochée : ${t.smsOptIns} sur ${t.participants} (${pct(t.smsOptIns, t.participants)})` },
+      { text: `Case e-mail cochée : ${t.emailOptIns} sur ${t.participants} (${pct(t.emailOptIns, t.participants)})` },
       {
         text: `Codes utilisés : ${t.used} sur ${t.plays} (${pct(t.used, t.plays)})${
           t.used ? ` : ${channelSplit(t.caisse, t.enLigne, t.unknown)}` : ''

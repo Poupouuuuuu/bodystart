@@ -30,20 +30,34 @@ describe('normalizeFrMobile', () => {
 describe('validateEntry', () => {
   const ok = { firstName: ' Léa ', lastName: 'Dupont-Martin', email: ' Lea@Exemple.FR ', phone: '07 61 84 75 80' }
 
-  it('normalise prénom, e-mail et téléphone ; case décochée par défaut', () => {
+  it('normalise prénom, e-mail et téléphone ; cases décochées par défaut', () => {
     expect(validateEntry(ok)).toEqual({
       ok: true,
-      entry: { firstName: 'Léa', lastName: 'Dupont-Martin', email: 'lea@exemple.fr', phone: '+33761847580', optIn: false },
+      entry: { firstName: 'Léa', lastName: 'Dupont-Martin', email: 'lea@exemple.fr', phone: '+33761847580', optInSms: false, optInEmail: false },
     })
+  })
+
+  it('deux cases indépendantes, les 4 combinaisons', () => {
+    const accords = (b: Record<string, unknown>) => {
+      const r = validateEntry({ ...ok, ...b })
+      return r.ok ? [r.entry.optInSms, r.entry.optInEmail] : null
+    }
+    expect(accords({})).toEqual([false, false])
+    expect(accords({ optInSms: true })).toEqual([true, false])
+    expect(accords({ optInEmail: true })).toEqual([false, true])
+    expect(accords({ optInSms: true, optInEmail: true })).toEqual([true, true])
+  })
+
+  it('ancienne case unique (page en cache) : vaut les deux accords', () => {
     const r = validateEntry({ ...ok, optIn: true })
-    expect(r.ok && r.entry.optIn).toBe(true)
+    expect(r.ok && [r.entry.optInSms, r.entry.optInEmail]).toEqual([true, true])
   })
 
   it('signale le premier champ invalide', () => {
     expect(validateEntry({ ...ok, firstName: '' })).toMatchObject({ ok: false, field: 'firstName' })
     expect(validateEntry({ ...ok, email: 'lea@' })).toMatchObject({ ok: false, field: 'email' })
     expect(validateEntry({ ...ok, phone: '01 30 12 34 56' })).toMatchObject({ ok: false, field: 'phone' })
-    expect(validateEntry({ ...ok, optIn: 'true' })).toMatchObject({ ok: true, entry: { optIn: false } })
+    expect(validateEntry({ ...ok, optInSms: 'true', optInEmail: 1 })).toMatchObject({ ok: true, entry: { optInSms: false, optInEmail: false } })
   })
 
   it('normalizeEmail met en minuscules', () => {

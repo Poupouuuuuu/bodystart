@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
     const result: JeuResult = { lotId: lot.id, code, endsAt, playedAt: new Date().toISOString() }
     // Le code existe : la personne le voit quoi qu'il arrive ensuite.
     await storeResult(entry.email, entry.phone, result).catch((e) => console.error('[jeu-roue] redis :', e))
-    await markParticipant(customer, lot, result, entry.optIn)
+    await markParticipant(customer, lot, result, { sms: entry.optInSms, email: entry.optInEmail })
     return NextResponse.json({ status: 'won', result: toPublic(result) })
   } catch (err) {
     console.error(`[jeu-roue] ${step} :`, err)
