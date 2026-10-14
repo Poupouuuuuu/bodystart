@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils'
 
 /**
  * Galerie boutique — VRAIES photos du magasin (fournies par Adam, 07/2026,
- * remplacées par celles du 14/10/2026 sauf le comptoir, optimisées en webp
- * dans public/boutique/).
+ * remplacées par celles du 14/10/2026, optimisées en webp dans
+ * public/boutique/).
  *
  * Objectif (retour consultant + review) : le site disait « voici une boutique
  * de compléments » sans jamais la MONTRER. Cette section montre les rayons
@@ -37,9 +37,10 @@ const PHOTOS = [
     position: 'object-[50%_40%]',
   },
   {
-    src: '/boutique/comptoir.webp',
-    alt: 'Le comptoir de la boutique BodyStart Nutrition avec les barres protéinées',
-    // pilier droit (portrait) sur 2 rangées
+    src: '/boutique/rayon-snacks-boissons.webp',
+    alt: 'Rayon snacks et boissons de la boutique BodyStart Nutrition à Coignières : canettes ABE et barres Crunch Warrior',
+    // pilier droit (portrait) sur 2 rangées. Fichier déjà coupé au-dessus des
+    // étagères basses (vides) : seuls les canettes et les barres restent.
     span: 'md:col-span-1 md:row-span-2',
     position: 'object-center',
   },
