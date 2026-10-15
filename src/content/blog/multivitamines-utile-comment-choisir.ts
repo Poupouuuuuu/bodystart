@@ -16,7 +16,7 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
   excerpt:
     "Une multivitamine n'est pas magique : elle sert de filet de sécurité pour combler les petits déficits quand l'assiette ne couvre pas tout, utile surtout en sèche, en régime restrictif ou quand on mange peu varié. Le tout est de choisir une formule bien dosée plutôt qu'un cocktail à rallonge sous-dosé.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'À quoi sert une multivitamine ?',
@@ -103,13 +103,13 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
           type: 'table',
           headers: ['Produit', 'Format', 'Prix'],
           rows: [
-            ['[Multivitamines & Minéraux](/products/multivitamines-mineraux)', '22 nutriments, 1 capsule/jour', '{{prix:multivitamines-mineraux|19,90 €}}'],
+            ['[Multivitamin DY Nutrition](/products/multivitamin-dy-60-comprimes)', 'Vitamines et minéraux, 1 comprimé par jour', '{{prix:multivitamin-dy-60-comprimes|14,90 €}}'],
             ['[Multivitamines](/products/multivitamines)', '12 vitamines hautement dosées', '{{prix:multivitamines|14,90 €}}'],
           ],
         },
         {
           type: 'p',
-          text: "Le [Multivitamines & Minéraux](/products/multivitamines-mineraux) couvre large (vitamines + minéraux, dont magnésium et zinc) en une capsule ; la formule [Multivitamines](/products/multivitamines) mise sur des vitamines bien dosées. Tu retrouves ces références et les autres fondations dans le rayon [santé & bien-être](/categories/sante). Et si tu ne sais pas si une multivitamine a sa place dans ta routine, on en parle honnêtement en boutique. Parfois la réponse est « travaille d'abord ton assiette ».",
+          text: "Le [Multivitamin DY Nutrition](/products/multivitamin-dy-60-comprimes) couvre large (vitamines et minéraux, dont magnésium, zinc et fer) en un comprimé par jour ; la formule [Multivitamines](/products/multivitamines) mise sur des vitamines bien dosées. Tu retrouves ces références et les autres fondations dans le rayon [santé & bien-être](/categories/sante). Et si tu ne sais pas si une multivitamine a sa place dans ta routine, on en parle honnêtement en boutique. Parfois la réponse est « travaille d'abord ton assiette ».",
         },
       ],
     },
@@ -137,7 +137,7 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
     },
   ],
   products: [
-    { handle: 'multivitamines-mineraux', label: 'Multivitamines & Minéraux' },
+    { handle: 'multivitamin-dy-60-comprimes', label: 'Multivitamin DY Nutrition' },
     { handle: 'multivitamines', label: 'Multivitamines' },
   ],
   categories: [{ slug: 'sante', label: 'Santé & bien-être' }],

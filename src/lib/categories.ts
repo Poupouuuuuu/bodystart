@@ -175,7 +175,6 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option : on te les présente en boutique, au cas par cas. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine.",
     ],
     featured: [
-      { handle: 'pump-nitric-oxide-booster', label: 'Pump Warrior, pré-workout sans stimulant' },
     ],
     related: [
       { slug: 'creatine', label: 'Créatine' },
@@ -245,9 +244,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Regarde la composition et le format (gélules pour une cure, boisson prête à boire) plutôt que les promesses. Attention aux formules avec caféine, comme la Testorine en boisson (100 mg par bouteille). Ces formules s'adressent aux adultes et sont déconseillées aux femmes enceintes ou allaitantes. Si tu hésites, pose-nous la question en boutique : on connaît chaque référence du rayon.",
     ],
     featured: [
-      { handle: 'alphatest-muscletech', label: 'Alphatest MuscleTech, fenugrec, bore et zinc' },
       { handle: 'testorine-booster-boisson', label: 'Testorine, format boisson' },
-      { handle: 'sex-bomb', label: 'Sex Bomb For Her Applied Nutrition, ashwagandha et maca' },
     ],
     related: [
       { slug: 'sante', label: 'Santé & bien-être' },
@@ -291,7 +288,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Pars de ton besoin réel : coup de fatigue et entraînement intense → magnésium bisglycinate ou ZMA ; peu d'exposition au soleil d'octobre à mars → vitamine D3 ; peu de poisson gras dans l'assiette → oméga 3. Pour le collagène, choisis-le sur sa composition (dose, origine, format). Un produit à la fois, choisi pour une raison précise, en complément d'une alimentation variée et équilibrée et d'un mode de vie sain.",
     ],
     featured: [
-      { handle: 'vitamin-d3-k2-dy-60-softgels', label: 'Vitamine D3 + K2 DY Nutrition' },
+      { handle: 'vitamine-d3-k2-osavi-60-softgels', label: 'Vitamine D3 + K2 Osavi, 1 softgel par jour' },
       { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY Nutrition' },
       { handle: 'collagene-hydrolyse-osavi-type-i-iii-poudre-660-g', label: 'Collagène Hydrolysé Osavi Type I & III' },
     ],

@@ -13,7 +13,7 @@ export const quandPrendreSaWhey: BlogArticle = {
   excerpt:
     "Le meilleur moment pour prendre sa whey, c'est celui qui t'aide à atteindre ton total de protéines du jour. Le timing autour de la séance a un effet réel mais mineur : la régularité et la quantité comptent bien plus que l'heure exacte.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'Le meilleur moment ? Celui qui te fait atteindre ton quota',
@@ -88,11 +88,6 @@ export const quandPrendreSaWhey: BlogArticle = {
               'Isolate',
               '{{prix:iso-zero-100-whey|78,90 €}}',
             ],
-            [
-              '[Whey Protein](/products/whey-protein)',
-              'Whey concentrée',
-              '{{prix:whey-protein|39,90 €}}',
-            ],
           ],
         },
         {
@@ -127,7 +122,6 @@ export const quandPrendreSaWhey: BlogArticle = {
   products: [
     { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle' },
     { handle: 'iso-zero-100-whey', label: 'Iso Zero 100 % Whey' },
-    { handle: 'whey-protein', label: 'Whey Protein' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],
   related: ['combien-de-proteines-par-jour', 'whey-ou-isolate-quelle-difference'],

@@ -127,25 +127,27 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </ReadMore>
         </div>
 
-        {/* Nos choix (maillage produits phares) */}
-        <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-7 mb-12 max-w-[760px]">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
-            Nos choix dans ce rayon
-          </p>
-          <ul className="space-y-2.5">
-            {cat.featured.map((f) => (
-              <li key={f.handle}>
-                <Link
-                  href={`/products/${f.handle}`}
-                  className="inline-flex min-h-[44px] items-center gap-2 text-[15px] font-semibold text-spruce hover:text-fresh transition-colors"
-                >
-                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
-                  {f.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Nos choix (maillage produits phares) ; rien si la sélection est vide */}
+        {cat.featured.length > 0 && (
+          <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-7 mb-12 max-w-[760px]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+              Nos choix dans ce rayon
+            </p>
+            <ul className="space-y-2.5">
+              {cat.featured.map((f) => (
+                <li key={f.handle}>
+                  <Link
+                    href={`/products/${f.handle}`}
+                    className="inline-flex min-h-[44px] items-center gap-2 text-[15px] font-semibold text-spruce hover:text-fresh transition-colors"
+                  >
+                    <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                    {f.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Grille produits */}
         <h2 className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-6">
