@@ -131,7 +131,7 @@ export const commentFaireUneSeche: BlogArticle = {
         },
         {
           type: 'table',
-          headers: ['Produit', 'Rôle dans la sèche', 'Prix'],
+          headers: ['Produit', 'En bref', 'Prix'],
           rows: [
             ['[Iso Zero 100% Whey](/products/iso-zero-100-whey)', 'Quota protéines, quasi zéro glucides/lipides', '{{prix:iso-zero-100-whey|78,90 €}}'],
             ['[L-Carnitine Pro Zero](/products/l-carnitine-pro-zero-liquide)', 'Le classique de sèche, liquide zéro sucre', '{{prix:l-carnitine-pro-zero-liquide|22,90 €}}'],

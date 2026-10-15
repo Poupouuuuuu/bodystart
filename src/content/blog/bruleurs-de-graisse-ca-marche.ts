@@ -92,7 +92,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La [L-Carnitine 1500](/products/l-carnitine-1500-120-gelules) est l\'option la plus simple autour de l\'entraînement ; le [CLA de DY Nutrition](/products/cla-dy-90-softgels) est un acide gras souvent choisi en période de régime. Les formules qui associent plusieurs ingrédients se conseillent au cas par cas en boutique, selon ton objectif et ta sensibilité à la caféine. Tu peux voir tout le rayon [brûleurs de graisse](/categories/bruleurs). Rappel : un produit ne remplace jamais le déficit.',
+          text: 'La [L-Carnitine 1500](/products/l-carnitine-1500-120-gelules) est la plus simple à prendre autour de l\'entraînement (2 gélules par dose) ; le [CLA de DY Nutrition](/products/cla-dy-90-softgels) est un acide gras souvent choisi en période de régime. Les formules qui associent plusieurs ingrédients se conseillent au cas par cas en boutique, selon ton objectif et ta sensibilité à la caféine. Tu peux voir tout le rayon [brûleurs](/categories/bruleurs). Rappel : un produit ne remplace jamais le déficit calorique.',
         },
       ],
     },
