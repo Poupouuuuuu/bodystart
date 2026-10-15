@@ -10,10 +10,12 @@ import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import Reveal from '@/components/ui/Reveal'
-import { getFeaturedProducts, getProductByHandle } from '@/lib/shopify'
+import { getCoffrets, getFeaturedProducts, getProductByHandle } from '@/lib/shopify'
 import { HOME_FEATURED_HANDLE, homeBestSellers } from '@/lib/merchandising'
 import { buildPageMetadata } from '@/lib/seo'
 import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
+import CoffretsNoelV3 from '@/components/home/v3/CoffretsNoelV3'
+import { coffretsVisibles, dateCoffrets } from '@/lib/coffrets'
 
 // REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
 // Ordre des sections : §B.Home.1-8 (avis retire, cf. site-rewrite-copy-v1.md §3.6)
@@ -60,7 +62,22 @@ async function BestSellersAsync() {
   return <BestSellersV3 products={products} />
 }
 
-export default function HomePage() {
+// Coffrets de Noël : du 2/11 au 24/12, heure de Paris (lib/coffrets). Hors
+// production, ?coffrets_date=2026-11-10 force la date (la page devient alors
+// dynamique) ; en production searchParams n'est jamais lu, la home reste en ISR.
+async function coffretsDuMoment(searchParams: Promise<Record<string, string | string[] | undefined>>) {
+  const env = process.env.VERCEL_ENV
+  const forcee = env === 'production' ? undefined : (await searchParams).coffrets_date
+  if (!coffretsVisibles(dateCoffrets(forcee, env))) return []
+  return getCoffrets().catch(() => [])
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const coffrets = await coffretsDuMoment(searchParams)
   return (
     <>
       {/* 1. Hero (LCP, rendu immediat — jamais enveloppe dans <Reveal>) */}
@@ -74,6 +91,13 @@ export default function HomePage() {
       {/* PREMIUM V2 : les sections sous la ligne de flottaison montent en
           douceur a l'entree dans l'ecran. Sans JS ou en prefers-reduced-motion,
           <Reveal> n'applique aucun masquage (cf. globals.css .reveal). */}
+
+      {/* 2 bis. Coffrets de Noël, en saison seulement (rien sinon) */}
+      {coffrets.length > 0 && (
+        <Reveal>
+          <CoffretsNoelV3 coffrets={coffrets} />
+        </Reveal>
+      )}
 
       {/* 3. Best-sellers (data Shopify, streame) */}
       <Reveal>

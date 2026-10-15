@@ -1,7 +1,9 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Truck, Package } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
 import { getBundleComponentImages } from '@/lib/shopify/bundle'
+import { estCoffret } from '@/lib/coffrets'
 import BundleComposite from './BundleComposite'
 import type { ShopifyProduct, ShopifyMetafield } from '@/lib/shopify/types'
 import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
@@ -78,6 +80,11 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
   // composants, accessibles via variants[0].components.productVariant.product.
   const componentImages = getBundleComponentImages(product)
   const hasComponents = componentImages.length > 0
+  // Coffrets de Noël : photo du coffret quand Shopify en a une (carrée, fond
+  // blanc, préparée par Claude Gestion), en pleine case ; posée sur le fond
+  // végétal, elle faisait un carré blanc. Sinon les pots des composants.
+  const coffret = estCoffret(product)
+  const photoCoffret = coffret ? product.featuredImage : null
 
   // Composants : on prefere le compte des composants Storefront, fallback
   // sur le metafield custom.composition s'il est rempli.
@@ -114,14 +121,27 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
           </div>
         )}
 
-        <BundleComposite
-          images={componentImages}
-          alt={product.title}
-          variant="card"
-          fallbackImage={product.featuredImage}
-          sizes={featured ? '(max-width: 768px) 100vw, 560px' : '(max-width: 768px) 50vw, 360px'}
-          className={cn(soldOut && 'opacity-60')}
-        />
+        {photoCoffret ? (
+          <Image
+            src={photoCoffret.url}
+            alt={photoCoffret.altText ?? product.title}
+            fill
+            sizes={featured ? '(max-width: 768px) 100vw, 560px' : '(max-width: 768px) 80vw, 360px'}
+            className={cn(
+              'bg-white object-cover transition-transform duration-500 group-hover:scale-105',
+              soldOut && 'opacity-60'
+            )}
+          />
+        ) : (
+          <BundleComposite
+            images={componentImages}
+            alt={product.title}
+            variant="card"
+            fallbackImage={product.featuredImage}
+            sizes={featured ? '(max-width: 768px) 100vw, 560px' : '(max-width: 768px) 50vw, 360px'}
+            className={cn(soldOut && 'opacity-60')}
+          />
+        )}
       </div>
 
       {/* ─── Corps ─── */}
@@ -170,7 +190,7 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
           )}
 
           <div className="inline-flex items-center gap-2 bg-fresh text-white font-semibold text-[14px] px-5 py-2.5 rounded-full transition-colors group-hover:bg-fresh-deep">
-            Voir le pack
+            {coffret ? 'Voir le coffret' : 'Voir le pack'}
             <ArrowRight className="w-3.5 h-3.5" />
           </div>
         </div>

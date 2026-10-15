@@ -1,11 +1,14 @@
 import { cache } from 'react'
 import { availableFirst } from '@/lib/product-order'
+import { COFFRETS_TAG, estCoffret } from '@/lib/coffrets'
+import { stockBoutique, type VarianteStock } from './stock-boutique'
 import { shopifyFetch, shopifyAdminFetch } from './client'
 import {
   GET_PRODUCTS,
   GET_PRODUCT_BY_HANDLE,
   GET_FEATURED_PRODUCTS,
   GET_SITEMAP_PRODUCTS,
+  GET_COFFRETS,
   SEARCH_PRODUCTS,
 } from './queries/products'
 import {
@@ -109,6 +112,17 @@ export const getProductByHandle = cache(async (handle: string) => {
     { handle }
   )
   return data.product ? withCardPrice(data.product) : null
+})
+
+/**
+ * Coffrets de Noël publiés sur le site (tag coffret-noel), du moins cher au
+ * plus cher. Mémoïsé : la page lit la même liste pour la metadata et le rendu.
+ */
+export const getCoffrets = cache(async (): Promise<ShopifyProduct[]> => {
+  const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>(GET_COFFRETS, {
+    query: `tag:${COFFRETS_TAG}`,
+  })
+  return data.products.nodes.filter(estCoffret)
 })
 
 export const getFeaturedProducts = cache(async (): Promise<ShopifyProduct[]> => {
@@ -281,18 +295,16 @@ export async function getProductInventoryByLocation(
   locationId: string
 ): Promise<{ variantId: string; title: string; available: number }[]> {
   const data = await shopifyAdminFetch<{
-    product: { variants: { nodes: AdminVariantNode[] } } | null
+    product: { variants: { nodes: VarianteStock[] } } | null
   }>(GET_PRODUCT_INVENTORY_BY_LOCATION, { productId })
 
   if (!data.product) return []
 
-  return data.product.variants.nodes.map((variant) => {
-    const level = variant.inventoryItem.inventoryLevels.nodes.find(
-      (l) => l.location.id === locationId
-    )
-    const available = level?.quantities.find((q) => q.name === 'available')?.quantity ?? 0
-    return { variantId: variant.id, title: variant.title, available }
-  })
+  return data.product.variants.nodes.map((variant) => ({
+    variantId: variant.id,
+    title: variant.title,
+    available: stockBoutique(variant, locationId),
+  }))
 }
 
 export async function getInventoryForVariants(

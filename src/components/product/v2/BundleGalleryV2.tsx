@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { BundleComponentDetail } from '@/lib/shopify/bundle'
+import type { ShopifyImage } from '@/lib/shopify/types'
 
 interface BundleGalleryV2Props {
   /**
@@ -14,6 +15,14 @@ interface BundleGalleryV2Props {
   components: BundleComponentDetail[]
   title: string
   discountPct: number | null
+  /**
+   * Photo du produit composé (coffrets de Noël : carrée, fond blanc). Si
+   * présente, elle remplace les pots empilés en tête de galerie : le client
+   * voit d'abord ce qu'il reçoit, les composants suivent dans la bande.
+   */
+  photo?: ShopifyImage | null
+  /** Titre de la bande des composants (« Dans ce pack » par défaut). */
+  libelleComposants?: string
 }
 
 /**
@@ -38,8 +47,10 @@ export default function BundleGalleryV2({
   components,
   title,
   discountPct,
+  photo = null,
+  libelleComposants = 'Dans ce pack',
 }: BundleGalleryV2Props) {
-  if (components.length === 0) {
+  if (components.length === 0 && !photo) {
     // Securite : ce composant ne devrait etre rendu que si components > 0
     // (la fiche fait deja la detection). Mais on garde un fallback propre.
     return (
@@ -65,7 +76,26 @@ export default function BundleGalleryV2({
 
   return (
     <div className="w-full">
-      {/* ─── Hero : pots empiles sur fond vegetal ─── */}
+      {photo ? (
+        /* ─── Hero coffret : sa photo, image LCP de la fiche ─── */
+        <div className="relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-white">
+          {discountPct !== null && (
+            <div className="absolute top-4 left-4 z-30 bg-terracotta text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+              −{discountPct}%
+            </div>
+          )}
+          <Image
+            src={photo.url}
+            alt={photo.altText ?? title}
+            fill
+            priority
+            fetchPriority="high"
+            sizes="(max-width: 1024px) calc(100vw - 32px), 580px"
+            className="object-cover"
+          />
+        </div>
+      ) : (
+      /* ─── Hero : pots empiles sur fond vegetal ─── */
       <div
         className="relative w-full aspect-square bg-cover bg-bottom bg-no-repeat overflow-hidden rounded-2xl border border-spruce/10"
         style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
@@ -105,11 +135,12 @@ export default function BundleGalleryV2({
         {/* Gradient bas pour fondu avec la carte parente */}
         <div className="absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-white/60 to-transparent" />
       </div>
+      )}
 
       {/* ─── Strip composants : noms + lien vers chaque produit ─── */}
       <div className="mt-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
-          Dans ce pack
+          {libelleComposants}
         </p>
         <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
           {components.map((c, i) => (
