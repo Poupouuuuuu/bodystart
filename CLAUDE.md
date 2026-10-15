@@ -22,7 +22,7 @@ src/
 │   │   ├── layout.tsx      # Header + Footer + CartDrawer + JSON-LD + revalidate=3600
 │   │   ├── error.tsx       # Error boundary Nutrition
 │   │   ├── page.tsx        # Homepage
-│   │   ├── products/       # Catalogue et fiches produit (+ stock en temps réel)
+│   │   ├── products/       # Catalogue et fiches produit (+ stock en temps réel) ; page/[n] = pages 2, 3… du catalogue (SSR, 12 par page, lib/catalogue)
 │   │   ├── collections/    # Collections Shopify (+ breadcrumb JSON-LD)
 │   │   ├── objectifs/      # Navigation par objectif fitness
 │   │   ├── blog/           # Articles
@@ -41,6 +41,7 @@ src/
 │       ├── stock-alert/    # POST « me prévenir quand c'est de retour » (Supabase stock_alerts) + webhook/ inventory_levels/update → email Resend
 │       │   └── sweep/      # GET cron Vercel quotidien (07:00 UTC) : rattrape les alertes que le webhook a manquées (Bearer CRON_SECRET)
 │       ├── version/        # GET { sha, env } : quel commit sert la prod (skill verif-prod)
+│       ├── indexnow/       # sync (POST : workflow GitHub « IndexNow » après chaque mise en prod + quotidien), webhook (Shopify products/update, HMAC), cle/[cle] (fichier /{clé}.txt)
 │       └── stripe/
 │           ├── checkout/   # POST — crée une Stripe Checkout Session (coaching)
 │           └── webhook/    # POST — gère checkout.completed + subscription.deleted
@@ -108,6 +109,9 @@ RESEND_AUDIENCE_ID=xxx                    # Audience Resend pour la newsletter (
 
 # Site
 NEXT_PUBLIC_SITE_URL=https://bodystart.com
+
+# IndexNow (Bing, Yandex…) : 8 à 128 caractères [a-zA-Z0-9-], servie à /{clé}.txt. Production seulement.
+INDEXNOW_KEY=xxx
 
 # Cron Vercel (/api/stock-alert/sweep) — défini sur Vercel uniquement, jamais en local
 CRON_SECRET=xxx                           # ≥ 32 caractères aléatoires ; Vercel l'envoie en Authorization: Bearer
@@ -257,6 +261,12 @@ Tout est dans `.claude/` (hooks, skills, agents) et documenté dans `.claude/hoo
 - Les tokens clients sont en localStorage + cookie sync (pour le middleware)
 - Cookie consent banner RGPD en place (`CookieBanner.tsx`) avec 3 options : accepter / refuser / personnaliser
 - JSON-LD en place : Organization + LocalBusiness dans le layout Nutrition, Product + BreadcrumbList sur les pages produit et collection
+- **SEO 2 (10/2026)** :
+  - Fiche : `lib/jsonld/product.ts`. Une variante = Product + Offer ; plusieurs = ProductGroup + une entrée par variante (Google interdit l'AggregateOffer pour des variantes). gtin13/gtin12 depuis le code-barres (clé GS1 vérifiée), sku = SKU Shopify ou id de variante (= g:id du flux Merchant). `variesBy` size quand une option Poids/Format/Taille/Contenance varie (la saveur n'a pas de propriété schema.org). Aucun Product sans image. Flux Merchant (`/google-feed.xml`) : source produits de Merchant Center en direct depuis le 15/10/2026, ne pas changer son format sans prévenir Claude Gestion.
+  - Fil d'Ariane visible + JSON-LD « Accueil > Rayon > Fiche », rayon et 1-2 guides par fiche dans `lib/rayon-fiche.ts`. « Ça va bien avec » : parmi les 3 meilleures ventes de chaque famille, selon la fiche.
+  - Catalogue paginé en chemins (`/products/page/N`, ISR) et pas en `?page=` (lirait la requête, plus de cache CDN).
+  - IndexNow (`lib/indexnow.ts`) : ne soumet que les URL nouvelles, modifiées ou retirées. Fiche = empreinte titre/description/prix/dispo, pas updatedAt (changé à chaque vente). État dans Upstash (`indexnow:etat`). Le webhook `products/update` doit être créé dans l'admin Shopify (Paramètres → Notifications → Webhooks) vers `/api/indexnow/webhook`.
+  - Texte alternatif des images produit : `lib/alt-produit.ts` (« [Produit] [marque] [format], BodyStart Nutrition », texte Shopify prioritaire).
 - Error boundaries sur les routes root, nutrition, et account
 - Loading skeletons sur account et search seulement (pages dynamiques) ; jamais de `loading.tsx` sur une page ISR (voir Performance mobile)
 - **Phase 3 Coaching** : Stripe Checkout (one-shot + subscription) pour 5 produits coaching, webhook pour activation/désactivation automatique

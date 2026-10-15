@@ -67,6 +67,31 @@ describe('pickComplements', () => {
   })
 })
 
+describe('pickComplements, choix varié par fiche', () => {
+  const pool = [
+    ...['a', 'b', 'c', 'd'].map((x) => p(`creatine-${x}`, 'Créatine')),
+    ...['a', 'b', 'c', 'd'].map((x) => p(`shaker-${x}`, 'Accessoires', 'Applied', ['shaker'])),
+  ]
+  const wheys = Array.from({ length: 12 }, (_, i) => p(`whey-${i}`, 'Protéines'))
+  it('toujours dans les 3 meilleures ventes de la famille, et stable pour une même fiche', () => {
+    for (const w of wheys) {
+      const out = pickComplements(w, pool, 4, 3).map((x) => x.handle)
+      expect(out).toHaveLength(2)
+      expect(['creatine-a', 'creatine-b', 'creatine-c']).toContain(out[0])
+      expect(['shaker-a', 'shaker-b', 'shaker-c']).toContain(out[1])
+      expect(pickComplements(w, pool, 4, 3).map((x) => x.handle)).toEqual(out)
+    }
+  })
+  it("d'une fiche à l'autre, les suggestions changent", () => {
+    const distincts = new Set(wheys.map((w) => pickComplements(w, pool, 4, 3).map((x) => x.handle).join()))
+    expect(distincts.size).toBeGreaterThan(2)
+  })
+  it('famille plus courte que parmi : pas de trou', () => {
+    const out = pickComplements(wheys[0], [p('creatine-seule', 'Créatine')], 4, 3)
+    expect(out.map((x) => x.handle)).toEqual(['creatine-seule'])
+  })
+})
+
 describe('homeBestSellers', () => {
   it('Whey Native Protimuscle en tête, marques exclues retirées', () => {
     const out = homeBestSellers(POOL).map((x) => x.handle)

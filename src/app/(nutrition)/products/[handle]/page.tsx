@@ -4,10 +4,11 @@ import { getProductByHandle, getProducts } from '@/lib/shopify'
 import { pickComplements } from '@/lib/merchandising'
 import { wheyLabel } from '@/lib/product-subtitle'
 import { BODY_START_STORES } from '@/lib/shopify/types'
-import { isBundle, pickInitialBundleVariant } from '@/lib/shopify/bundle'
+import { isBundle } from '@/lib/shopify/bundle'
 import { COFFRETS_CHEMIN, COFFRETS_LIBELLE, coffretsVisibles, estCoffret } from '@/lib/coffrets'
-import { pickDefaultVariant } from '@/lib/product-variant'
 import BackButton from '@/components/product/v2/BackButton'
+import FilArianeV2 from '@/components/product/v2/FilArianeV2'
+import GuidesFicheV2 from '@/components/product/v2/GuidesFicheV2'
 import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
 import NutritionTableV2 from '@/components/product/v2/NutritionTableV2'
 import CompositionV2 from '@/components/product/v2/CompositionV2'
@@ -21,6 +22,10 @@ import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
 import { ratingFromMetafields, buildAggregateRating } from '@/lib/reviews'
 import { getGoogleRating } from '@/lib/shopify/google-rating'
 import { getProductRedirect } from '@/lib/shopify/product-redirects'
+import { productSchema } from '@/lib/jsonld/product'
+import { guidesDeFiche, rayonDeFiche } from '@/lib/rayon-fiche'
+import { altProduit } from '@/lib/alt-produit'
+import { BLOG_ARTICLES } from '@/content/blog'
 
 // ISR 3 min (sprint perf 2026-07-04) : la page était en revalidate=0 +
 // force-no-store « pour le stock C&C temps réel » → TTFB ~600 ms mesuré en prod
@@ -150,7 +155,8 @@ export default async function ProductPage({ params }: Props) {
   // 08/10/2026 : produits de la même collection, donc une whey sous une whey.
   let relatedProducts: import('@/lib/shopify/types').ShopifyProduct[] = []
   try {
-    relatedProducts = pickComplements(product, (await getProducts({ first: 100, sortKey: 'BEST_SELLING' })).nodes)
+    // Parmi les 3 meilleures ventes de chaque famille, selon la fiche (SEO 2).
+    relatedProducts = pickComplements(product, (await getProducts({ first: 100, sortKey: 'BEST_SELLING' })).nodes, 4, 3)
   } catch {
     // Pas de suggestions si Shopify ne répond pas (section masquée)
   }
@@ -166,14 +172,13 @@ export default async function ProductPage({ params }: Props) {
   const coffret = estCoffret(product)
   const retourCoffrets = coffretsVisibles(new Date()) ? COFFRETS_CHEMIN : '/products'
   const surTitre = coffret ? { label: COFFRETS_LIBELLE, href: retourCoffrets } : null
-  // Variante d'ouverture, même règle que BuyBoxV2 (première disponible ; pack :
-  // première variante complète) : prix, remise et disponibilité du JSON-LD
-  // collent à ce que la fiche affiche. Avant : variants[0], donc « OutOfStock »
-  // pour YEAAH EAA alors que deux saveurs sur trois étaient en stock.
-  const mainVariant = productIsBundle
-    ? pickInitialBundleVariant(product.variants.nodes)
-    : pickDefaultVariant(product.variants.nodes)
-
+  // Fil d'Ariane (rayon déduit du type, comme le menu) et 1 ou 2 guides du
+  // rayon choisis d'après les étiquettes (lib/rayon-fiche).
+  const rayon = rayonDeFiche(product, { coffretsOuverts: coffretsVisibles(new Date()) })
+  const guides = guidesDeFiche(product).flatMap((slug) => {
+    const article = BLOG_ARTICLES.find((a) => a.slug === slug)
+    return article ? [{ slug, title: article.title, excerpt: article.excerpt }] : []
+  })
   const collectionName = product.collections?.nodes?.[0]?.title ?? null
   const collectionHandle = product.collections?.nodes?.[0]?.handle ?? null
   const benefits = extractBenefits(product.tags ?? [], product.title)
@@ -213,39 +218,39 @@ export default async function ProductPage({ params }: Props) {
     itemDefectReturnFees: 'https://schema.org/FreeReturn',
   }
 
+  const images =
+    product.images?.nodes.length
+      ? product.images.nodes
+      : product.featuredImage
+        ? [product.featuredImage]
+        : []
+
   // Avis-ready : n'émet aggregateRating QUE si une vraie source d'avis existe
   // (aucune aujourd'hui → rien n'est émis ; cf. src/lib/reviews.ts).
   const rating = ratingFromMetafields(product.metafields)
   const googleRating = await getGoogleRating()
 
-  const productJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.title,
-    description: product.description?.slice(0, 500) ?? '',
-    image: product.featuredImage?.url ?? '',
-    brand: { '@type': 'Brand', name: product.vendor || 'BodyStart Nutrition' },
-    offers: {
-      '@type': 'Offer',
-      url: `${siteUrl}/products/${product.handle}`,
-      priceCurrency: mainVariant?.price.currencyCode ?? 'EUR',
-      price: mainVariant?.price.amount ?? '0',
-      availability: mainVariant?.availableForSale
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
-      seller: { '@type': 'Organization', name: 'BodyStart Nutrition' },
-      shippingDetails,
-      hasMerchantReturnPolicy: merchantReturnPolicy,
+  // Product (une variante) ou ProductGroup (une entrée par variante), rien
+  // sans image (lib/jsonld/product).
+  const productJsonLd = productSchema(
+    { ...product, images, variants: product.variants.nodes },
+    {
+      siteUrl,
+      offre: {
+        seller: { '@type': 'Organization', name: 'BodyStart Nutrition' },
+        shippingDetails,
+        hasMerchantReturnPolicy: merchantReturnPolicy,
+      },
+      extra: buildAggregateRating(rating),
     },
-    ...buildAggregateRating(rating),
-  }
+  )
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
-      { '@type': 'ListItem', position: 2, name: 'Produits', item: `${siteUrl}/products` },
+      { '@type': 'ListItem', position: 2, name: rayon.label, item: `${siteUrl}${rayon.href}` },
       {
         '@type': 'ListItem',
         position: 3,
@@ -255,21 +260,16 @@ export default async function ProductPage({ params }: Props) {
     ],
   }
 
-  const images =
-    product.images?.nodes.length
-      ? product.images.nodes
-      : product.featuredImage
-        ? [product.featuredImage]
-        : []
-
   return (
     <>
       {/* Hissée dans <head> par React 19 ; buildPageMetadata n'émet pas de og:type ici. */}
       <meta property="og:type" content="product" />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
-      />
+      {productJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        />
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
@@ -278,10 +278,12 @@ export default async function ProductPage({ params }: Props) {
       {/* GA4 view_item + Meta ViewContent : envoyés par BuyBoxV2, qui connaît
           la variante réellement affichée (dont ?variant= des pubs Meta). */}
 
-      {/* ─── Retour (remplace le fil d'ariane) ─── */}
+      {/* ─── Retour + fil d'Ariane ─── */}
       <div className="bg-canvas border-b border-spruce/10">
-        <div className="container py-4">
+        <div className="container flex items-center gap-3 py-2 md:py-3">
           <BackButton fallbackHref={coffret ? retourCoffrets : productIsBundle ? '/packs' : '/products'} />
+          <span aria-hidden="true" className="h-4 w-px flex-shrink-0 bg-spruce/15" />
+          <FilArianeV2 rayon={rayon} titre={product.title} />
         </div>
       </div>
 
@@ -308,6 +310,7 @@ export default async function ProductPage({ params }: Props) {
             isBundle={productIsBundle}
             surTitre={surTitre}
             photoCoffret={coffret ? (images[0] ?? null) : null}
+            altImages={altProduit({ title: product.title, vendor: product.vendor, format })}
             rating={rating}
             googleRating={googleRating}
           />
@@ -333,6 +336,9 @@ export default async function ProductPage({ params }: Props) {
 
       {/* ─── Composition + Allergenes (metafields custom.composition + custom.allergenes) ─── */}
       <CompositionV2 metafields={product.metafields} />
+
+      {/* ─── Guides du rayon (maillage fiche → guide) ─── */}
+      <GuidesFicheV2 guides={guides} />
 
       <QuestionProduitV2 />
 

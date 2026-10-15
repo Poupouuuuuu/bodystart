@@ -104,14 +104,30 @@ interface Candidate {
   availableForSale?: boolean
 }
 
+/** Empreinte stable d'une chaîne (FNV-1a 32 bits) : même fiche, même choix. */
+function empreinte(s: string): number {
+  let h = 0x811c9dc5
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return h >>> 0
+}
+
 /**
  * Suggestions pour un produit affiché : produits des familles complémentaires,
- * marques exclues retirées, disponibles, UN SEUL par famille (le mieux vendu,
- * ordre du pool), dans l'ordre de préférence des familles. Moins de `n`
- * résultats plutôt que deux produits de la même famille (relecture du
- * 08/10/2026 : deux créatines proposées sous une whey) ou un concurrent.
+ * marques exclues retirées, disponibles, UN SEUL par famille, dans l'ordre de
+ * préférence des familles. Moins de `n` résultats plutôt que deux produits de
+ * la même famille (relecture du 08/10/2026 : deux créatines proposées sous une
+ * whey) ou un concurrent.
+ *
+ * `parmi` : le produit de chaque famille est pris parmi ses `parmi` meilleures
+ * ventes (ordre du pool), selon une empreinte de la fiche affichée. Stable d'un
+ * rendu à l'autre, mais varié d'une fiche à l'autre (SEO 2 : avec 1, toutes
+ * les wheys proposaient les 4 mêmes produits). Par défaut 1 : la meilleure
+ * vente de chaque famille.
  */
-export function pickComplements<T extends Candidate>(current: Candidate, pool: T[], n = 4): T[] {
+export function pickComplements<T extends Candidate>(current: Candidate, pool: T[], n = 4, parmi = 1): T[] {
   const wanted = COMPLEMENTS[familyOf(current)]
   const byFamily = new Map<Family, T[]>(wanted.map((f) => [f, []]))
   const seen = new Set<string>([current.handle])
@@ -124,7 +140,9 @@ export function pickComplements<T extends Candidate>(current: Candidate, pool: T
   }
   const out: T[] = []
   for (const f of wanted) {
-    const p = byFamily.get(f)?.[0]
+    const list = byFamily.get(f) ?? []
+    const choix = Math.min(list.length, Math.max(1, parmi))
+    const p = choix > 0 ? list[empreinte(`${current.handle}|${f}`) % choix] : undefined
     if (p && out.length < n) out.push(p)
   }
   return out

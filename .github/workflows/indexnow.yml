@@ -1,0 +1,44 @@
+name: IndexNow
+
+# Prévient IndexNow (Bing, Yandex, Seznam…) des URL nouvelles, modifiées ou
+# retirées (src/lib/indexnow.ts) :
+# - après chaque push sur main, dès que la production sert ce commit
+#   (/api/version) : les guides et pages changés par le déploiement partent
+#   tout de suite ;
+# - une fois par jour : fiches modifiées dans Shopify (prix, disponibilité,
+#   texte), nouvelles fiches, fiches retirées.
+# La route ne renvoie jamais une URL inchangée : relancer ce workflow est sans
+# effet tant que rien n'a changé. Aucun secret nécessaire.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: true
+
+jobs:
+  soumettre:
+    name: Soumettre les URL modifiées
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Attendre que la production serve ce commit
+        if: github.event_name == 'push'
+        run: |
+          attendu="${GITHUB_SHA:0:12}"
+          for i in $(seq 1 60); do
+            sert=$(curl -fsS --retry 2 https://bodystart-nutrition.fr/api/version | jq -r .sha || true)
+            if [ "$sert" = "$attendu" ]; then echo "production sur $attendu"; exit 0; fi
+            sleep 15
+          done
+          echo "::warning::la production ne sert pas $attendu après 15 min, soumission reportée au passage quotidien"
+          exit 1
+
+      - name: Soumettre
+        run: |
+          curl -fsS --retry 3 --retry-all-errors -X POST https://bodystart-nutrition.fr/api/indexnow/sync
+          echo

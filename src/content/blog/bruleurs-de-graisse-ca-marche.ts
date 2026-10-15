@@ -17,7 +17,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
   excerpt:
     "La vérité d'abord : aucun brûleur ne fait maigrir sans déficit calorique. La L-carnitine, le CLA ou les formules à la caféine s'utilisent en accompagnement d'une sèche déjà structurée, jamais à sa place. On t'explique ce qu'on peut en dire, et à quel moment ils ont leur place.",
   datePublished: '2026-07-17',
-  dateModified: '2026-10-10',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'La vérité qui dérange : le déficit calorique fait tout le travail',
@@ -88,16 +88,11 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
               'CLA (période de régime)',
               '{{prix:cla-dy-90-softgels|19,90 €}}',
             ],
-            [
-              '[Iron Ultra Eric Favre](/products/iron-ultra-eric-favre)',
-              'Formule complète (carnitine, thé vert)',
-              '{{prix:iron-ultra-eric-favre|31,90 €}}',
-            ],
           ],
         },
         {
           type: 'p',
-          text: 'La [L-Carnitine 1500](/products/l-carnitine-1500-120-gelules) est l\'option la plus simple autour de l\'entraînement ; le [CLA de DY Nutrition](/products/cla-dy-90-softgels) est un acide gras souvent choisi en période de régime ; les formules complètes type [Iron Ultra](/products/iron-ultra-eric-favre) combinent plusieurs ingrédients pour les pratiquants avancés. Tu peux voir tout le rayon [brûleurs de graisse](/categories/bruleurs). Rappel : un produit ne remplace jamais le déficit.',
+          text: 'La [L-Carnitine 1500](/products/l-carnitine-1500-120-gelules) est la plus simple à prendre autour de l\'entraînement (2 gélules par dose) ; le [CLA de DY Nutrition](/products/cla-dy-90-softgels) est un acide gras souvent choisi en période de régime. Les formules qui associent plusieurs ingrédients se conseillent au cas par cas en boutique, selon ton objectif et ta sensibilité à la caféine. Tu peux voir tout le rayon [brûleurs](/categories/bruleurs). Rappel : un produit ne remplace jamais le déficit calorique.',
         },
       ],
     },
@@ -154,7 +149,6 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
   products: [
     { handle: 'l-carnitine-1500-120-gelules', label: 'L-Carnitine 1500 (Applied Nutrition)' },
     { handle: 'cla-dy-90-softgels', label: 'CLA (DY Nutrition)' },
-    { handle: 'iron-ultra-eric-favre', label: 'Iron Ultra (Eric Favre)' },
   ],
   categories: [{ slug: 'bruleurs', label: 'Brûleurs de graisse' }],
   related: ['comment-faire-une-seche', 'combien-de-proteines-par-jour', 'complements-debutant-musculation'],

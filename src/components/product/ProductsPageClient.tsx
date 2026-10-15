@@ -14,6 +14,8 @@ import { SlidersHorizontal, X, ChevronDown, Search, Package } from 'lucide-react
 import { cn } from '@/lib/utils'
 import { availableFirst } from '@/lib/product-order'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
+import PaginationCatalogue from '@/components/product/PaginationCatalogue'
+import { nombreDePages } from '@/lib/catalogue'
 import { cardPriceOf } from '@/lib/product-price'
 import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 
@@ -393,6 +395,14 @@ export function ProductsCatalog({
     // conservé à l'intérieur de chaque groupe.
     return availableFirst(result)
   }, [products, activeGoal, currentCategory, activeTag, sortKey, priceRange, searchQuery])
+
+  const isDefaultView =
+    activeGoal === 'all' &&
+    !activeCategory &&
+    !searchQuery.trim() &&
+    sortKey === 'best' &&
+    priceRange[0] === 0 &&
+    priceRange[1] === 200
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -799,6 +809,10 @@ export function ProductsCatalog({
                     </p>
                   </div>
                 )}
+
+                {/* Vue par défaut seulement : les pages /products/page/N
+                    reprennent cette liste-là, pas une liste filtrée. */}
+                {isDefaultView && <PaginationCatalogue page={1} pages={nombreDePages(filtered.length)} />}
               </>
             ) : hasProducts && filtered.length === 0 ? (
               <div className="text-center py-16">

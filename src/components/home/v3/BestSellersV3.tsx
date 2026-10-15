@@ -6,6 +6,7 @@ import { ProductCardShop } from '@/components/product/ProductCardShop'
 import { cn, formatPrice } from '@/lib/utils'
 import { HOME_FEATURED_HANDLE } from '@/lib/merchandising'
 import { cardPriceOf } from '@/lib/product-price'
+import { altImage, altProduit } from '@/lib/alt-produit'
 
 /**
  * Best-sellers V3 — grille « bento » asymétrique.
@@ -54,7 +55,7 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
               <div className="relative h-[78%] w-[78%]">
                 <Image
                   src={image.url}
-                  alt={image.altText ?? product.title}
+                  alt={altImage(image, altProduit(product))}
                   fill
                   sizes="(max-width: 1024px) 90vw, 560px"
                   className={cn(

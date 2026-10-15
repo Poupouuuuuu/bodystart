@@ -5,10 +5,13 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { ShopifyImage } from '@/lib/shopify/types'
 import { X, ZoomIn } from 'lucide-react'
+import { altImage } from '@/lib/alt-produit'
 
 interface ProductGalleryV2Props {
   images: ShopifyImage[]
   title: string
+  /** Texte alternatif des images sans texte saisi dans Shopify (lib/alt-produit). */
+  alt?: string
   discountPct: number | null
   selectedIndex?: number
   /** Index de l'image affichée au chargement : c'est elle qui est préchargée (LCP). */
@@ -23,6 +26,7 @@ interface ProductGalleryV2Props {
 export default function ProductGalleryV2({
   images,
   title,
+  alt = title,
   discountPct,
   selectedIndex: controlledIndex,
   priorityIndex = 0,
@@ -138,7 +142,7 @@ export default function ProductGalleryV2({
               <Image
                 key={currentImage.url}
                 src={currentImage.url}
-                alt={currentImage.altText ?? title}
+                alt={altImage(currentImage, alt)}
                 fill
                 // Une SEULE ombre portée, TEINTÉE verte : le cumul précédent
                 // (drop-shadow-2xl sur le bouton + une ombre noire ici) grisait
@@ -193,7 +197,7 @@ export default function ProductGalleryV2({
               >
                 <Image
                   src={img.url}
-                  alt={img.altText ?? `${title} - image ${i + 1}`}
+                  alt={altImage(img, alt)}
                   fill
                   className="object-contain p-2"
                   sizes="72px"
@@ -239,7 +243,7 @@ export default function ProductGalleryV2({
               <div className="relative w-[250%] h-[250%]">
                 <Image
                   src={currentImage.url}
-                  alt={currentImage.altText ?? title}
+                  alt={altImage(currentImage, alt)}
                   fill
                   className="object-contain"
                   sizes="250vw"
@@ -256,7 +260,7 @@ export default function ProductGalleryV2({
             >
               <Image
                 src={currentImage.url}
-                alt={currentImage.altText ?? title}
+                alt={altImage(currentImage, alt)}
                 fill
                 className="object-contain"
                 sizes="100vw"
