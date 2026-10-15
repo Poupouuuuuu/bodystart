@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Truck, Package } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
@@ -79,10 +80,11 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
   // composants, accessibles via variants[0].components.productVariant.product.
   const componentImages = getBundleComponentImages(product)
   const hasComponents = componentImages.length > 0
-  // Coffrets de Noël : photo du coffret quand Shopify en a une (composition
-  // préparée par Claude Gestion), sinon les pots des composants comme un pack.
+  // Coffrets de Noël : photo du coffret quand Shopify en a une (carrée, fond
+  // blanc, préparée par Claude Gestion), en pleine case ; posée sur le fond
+  // végétal, elle faisait un carré blanc. Sinon les pots des composants.
   const coffret = estCoffret(product)
-  const visuel = coffret && product.featuredImage ? [] : componentImages
+  const photoCoffret = coffret ? product.featuredImage : null
 
   // Composants : on prefere le compte des composants Storefront, fallback
   // sur le metafield custom.composition s'il est rempli.
@@ -119,14 +121,27 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
           </div>
         )}
 
-        <BundleComposite
-          images={visuel}
-          alt={product.title}
-          variant="card"
-          fallbackImage={product.featuredImage}
-          sizes={featured ? '(max-width: 768px) 100vw, 560px' : '(max-width: 768px) 50vw, 360px'}
-          className={cn(soldOut && 'opacity-60')}
-        />
+        {photoCoffret ? (
+          <Image
+            src={photoCoffret.url}
+            alt={photoCoffret.altText ?? product.title}
+            fill
+            sizes={featured ? '(max-width: 768px) 100vw, 560px' : '(max-width: 768px) 80vw, 360px'}
+            className={cn(
+              'bg-white object-cover transition-transform duration-500 group-hover:scale-105',
+              soldOut && 'opacity-60'
+            )}
+          />
+        ) : (
+          <BundleComposite
+            images={componentImages}
+            alt={product.title}
+            variant="card"
+            fallbackImage={product.featuredImage}
+            sizes={featured ? '(max-width: 768px) 100vw, 560px' : '(max-width: 768px) 50vw, 360px'}
+            className={cn(soldOut && 'opacity-60')}
+          />
+        )}
       </div>
 
       {/* ─── Corps ─── */}
