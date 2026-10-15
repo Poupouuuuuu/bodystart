@@ -61,6 +61,8 @@ interface BuyBoxV2Props {
   googleRating?: GoogleRating
   /** Sur-titre imposé par la page (ex. « Coffrets de Noël »), sinon fournisseur ou « Packs ». */
   surTitre?: { label: string; href: string } | null
+  /** Coffret : sa photo en tête de galerie, avant les composants (cf. BundleGalleryV2). */
+  photoCoffret?: ShopifyImage | null
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -99,6 +101,7 @@ export default function BuyBoxV2({
   rating = null,
   googleRating = GOOGLE_RATING,
   surTitre = null,
+  photoCoffret = null,
 }: BuyBoxV2Props) {
   // Variante d'ouverture (rendu serveur, donc sans ?variant=) :
   // - bundle : une variante COMPLÈTE (composants tous présents), pour ne pas
@@ -352,6 +355,8 @@ export default function BuyBoxV2({
               components={bundleDetails}
               title={title}
               discountPct={discountPctOf(selectedVariant)}
+              photo={photoCoffret}
+              libelleComposants={photoCoffret ? 'Dans ce coffret' : undefined}
             />
           ) : (
             <ProductGalleryV2

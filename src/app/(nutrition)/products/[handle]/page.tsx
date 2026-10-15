@@ -307,6 +307,7 @@ export default async function ProductPage({ params }: Props) {
             vendor={product.vendor}
             isBundle={productIsBundle}
             surTitre={surTitre}
+            photoCoffret={coffret ? (images[0] ?? null) : null}
             rating={rating}
             googleRating={googleRating}
           />
