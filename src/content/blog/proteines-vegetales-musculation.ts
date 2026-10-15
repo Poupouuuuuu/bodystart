@@ -11,7 +11,7 @@ export const proteinesVegetalesMusculation: BlogArticle = {
   metaDescription:
     'Whey vegan ou protéine végétale : est-ce aussi efficace pour le muscle ? Pois, riz, soja, mélanges multi-sources : comment choisir et bien doser.',
   excerpt:
-    "Les protéines végétales (pois, riz, soja…) couvrent tes besoins et soutiennent le muscle sans produit laitier. La clé : privilégier un mélange multi-sources pour un profil d'acides aminés complet, à une dose équivalente à celle d'une whey.",
+    "Les protéines végétales (pois, riz, soja…) contribuent au maintien et au développement de la masse musculaire, sans produit laitier. La clé : privilégier un mélange multi-sources pour un profil d'acides aminés complet, à une dose équivalente à celle d'une whey.",
   datePublished: '2026-07-17',
   dateModified: '2026-10-15',
   sections: [

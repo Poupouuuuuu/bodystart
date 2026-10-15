@@ -60,7 +60,7 @@ export const complementsApres40Ans: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La logique est simple : peu d\'exposition au soleil d\'octobre à mars = supplémentation qui fait sens sur cette période. Dans notre sélection, la [Vitamine D3 + K2 Osavi](/products/vitamine-d3-k2-osavi-60-softgels) associe vitamine D3 (50 µg) et vitamine K2 (100 µg) en un softgel par jour.',
+          text: 'La logique est simple : peu d\'exposition au soleil d\'octobre à mars = supplémentation qui fait sens sur cette période. Dans notre sélection, la [Vitamine D3 + K2 Osavi](/products/vitamine-d3-k2-osavi-60-softgels) associe vitamine D3 (50 µg) et vitamine K2 (100 µg) en un softgel par jour. Sous traitement anticoagulant, demande d\'abord l\'avis de ton médecin : la vitamine K est déconseillée.',
         },
       ],
     },

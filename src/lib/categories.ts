@@ -168,11 +168,11 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     label: 'Pré-workout',
     metaTitle: 'Pré-workout : formules avec ou sans caféine, à Coignières',
     metaDescription:
-      'Pré-workout avec caféine ou formules sans stimulant pour les séances du soir. Conseil en boutique à Coignières, livraison France.',
+      'Pré-workout sans stimulant pour les séances du soir, formules avec caféine en boutique à Coignières, sur conseil. Livraison France.',
     h1: 'Pré-workout : formules avec ou sans caféine',
     intro: [
       "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur l'étiquette), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
-      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option : on te les présente en boutique, au cas par cas. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine.",
+      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option : on te les présente en boutique, au cas par cas. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur une formule sans caféine, ou compose-la avec la citrulline du rayon acides aminés.",
     ],
     featured: [
     ],
@@ -215,7 +215,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     h1: 'Brûleurs et compléments minceur',
     intro: [
       "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon (L-carnitine, CLA, formules avec caféine, draineurs) s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
-      "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras populaire en période de régime, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non.",
+      "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras en softgel, à prendre une fois par jour, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non.",
     ],
     featured: [
       { handle: 'l-carnitine-1500-120-gelules', label: 'L-Carnitine 1500, la carnitine en gélules' },

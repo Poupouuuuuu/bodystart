@@ -135,7 +135,7 @@ export const commentFaireUneSeche: BlogArticle = {
           rows: [
             ['[Iso Zero 100% Whey](/products/iso-zero-100-whey)', 'Quota protéines, quasi zéro glucides/lipides', '{{prix:iso-zero-100-whey|78,90 €}}'],
             ['[Multivitamin DY Nutrition](/products/multivitamin-dy-60-comprimes)', 'Vitamines et minéraux, 1 comprimé par jour', '{{prix:multivitamin-dy-60-comprimes|14,90 €}}'],
-            ['[CLA DY Nutrition](/products/cla-dy-90-softgels)', "L'acide gras populaire en période de régime", '{{prix:cla-dy-90-softgels|19,90 €}}'],
+            ['[CLA DY Nutrition](/products/cla-dy-90-softgels)', 'Acide linoléique conjugué, 1 000 mg par softgel, 1 par jour', '{{prix:cla-dy-90-softgels|19,90 €}}'],
             ['[L-Carnitine 1500 Applied Nutrition](/products/l-carnitine-1500-120-gelules)', 'La carnitine en gélules, sans dosage à la cuillère', '{{prix:l-carnitine-1500-120-gelules|27,90 €}}'],
           ],
         },

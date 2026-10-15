@@ -83,7 +83,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Privilégie la **vitamine D3** (cholécalciférol) : c'est la forme la mieux utilisée par l'organisme, identique à celle que ta peau produit au soleil. La D2 (d'origine végétale) est moins efficace pour élever le statut. Certaines formules associent la **D3 à la K2**, appréciée pour son rôle dans la fixation du calcium sur l'os.",
+          text: "Privilégie la **vitamine D3** (cholécalciférol) : c'est la forme la mieux utilisée par l'organisme, identique à celle que ta peau produit au soleil. La D2 (d'origine végétale) est moins efficace pour élever le statut. Certaines formules associent la **D3 à la K2** : la vitamine K contribue au maintien d'une ossature normale.",
         },
         {
           type: 'table',
@@ -103,7 +103,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La [Vitamine D3 + K2 Osavi](/products/vitamine-d3-k2-osavi-60-softgels) tient en un softgel par jour, à prendre le matin après un repas ; la [Vitamine D3 + K2 d\'Evolite](/products/vitamin-d3-k2) associe aussi les deux vitamines en softgels. Tu retrouves ces références et les autres fondations dans le rayon [santé & bien-être](/categories/sante). La vitamine D fait aussi partie des priorités qu\'on détaille dans notre article [compléments après 40 ans](/blog/complements-apres-40-ans).',
+          text: 'La [Vitamine D3 + K2 Osavi](/products/vitamine-d3-k2-osavi-60-softgels) tient en un softgel par jour, à prendre le matin après un repas, sans la cumuler avec un autre complément de vitamine D (sous traitement anticoagulant, demande d\'abord l\'avis de ton médecin : la vitamine K est déconseillée) ; la [Vitamine D3 + K2 d\'Evolite](/products/vitamin-d3-k2) associe aussi les deux vitamines en softgels. Tu retrouves ces références et les autres fondations dans le rayon [santé & bien-être](/categories/sante). La vitamine D fait aussi partie des priorités qu\'on détaille dans notre article [compléments après 40 ans](/blog/complements-apres-40-ans).',
         },
       ],
     },
@@ -123,7 +123,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
     },
     {
       q: 'À quoi sert d\'associer la vitamine D à la K2 ?',
-      a: 'La vitamine K2 est appréciée pour son rôle dans la fixation du calcium sur l\'os, en complément de la vitamine D qui contribue à l\'absorption normale du calcium et au maintien d\'une ossature normale. Les formules D3 + K2 réunissent les deux dans un même produit.',
+      a: 'La vitamine K contribue au maintien d\'une ossature normale, en complément de la vitamine D qui contribue à l\'absorption normale du calcium et au maintien d\'une ossature normale. Les formules D3 + K2 réunissent les deux dans un même produit.',
     },
     {
       q: 'La vitamine D est-elle utile pour les sportifs ?',

@@ -55,7 +55,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Femmes enceintes et adolescents : on évite les pré-workout stimulés, tout simplement."
+          "text": "Femmes enceintes ou allaitantes, enfants et adolescents : on évite les pré-workout stimulés, tout simplement."
         }
       ]
     },
@@ -68,11 +68,11 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Côté dosages, les formules tournent généralement autour de **6 à 8 g de citrulline malate par séance** ; la bêta-alanine se prend autour de **3,2 à 6,4 g par jour**, tous les jours."
+          "text": "Côté dosages, chaque formule affiche les siens : suis l'étiquette, sans dépasser la dose journalière indiquée. La bêta-alanine, elle, se prend tous les jours."
         },
         {
           "type": "p",
-          "text": "Au rayon, tu as deux approches. Les formules complètes prêtes à l'emploi, qu'on te présente en boutique selon ta séance. Ou les ingrédients à l'unité pour composer ton propre mix, comme la [Citrulline Malate 2:1 d'Applied Nutrition](/products/citrulline-malate-2-1-applied-nutrition-poudre-300-g) ({{prix:citrulline-malate-2-1-applied-nutrition-poudre-300-g|24,90 €}}), à doser selon son étiquette (une mesure de 3 g)."
+          "text": "Au rayon, tu as deux approches. Les formules complètes prêtes à l'emploi, qu'on te présente en boutique selon ta séance. Ou les ingrédients à l'unité pour composer ton propre mix, comme la [Citrulline Malate 2:1 d'Applied Nutrition](/products/citrulline-malate-2-1-applied-nutrition-poudre-300-g) ({{prix:citrulline-malate-2-1-applied-nutrition-poudre-300-g|24,90 €}}), à doser selon son étiquette (une mesure rase de 3 g par jour)."
         },
         {
           "type": "h3",
@@ -128,7 +128,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Rien ne t'empêche d'alterner : stim pour la grosse séance du samedi matin, pump pour les entraînements du soir en semaine. Les formules sans caféine sont dans notre rayon [pré-workout](/categories/pre-workout) ; pour une formule avec caféine, passe nous voir en boutique, on choisit avec toi."
+          "text": "Rien ne t'empêche d'alterner : stim pour la grosse séance du samedi matin, pump pour les entraînements du soir en semaine. Les ingrédients sans caféine sont dans notre rayon [acides aminés](/categories/acides-amines) ; pour une formule complète, avec ou sans caféine, passe nous voir en boutique, on choisit avec toi."
         }
       ]
     },
@@ -188,6 +188,10 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
     {
       "slug": "pre-workout",
       "label": "Pré-workout"
+    },
+    {
+      "slug": "acides-amines",
+      "label": "Acides aminés"
     }
   ],
   "related": [

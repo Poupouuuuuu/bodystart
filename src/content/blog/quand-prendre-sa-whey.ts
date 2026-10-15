@@ -80,7 +80,7 @@ export const quandPrendreSaWhey: BlogArticle = {
           rows: [
             [
               '[Whey Native Protimuscle](/products/whey-native-protimuscle)',
-              'Whey native (valeur sûre)',
+              'Whey native',
               '{{prix:whey-native-protimuscle|21,90 €}}',
             ],
             [
@@ -92,7 +92,7 @@ export const quandPrendreSaWhey: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La [Whey Native Protimuscle](/products/whey-native-protimuscle) est notre valeur sûre au bon prix ; l’[Iso Zero 100 % Whey](/products/iso-zero-100-whey) est une isolate : 25,4 g de protéines et 0,5 g de sucres par dose de 30 g. Compare tout le rayon [protéines](/categories/proteines), et si tu débutes, notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant) t\'aide à trancher.',
+          text: 'La [Whey Native Protimuscle](/products/whey-native-protimuscle) est une whey native au bon prix ; l’[Iso Zero 100 % Whey](/products/iso-zero-100-whey) est une isolate : 25,4 g de protéines et 0,5 g de sucres par dose de 30 g. Compare tout le rayon [protéines](/categories/proteines), et si tu débutes, notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant) t\'aide à trancher.',
         },
       ],
     },

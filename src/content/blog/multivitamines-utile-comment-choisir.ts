@@ -88,7 +88,7 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: "La multivitamine, elle, joue la **couverture large** : pratique quand tu veux une base simple sans multiplier les pots, ou quand ton alimentation est irrégulière. Les deux approches ne s'opposent pas : beaucoup associent une multivitamine à une vitamine D en hiver. L'important est de partir d'un besoin réel, pas d'accumuler par réflexe.",
+          text: "La multivitamine, elle, joue la **couverture large** : pratique quand tu veux une base simple sans multiplier les pots, ou quand ton alimentation est irrégulière. Les deux approches ne s'opposent pas, à une condition : pas de doublon. La plupart des multivitamines contiennent déjà de la vitamine D, donc on n'ajoute pas un deuxième complément de vitamine D sans en parler avec nous ou avec ton pharmacien. L'important est de partir d'un besoin réel, pas d'accumuler par réflexe.",
         },
       ],
     },
@@ -129,7 +129,7 @@ export const multivitaminesUtileCommentChoisir: BlogArticle = {
     },
     {
       q: 'Multivitamine ou compléments séparés ?',
-      a: "Si tu as un besoin précis (vitamine D en hiver, magnésium contre la fatigue), un complément ciblé est plus pertinent. La multivitamine offre une couverture large et pratique quand tu veux une base simple. Les deux se combinent très bien, par exemple multivitamine + vitamine D l'hiver.",
+      a: "Si tu as un besoin précis (vitamine D en hiver, magnésium, qui contribue à réduire la fatigue), un complément ciblé est plus pertinent. La multivitamine offre une couverture large et pratique quand tu veux une base simple. Les deux peuvent se compléter en évitant les doublons : si ta multivitamine contient déjà de la vitamine D, ne la cumule pas avec un autre complément de vitamine D sans avis.",
     },
     {
       q: 'Quand prendre sa multivitamine ?',

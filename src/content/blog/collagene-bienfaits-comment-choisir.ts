@@ -138,7 +138,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
     },
     {
       q: 'Faut-il prendre du collagène avec de la vitamine C ?',
-      a: "Ce sont deux choses différentes : le collagène n'a pas d'allégation santé autorisée, la vitamine C, apportée notamment par les fruits et légumes, en a plusieurs. Notre collagène Osavi n'en contient pas : il apporte 20 g de peptides de collagène par dose de 22 g.",
+      a: "Ce sont deux choses différentes : le collagène n'a pas d'allégation santé autorisée, la vitamine C, apportée notamment par les fruits et légumes, en a plusieurs. Nos collagènes Osavi n'en contiennent pas : ils apportent 20 g de peptides de collagène par dose.",
     },
   ],
   products: [
