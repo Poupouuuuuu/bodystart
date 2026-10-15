@@ -66,10 +66,10 @@ const CATEGORIES: Category[] = [
     { key: 'citrulline', label: 'Citrulline', tags: ['citrulline'] },
     { key: 'beta-alanine', label: 'Bêta-alanine', tags: ['beta-alanine'] },
   ]},
-  { key: 'bruleurs', label: 'Brûleurs de graisse', productTypes: ['Brûleur'], subcategories: [
+  { key: 'bruleurs', label: 'Brûleurs', productTypes: ['Brûleur'], subcategories: [
     { key: 'carnitine', label: 'Carnitine', tags: ['carnitine'] },
     { key: 'cla', label: 'CLA', tags: ['cla'] },
-    { key: 'thermo-draineur', label: 'Thermo / Draineur', tags: ['thermo', 'draineur'] },
+    { key: 'thermo-draineur', label: 'Formules complètes', tags: ['thermo', 'draineur'] },
   ]},
   { key: 'boosters', label: 'Boosters', productTypes: ['Boosters'], subcategories: [
     { key: 'pump', label: 'Pump', tags: ['pump'] },
