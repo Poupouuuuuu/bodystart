@@ -197,7 +197,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     featured: [
       { handle: 'hit-eaa', label: 'HIT EAA DY Nutrition, les essentiels à 26,90 €' },
       { handle: 'yeaah-eaa', label: 'YEAAH EAA Dedicated' },
-      { handle: 'l-citrulline', label: 'L-Citrulline Dedicated, la citrulline à l’unité' },
+      { handle: 'citrulline-malate-2-1-applied-nutrition-poudre-300-g', label: 'Citrulline Malate 2:1 Applied Nutrition, la citrulline à l’unité' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },

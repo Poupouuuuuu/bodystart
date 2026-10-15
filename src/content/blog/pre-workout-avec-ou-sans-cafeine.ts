@@ -72,7 +72,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Au rayon, tu as deux approches. Les formules complètes prêtes à l'emploi, qu'on te présente en boutique selon ta séance. Ou les ingrédients à l'unité pour composer ton propre mix : la [L-Citrulline de Dedicated](/products/l-citrulline) ({{prix:l-citrulline|27,90 €}}) et la [Beta-Alanine de Dedicated](/products/dedicated-nutrition-beta-alanine) ({{prix:dedicated-nutrition-beta-alanine|19,90 €}})."
+          "text": "Au rayon, tu as deux approches. Les formules complètes prêtes à l'emploi, qu'on te présente en boutique selon ta séance. Ou les ingrédients à l'unité pour composer ton propre mix, comme la [Citrulline Malate 2:1 d'Applied Nutrition](/products/citrulline-malate-2-1-applied-nutrition-poudre-300-g) ({{prix:citrulline-malate-2-1-applied-nutrition-poudre-300-g|24,90 €}}), à doser selon son étiquette (une mesure de 3 g)."
         },
         {
           "type": "h3",
@@ -180,8 +180,8 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
   ],
   "products": [
     {
-      "handle": "l-citrulline",
-      "label": "L-Citrulline (Dedicated)"
+      "handle": "citrulline-malate-2-1-applied-nutrition-poudre-300-g",
+      "label": "Citrulline Malate 2:1 (Applied Nutrition)"
     }
   ],
   "categories": [
