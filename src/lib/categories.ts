@@ -209,12 +209,12 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     slug: 'bruleurs',
     productType: 'Brûleur',
     label: 'Brûleurs',
-    metaTitle: 'Brûleurs et minceur : carnitine, CLA, draineurs',
+    metaTitle: 'Brûleurs : L-carnitine et CLA',
     metaDescription:
-      'L-carnitine, CLA, formules avec caféine et draineurs pour accompagner une sèche. À utiliser avec un déficit calorique. Conseil en boutique à Coignières.',
-    h1: 'Brûleurs et compléments minceur',
+      'L-carnitine, CLA et formules avec caféine pour accompagner une sèche. À utiliser avec un déficit calorique. Conseil en boutique à Coignières.',
+    h1: 'Brûleurs : L-carnitine et CLA',
     intro: [
-      "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon (L-carnitine, CLA, formules avec caféine, draineurs) s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
+      "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon (L-carnitine, CLA, formules avec caféine) s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
       "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras en softgel, à prendre une fois par jour, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non.",
     ],
     featured: [

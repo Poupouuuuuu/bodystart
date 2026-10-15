@@ -141,7 +141,7 @@ export const commentFaireUneSeche: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Tu retrouves tout le rayon dans [brûleurs et minceur](/categories/bruleurs) et les protéines dans [le rayon protéines](/categories/proteines). Et si tu ne sais pas par où commencer ta sèche, passe en boutique à Coignières : on regarde ton objectif et on te dit honnêtement ce qui est utile, et ce qui ne l'est pas.",
+          text: "Tu retrouves tout le rayon dans [brûleurs](/categories/bruleurs) et les protéines dans [le rayon protéines](/categories/proteines). Et si tu ne sais pas par où commencer ta sèche, passe en boutique à Coignières : on regarde ton objectif et on te dit honnêtement ce qui est utile, et ce qui ne l'est pas.",
         },
       ],
     },
@@ -197,7 +197,7 @@ export const commentFaireUneSeche: BlogArticle = {
     { handle: 'l-carnitine-1500-120-gelules', label: 'L-Carnitine 1500 (Applied Nutrition)' },
   ],
   categories: [
-    { slug: 'bruleurs', label: 'Brûleurs & minceur' },
+    { slug: 'bruleurs', label: 'Brûleurs' },
     { slug: 'proteines', label: 'Protéines' },
   ],
   related: ['bruleurs-de-graisse-ca-marche', 'combien-de-proteines-par-jour', 'whey-ou-isolate-quelle-difference'],
