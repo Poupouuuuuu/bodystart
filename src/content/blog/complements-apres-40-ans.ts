@@ -15,7 +15,7 @@ export const complementsApres40Ans: BlogArticle = {
   excerpt:
     "Après 40 ans, les priorités changent : les protéines pour préserver le muscle, la vitamine D et le magnésium comme fondations, la créatine pour les efforts intenses et répétés. On te donne l'ordre logique, avec des allégations honnêtes : un complément à la fois, choisi pour une vraie raison.",
   datePublished: '2026-07-17',
-  dateModified: '2026-10-10',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'Qu\'est-ce qui change vraiment après 40 ans ?',
@@ -95,7 +95,7 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un complément apprécié, sans allégation santé autorisée : on le choisit pour sa composition. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dose de 22 g, le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) se boit tel quel.",
+          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un complément apprécié, sans allégation santé autorisée : on le choisit pour sa composition. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dose de 22 g dans sa version aromatisée (pot de 660 g), et existe en [version Neutre de 300 g](/products/collagene-hydrolyse-osavi-type-i-iii-neutre-poudre-300-g), sans arôme.",
         },
         {
           type: 'p',

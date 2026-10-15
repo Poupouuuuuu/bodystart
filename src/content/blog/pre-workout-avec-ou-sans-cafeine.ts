@@ -10,14 +10,14 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
   "metaDescription": "Caféine ou pas dans ton pré-workout ? Dosages réels du marché, demi-vie, sommeil et formules sans stimulant (citrulline, bêta-alanine) pour trancher.",
   "excerpt": "Choisis un pré-workout avec caféine si tu t'entraînes le matin ou en début d'après-midi et que tu la tolères bien ; passe à une formule sans caféine (pump) pour les séances du soir ou si tu es sensible à la caféine ; en cas d'hypertension, demande d'abord l'avis de ton médecin. Attention à l'heure : la caféine a une demi-vie de 5 à 6 heures et peut gêner ton sommeil.",
   "datePublished": "2026-06-12",
-  "dateModified": "2026-10-10",
+  "dateModified": "2026-10-15",
   "sections": [
     {
       "h2": "La caféine dans un pré-workout : ce qu'on peut en dire",
       "blocks": [
         {
           "type": "p",
-          "text": "La caféine est l'ingrédient central des pré-workout stimulés : chaque fiche indique sa teneur par dose. Ses allégations sont encore en attente au niveau européen : on ne lui prête donc pas d'effet ici, et on regarde surtout la dose et l'heure de prise."
+          "text": "La caféine est l'ingrédient central des pré-workout stimulés : chaque étiquette indique sa teneur par dose. Ses allégations sont encore en attente au niveau européen : on ne lui prête donc pas d'effet ici, et on regarde surtout la dose et l'heure de prise."
         },
         {
           "type": "p",
@@ -38,7 +38,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Le bon réflexe : lire l'étiquette, parce que chaque formule est différente et qu'on ne te donnera jamais un chiffre générique pour un produit précis. Un pré-workout stimulé comme le [French Pump de French Nutrition](/products/french-pump-pre-workout) ({{prix:french-pump-pre-workout|34,90 €}}) affiche sa teneur en caféine par dose sur l'étiquette (200 mg) : c'est la première ligne à vérifier avant d'acheter."
+          "text": "Le bon réflexe : lire l'étiquette, parce que chaque formule est différente et qu'on ne te donnera jamais un chiffre générique pour un produit précis. La teneur en caféine par dose est la première ligne à vérifier. Les formules avec caféine se conseillent en boutique, au cas par cas, selon l'heure de ta séance et ta sensibilité à la caféine."
         }
       ]
     },
@@ -101,7 +101,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
           "rows": [
             [
               "Composition",
-              "Caféine (teneur indiquée sur la fiche)",
+              "Caféine (teneur indiquée sur l'étiquette)",
               "Sans stimulant (citrulline, bêta-alanine…)"
             ],
             [
@@ -128,7 +128,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Rien ne t'empêche d'alterner : stim pour la grosse séance du samedi matin, pump pour les entraînements du soir en semaine. Les deux familles sont réunies dans notre rayon [pré-workout](/categories/pre-workout)."
+          "text": "Rien ne t'empêche d'alterner : stim pour la grosse séance du samedi matin, pump pour les entraînements du soir en semaine. Les formules sans caféine sont dans notre rayon [pré-workout](/categories/pre-workout) ; pour une formule avec caféine, passe nous voir en boutique, on choisit avec toi."
         }
       ]
     },
@@ -179,10 +179,6 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
     }
   ],
   "products": [
-    {
-      "handle": "french-pump-pre-workout",
-      "label": "French Pump (French Nutrition, avec caféine)"
-    },
     {
       "handle": "pump-nitric-oxide-booster",
       "label": "Pump Warrior (sans stimulant)"

@@ -62,7 +62,7 @@ const LOCAL_FAQ = [
   },
   {
     q: 'Vendez-vous les mêmes marques qu’en ligne ?',
-    a: 'Oui, le magasin et le site partagent le même stock multi-marques (Eric Favre, Nutrimuscle, MuscleTech, Dedicated, French Nutrition et d’autres). L’avantage de la boutique, c’est le conseil gratuit : on t’aide à choisir le bon produit pour ton objectif, pas le plus cher.',
+    a: 'Oui, le magasin et le site partagent le même stock multi-marques (Eric Favre, Nutrimuscle, MuscleTech, Dedicated, DY Nutrition et d’autres). L’avantage de la boutique, c’est le conseil gratuit : on t’aide à choisir le bon produit pour ton objectif, pas le plus cher.',
   },
 ]
 
@@ -167,7 +167,7 @@ export default function YvelinesLandingPage() {
           </h2>
           <p className="text-ink-mute text-[15px] leading-[1.65] mb-6 max-w-[680px]">
             Le même stock multi-marques (Eric Favre, Nutrimuscle, MuscleTech, Dedicated,
-            French Nutrition…), que tu viennes au comptoir ou que tu commandes :
+            DY Nutrition…), que tu viennes au comptoir ou que tu commandes :
           </p>
           <div className="flex flex-wrap gap-2.5">
             {CATEGORY_PAGES.map((c) => (

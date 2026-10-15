@@ -171,11 +171,10 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       'Pré-workout avec caféine ou formules sans stimulant pour les séances du soir. Conseil en boutique à Coignières, livraison France.',
     h1: 'Pré-workout : formules avec ou sans caféine',
     intro: [
-      "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur chaque fiche), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
-      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine. En cas de doute, on t'aide à trancher en boutique.",
+      "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur l'étiquette), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
+      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option : on te les présente en boutique, au cas par cas. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine.",
     ],
     featured: [
-      { handle: 'french-pump-pre-workout', label: 'French Pump French Nutrition, avec caféine' },
       { handle: 'pump-nitric-oxide-booster', label: 'Pump Warrior, pré-workout sans stimulant' },
     ],
     related: [
@@ -220,9 +219,8 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras populaire en période de régime, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non.",
     ],
     featured: [
-      { handle: 'l-carnitine-pro-zero-liquide', label: 'L-Carnitine Pro Zero, le classique liquide' },
-      { handle: 'cla-2400', label: 'CLA 2400 Eric Favre' },
       { handle: 'l-carnitine-1500-120-gelules', label: 'L-Carnitine 1500, la carnitine en gélules' },
+      { handle: 'cla-dy-90-softgels', label: 'CLA DY Nutrition, 1 softgel par jour' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },

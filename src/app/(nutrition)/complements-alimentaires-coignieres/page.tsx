@@ -121,7 +121,7 @@ export default function CoignieresLandingPage() {
           </h2>
           <p className="text-ink-mute text-[15px] leading-[1.65] mb-6 max-w-[680px]">
             Le magasin et le site partagent le même stock multi-marques (Eric Favre,
-            Nutrimuscle, MuscleTech, Dedicated, French Nutrition…) :
+            Nutrimuscle, MuscleTech, Dedicated, DY Nutrition…) :
           </p>
           <div className="flex flex-wrap gap-2.5">
             {CATEGORY_PAGES.map((c) => (

@@ -16,7 +16,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
   excerpt:
     "Le collagène est la protéine structurelle de la peau, des tendons et des os. En complément, il n'a pas d'allégation santé autorisée : c'est un complément apprécié, qu'on choisit pour sa composition (origine, dose de peptides, format).",
   datePublished: '2026-07-17',
-  dateModified: '2026-10-10',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'Le collagène, c\'est quoi exactement ?',
@@ -88,9 +88,9 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
               '{{prix:collagene-hydrolyse-osavi-type-i-iii-poudre-660-g|44,90 €}}',
             ],
             [
-              '[Collagène Marin Liquide](/products/pure-collagen-marin-liquide)',
-              'Liquide prêt à boire',
-              '{{prix:pure-collagen-marin-liquide|34,90 €}}',
+              '[Collagène Hydrolysé Osavi Neutre 300 g](/products/collagene-hydrolyse-osavi-type-i-iii-neutre-poudre-300-g)',
+              'Poudre sans arôme, 100 % peptides de collagène bovin, 20 g par dose',
+              '{{prix:collagene-hydrolyse-osavi-type-i-iii-neutre-poudre-300-g|24,90 €}}',
             ],
             [
               '[Beauty & Shape - Protéine & Collagène](/products/beauty-shape-proteine-collagene)',
@@ -101,7 +101,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides de collagène bovin par dose de 22 g, sans vitamine C ; le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) mise sur la praticité ; le [Beauty & Shape](/products/beauty-shape-proteine-collagene) combine protéine et collagène pour celles et ceux qui veulent les deux en un. Tout le rayon est sur la page [santé & bien-être](/categories/sante).',
+          text: 'Le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides de collagène bovin par dose de 22 g, sans vitamine C ; sa version [Neutre en pot de 300 g](/products/collagene-hydrolyse-osavi-type-i-iii-neutre-poudre-300-g), sans arôme, se mélange à ta boisson habituelle ; le [Beauty & Shape](/products/beauty-shape-proteine-collagene) combine protéine et collagène pour celles et ceux qui veulent les deux en un. Tout le rayon est sur la page [santé & bien-être](/categories/sante).',
         },
       ],
     },
@@ -143,7 +143,7 @@ export const collageneBienfaitsCommentChoisir: BlogArticle = {
   ],
   products: [
     { handle: 'collagene-hydrolyse-osavi-type-i-iii-poudre-660-g', label: 'Collagène Hydrolysé Osavi Type I & III' },
-    { handle: 'pure-collagen-marin-liquide', label: 'Collagène Marin Liquide' },
+    { handle: 'collagene-hydrolyse-osavi-type-i-iii-neutre-poudre-300-g', label: 'Collagène Hydrolysé Osavi Neutre 300 g' },
     { handle: 'beauty-shape-proteine-collagene', label: 'Beauty & Shape - Protéine & Collagène' },
   ],
   categories: [{ slug: 'sante', label: 'Santé & bien-être' }],
