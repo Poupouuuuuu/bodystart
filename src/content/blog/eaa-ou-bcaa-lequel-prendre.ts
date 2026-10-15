@@ -5,19 +5,19 @@ import type { BlogArticle } from '@/lib/blog'
 // l'article publié ; penser à mettre à jour dateModified.
 export const eaaOuBcaaLequelPrendre: BlogArticle = {
   "slug": "eaa-ou-bcaa-lequel-prendre",
-  "title": "EAA ou BCAA : lequel prendre pour progresser ?",
+  "title": "EAA ou BCAA : lequel prendre ?",
   "metaTitle": "EAA ou BCAA : lequel prendre ? Le guide clair",
-  "metaDescription": "EAA ou BCAA ? Les EAA couvrent les 9 acides aminés essentiels pour la synthèse protéique. Qui en a besoin, dosages et quoi choisir : on t'explique.",
-  "excerpt": "Pour soutenir la construction musculaire, les EAA l'emportent : ils apportent les 9 acides aminés essentiels nécessaires à une synthèse protéique complète, là où les BCAA n'en fournissent que 3. Les BCAA restent une bonne boisson d'entraînement, mais si ton apport en protéines est déjà suffisant, aucun des deux n'est vraiment indispensable.",
+  "metaDescription": "EAA ou BCAA ? Les EAA contiennent les 9 acides aminés essentiels, les BCAA 3 d'entre eux. Pour qui, quelle dose, lequel choisir : on t'explique.",
+  "excerpt": "Les EAA contiennent les 9 acides aminés essentiels, dont les 3 BCAA (leucine, isoleucine, valine) : si tu dois en choisir un, ce sont les EAA, le produit le plus complet des deux. Les BCAA restent une boisson d'entraînement appréciée, et si ton apport en protéines est déjà suffisant, aucun des deux n'est indispensable.",
   "datePublished": "2026-06-12",
-  "dateModified": "2026-06-12",
+  "dateModified": "2026-10-15",
   "sections": [
     {
       "h2": "EAA ou BCAA : lequel prendre au final ?",
       "blocks": [
         {
           "type": "p",
-          "text": "Si tu dois trancher, prends des EAA. Ils contiennent les 9 acides aminés essentiels (dont les 3 BCAA), donc ils fournissent toutes les briques dont ton corps a besoin pour la synthèse protéique, là où les BCAA n'en apportent que 3. Les protéines contribuent au maintien et au développement de la masse musculaire, et un complément qui couvre le spectre complet est plus utile qu'un produit partiel."
+          "text": "Si tu dois trancher, prends des EAA. Ils contiennent les 9 acides aminés essentiels, dont les 3 BCAA : un produit EAA apporte donc tout ce que contient un BCAA, plus six autres acides aminés essentiels."
         },
         {
           "type": "p",
@@ -37,9 +37,9 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
               "9 essentiels (dont les 3 BCAA)"
             ],
             [
-              "Synthèse protéique",
-              "Signal déclenché mais incomplet",
-              "Réponse complète, toutes les briques présentes"
+              "Acides aminés essentiels apportés",
+              "3 sur 9",
+              "9 sur 9"
             ],
             [
               "Dosage usuel",
@@ -47,9 +47,9 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
               "10 à 15 g"
             ],
             [
-              "Meilleur usage",
-              "Boisson d'entraînement, goût",
-              "Apport ciblé, jeûne, régime végétal"
+              "Usage courant",
+              "Boisson d'entraînement aromatisée",
+              "Entraînement à jeun, alimentation végétale, petit appétit"
             ],
             [
               "Prix moyen",
@@ -77,33 +77,33 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "La leucine est la plus connue car c'est elle qui déclenche le signal de construction musculaire. Mais déclencher un signal ne suffit pas : il faut aussi livrer les matériaux."
+          "text": "La leucine est la plus connue des trois. Dans beaucoup de BCAA, elle est dosée deux fois plus que chacune des deux autres : c'est le ratio « 2:1:1 » qu'on lit sur les pots."
         }
       ]
     },
     {
-      "h2": "Pourquoi la recherche penche pour les EAA ?",
+      "h2": "Pourquoi on conseille plutôt les EAA ?",
       "blocks": [
         {
           "type": "p",
-          "text": "La recherche récente favorise les EAA parce que la synthèse protéique a besoin des 9 acides aminés essentiels en même temps, pas seulement des 3 branchés. Prendre des BCAA seuls, c'est un peu comme donner l'ordre de monter un mur en ne livrant qu'une partie des briques."
+          "text": "Pour une raison de composition, tout simplement. Un BCAA apporte 3 acides aminés essentiels sur 9 ; un EAA les apporte tous les 9. Les six qui manquent aux BCAA (histidine, lysine, méthionine, phénylalanine, thréonine, tryptophane) se trouvent dans les aliments riches en protéines, mais pas dans un shaker de BCAA."
         },
         {
           "type": "p",
-          "text": "La leucine des BCAA active bien la voie de la synthèse, mais sans les 6 autres essentiels la réponse reste limitée et plafonne vite. Les EAA apportent le signal ET la matière première, ce qui explique une réponse plus complète à dose équivalente. C'est pour ça que les BCAA seuls, longtemps stars des salles, sont aujourd'hui jugés moins pertinents que les EAA pour soutenir la masse musculaire."
+          "text": "À prix proche, les EAA donnent la liste complète : c'est pour ça qu'on les propose en premier au comptoir quand quelqu'un hésite entre les deux. Les BCAA gardent toute leur place pour qui cherche d'abord une boisson aromatisée à boire pendant la séance."
         }
       ]
     },
     {
-      "h2": "Les BCAA servent-ils encore à quelque chose ?",
+      "h2": "Pour qui les BCAA ?",
       "blocks": [
         {
           "type": "p",
-          "text": "Oui, mais surtout pour le confort. Les BCAA font une excellente boisson d'entraînement : bon goût, hydratation, petite touche d'acides aminés à siroter pendant la séance. Si c'est ce que tu cherches, un BCAA aromatisé fait parfaitement le job."
+          "text": "Les BCAA sont avant tout une boisson d'entraînement : aromatisés, faciles à boire, à siroter pendant la séance. Si c'est ce que tu cherches, un BCAA fait parfaitement le job."
         },
         {
           "type": "p",
-          "text": "Ils conviennent aussi quand ton alimentation est déjà très riche en protéines et que tu veux juste une boisson agréable pendant l'effort, sans viser un apport complet. En revanche, pour réellement compléter ton apport en acides aminés, les EAA restent le choix plus logique."
+          "text": "Ils conviennent aussi quand ton alimentation est déjà riche en protéines et que tu veux juste une boisson agréable pendant l'effort. Si ton but est de compléter ton apport en acides aminés essentiels, les EAA sont le choix le plus logique, puisqu'ils les contiennent tous."
         }
       ]
     },
@@ -120,7 +120,7 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
             "Apport en protéines déjà couvert (1,6 à 2,2 g/kg/jour pour la prise de muscle) : les EAA et BCAA sont un bonus, pas une priorité.",
             "Régime végétarien ou vegan : les sources végétales sont parfois plus pauvres en certains acides aminés essentiels, les EAA deviennent un complément pertinent.",
             "Entraînement à jeun le matin : des EAA avant la séance fournissent les acides aminés que l'alimentation n'a pas encore apportés.",
-            "Petit appétit ou protéines difficiles à atteindre : les EAA aident à combler le manque sans alourdir la digestion."
+            "Petit appétit ou protéines difficiles à atteindre : une dose d'EAA se boit en quelques gorgées, plus facile à caser qu'un repas de plus."
           ]
         },
         {
@@ -173,7 +173,7 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
   "faq": [
     {
       "q": "Est-ce que je peux remplacer les BCAA par des EAA ?",
-      "a": "Oui. Comme les EAA contiennent déjà les 3 BCAA (leucine, isoleucine, valine) plus les 6 autres acides aminés essentiels, ils font tout ce que font les BCAA et davantage. Si tu ne devais en garder qu'un, ce seraient les EAA."
+      "a": "Oui. Les EAA contiennent déjà les 3 BCAA (leucine, isoleucine, valine) plus les 6 autres acides aminés essentiels : ils apportent tout ce qu'apporte un BCAA, et davantage. Si tu ne devais en garder qu'un, ce seraient les EAA."
     },
     {
       "q": "Les EAA sont-ils utiles si je prends déjà de la whey ?",
@@ -185,11 +185,11 @@ export const eaaOuBcaaLequelPrendre: BlogArticle = {
     },
     {
       "q": "Les BCAA ou les EAA font-ils maigrir ?",
-      "a": "Non, ce ne sont pas des produits minceur. Ce sont des acides aminés qui complètent l'apport en protéines, et les protéines contribuent au maintien et au développement de la masse musculaire, mais aucune poudre d'acides aminés ne fait perdre du poids à elle seule."
+      "a": "Non, ce ne sont pas des produits minceur. Ce sont des acides aminés, qui complètent l'apport en protéines de ton alimentation, et aucune poudre d'acides aminés ne fait perdre du poids à elle seule."
     },
     {
       "q": "EAA avant ou après l'entraînement ?",
-      "a": "Les deux fonctionnent. Beaucoup les boivent pendant la séance pour l'hydratation et le goût ; à jeun le matin, les prendre avant l'entraînement a du sens car l'alimentation n'a pas encore fourni d'acides aminés."
+      "a": "Les deux se font. Beaucoup les boivent pendant la séance, pour le goût et le côté pratique ; à jeun le matin, les prendre avant l'entraînement a du sens, car l'alimentation n'a pas encore fourni d'acides aminés."
     }
   ],
   "products": [

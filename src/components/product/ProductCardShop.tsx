@@ -25,6 +25,7 @@ import { useCart } from '@/hooks/useCart'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { productSubtitle } from '@/lib/product-subtitle'
 import { cardPriceOf } from '@/lib/product-price'
+import { altImage, altProduit } from '@/lib/alt-produit'
 
 // ─── Badges (tags Shopify → pastilles) ───
 
@@ -134,7 +135,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
           {product.featuredImage ? (
             <Image
               src={product.featuredImage.url}
-              alt={product.featuredImage.altText ?? product.title}
+              alt={altImage(product.featuredImage, altProduit(product))}
               width={200}
               height={200}
               // h-[70%] (au lieu de 65) : le produit occupe plus de place, c'est

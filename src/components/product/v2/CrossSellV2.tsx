@@ -11,6 +11,7 @@ import BundleComposite from '@/components/pack/v2/BundleComposite'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { FREE_SHIPPING_THRESHOLD_CENTS } from '@/lib/shipping'
 import { cardPriceOf } from '@/lib/product-price'
+import { altImage, altProduit } from '@/lib/alt-produit'
 
 interface CrossSellV2Props {
   products: ShopifyProduct[]
@@ -108,7 +109,7 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                         {product.featuredImage ? (
                           <Image
                             src={product.featuredImage.url}
-                            alt={product.featuredImage.altText ?? product.title}
+                            alt={altImage(product.featuredImage, altProduit(product))}
                             width={200}
                             height={200}
                             className={cn("relative z-10 w-auto h-[65%] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-110", soldOut && "opacity-60")}

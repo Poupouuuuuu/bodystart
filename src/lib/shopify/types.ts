@@ -43,6 +43,9 @@ export interface ShopifyProductVariant {
   price: ShopifyMoney
   compareAtPrice: ShopifyMoney | null
   image?: ShopifyImage | null
+  // Fiche produit seulement (GET_PRODUCT_BY_HANDLE) : identifiants du schéma Product.
+  sku?: string | null
+  barcode?: string | null
   selectedOptions: {
     name: string
     value: string

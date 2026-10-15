@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import { getProducts, getCollections, getInventoryForVariants } from '@/lib/shopify'
-import { BODY_START_STORES, type ShopifyCollection, type ShopifyProduct } from '@/lib/shopify/types'
-import { isPackProduct } from '@/lib/shopify/bundle'
+import { getCatalogue } from '@/lib/shopify/catalogue'
 import ProductsPageClient, { ProductsCatalog } from '@/components/product/ProductsPageClient'
 import { buildPageMetadata } from '@/lib/seo'
 
@@ -17,47 +15,8 @@ export const metadata: Metadata = buildPageMetadata({
 })
 
 export default async function ProductsPage() {
-  let products: ShopifyProduct[] = []
-  let collections: ShopifyCollection[] = []
-  try {
-    const [result, cols] = await Promise.all([
-      // first:250 = tout le catalogue (~60 produits) en une seule requete.
-      // BEST_SELLING = classement reel des ventes Shopify (caisse POS incluse,
-      // 99 % du CA) : le tri par defaut « Meilleures ventes » affiche enfin les
-      // vrais best-sellers en tete (decision Adam 2026-07 — avant : createdAt
-      // groupe par categorie, un produit recent squattait le haut de grille).
-      // Le tri client « Nouveautes » repose desormais sur le champ createdAt.
-      getProducts({ first: 250, sortKey: 'BEST_SELLING' }),
-      getCollections(50),
-    ])
-    // Exclut les packs (bundles) de "Tous les produits" : ils ont leur
-    // propre page /packs. Filtre par productType "Pack" OU tag "pack".
-    // (Scope local a cette page : la home et /packs gardent les packs.)
-    products = result.nodes.filter((p) => !isPackProduct(p))
-    // Retire aussi la collection "Packs" de la barre de categories pour ne
-    // pas laisser un filtre qui mene a une grille vide.
-    collections = cols.filter((c) => c.handle !== 'packs')
-  } catch {
-    // Fallback sans API
-  }
-
-  // Fetch batch inventaire boutique Coignieres pour badge stock bas
-  // (Plus que X en stock - cf. ProductsPageClient ProductCardShop).
-  // Si echec : on continue sans le data, les badges stock bas ne s'affichent pas.
-  const stockByProductId: Record<string, number> = {}
-  const activeStore = BODY_START_STORES.find((s) => s.isActive)
-  if (activeStore?.shopifyLocationId && products.length > 0) {
-    try {
-      const allVariantIds = products.flatMap((p) => p.variants.nodes.map((v) => v.id))
-      const inventory = await getInventoryForVariants(allVariantIds, activeStore.shopifyLocationId)
-      for (const p of products) {
-        const total = p.variants.nodes.reduce((sum, v) => sum + (inventory[v.id] ?? 0), 0)
-        stockByProductId[p.id] = total
-      }
-    } catch (err) {
-      console.error('[ProductsPage] batch inventory fetch failed:', err)
-    }
-  }
+  // Données partagées avec /products/page/N (lib/shopify/catalogue).
+  const { products, collections, stockByProductId } = await getCatalogue()
 
   return (
     <div className="bg-canvas min-h-screen">

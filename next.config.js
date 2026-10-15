@@ -157,6 +157,14 @@ const nextConfig = {
       },
     ]
   },
+  async rewrites() {
+    return {
+      // Après les fichiers et routes existants (robots.txt, llms.txt, mta-sts) :
+      // /{clé}.txt → fichier de clé IndexNow (app/api/indexnow/cle). La route
+      // répond 404 pour toute autre valeur que INDEXNOW_KEY.
+      afterFiles: [{ source: '/:cle([a-zA-Z0-9-]{8,128}).txt', destination: '/api/indexnow/cle/:cle' }],
+    }
+  },
   async redirects() {
     return [
       // Sous-domaine MTA-STS (politique de chiffrement des e-mails reçus,

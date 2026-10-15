@@ -222,7 +222,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     featured: [
       { handle: 'l-carnitine-pro-zero-liquide', label: 'L-Carnitine Pro Zero, le classique liquide' },
       { handle: 'cla-2400', label: 'CLA 2400 Eric Favre' },
-      { handle: 'iron-ultra-eric-favre', label: 'Iron Ultra, la formule complète' },
+      { handle: 'l-carnitine-1500-120-gelules', label: 'L-Carnitine 1500, la carnitine en gélules' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },
