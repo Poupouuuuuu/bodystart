@@ -53,7 +53,6 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
             'L-carnitine : classique autour de l\'entraînement ; aucune allégation santé autorisée.',
             'CLA : acide gras populaire en régime ; pas d\'allégation reconnue.',
             'Formules avec caféine : teneur indiquée sur chaque fiche ; allégations encore en attente au niveau européen.',
-            'Draineurs : formules à base de plantes, à ne pas confondre avec une perte de graisse.',
           ],
         },
       ],
@@ -63,7 +62,7 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: 'Pour t\'y retrouver, voici les quatre grandes catégories. La **L-carnitine**, le grand classique autour de l\'entraînement, en poudre, en boisson prête ou en shot. Le **CLA**, en capsules, choisi pendant les périodes de régime. Les **formules** à base de caféine et de plantes, pour les pratiquants avancés qui tolèrent bien les stimulants. Et les **draineurs**, des formules à base de plantes, à ne pas confondre avec la perte de graisse.',
+          text: 'Pour t\'y retrouver, voici les trois grandes familles. La **L-carnitine**, le grand classique autour de l\'entraînement, en poudre, en boisson prête ou en shot. Le **CLA**, en capsules, choisi pendant les périodes de régime. Et les **formules** à base de caféine et de plantes, pour les pratiquants avancés qui tolèrent bien les stimulants.',
         },
         {
           type: 'p',
@@ -150,6 +149,6 @@ export const bruleursDeGraisseCaMarche: BlogArticle = {
     { handle: 'l-carnitine-1500-120-gelules', label: 'L-Carnitine 1500 (Applied Nutrition)' },
     { handle: 'cla-dy-90-softgels', label: 'CLA (DY Nutrition)' },
   ],
-  categories: [{ slug: 'bruleurs', label: 'Brûleurs de graisse' }],
+  categories: [{ slug: 'bruleurs', label: 'Brûleurs' }],
   related: ['comment-faire-une-seche', 'combien-de-proteines-par-jour', 'complements-debutant-musculation'],
 }
