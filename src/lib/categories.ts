@@ -166,13 +166,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     slug: 'pre-workout',
     productType: 'Pré-workout',
     label: 'Pré-workout',
-    metaTitle: 'Pré-workout : formules avec ou sans caféine, à Coignières',
+    metaTitle: 'Pré-workout avec ou sans caféine : comment choisir',
     metaDescription:
-      'Pré-workout sans stimulant pour les séances du soir, formules avec caféine en boutique à Coignières, sur conseil. Livraison France.',
-    h1: 'Pré-workout : formules avec ou sans caféine',
+      'Pré-workout sans stimulant pour les séances du soir, citrulline à l’unité et conseil en boutique à Coignières. Livraison France.',
+    h1: 'Pré-workout : avec ou sans caféine ?',
     intro: [
       "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur l'étiquette), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
-      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option : on te les présente en boutique, au cas par cas. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur une formule sans caféine, ou compose-la avec la citrulline du rayon acides aminés.",
+      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option : vérifie la teneur par dose et compte ton café de la journée. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur une formule sans caféine, ou compose-la avec la citrulline du rayon acides aminés. Si tu hésites, pose-nous la question en boutique.",
     ],
     featured: [
     ],

@@ -43,9 +43,10 @@ const PROTEINES_OU_GAINERS = new Set([
 
 /**
  * Vegan (règle v3 du 08/10/2026) : ne garder que la créatine et le magnésium,
- * le premier produit restant devient l'essentiel.
+ * le premier produit restant devient l'essentiel. Le magnésium compte ses deux
+ * clés du guide v4 (15/10/2026) : Ostrovit (magnesium) et DY (magnesiumdy).
  */
-const VEGAN_AUTORISES = new Set(['creatine', 'magnesium'])
+const VEGAN_AUTORISES = new Set(['creatine', 'magnesium', 'magnesiumdy'])
 
 /**
  * Sans lactose (règle v3) : la whey native et la MuscleWhey sont remplacées

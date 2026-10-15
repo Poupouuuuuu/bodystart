@@ -38,7 +38,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Le bon réflexe : lire l'étiquette, parce que chaque formule est différente et qu'on ne te donnera jamais un chiffre générique pour un produit précis. La teneur en caféine par dose est la première ligne à vérifier. Les formules avec caféine se conseillent en boutique, au cas par cas, selon l'heure de ta séance et ta sensibilité à la caféine."
+          "text": "Le bon réflexe : lire l'étiquette, parce que chaque formule est différente et qu'on ne te donnera jamais un chiffre générique pour un produit précis. La teneur en caféine par dose est la première ligne à vérifier, avant même le goût ou le prix."
         }
       ]
     },
@@ -72,7 +72,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Au rayon, tu as deux approches. Les formules complètes prêtes à l'emploi, qu'on te présente en boutique selon ta séance. Ou les ingrédients à l'unité pour composer ton propre mix, comme la [Citrulline Malate 2:1 d'Applied Nutrition](/products/citrulline-malate-2-1-applied-nutrition-poudre-300-g) ({{prix:citrulline-malate-2-1-applied-nutrition-poudre-300-g|24,90 €}}), à doser selon son étiquette (une mesure rase de 3 g par jour)."
+          "text": "Deux approches : une formule complète prête à l'emploi, ou les ingrédients à l'unité pour composer ton propre mix, comme la [Citrulline Malate 2:1 d'Applied Nutrition](/products/citrulline-malate-2-1-applied-nutrition-poudre-300-g) ({{prix:citrulline-malate-2-1-applied-nutrition-poudre-300-g|24,90 €}}), à doser selon son étiquette (une mesure rase de 3 g par jour)."
         },
         {
           "type": "h3",
@@ -128,7 +128,7 @@ export const preWorkoutAvecOuSansCafeine: BlogArticle = {
         },
         {
           "type": "p",
-          "text": "Rien ne t'empêche d'alterner : stim pour la grosse séance du samedi matin, pump pour les entraînements du soir en semaine. Les ingrédients sans caféine sont dans notre rayon [acides aminés](/categories/acides-amines) ; pour une formule complète, avec ou sans caféine, passe nous voir en boutique, on choisit avec toi."
+          "text": "Rien ne t'empêche d'alterner : stim pour la grosse séance du samedi matin, pump pour les entraînements du soir en semaine. Les ingrédients sans caféine sont dans notre rayon [acides aminés](/categories/acides-amines). Si tu hésites, passe nous voir en boutique, on choisit avec toi."
         }
       ]
     },

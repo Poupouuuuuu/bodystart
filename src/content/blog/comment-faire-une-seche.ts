@@ -126,7 +126,7 @@ export const commentFaireUneSeche: BlogArticle = {
           items: [
             "**Une protéine en poudre** (whey ou isolate) : le plus utile de tous, pour tenir son quota de protéines avec peu de calories.",
             "**Une multivitamine** : en déficit, on mange moins, donc moins de micronutriments. Un [filet de sécurité pertinent](/blog/multivitamines-utile-comment-choisir) pendant la diète.",
-            "**Les classiques de sèche** (L-carnitine, CLA, formules avec caféine) : en accompagnement, sans leur prêter d'effet. Les formules avec caféine se conseillent en boutique, selon ta sensibilité à la caféine.",
+            "**Les classiques de sèche** (L-carnitine, CLA, formules avec caféine) : en accompagnement, sans leur prêter d'effet. Pour une formule avec caféine, vérifie la teneur par dose sur l'étiquette selon ta sensibilité.",
           ],
         },
         {

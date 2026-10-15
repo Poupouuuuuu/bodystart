@@ -23,7 +23,7 @@ const commitments = [
   {
     Icon: ShieldCheck,
     title: 'Des marques qu’on assume',
-    desc: 'Eric Favre, Nutrimuscle, MuscleTech, Dedicated, DY Nutrition… On choisit des marques établies, avec des compositions affichées noir sur blanc sur chaque fiche.',
+    desc: 'Eric Favre, Nutrimuscle, Applied Nutrition, Dedicated, DY Nutrition… On choisit des marques établies, avec des compositions affichées noir sur blanc sur chaque fiche.',
   },
   {
     Icon: Store,

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   appliquerPlafond,
+  appliquerRegles,
   correspondAuFormat,
   extraireMessage,
   formatDansTitre,
@@ -208,6 +209,20 @@ describe('contraintes', () => {
 
     const recup = selection(recommander(guide, reponses({ objectif: 'recuperation', budget: 'moins-40', contraintes: ['vegan'] }), catalogue))
     expect(recup.lignes.map((l) => [l.cle, l.role])).toEqual([['magnesium', 'essentiel']])
+  })
+
+  it('vegan (guide v4) : magnesium et magnesiumdy comptent tous deux comme magnésium', () => {
+    const sante = appliquerRegles(
+      [
+        { role: 'essentiel', candidats: ['multivit'] },
+        { role: 'complement', candidats: ['omega3', 'omega3dy'] },
+        { role: 'complement', candidats: ['magnesium', 'magnesiumdy'] },
+        { role: 'complement', candidats: ['magnesiumdy'] },
+        { role: 'complement', candidats: ['d3k2', 'd3k2dy'] },
+      ],
+      reponses({ objectif: 'sante', contraintes: ['vegan'] })
+    )
+    expect(sante.map((e) => e.candidats)).toEqual([[], [], ['magnesium', 'magnesiumdy'], ['magnesiumdy'], []])
   })
 
   it('vegan (v3) : message selon l’objectif', () => {
