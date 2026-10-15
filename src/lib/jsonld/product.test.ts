@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { descriptionSchema, gtinSchema, productSchema, type ProduitSchema } from './product'
+import { descriptionSchema, gtinSchema, optionTaille, productSchema, type ProduitSchema } from './product'
 
 const SITE = 'https://bodystart-nutrition.fr'
 const variante = (id: number, extra: Partial<ProduitSchema['variants'][number]> = {}) => ({
@@ -106,6 +106,24 @@ describe('productSchema', () => {
       offers: { price: '23.9', availability: 'https://schema.org/OutOfStock' },
     })
     expect(b.gtin13).toBeUndefined()
+  })
+
+  it('variesBy size quand le format varie, avec size sur chaque variante', () => {
+    const v = (id: number, saveur: string, poids: string) =>
+      variante(id, { title: `${saveur} / ${poids}`, selectedOptions: [{ name: 'Saveur', value: saveur }, { name: 'Poids', value: poids }] })
+    const s = productSchema(produit({ variants: [v(1, 'Chocolat', '2.27kg'), v(2, 'Vanille', '6.8kg')] }), { siteUrl: SITE })!
+    expect(s.variesBy).toEqual(['https://schema.org/size'])
+    expect((s.hasVariant as Record<string, unknown>[]).map((x) => x.size)).toEqual(['2,27 kg', '6,8 kg'])
+  })
+
+  it('pas de variesBy quand seule la saveur varie (poids unique)', () => {
+    const v = (id: number, saveur: string) =>
+      variante(id, { selectedOptions: [{ name: 'Saveur', value: saveur }, { name: 'Poids', value: '380g' }] })
+    const variantes = [v(1, 'Cola'), v(2, 'Mango')]
+    expect(optionTaille(variantes)).toBeNull()
+    const s = productSchema(produit({ variants: variantes }), { siteUrl: SITE })!
+    expect(s.variesBy).toBeUndefined()
+    expect((s.hasVariant as Record<string, unknown>[])[0].size).toBeUndefined()
   })
 
   it('pas de Product sans image, ni sans prix', () => {

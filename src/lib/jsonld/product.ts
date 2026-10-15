@@ -18,11 +18,16 @@
 //   marchandes.
 // - Description tirée du HTML, avec un espace entre les paragraphes (le
 //   champ texte de Shopify les colle : « 500 g.La créatine »).
+// - variesBy https://schema.org/size quand une option Poids, Format, Taille ou
+//   Contenance prend au moins deux valeurs (Claude Gestion, 15/10/2026), avec
+//   `size` sur chaque variante. La saveur n'a pas de propriété schema.org :
+//   elle reste dans le nom de la variante.
 //
 // Pur, sans réseau. Testé dans product.test.ts.
 
 import { isValidGtin, numericId } from '@/lib/google-feed'
 import { plainTextFromHtml, truncateAtWord } from '@/lib/seo'
+import { formatPoids } from '@/lib/typo'
 
 export interface VarianteSchema {
   id: string
@@ -68,6 +73,20 @@ export function gtinSchema(barcode: string | null | undefined): Record<string, s
 export function descriptionSchema(p: Pick<ProduitSchema, 'description' | 'descriptionHtml'>): string {
   const texte = plainTextFromHtml(p.descriptionHtml) || (p.description ?? '').replace(/\s+/g, ' ').trim()
   return truncateAtWord(texte, MAX_DESCRIPTION)
+}
+
+const OPTIONS_TAILLE = ['poids', 'format', 'taille', 'contenance']
+const normOption = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
+
+/** Nom de l'option de taille qui varie entre les variantes, sinon null. */
+export function optionTaille(variantes: VarianteSchema[]): string | null {
+  const noms = new Set(variantes.flatMap((v) => (v.selectedOptions ?? []).map((o) => o.name)))
+  for (const nom of noms) {
+    if (!OPTIONS_TAILLE.includes(normOption(nom))) continue
+    const valeurs = new Set(variantes.map((v) => v.selectedOptions?.find((o) => o.name === nom)?.value).filter(Boolean))
+    if (valeurs.size >= 2) return nom
+  }
+  return null
 }
 
 /** « Chocolat, 1 kg » d'après les options, sinon le titre de la variante. */
@@ -127,6 +146,7 @@ export function productSchema(
     }
   }
 
+  const taille = optionTaille(variantes)
   return {
     '@context': 'https://schema.org',
     '@type': 'ProductGroup',
@@ -137,13 +157,16 @@ export function productSchema(
     url,
     brand,
     productGroupID: numericId(p.id),
+    ...(taille ? { variesBy: ['https://schema.org/size'] } : {}),
     hasVariant: variantes.map((v) => {
       const libelle = libelleVariante(v)
       const urlVariante = `${url}?variant=${numericId(v.id)}`
+      const valeurTaille = taille ? v.selectedOptions?.find((o) => o.name === taille)?.value : undefined
       return {
         '@type': 'Product',
         name: libelle ? `${p.title} - ${libelle}` : p.title,
         image: v.image?.url?.startsWith('https://') ? v.image.url : images[0],
+        ...(valeurTaille ? { size: formatPoids(valeurTaille).replace(/[\u00a0\u202f]/g, ' ') } : {}),
         ...identifiants(v),
         offers: offre(v, urlVariante, commun),
       }
