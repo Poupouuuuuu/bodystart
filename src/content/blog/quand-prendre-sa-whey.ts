@@ -13,7 +13,7 @@ export const quandPrendreSaWhey: BlogArticle = {
   excerpt:
     "Le meilleur moment pour prendre sa whey, c'est celui qui t'aide à atteindre ton total de protéines du jour. Le timing autour de la séance a un effet réel mais mineur : la régularité et la quantité comptent bien plus que l'heure exacte.",
   datePublished: '2026-07-17',
-  dateModified: '2026-07-17',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'Le meilleur moment ? Celui qui te fait atteindre ton quota',
@@ -80,7 +80,7 @@ export const quandPrendreSaWhey: BlogArticle = {
           rows: [
             [
               '[Whey Native Protimuscle](/products/whey-native-protimuscle)',
-              'Whey native (valeur sûre)',
+              'Whey native',
               '{{prix:whey-native-protimuscle|21,90 €}}',
             ],
             [
@@ -88,16 +88,11 @@ export const quandPrendreSaWhey: BlogArticle = {
               'Isolate',
               '{{prix:iso-zero-100-whey|78,90 €}}',
             ],
-            [
-              '[Whey Protein](/products/whey-protein)',
-              'Whey concentrée',
-              '{{prix:whey-protein|39,90 €}}',
-            ],
           ],
         },
         {
           type: 'p',
-          text: 'La [Whey Native Protimuscle](/products/whey-native-protimuscle) est notre valeur sûre au bon prix ; l’[Iso Zero 100 % Whey](/products/iso-zero-100-whey) est une isolate : 25,4 g de protéines et 0,5 g de sucres par dose de 30 g. Compare tout le rayon [protéines](/categories/proteines), et si tu débutes, notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant) t\'aide à trancher.',
+          text: 'La [Whey Native Protimuscle](/products/whey-native-protimuscle) est une whey native au bon prix ; l’[Iso Zero 100 % Whey](/products/iso-zero-100-whey) est une isolate : 25,4 g de protéines et 0,5 g de sucres par dose de 30 g. Compare tout le rayon [protéines](/categories/proteines), et si tu débutes, notre guide [quelle whey choisir quand on débute](/blog/quelle-whey-choisir-debutant) t\'aide à trancher.',
         },
       ],
     },
@@ -127,7 +122,6 @@ export const quandPrendreSaWhey: BlogArticle = {
   products: [
     { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle' },
     { handle: 'iso-zero-100-whey', label: 'Iso Zero 100 % Whey' },
-    { handle: 'whey-protein', label: 'Whey Protein' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],
   related: ['combien-de-proteines-par-jour', 'whey-ou-isolate-quelle-difference'],

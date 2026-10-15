@@ -126,7 +126,7 @@ export const commentFaireUneSeche: BlogArticle = {
           items: [
             "**Une protéine en poudre** (whey ou isolate) : le plus utile de tous, pour tenir son quota de protéines avec peu de calories.",
             "**Une multivitamine** : en déficit, on mange moins, donc moins de micronutriments. Un [filet de sécurité pertinent](/blog/multivitamines-utile-comment-choisir) pendant la diète.",
-            "**Les classiques de sèche** (L-carnitine, CLA, formules avec caféine) : en accompagnement, sans leur prêter d'effet. Pour les formules avec caféine, la teneur est indiquée sur chaque fiche.",
+            "**Les classiques de sèche** (L-carnitine, CLA, formules avec caféine) : en accompagnement, sans leur prêter d'effet. Pour une formule avec caféine, vérifie la teneur par dose sur l'étiquette selon ta sensibilité.",
           ],
         },
         {
@@ -134,14 +134,14 @@ export const commentFaireUneSeche: BlogArticle = {
           headers: ['Produit', 'En bref', 'Prix'],
           rows: [
             ['[Iso Zero 100% Whey](/products/iso-zero-100-whey)', 'Quota protéines, quasi zéro glucides/lipides', '{{prix:iso-zero-100-whey|78,90 €}}'],
-            ['[L-Carnitine Pro Zero](/products/l-carnitine-pro-zero-liquide)', 'Le classique de sèche, liquide zéro sucre', '{{prix:l-carnitine-pro-zero-liquide|22,90 €}}'],
-            ['[CLA 2400](/products/cla-2400)', "L'acide gras populaire en période de régime", '{{prix:cla-2400|22,90 €}}'],
+            ['[Multivitamin DY Nutrition](/products/multivitamin-dy-60-comprimes)', 'Vitamines et minéraux, 1 comprimé par jour', '{{prix:multivitamin-dy-60-comprimes|14,90 €}}'],
+            ['[CLA DY Nutrition](/products/cla-dy-90-softgels)', 'Acide linoléique conjugué, 1 000 mg par softgel, 1 par jour', '{{prix:cla-dy-90-softgels|19,90 €}}'],
             ['[L-Carnitine 1500 Applied Nutrition](/products/l-carnitine-1500-120-gelules)', 'La carnitine en gélules, sans dosage à la cuillère', '{{prix:l-carnitine-1500-120-gelules|27,90 €}}'],
           ],
         },
         {
           type: 'p',
-          text: "Tu retrouves tout le rayon dans [brûleurs et minceur](/categories/bruleurs) et les protéines dans [le rayon protéines](/categories/proteines). Et si tu ne sais pas par où commencer ta sèche, passe en boutique à Coignières : on regarde ton objectif et on te dit honnêtement ce qui est utile, et ce qui ne l'est pas.",
+          text: "Tu retrouves tout le rayon dans [brûleurs](/categories/bruleurs) et les protéines dans [le rayon protéines](/categories/proteines). Et si tu ne sais pas par où commencer ta sèche, passe en boutique à Coignières : on regarde ton objectif et on te dit honnêtement ce qui est utile, et ce qui ne l'est pas.",
         },
       ],
     },
@@ -192,12 +192,12 @@ export const commentFaireUneSeche: BlogArticle = {
   ],
   products: [
     { handle: 'iso-zero-100-whey', label: 'Iso Zero 100% Whey' },
-    { handle: 'l-carnitine-pro-zero-liquide', label: 'L-Carnitine Pro Zero' },
-    { handle: 'cla-2400', label: 'CLA 2400' },
+    { handle: 'multivitamin-dy-60-comprimes', label: 'Multivitamin DY Nutrition' },
+    { handle: 'cla-dy-90-softgels', label: 'CLA DY Nutrition' },
     { handle: 'l-carnitine-1500-120-gelules', label: 'L-Carnitine 1500 (Applied Nutrition)' },
   ],
   categories: [
-    { slug: 'bruleurs', label: 'Brûleurs & minceur' },
+    { slug: 'bruleurs', label: 'Brûleurs' },
     { slug: 'proteines', label: 'Protéines' },
   ],
   related: ['bruleurs-de-graisse-ca-marche', 'combien-de-proteines-par-jour', 'whey-ou-isolate-quelle-difference'],

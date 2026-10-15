@@ -15,7 +15,7 @@ export const complementsApres40Ans: BlogArticle = {
   excerpt:
     "Après 40 ans, les priorités changent : les protéines pour préserver le muscle, la vitamine D et le magnésium comme fondations, la créatine pour les efforts intenses et répétés. On te donne l'ordre logique, avec des allégations honnêtes : un complément à la fois, choisi pour une vraie raison.",
   datePublished: '2026-07-17',
-  dateModified: '2026-10-10',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'Qu\'est-ce qui change vraiment après 40 ans ?',
@@ -60,7 +60,7 @@ export const complementsApres40Ans: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'La logique est simple : peu d\'exposition au soleil d\'octobre à mars = supplémentation qui fait sens sur cette période. Deux formats dans notre sélection : la [Vitamine D3 + K2](/products/vitamin-d3-k2) en softgels (vitamine D3 associée à de la vitamine K2) et la [Vitamine D3 en gouttes](/products/vitamine-d3-gouttes), pratique et économique.',
+          text: 'La logique est simple : peu d\'exposition au soleil d\'octobre à mars = supplémentation qui fait sens sur cette période. Dans notre sélection, la [Vitamine D3 + K2 Osavi](/products/vitamine-d3-k2-osavi-60-softgels) associe vitamine D3 (50 µg) et vitamine K2 (100 µg) en un softgel par jour. Sous traitement anticoagulant, demande d\'abord l\'avis de ton médecin : la vitamine K est déconseillée.',
         },
       ],
     },
@@ -95,7 +95,7 @@ export const complementsApres40Ans: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un complément apprécié, sans allégation santé autorisée : on le choisit pour sa composition. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dose de 22 g, le [Collagène Marin Liquide](/products/pure-collagen-marin-liquide) se boit tel quel.",
+          text: "Au-delà des fondations, certains produits répondent à des envies précises. Le **collagène** est un complément apprécié, sans allégation santé autorisée : on le choisit pour sa composition. Côté produits, le [Collagène Hydrolysé Osavi](/products/collagene-hydrolyse-osavi-type-i-iii-poudre-660-g) apporte 20 g de peptides par dose de 22 g dans sa version aromatisée (pot de 660 g), et existe en [version Neutre de 300 g](/products/collagene-hydrolyse-osavi-type-i-iii-neutre-poudre-300-g), sans arôme.",
         },
         {
           type: 'p',
@@ -142,7 +142,7 @@ export const complementsApres40Ans: BlogArticle = {
   ],
   products: [
     { handle: 'whey-native-protimuscle', label: 'Whey Native Protimuscle' },
-    { handle: 'vitamin-d3-k2', label: 'Vitamine D3 + K2' },
+    { handle: 'vitamine-d3-k2-osavi-60-softgels', label: 'Vitamine D3 + K2 Osavi' },
     { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY' },
   ],
   categories: [

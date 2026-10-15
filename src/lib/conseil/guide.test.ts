@@ -32,6 +32,22 @@ describe('parseGuide', () => {
     expect(() => parseGuide('{pas du json')).toThrow(GuideInvalideError)
   })
 
+  it('accepte de nouvelles clés produit (guide v4 du 15/10/2026 : magnesiumdy, omega3dy, d3k2dy)', () => {
+    const g = copie()
+    g.produits.magnesiumdy = { handle: 'magnesium-bisglycinate-dy-90-capsules', format: '', pourquoi: 'Magnésium.' }
+    g.produits.omega3dy = { handle: 'omega-3-fish-oil-epa-dha', format: '', pourquoi: 'Oméga 3.' }
+    g.produits.d3k2dy = { handle: 'vitamin-d3-k2-dy-60-softgels', format: '', pourquoi: 'Vitamine D.' }
+    g.objectifs.sante.parcours.standard['plus-90'] = [
+      { role: 'essentiel', candidats: ['multivit'] },
+      { role: 'complement', candidats: ['omega3', 'omega3dy'] },
+      { role: 'complement', candidats: ['magnesium', 'magnesiumdy'] },
+      { role: 'complement', candidats: ['d3k2', 'd3k2dy'] },
+    ]
+    const sante = parseGuide(g).objectifs.find((o) => o.cle === 'sante')
+    expect(sante).toMatchObject({ type: 'parcours' })
+    expect(JSON.stringify(sante)).toContain('"magnesium","magnesiumdy"')
+  })
+
   it('refuse un candidat qui ne correspond à aucun produit', () => {
     const g = copie()
     g.objectifs.sante.parcours.standard['moins-40'][0].candidats = ['inexistant']

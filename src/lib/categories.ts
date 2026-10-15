@@ -166,17 +166,15 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     slug: 'pre-workout',
     productType: 'Pré-workout',
     label: 'Pré-workout',
-    metaTitle: 'Pré-workout : formules avec ou sans caféine, à Coignières',
+    metaTitle: 'Pré-workout avec ou sans caféine : comment choisir',
     metaDescription:
-      'Pré-workout avec caféine ou formules sans stimulant pour les séances du soir. Conseil en boutique à Coignières, livraison France.',
-    h1: 'Pré-workout : formules avec ou sans caféine',
+      'Pré-workout sans stimulant pour les séances du soir, citrulline à l’unité et conseil en boutique à Coignières. Livraison France.',
+    h1: 'Pré-workout : avec ou sans caféine ?',
     intro: [
-      "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur chaque fiche), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
-      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur un pump sans caféine. En cas de doute, on t'aide à trancher en boutique.",
+      "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur l'étiquette), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
+      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option : vérifie la teneur par dose et compte ton café de la journée. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur une formule sans caféine, ou compose-la avec la citrulline du rayon acides aminés. Si tu hésites, pose-nous la question en boutique.",
     ],
     featured: [
-      { handle: 'french-pump-pre-workout', label: 'French Pump French Nutrition, avec caféine' },
-      { handle: 'pump-nitric-oxide-booster', label: 'Pump Warrior, pré-workout sans stimulant' },
     ],
     related: [
       { slug: 'creatine', label: 'Créatine' },
@@ -199,7 +197,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     featured: [
       { handle: 'hit-eaa', label: 'HIT EAA DY Nutrition, les essentiels à 26,90 €' },
       { handle: 'yeaah-eaa', label: 'YEAAH EAA Dedicated' },
-      { handle: 'l-citrulline', label: 'L-Citrulline Dedicated, la citrulline à l’unité' },
+      { handle: 'citrulline-malate-2-1-applied-nutrition-poudre-300-g', label: 'Citrulline Malate 2:1 Applied Nutrition, la citrulline à l’unité' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },
@@ -211,18 +209,17 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     slug: 'bruleurs',
     productType: 'Brûleur',
     label: 'Brûleurs',
-    metaTitle: 'Brûleurs et minceur : carnitine, CLA, draineurs',
+    metaTitle: 'Brûleurs : L-carnitine et CLA',
     metaDescription:
-      'L-carnitine, CLA, formules avec caféine et draineurs pour accompagner une sèche. À utiliser avec un déficit calorique. Conseil en boutique à Coignières.',
-    h1: 'Brûleurs et compléments minceur',
+      'L-carnitine, CLA et formules avec caféine pour accompagner une sèche. À utiliser avec un déficit calorique. Conseil en boutique à Coignières.',
+    h1: 'Brûleurs : L-carnitine et CLA',
     intro: [
-      "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon (L-carnitine, CLA, formules avec caféine, draineurs) s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
-      "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras populaire en période de régime, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non.",
+      "Soyons clairs : aucun complément ne fait perdre de gras sans déficit calorique. Les produits de ce rayon (L-carnitine, CLA, formules avec caféine) s'utilisent en accompagnement d'une sèche déjà structurée : alimentation contrôlée, entraînement régulier, sommeil correct.",
+      "Comment choisir ? La L-carnitine est le grand classique autour de l'entraînement, le CLA un acide gras en softgel, à prendre une fois par jour, et les formules complètes combinent plusieurs ingrédients (caféine, plantes, vitamines) pour les pratiquants avancés. Si tu démarres ta sèche, viens en boutique avec tes objectifs : on te dira honnêtement si un brûleur a sa place dans ton plan. Et parfois, la réponse est non.",
     ],
     featured: [
-      { handle: 'l-carnitine-pro-zero-liquide', label: 'L-Carnitine Pro Zero, le classique liquide' },
-      { handle: 'cla-2400', label: 'CLA 2400 Eric Favre' },
       { handle: 'l-carnitine-1500-120-gelules', label: 'L-Carnitine 1500, la carnitine en gélules' },
+      { handle: 'cla-dy-90-softgels', label: 'CLA DY Nutrition, 1 softgel par jour' },
     ],
     related: [
       { slug: 'proteines', label: 'Protéines' },
@@ -247,9 +244,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Regarde la composition et le format (gélules pour une cure, boisson prête à boire) plutôt que les promesses. Attention aux formules avec caféine, comme la Testorine en boisson (100 mg par bouteille). Ces formules s'adressent aux adultes et sont déconseillées aux femmes enceintes ou allaitantes. Si tu hésites, pose-nous la question en boutique : on connaît chaque référence du rayon.",
     ],
     featured: [
-      { handle: 'alphatest-muscletech', label: 'Alphatest MuscleTech, fenugrec, bore et zinc' },
       { handle: 'testorine-booster-boisson', label: 'Testorine, format boisson' },
-      { handle: 'sex-bomb', label: 'Sex Bomb For Her Applied Nutrition, ashwagandha et maca' },
     ],
     related: [
       { slug: 'sante', label: 'Santé & bien-être' },
@@ -293,7 +288,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       "Comment choisir ? Pars de ton besoin réel : coup de fatigue et entraînement intense → magnésium bisglycinate ou ZMA ; peu d'exposition au soleil d'octobre à mars → vitamine D3 ; peu de poisson gras dans l'assiette → oméga 3. Pour le collagène, choisis-le sur sa composition (dose, origine, format). Un produit à la fois, choisi pour une raison précise, en complément d'une alimentation variée et équilibrée et d'un mode de vie sain.",
     ],
     featured: [
-      { handle: 'vitamin-d3-k2-dy-60-softgels', label: 'Vitamine D3 + K2 DY Nutrition' },
+      { handle: 'vitamine-d3-k2-osavi-60-softgels', label: 'Vitamine D3 + K2 Osavi, 1 softgel par jour' },
       { handle: 'magnesium-bisglycinate-dy-90-capsules', label: 'Magnésium Bisglycinate DY Nutrition' },
       { handle: 'collagene-hydrolyse-osavi-type-i-iii-poudre-660-g', label: 'Collagène Hydrolysé Osavi Type I & III' },
     ],

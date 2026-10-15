@@ -15,7 +15,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
   excerpt:
     "La vitamine D contribue au fonctionnement normal du système immunitaire, au maintien d'une ossature normale et à une fonction musculaire normale. Sous nos latitudes, une supplémentation fait surtout sens d'octobre à mars, quand le soleil manque, sous forme de D3, de préférence avec un repas.",
   datePublished: '2026-07-17',
-  dateModified: '2026-09-30',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'À quoi sert vraiment la vitamine D ?',
@@ -83,27 +83,27 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Privilégie la **vitamine D3** (cholécalciférol) : c'est la forme la mieux utilisée par l'organisme, identique à celle que ta peau produit au soleil. La D2 (d'origine végétale) est moins efficace pour élever le statut. Certaines formules associent la **D3 à la K2**, appréciée pour son rôle dans la fixation du calcium sur l'os.",
+          text: "Privilégie la **vitamine D3** (cholécalciférol) : c'est la forme la mieux utilisée par l'organisme, identique à celle que ta peau produit au soleil. La D2 (d'origine végétale) est moins efficace pour élever le statut. Certaines formules associent la **D3 à la K2** : la vitamine K contribue au maintien d'une ossature normale.",
         },
         {
           type: 'table',
           headers: ['Produit', 'Format', 'Prix'],
           rows: [
             [
-              '[Vitamine D3 + K2](/products/vitamin-d3-k2)',
-              'Softgels (duo D3-K2)',
-              '{{prix:vitamin-d3-k2|17,90 €}}',
+              '[Vitamine D3 + K2 Osavi](/products/vitamine-d3-k2-osavi-60-softgels)',
+              'Softgels, 1 par jour (50 µg de D3, 100 µg de K2)',
+              '{{prix:vitamine-d3-k2-osavi-60-softgels|13,90 €}}',
             ],
             [
-              '[Vitamine D3 - Gouttes](/products/vitamine-d3-gouttes)',
-              'Gouttes (dose ajustable)',
-              '{{prix:vitamine-d3-gouttes|9,90 €}}',
+              '[Vitamine D3 + K2 Evolite](/products/vitamin-d3-k2)',
+              'Softgels (duo D3-K2)',
+              '{{prix:vitamin-d3-k2|17,90 €}}',
             ],
           ],
         },
         {
           type: 'p',
-          text: 'La [Vitamine D3 + K2](/products/vitamin-d3-k2) en softgels est simple et complète ; la [version en gouttes](/products/vitamine-d3-gouttes) permet d\'ajuster la dose et se glisse dans un repas. Tu retrouves ces références et les autres fondations dans le rayon [santé & bien-être](/categories/sante). La vitamine D fait aussi partie des priorités qu\'on détaille dans notre article [compléments après 40 ans](/blog/complements-apres-40-ans).',
+          text: 'La [Vitamine D3 + K2 Osavi](/products/vitamine-d3-k2-osavi-60-softgels) tient en un softgel par jour, à prendre le matin après un repas, sans la cumuler avec un autre complément de vitamine D (sous traitement anticoagulant, demande d\'abord l\'avis de ton médecin : la vitamine K est déconseillée) ; la [Vitamine D3 + K2 d\'Evolite](/products/vitamin-d3-k2) associe aussi les deux vitamines en softgels. Tu retrouves ces références et les autres fondations dans le rayon [santé & bien-être](/categories/sante). La vitamine D fait aussi partie des priorités qu\'on détaille dans notre article [compléments après 40 ans](/blog/complements-apres-40-ans).',
         },
       ],
     },
@@ -123,7 +123,7 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
     },
     {
       q: 'À quoi sert d\'associer la vitamine D à la K2 ?',
-      a: 'La vitamine K2 est appréciée pour son rôle dans la fixation du calcium sur l\'os, en complément de la vitamine D qui contribue à l\'absorption normale du calcium et au maintien d\'une ossature normale. Les formules D3 + K2 réunissent les deux dans un même produit.',
+      a: 'La vitamine K contribue au maintien d\'une ossature normale, en complément de la vitamine D qui contribue à l\'absorption normale du calcium et au maintien d\'une ossature normale. Les formules D3 + K2 réunissent les deux dans un même produit.',
     },
     {
       q: 'La vitamine D est-elle utile pour les sportifs ?',
@@ -131,8 +131,8 @@ export const vitamineDCombienQuandPourquoi: BlogArticle = {
     },
   ],
   products: [
-    { handle: 'vitamin-d3-k2', label: 'Vitamine D3 + K2' },
-    { handle: 'vitamine-d3-gouttes', label: 'Vitamine D3 - Gouttes' },
+    { handle: 'vitamine-d3-k2-osavi-60-softgels', label: 'Vitamine D3 + K2 Osavi' },
+    { handle: 'vitamin-d3-k2', label: 'Vitamine D3 + K2 Evolite' },
   ],
   categories: [{ slug: 'sante', label: 'Santé & bien-être' }],
   related: ['complements-apres-40-ans', 'complements-debutant-musculation'],

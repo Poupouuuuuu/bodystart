@@ -11,9 +11,9 @@ export const proteinesVegetalesMusculation: BlogArticle = {
   metaDescription:
     'Whey vegan ou protéine végétale : est-ce aussi efficace pour le muscle ? Pois, riz, soja, mélanges multi-sources : comment choisir et bien doser.',
   excerpt:
-    "Les protéines végétales (pois, riz, soja…) couvrent tes besoins et soutiennent le muscle sans produit laitier. La clé : privilégier un mélange multi-sources pour un profil d'acides aminés complet, à une dose équivalente à celle d'une whey.",
+    "Les protéines végétales (pois, riz, soja…) contribuent au maintien et au développement de la masse musculaire, sans produit laitier. La clé : privilégier un mélange multi-sources pour un profil d'acides aminés complet, à une dose équivalente à celle d'une whey.",
   datePublished: '2026-07-17',
-  dateModified: '2026-09-30',
+  dateModified: '2026-10-15',
   sections: [
     {
       h2: 'Une protéine végétale, ça vaut une whey pour prendre du muscle ?',
@@ -88,11 +88,6 @@ export const proteinesVegetalesMusculation: BlogArticle = {
           headers: ['Produit', 'Type', 'Prix'],
           rows: [
             [
-              '[ISO French Vegan](/products/iso-french-vegan)',
-              'Isolat végétal',
-              '{{prix:iso-french-vegan|25,90 €}}',
-            ],
-            [
               '[Tri Source Protein Vegan](/products/tri-source-protein-vegan)',
               'Mélange 3 sources',
               '{{prix:tri-source-protein-vegan|25,90 €}}',
@@ -101,7 +96,7 @@ export const proteinesVegetalesMusculation: BlogArticle = {
         },
         {
           type: 'p',
-          text: 'Le [Tri Source Protein Vegan](/products/tri-source-protein-vegan) est un bon exemple de formule multi-sources au profil complet ; l\'[ISO French Vegan](/products/iso-french-vegan) joue la carte de l\'isolat plus pur. Tu peux comparer l\'ensemble sur la page [protéines](/categories/proteines), où figurent aussi nos whey classiques.',
+          text: 'Le [Tri Source Protein Vegan](/products/tri-source-protein-vegan) est un bon exemple de formule multi-sources au profil complet. Tu peux comparer l\'ensemble sur la page [protéines](/categories/proteines), où figurent aussi nos whey classiques.',
         },
       ],
     },
@@ -143,7 +138,6 @@ export const proteinesVegetalesMusculation: BlogArticle = {
   ],
   products: [
     { handle: 'tri-source-protein-vegan', label: 'Tri Source Protein Vegan' },
-    { handle: 'iso-french-vegan', label: 'ISO French Vegan' },
   ],
   categories: [{ slug: 'proteines', label: 'Protéines' }],
   related: ['whey-ou-isolate-quelle-difference', 'combien-de-proteines-par-jour'],
