@@ -2,8 +2,8 @@
 // « [Produit] [marque] [format], BodyStart Nutrition ». Avant : « Whey Native
 // Protimuscle - image 3 » sur la galerie, le seul titre sur les cartes.
 // - Un texte saisi dans Shopify (coffrets, packs) reste prioritaire.
-// - Marque omise si le titre la contient déjà ; format omis s'il est déjà dans
-//   le titre, s'il y en a plusieurs (« 500 g / 1 kg / 2,25 kg ») ou s'il
+// - Marque omise si le titre la contient déjà ; format omis si sa quantité est
+//   déjà dans le titre, s'il y en a plusieurs (« 500 g / 1 kg / 2,25 kg ») ou s'il
 //   décrit autre chose qu'un format (« 3 produits : … »).
 //
 // Pur. Testé dans alt-produit.test.ts.
@@ -29,7 +29,10 @@ export function altProduit(p: { title: string; vendor?: string | null; format?: 
   const marque = p.vendor?.trim()
   if (marque && marque !== MAISON && !compact(titre).includes(compact(marque))) parties.push(marque)
   const format = formatCourt(p.format)
-  if (format && !compact(titre).includes(compact(format))) parties.push(format)
+  // « 120 gélules végétales » sous « L-Carnitine 1500 - 120 gélules » : la
+  // quantité est déjà dans le titre, le format n'apporte rien.
+  const quantite = format?.match(/^\d+(?:[.,]\d+)?\s*\p{L}+/u)?.[0] ?? format
+  if (format && quantite && !compact(titre).includes(compact(quantite))) parties.push(format)
   return `${parties.join(' ')}, ${MAISON}`
 }
 

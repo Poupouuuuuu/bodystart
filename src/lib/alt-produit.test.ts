@@ -25,7 +25,7 @@ describe('altProduit', () => {
     expect(altProduit({ title: 'Iron Ultra Eric Favre', vendor: 'Eric Favre', format: '120 gélules' })).toBe(
       'Iron Ultra Eric Favre 120 gélules, BodyStart Nutrition',
     )
-    expect(altProduit({ title: 'L-Carnitine 1500 - 120 gélules', vendor: 'Applied Nutrition', format: '120 gélules' })).toBe(
+    expect(altProduit({ title: 'L-Carnitine 1500 - 120 gélules', vendor: 'Applied Nutrition', format: '120 gélules végétales' })).toBe(
       'L-Carnitine 1500 - 120 gélules Applied Nutrition, BodyStart Nutrition',
     )
     expect(altProduit({ title: 'Pack Séance parfaite', vendor: 'BodyStart Nutrition', format: '3 produits : …' })).toBe(
