@@ -5,6 +5,7 @@ import { pickComplements } from '@/lib/merchandising'
 import { wheyLabel } from '@/lib/product-subtitle'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { isBundle, pickInitialBundleVariant } from '@/lib/shopify/bundle'
+import { COFFRETS_CHEMIN, COFFRETS_LIBELLE, coffretsVisibles, estCoffret } from '@/lib/coffrets'
 import { pickDefaultVariant } from '@/lib/product-variant'
 import BackButton from '@/components/product/v2/BackButton'
 import BuyBoxV2 from '@/components/product/v2/BuyBoxV2'
@@ -160,6 +161,11 @@ export default async function ProductPage({ params }: Props) {
   // details des composants de la variante selectionnee en interne (galerie
   // dynamique + selecteurs par composant). La page passe juste le flag.
   const productIsBundle = isBundle(product)
+  // Coffrets de Noël : sur-titre et retour vers leur page pendant la période
+  // d'affichage (2/11 au 24/12, heure de Paris), vers le catalogue sinon.
+  const coffret = estCoffret(product)
+  const retourCoffrets = coffretsVisibles(new Date()) ? COFFRETS_CHEMIN : '/products'
+  const surTitre = coffret ? { label: COFFRETS_LIBELLE, href: retourCoffrets } : null
   // Variante d'ouverture, même règle que BuyBoxV2 (première disponible ; pack :
   // première variante complète) : prix, remise et disponibilité du JSON-LD
   // collent à ce que la fiche affiche. Avant : variants[0], donc « OutOfStock »
@@ -275,7 +281,7 @@ export default async function ProductPage({ params }: Props) {
       {/* ─── Retour (remplace le fil d'ariane) ─── */}
       <div className="bg-canvas border-b border-spruce/10">
         <div className="container py-4">
-          <BackButton fallbackHref={productIsBundle ? '/packs' : '/products'} />
+          <BackButton fallbackHref={coffret ? retourCoffrets : productIsBundle ? '/packs' : '/products'} />
         </div>
       </div>
 
@@ -300,6 +306,7 @@ export default async function ProductPage({ params }: Props) {
             format={format}
             vendor={product.vendor}
             isBundle={productIsBundle}
+            surTitre={surTitre}
             rating={rating}
             googleRating={googleRating}
           />

@@ -59,6 +59,8 @@ interface BuyBoxV2Props {
   rating?: { ratingValue: number; reviewCount: number } | null
   /** Note Google de la boutique (métachamps Shopify, lue par la page). */
   googleRating?: GoogleRating
+  /** Sur-titre imposé par la page (ex. « Coffrets de Noël »), sinon fournisseur ou « Packs ». */
+  surTitre?: { label: string; href: string } | null
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -96,6 +98,7 @@ export default function BuyBoxV2({
   isBundle = false,
   rating = null,
   googleRating = GOOGLE_RATING,
+  surTitre = null,
 }: BuyBoxV2Props) {
   // Variante d'ouverture (rendu serveur, donc sans ?variant=) :
   // - bundle : une variante COMPLÈTE (composants tous présents), pour ne pas
@@ -280,9 +283,8 @@ export default function BuyBoxV2({
   // null = pas encore chargé / échec → bloc stock masqué (storeStock undefined).
   const [variantStock, setVariantStock] = useState<Record<string, number> | null>(null)
   useEffect(() => {
-    // Bundles : le bloc stock est toujours masqué (un pack n'a pas d'inventaire
-    // propre) → inutile de consommer un appel Admin + le rate-limit du visiteur.
-    if (isBundle) return
+    // Produits composés (packs, coffrets) compris : /api/inventory renvoie pour
+    // eux le stock du composant le moins disponible (cf. lib/shopify).
     if (!productId || !activeStore?.shopifyLocationId) return
     let cancelled = false
     const params = new URLSearchParams({
@@ -305,7 +307,7 @@ export default function BuyBoxV2({
     return () => {
       cancelled = true
     }
-  }, [productId, activeStore?.shopifyLocationId, isBundle])
+  }, [productId, activeStore?.shopifyLocationId])
 
   const storeStock = activeStore ? variantStock?.[selectedVariant.id] : undefined
   const showExactStock = storeStock !== undefined && storeStock > 0 && storeStock <= LOW_STOCK_THRESHOLD
@@ -320,12 +322,11 @@ export default function BuyBoxV2({
   const vendorClean = (vendor ?? '').trim()
   const isGenericVendor =
     vendorClean === '' || ['bodystart', 'bodystart nutrition'].includes(vendorClean.toLowerCase())
-  const eyebrowLabel = isBundle ? 'Packs' : isGenericVendor ? 'BodyStart Nutrition' : vendorClean
-  const eyebrowHref = isBundle
-    ? '/packs'
-    : collectionHandle
-      ? `/products?cat=${collectionHandle}`
-      : '/products'
+  const eyebrowLabel =
+    surTitre?.label ?? (isBundle ? 'Packs' : isGenericVendor ? 'BodyStart Nutrition' : vendorClean)
+  const eyebrowHref =
+    surTitre?.href ??
+    (isBundle ? '/packs' : collectionHandle ? `/products?cat=${collectionHandle}` : '/products')
 
   return (
     <>
@@ -642,14 +643,14 @@ export default function BuyBoxV2({
           </div>
 
           {/* Stock (DA §B.Fiche produit.1 : decision Adam) */}
-          {/* Masque pour les bundles : un pack n'a pas d'inventaire propre a
-              l'emplacement, son stock boutique depend de ses composants (et de
-              la variante selectionnee). On ne montre donc jamais "Indisponible
-              en boutique" a tort sur un pack. */}
+          {/* Produits composés (packs, coffrets) : stock du composant le moins
+              disponible pour la variante choisie, calculé par Shopify
+              (cf. getProductInventoryByLocation). Avant le 15/10/2026, bloc
+              masqué : le parent n'a pas de quantité propre à l'emplacement. */}
           {/* L'ESPACE est réservé dès le 1er rendu (min-h + placeholder) : le
               stock arrive par fetch client ~1s après — avant, le bloc
               s'insérait d'un coup et décalait toute la page sous le doigt (CLS). */}
-          {!isBundle && productId && activeStore?.shopifyLocationId && (
+          {productId && activeStore?.shopifyLocationId && (
             <div className="mt-6 pt-5 border-t border-spruce/10 min-h-[42px]">
               {variantStock === null ? (
                 <div className="inline-flex items-center gap-2 text-[13px] font-medium text-ink-mute/50">

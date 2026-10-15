@@ -341,3 +341,85 @@ export const GET_SITEMAP_PRODUCTS = `
     }
   }
 `
+
+// Coffrets de Noël (tag coffret-noel) pour la page /coffrets-noel et le bloc
+// de l'accueil : mêmes champs que les cartes packs (PackCardV2), composants
+// compris. Requête dédiée et bornée (first: 12), comme GET_FEATURED_PRODUCTS.
+// Les produits UNLISTED n'y figurent pas (Storefront : jamais dans `products`).
+export const GET_COFFRETS = `
+  query GetCoffrets($query: String!) {
+    products(first: 12, query: $query, sortKey: PRICE) {
+      nodes {
+        id
+        handle
+        availableForSale
+        title
+        description
+        tags
+        vendor
+        productType
+        featuredImage {
+          url
+          altText
+          width
+          height
+        }
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        variants(first: 1) {
+          nodes {
+            id
+            availableForSale
+            price {
+              amount
+              currencyCode
+            }
+            compareAtPrice {
+              amount
+              currencyCode
+            }
+            requiresComponents
+            components(first: 12) {
+              nodes {
+                quantity
+                productVariant {
+                  id
+                  title
+                  image {
+                    url
+                    altText
+                    width
+                    height
+                  }
+                  product {
+                    id
+                    handle
+                    title
+                    featuredImage {
+                      url
+                      altText
+                      width
+                      height
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        metafields(identifiers: [
+          { namespace: "custom", key: "composition" }
+        ]) {
+          namespace
+          key
+          value
+          type
+        }
+      }
+    }
+  }
+`

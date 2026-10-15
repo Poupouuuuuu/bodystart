@@ -29,6 +29,7 @@ src/
 │   │   ├── account/        # Espace client (protégé par middleware + error.tsx + loading.tsx)
 │   │   │   └── coaching/   # Dashboard coaching, programmes/[id], suivi de progression
 │   │   ├── stores/         # Boutique physique
+│   │   ├── coffrets-noel/  # Coffrets de Noël (tag coffret-noel), du 2/11 au 24/12 heure de Paris, 404 sinon (lib/coffrets.ts)
 │   │   └── ...             # Pages légales, auth, etc.
 │   ├── (coaching)/         # Route group Coaching (pages publiques : home, programmes, tarifs)
 │   └── api/
@@ -243,6 +244,8 @@ Tout est dans `.claude/` (hooks, skills, agents) et documenté dans `.claude/hoo
 
 - Les routes `/account/*` sont protégées par `src/middleware.ts` — vérifie la présence du cookie `body-start-customer-token`
 - Click & Collect fonctionnel : stock réel via Admin API, toggle livraison/retrait dans le CartDrawer, attributs panier transmis au checkout
+- **Produits composés** (packs, coffrets : `requiresComponents`) : le prix est celui de la variante parente (pas la somme des composants), la disponibilité vient des composants. Stock affiché sur la fiche = `sellableOnlineQuantity` du parent, calculé par Shopify sur le composant le moins disponible des emplacements de vente en ligne (Coignières seule ; `lib/shopify/stock-boutique.ts`). Les remises Shopify s'appliquent aussi aux lignes composants : un cadeau de la barre (Crunch Bar, créatine 500 g) présent dans un coffret est à vérifier au checkout.
+- **Coffrets de Noël** (15/10/2026) : tag `coffret-noel`, page `/coffrets-noel` et bloc de l'accueil du 2/11 au 24/12 (heure de Paris, chaque année), sur-titre « Coffrets de Noël » sur la fiche. Hors production, `?coffrets_date=2026-11-10` force la date (page alors dynamique ; en production `searchParams` n'est pas lu, l'accueil reste en ISR). Statut UNLISTED inutilisable pour eux : il retire aussi le produit de la caisse (POS).
 - La newsletter est connectée à `/api/newsletter` (Resend contacts + email de bienvenue avec code promo)
 - L'API `/api/contact` échappe le HTML des champs saisis (en plus de la limite par IP ci-dessous)
 - **Upstash Redis, état réel** :

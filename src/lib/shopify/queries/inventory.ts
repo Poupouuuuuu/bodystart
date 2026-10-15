@@ -7,6 +7,9 @@ export const GET_PRODUCT_INVENTORY_BY_LOCATION = `
         nodes {
           id
           title
+          # Produits composés (packs, coffrets) : cf. lib/shopify/stock-boutique.ts
+          requiresComponents
+          sellableOnlineQuantity
           inventoryItem {
             id
             inventoryLevels(first: 10) {

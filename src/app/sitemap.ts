@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getSitemapProducts } from '@/lib/shopify'
 import { isPackProduct } from '@/lib/shopify/bundle'
+import { COFFRETS_CHEMIN, coffretsVisibles, estCoffret } from '@/lib/coffrets'
 import { CATEGORY_PAGES } from '@/lib/categories'
 import { BLOG_ARTICLES } from '@/content/blog'
 
@@ -64,6 +65,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   })
   if (products.some(isPackProduct)) {
     packRoutes = [{ url: `${BASE_URL}/packs`, priority: 0.85, changeFrequency: 'weekly' }]
+  }
+  // /coffrets-noel : ouverte du 2/11 au 24/12 avec au moins un coffret publié,
+  // 404 sinon (cf. coffrets-noel/page.tsx).
+  if (coffretsVisibles(new Date()) && products.some(estCoffret)) {
+    packRoutes.push({ url: `${BASE_URL}${COFFRETS_CHEMIN}`, priority: 0.85, changeFrequency: 'daily' })
   }
   const productRoutes: MetadataRoute.Sitemap = products.map((p) => ({
     url: `${BASE_URL}/products/${p.handle}`,
