@@ -42,8 +42,11 @@ type CrossSellItem = {
   family?: Family
 }
 
+/** Ancre du bloc point relais, visée par le rappel sous le bouton de paiement. */
+const RAPPEL_RELAIS_ID = 'panier-point-relais'
+
 export default function CartDrawer() {
-  const { cart, isOpen, isLoading, isInitializing, closeCart, addItem, updateItem, flushCartUpdates, removeItem, setCartAttributes } = useCart()
+  const { cart, isOpen, isLoading, isInitializing, closeCart, addItem, updateItem, flushCartUpdates, removeItem, setCartAttributes, relayPickup } = useCart()
 
   const [isClickAndCollect, setIsClickAndCollect] = useState(false)
 
@@ -244,6 +247,15 @@ export default function CartDrawer() {
     } finally {
       setAddingCross(null)
     }
+  }
+
+  // Rappel sous le bouton de paiement : fait défiler la zone du panier
+  // jusqu'au bloc point relais et place le focus sur son bouton.
+  function allerAuRelais() {
+    const bloc = document.getElementById(RAPPEL_RELAIS_ID)
+    if (!bloc) return
+    bloc.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    bloc.querySelector('button')?.focus({ preventScroll: true })
   }
 
   async function toggleClickAndCollect() {
@@ -623,6 +635,18 @@ export default function CartDrawer() {
               </div>
             )}
 
+            {/* Point relais Mondial Relay (livraison uniquement, FACULTATIF).
+                Au-dessus du sous-total depuis le 16/10/2026 : plus bas, sous la
+                cagnotte, il sortait du premier écran sur mobile et la 1re
+                commande Mondial Relay du site (#1954) est partie sans relais.
+                Rappel sous le bouton de paiement tant qu'aucun relais n'est
+                choisi (RAPPEL_RELAIS_ID). */}
+            {!isClickAndCollect && (
+              <div id={RAPPEL_RELAIS_ID} className="scroll-mt-4">
+                <RelayPickupBlock />
+              </div>
+            )}
+
             {/* Détail des prix — désormais VISIBLE AUSSI SUR MOBILE. Il était
                 masqué (hidden sm:flex) uniquement parce que le pied fixe n'avait
                 pas la place : le client voyait un total sans explication. La
@@ -729,15 +753,6 @@ export default function CartDrawer() {
               {/* ─── Widget Cagnotte (loyalty) — dans la zone scrollable ─── */}
               <CagnotteCartWidget />
 
-              {/* Point relais Mondial Relay (livraison uniquement, non bloquant).
-                  Déplacé du pied fixe vers la zone scrollable : sur petit écran
-                  le pied ~400px masquait les articles (retour client 2026-07). */}
-              {!isClickAndCollect && (
-                <div className="px-8">
-                  <RelayPickupBlock />
-                </div>
-              )}
-
             </div>
 
             {/* ─── PIED FIXE COMPACT (flex-shrink-0) : uniquement ce qui sert à
@@ -809,6 +824,19 @@ export default function CartDrawer() {
               >
                 {isClickAndCollect ? 'Valider le retrait' : 'Paiement sécurisé'}
               </a>
+              {/* Rappel du point relais (facultatif, ne bloque jamais le paiement) */}
+              {!isClickAndCollect && !relayPickup && (
+                <p className="-my-1.5 text-center text-[12px] font-medium text-ink-mute">
+                  Livraison en point relais ?{' '}
+                  <button
+                    type="button"
+                    onClick={allerAuRelais}
+                    className="inline-flex min-h-[44px] items-center font-semibold text-fresh underline underline-offset-2 transition-colors hover:text-fresh-deep"
+                  >
+                    Choisis ton point ici
+                  </button>
+                </p>
+              )}
               {/* Réassurance au point de paiement : la confiance est le 1er frein
                   sur un site de compléments. Compact (1 ligne, wrap sur mobile). */}
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-medium text-ink-mute">

@@ -16,6 +16,7 @@
 //   - Meta Pixel post-consentement publicité ...... script (connect.facebook.net) + img/connect (www.facebook.com)
 //   - Widget Mondial Relay ........................ jQuery (ajax.googleapis.com) + Leaflet (unpkg.com)
 //                                                   + plugin et CSS (widget.mondialrelay.com) + tuiles OSM
+//                                                   + photo du relais (img : www.mondialrelay.com)
 //                                                   + police Montserrat (fonts.googleapis.com / fonts.gstatic.com)
 //   - Carte Google Maps (embed /stores) ........... frame (maps.google.com / www.google.com)
 //   - Images .......................................cdn.shopify.com ; visuels : images/plus.unsplash.com
@@ -91,6 +92,8 @@ function buildContentSecurityPolicy() {
       'https://*.google-analytics.com',
       'https://www.facebook.com',
       'https://widget.mondialrelay.com',
+      // Photo du point relais dans le widget (pr.aspx), bloquée avant le 16/10/2026
+      'https://www.mondialrelay.com',
       'https://unpkg.com',
       'https://*.tile.openstreetmap.org',
       'https://maps.gstatic.com',
