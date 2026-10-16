@@ -1,6 +1,6 @@
 'use client'
 
-// Bloc point relais Mondial Relay dans le panier (sous le récap).
+// Bloc point relais Mondial Relay dans le panier (au-dessus du sous-total).
 // Non bloquant : on peut toujours passer commande sans choisir de relais
 // (la boutique prend alors le plus proche de l'adresse du client). Masqué si
 // le widget ne charge pas (adblock, réseau).
