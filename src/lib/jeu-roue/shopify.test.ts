@@ -33,7 +33,7 @@ describe('discountInput', () => {
   it('article offert : montant fixe une seule fois, limité aux cibles, 1 utilisation', () => {
     const input = discountInput(lotById('crunch-bar')!, 'ROUE-ABC234', 2.9, start, end)
     expect(input).toMatchObject({
-      title: 'Jeu roue : Une barre Crunch Bar (parfum au choix) : ROUE-ABC234',
+      title: 'Jeu roue : Une barre protéinée au choix (Crunch Bar, Smart Bar ou Applied Crunch) : ROUE-ABC234',
       code: 'ROUE-ABC234',
       startsAt: '2026-10-07T10:00:00.000Z',
       endsAt: '2026-11-06T10:00:00.000Z',
@@ -43,7 +43,7 @@ describe('discountInput', () => {
       combinesWith: { productDiscounts: true, orderDiscounts: true, shippingDiscounts: true },
       customerGets: {
         value: { discountAmount: { amount: '2.90', appliesOnEachItem: false } },
-        items: { products: { productsToAdd: ['gid://shopify/Product/10832196010326'], productVariantsToAdd: [] } },
+        items: { products: { productsToAdd: ['gid://shopify/Product/10832196010326', 'gid://shopify/Product/11371642061142', 'gid://shopify/Product/11371642093910'], productVariantsToAdd: [] } },
       },
     })
     expect(input).not.toHaveProperty('minimumRequirement')

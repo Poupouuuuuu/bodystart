@@ -103,10 +103,10 @@ describe('noteLine', () => {
       'Jeu roue 09/10/2026 : Une whey Protimuscle 1 kg au choix : Chocolat, Vanille, Choco-cookie ou Fraise, code ROUE-ABC234'
     )
   })
-  it('Crunch Bar : parfum au choix, sans liste', () => {
+  it('barre au choix : les trois barres, sans liste de parfums', () => {
     const lot = LOTS.find((l) => l.id === 'crunch-bar')!
-    expect(noteLine({ lotId: 'crunch-bar', code: 'ROUE-ABC234', endsAt: '', playedAt: '2026-10-09T10:00:00Z' }, lot)).toBe(
-      'Jeu roue 09/10/2026 : Une barre Crunch Bar (parfum au choix), code ROUE-ABC234'
+    expect(noteLine({ lotId: 'crunch-bar', code: 'ROUE-ABC234', endsAt: '', playedAt: '2026-10-16T10:00:00Z' }, lot)).toBe(
+      'Jeu roue 16/10/2026 : Une barre protéinée au choix (Crunch Bar, Smart Bar ou Applied Crunch), code ROUE-ABC234'
     )
   })
 })

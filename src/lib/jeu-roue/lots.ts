@@ -64,15 +64,29 @@ export const LOTS: Lot[] = [
     amount: 3.1,
   },
   {
+    // id gardé (étiquette client `jeu-roue-crunch-bar`) : le lot est devenu une
+    // barre au choix le 16/10/2026 (un gagnant avait pris une Smart Bar en
+    // boutique). Avant : tous les parfums de la Crunch Bar depuis le
+    // 09/10/2026, 3 variantes avant. Smart Bar et Applied Crunch sont vendues
+    // en caisse seulement (pas sur le site) : normal, les codes servent en
+    // caisse. Les trois à 2,90 € le 16/10/2026 ; la remise prend le prix le
+    // plus élevé des trois.
     id: 'crunch-bar',
-    // Tous les parfums depuis le 09/10/2026 (3 variantes avant, un gagnant
-    // avait pris un parfum hors lot, code refusé en caisse).
-    label: 'Une barre Crunch Bar (parfum au choix)',
-    wheelLabel: 'Crunch Bar',
+    label: 'Une barre protéinée au choix (Crunch Bar, Smart Bar ou Applied Crunch)',
+    // « Barre protéinée » (115 px) ne tient pas dans la part de roue (~118 px utiles).
+    wheelLabel: 'Barre au choix',
     weight: 25,
     type: 'product',
-    products: ['gid://shopify/Product/10832196010326'],
-    anciensLibelles: ['Une barre Crunch Bar', 'Une barre Crunch Bar (Dark Choco PB, PB Cup ou Cookie Dough)'],
+    products: [
+      'gid://shopify/Product/10832196010326', // Crunch Bar Warrior
+      'gid://shopify/Product/11371642061142', // Smart Bar PhD 64 g
+      'gid://shopify/Product/11371642093910', // Protein Crunch Bar Applied Nutrition 62 g
+    ],
+    anciensLibelles: [
+      'Une barre Crunch Bar',
+      'Une barre Crunch Bar (Dark Choco PB, PB Cup ou Cookie Dough)',
+      'Une barre Crunch Bar (parfum au choix)',
+    ],
     amount: 2.9,
   },
   {

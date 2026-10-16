@@ -11,13 +11,13 @@ describe('parfums des lots', () => {
     }
   })
 
-  it('Crunch Bar : produit entier (tous parfums), libellé sans liste de parfums', () => {
+  it('barre au choix : Crunch Bar, Smart Bar et Applied Crunch entières (tous parfums), sans liste de parfums', () => {
     const crunch = lotById('crunch-bar')!
-    expect(crunch.products).toEqual(['gid://shopify/Product/10832196010326'])
+    expect(crunch.products).toEqual(['gid://shopify/Product/10832196010326', 'gid://shopify/Product/11371642061142', 'gid://shopify/Product/11371642093910'])
     expect(crunch.variants).toBeUndefined()
-    expect(lotLabelClient(crunch)).toBe('Une barre Crunch Bar (parfum au choix)')
-    expect(lotLabelRemise(crunch)).toBe('Une barre Crunch Bar (parfum au choix)')
-    expect(crunch.wheelLabel).toBe('Crunch Bar')
+    expect(lotLabelClient(crunch)).toBe('Une barre protéinée au choix (Crunch Bar, Smart Bar ou Applied Crunch)')
+    expect(lotLabelRemise(crunch)).toBe('Une barre protéinée au choix (Crunch Bar, Smart Bar ou Applied Crunch)')
+    expect(crunch.wheelLabel).toBe('Barre au choix')
     expect([crunch.amount, crunch.weight]).toEqual([2.9, 25])
   })
 
