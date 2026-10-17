@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, X } from 'lucide-react'
 
@@ -15,9 +15,12 @@ export default function SearchBar({
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery)
   const router = useRouter()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    // Mobile : fermer le clavier, sinon il cache les résultats.
+    inputRef.current?.blur()
     if (query.trim()) {
       router.push('/search?q=' + encodeURIComponent(query.trim()))
     }
@@ -33,12 +36,21 @@ export default function SearchBar({
     >
       <Search className="w-5 h-5 text-ink-mute flex-shrink-0 mr-3" />
       <input
-        type="text"
+        ref={inputRef}
+        type="search"
+        enterKeyHint="search"
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="none"
+        spellCheck={false}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Rechercher un produit..."
-        className="flex-1 bg-transparent outline-none text-ink placeholder:text-ink-mute text-[16px] md:text-sm"
-        autoFocus
+        aria-label="Rechercher un produit"
+        className="flex-1 bg-transparent outline-none text-ink placeholder:text-ink-mute text-[16px] md:text-sm [&::-webkit-search-cancel-button]:hidden"
+        // Focus seulement sur la page vide : avec une recherche déjà faite, le
+        // clavier se rouvrait par-dessus les résultats (bug du 17/10/2026).
+        autoFocus={!initialQuery}
       />
       {query && (
         <button

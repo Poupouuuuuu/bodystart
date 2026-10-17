@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { searchProducts } from '@/lib/shopify'
+import { rechercherProduits } from '@/lib/shopify/recherche'
 import { cardPriceOf } from '@/lib/product-price'
 
 // Lit les query params → forcer le rendu dynamique pour éviter le warning au build
@@ -10,10 +10,12 @@ export async function GET(req: NextRequest) {
     const q = req.nextUrl.searchParams.get('q')?.trim()
 
     if (!q || q.length < 2) {
-      return NextResponse.json({ results: [] })
+      return NextResponse.json({ results: [], total: 0 })
     }
 
-    const products = await searchProducts(q, 12)
+    // Moteur du site (lib/recherche) : 12 fiches, et le total pour le lien
+    // « Voir les N résultats ».
+    const { produits: products, total } = await rechercherProduits(q, 12)
 
     // Même prix que les cartes du catalogue (lib/product-price).
     const results = products.map((p) => {
@@ -32,11 +34,11 @@ export async function GET(req: NextRequest) {
     })
 
     return NextResponse.json(
-      { results },
+      { results, total },
       { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } }
     )
   } catch (error) {
     console.error('[Search API] Erreur:', error)
-    return NextResponse.json({ results: [], error: 'Erreur serveur.' }, { status: 500 })
+    return NextResponse.json({ results: [], total: 0, error: 'Erreur serveur.' }, { status: 500 })
   }
 }

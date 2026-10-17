@@ -73,13 +73,24 @@ export default function Header(_props: HeaderProps) {
   const [scrolled, setScrolled] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
+  const [searchTotal, setSearchTotal] = useState(0)
   const [isSearching, setIsSearching] = useState(false)
+  // Hauteur des résultats visible au-dessus du clavier (visualViewport).
+  const [hauteurResultats, setHauteurResultats] = useState<number | null>(null)
 
   const { totalQuantity, openCart } = useCart()
   const { isLoggedIn, customer } = useCustomer()
   const router = useRouter()
   const pathname = usePathname()
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchResultsRef = useRef<HTMLDivElement>(null)
+
+  // Mobile (bug du 17/10/2026) : le clavier restait ouvert et cachait les
+  // résultats. Il se ferme sur Entrée/« Rechercher » et dès qu'on fait défiler
+  // la liste.
+  const fermerClavier = () => {
+    if (document.activeElement === searchInputRef.current) searchInputRef.current?.blur()
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -109,6 +120,7 @@ export default function Header(_props: HeaderProps) {
     const q = searchQuery.trim()
     if (q.length < 2) {
       setSearchResults([])
+      setSearchTotal(0)
       setIsSearching(false)
       return
     }
@@ -122,8 +134,12 @@ export default function Header(_props: HeaderProps) {
         if (!res.ok) throw new Error()
         const data = await res.json()
         setSearchResults(data.results ?? [])
+        setSearchTotal(data.total ?? data.results?.length ?? 0)
       } catch (err) {
-        if ((err as Error).name !== 'AbortError') setSearchResults([])
+        if ((err as Error).name !== 'AbortError') {
+          setSearchResults([])
+          setSearchTotal(0)
+        }
       } finally {
         setIsSearching(false)
       }
@@ -140,8 +156,32 @@ export default function Header(_props: HeaderProps) {
     if (!isSearchOpen) {
       setSearchQuery('')
       setSearchResults([])
+      setSearchTotal(0)
     }
   }, [isSearchOpen])
+
+  // Liste des résultats lisible au-dessus du clavier : sur iOS, le clavier ne
+  // réduit pas la fenêtre (85vh débordait dessous), seul visualViewport le
+  // sait. La liste s'arrête au bord haut du clavier tant qu'il est ouvert.
+  const afficheResultats = isSearchOpen && searchQuery.trim().length >= 2
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!afficheResultats || !vv) {
+      setHauteurResultats(null)
+      return
+    }
+    const maj = () => {
+      const haut = searchResultsRef.current?.getBoundingClientRect().top ?? 0
+      setHauteurResultats(Math.max(160, Math.floor(vv.offsetTop + vv.height - haut - 8)))
+    }
+    maj()
+    vv.addEventListener('resize', maj)
+    vv.addEventListener('scroll', maj)
+    return () => {
+      vv.removeEventListener('resize', maj)
+      vv.removeEventListener('scroll', maj)
+    }
+  }, [afficheResultats])
 
   useEffect(() => {
     setIsSearchOpen(false)
@@ -302,6 +342,7 @@ export default function Header(_props: HeaderProps) {
               className="relative"
               onSubmit={(e) => {
                 e.preventDefault()
+                fermerClavier()
                 const q = searchQuery.trim()
                 if (q) {
                   setIsSearchOpen(false)
@@ -313,12 +354,17 @@ export default function Header(_props: HeaderProps) {
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-mute" />
                 <input
                   ref={searchInputRef}
-                  type="text"
+                  type="search"
+                  enterKeyHint="search"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="none"
+                  spellCheck={false}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Rechercher un produit, une marque, un objectif..."
                   aria-label="Rechercher un produit"
-                  className="w-full text-base font-medium py-4 pl-14 pr-14 rounded-full outline-none border-2 transition-colors bg-canvas border-spruce/15 text-ink focus:border-fresh placeholder-ink-mute"
+                  className="w-full text-base font-medium py-4 pl-14 pr-14 rounded-full outline-none border-2 transition-colors bg-canvas border-spruce/15 text-ink focus:border-fresh placeholder-ink-mute [&::-webkit-search-cancel-button]:hidden"
                 />
                 {isSearching ? (
                   <Loader2 className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 animate-spin text-fresh" />
@@ -339,14 +385,22 @@ export default function Header(_props: HeaderProps) {
           {/* Zone scrollable des résultats */}
           {searchQuery.trim().length >= 2 && (
             <div
+              ref={searchResultsRef}
+              onTouchMove={fermerClavier}
+              onScroll={fermerClavier}
               className="overflow-y-auto overscroll-contain"
-              style={{ maxHeight: 'calc(85vh - 110px)' }}
+              style={{
+                maxHeight:
+                  hauteurResultats !== null
+                    ? `min(calc(85vh - 110px), ${hauteurResultats}px)`
+                    : 'calc(85vh - 110px)',
+              }}
             >
               <div className="container max-w-5xl mx-auto pb-6">
                 {searchResults.length > 0 ? (
                   <>
                     <p className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-4 text-ink-mute">
-                      {searchResults.length} produit{searchResults.length > 1 ? 's' : ''} trouvé{searchResults.length > 1 ? 's' : ''}
+                      {searchTotal} produit{searchTotal > 1 ? 's' : ''} trouvé{searchTotal > 1 ? 's' : ''}
                     </p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                       {searchResults.map((result) => (
@@ -389,17 +443,19 @@ export default function Header(_props: HeaderProps) {
                       ))}
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsSearchOpen(false)
-                        router.push('/search?q=' + encodeURIComponent(searchQuery.trim()))
-                      }}
-                      className="w-full mt-6 flex items-center justify-center gap-2 text-sm font-semibold py-4 rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep"
-                    >
-                      Voir tous les résultats pour « {searchQuery.trim()} »
-                      <ChevronDown className="w-4 h-4 -rotate-90" />
-                    </button>
+                    {searchTotal > searchResults.length && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsSearchOpen(false)
+                          router.push('/search?q=' + encodeURIComponent(searchQuery.trim()))
+                        }}
+                        className="w-full mt-6 flex items-center justify-center gap-2 text-sm font-semibold py-4 rounded-full transition-colors bg-fresh text-white hover:bg-fresh-deep"
+                      >
+                        Voir les {searchTotal} résultats
+                        <ChevronDown className="w-4 h-4 -rotate-90" />
+                      </button>
+                    )}
                   </>
                 ) : (
                   !isSearching && (

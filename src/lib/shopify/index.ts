@@ -9,7 +9,6 @@ import {
   GET_FEATURED_PRODUCTS,
   GET_SITEMAP_PRODUCTS,
   GET_COFFRETS,
-  SEARCH_PRODUCTS,
 } from './queries/products'
 import {
   GET_COLLECTIONS,
@@ -92,14 +91,6 @@ export async function getSitemapProducts(): Promise<SitemapProduct[]> {
     after = data.products.pageInfo.endCursor
   }
   return out
-}
-
-export async function searchProducts(query: string, first = 24) {
-  const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>(
-    SEARCH_PRODUCTS,
-    { query, first }
-  )
-  return data.products.nodes.map(withCardPrice)
 }
 
 // cache() (React request memoization) : generateMetadata ET la page appellent

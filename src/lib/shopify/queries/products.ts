@@ -85,12 +85,20 @@ export const GET_PRODUCTS = `
   }
 `
 
-export const SEARCH_PRODUCTS = `
+// Index de la recherche du site (lib/recherche) : tout le catalogue publié,
+// dans l'ordre des meilleures ventes, avec le début de la description
+// (dernier recours de la recherche).
+export const INDEX_RECHERCHE = `
   ${PRODUCT_CARD_FRAGMENT}
-  query SearchProducts($query: String!, $first: Int!) {
-    products(first: $first, query: $query, sortKey: RELEVANCE) {
+  query IndexRecherche($first: Int!, $after: String) {
+    products(first: $first, after: $after, sortKey: BEST_SELLING) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
         ...ProductCard
+        description(truncateAt: 400)
       }
     }
   }
