@@ -26,6 +26,9 @@ type SearchResult = {
   /** Les variantes n'ont pas toutes le même prix : « dès ». */
   from?: boolean
   availableForSale?: boolean
+  /** « whey vanille » : variante trouvée, la fiche s'ouvre dessus (?variant=). */
+  variantId?: string | null
+  variantTitle?: string | null
 }
 
 type NavCategory = { label: string; href: string; children?: { label: string; href: string }[] }
@@ -406,7 +409,7 @@ export default function Header(_props: HeaderProps) {
                       {searchResults.map((result) => (
                         <Link
                           key={result.id}
-                          href={`/products/${result.handle}`}
+                          href={`/products/${result.handle}${result.variantId ? `?variant=${result.variantId}` : ''}`}
                           onClick={() => setIsSearchOpen(false)}
                           className="group relative flex flex-col rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 bg-white border-spruce/10 hover:border-spruce/30 hover:shadow-[0_8px_30px_rgba(45,90,45,0.08)]"
                         >
@@ -434,6 +437,9 @@ export default function Header(_props: HeaderProps) {
                             <p className="text-sm font-semibold line-clamp-2 leading-snug min-h-[2.5rem] text-ink">
                               {result.title}
                             </p>
+                            {result.variantTitle && (
+                              <p className="text-xs font-medium text-ink-mute line-clamp-1">{result.variantTitle}</p>
+                            )}
                             <p className="text-sm font-bold mt-0.5 text-spruce">
                               {result.from && <span className="mr-1 font-medium text-ink-mute">dès</span>}
                               {formatPrice({ amount: result.price, currencyCode: result.currency })}

@@ -1,8 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { motsRecherche, normaliser, rechercher, type Recherchable } from './recherche'
+import { motsRecherche, normaliser, rechercher, rechercherDetail, type Recherchable } from './recherche'
 // Fiches publiées sur le site le 17/10/2026 (titre, marque, type, étiquettes,
 // disponibilité), dans l'ordre réel du catalogue (meilleures ventes, épuisés
 // à la fin). Descriptions : extraits, seulement sur les accessoires testés.
+// Variantes réelles (parfums, formats) sur 11 fiches : wheys, crèmes de riz,
+// Mutant Mass, Crunch Bar, Clear Whey.
 import catalogue from './fixtures/catalogue-recherche-2026-10-17.json'
 
 type Fiche = Recherchable & { handle: string }
@@ -153,5 +155,65 @@ describe('synonymes', () => {
 
   it('protein (anglais) = proteine', () => {
     expect(handles('protein', 12)).toEqual(handles('proteine', 12))
+  })
+})
+
+describe('parfums et formats (variantes)', () => {
+  const detail = (q: string) =>
+    rechercherDetail(CAT, q).map((r) => [r.produit.handle, r.variante?.title ?? null] as const)
+  const variante = (q: string, handle: string) => detail(q).find(([h]) => h === handle)?.[1]
+
+  it('« whey vanille » : les whey qui ont un parfum vanille (français ou anglais), ouvertes sur ce parfum', () => {
+    const r = detail('whey vanille')
+    expect(r.map(([h]) => h)).toEqual(
+      expect.arrayContaining(['iso-zero-100-whey', 'whey-native-protimuscle', 'isolate-native-whey-mix-musclewhey', 'native-iso-blend', 'isolate-zero-per4m-whey-isolate'])
+    )
+    expect(r.map(([h]) => h)).not.toContain('clear-whey-isolate-500-g') // pas de vanille
+    expect(variante('whey vanille', 'iso-zero-100-whey')).toBe('Vanille')
+    expect(variante('whey vanille', 'whey-native-protimuscle')).toBe('Vanille / 1 kg')
+    expect(variante('whey vanille', 'isolate-zero-per4m-whey-isolate')).toBe('Vanilla Creme / 2kg')
+  })
+
+  it('« crème de riz chocolat » : les trois crèmes de riz, sur leur parfum chocolat', () => {
+    const r = detail('crème de riz chocolat')
+    expect(r).toEqual(
+      expect.arrayContaining([
+        ['creme-de-riz-bio', 'Chocolat'],
+        ['cream-of-rice-creme-de-riz-2-kg', 'Chocolate Fudge'],
+        ['cream-of-rice-per4m-creme-de-riz-2-kg', 'White Chocolate Hazelnut'],
+      ])
+    )
+    expect(r).toHaveLength(3)
+  })
+
+  it('parfum en stock d’abord ; parfum épuisé : la fiche passe après, toujours trouvable', () => {
+    // Musclewhey : seul le Chocolat existe, épuisé
+    const r = detail('whey chocolat')
+    const i = r.findIndex(([h]) => h === 'isolate-native-whey-mix-musclewhey')
+    expect(r[i][1]).toBe('Chocolat')
+    expect(i).toBeGreaterThan(r.findIndex(([h]) => h === 'native-iso-blend'))
+    // Native Iso Blend : Chocolat 900 g en stock, choisi plutôt que 1,8 kg épuisé
+    expect(variante('whey chocolat', 'native-iso-blend')).toBe('Chocolat / 900 g')
+  })
+
+  it('« whey fraise » et « whey strawberry » : même fiches', () => {
+    const fr = detail('whey fraise').map(([h]) => h)
+    expect(fr).toEqual(['whey-native-protimuscle', 'isolate-zero-per4m-whey-isolate'])
+    expect(detail('whey strawberry').map(([h]) => h)).toEqual(fr)
+    expect(variante('whey fraise', 'whey-native-protimuscle')).toBe('Fraise / 1 kg')
+  })
+
+  it('format : « 1 kg » = « 1kg », la variante de ce format', () => {
+    expect(variante('protimuscle 1kg', 'whey-native-protimuscle')).toBe('Chocolat / 1 kg')
+    expect(variante('protimuscle vanille 2,25 kg', 'whey-native-protimuscle')).toBe('Vanille / 2,25 kg')
+  })
+
+  it('sans parfum demandé : pas de variante, ordre inchangé', () => {
+    expect(rechercherDetail(CAT, 'whey').every((r) => r.variante === null)).toBe(true)
+    expect(rechercherDetail(CAT, 'proteine').every((r) => r.variante === null)).toBe(true)
+  })
+
+  it('deux parfums différents : la fiche est trouvée, sans variante imposée', () => {
+    expect(detail('iso zero vanille pistache')).toEqual([['iso-zero-100-whey', null]])
   })
 })

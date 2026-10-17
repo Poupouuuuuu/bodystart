@@ -15,10 +15,10 @@ export async function GET(req: NextRequest) {
 
     // Moteur du site (lib/recherche) : 12 fiches, et le total pour le lien
     // « Voir les N résultats ».
-    const { produits: products, total } = await rechercherProduits(q, 12)
+    const { resultats, total } = await rechercherProduits(q, 12)
 
     // Même prix que les cartes du catalogue (lib/product-price).
-    const results = products.map((p) => {
+    const results = resultats.map(({ produit: p, varianteId, varianteTitre }) => {
       const prix = cardPriceOf(p)
       const price = prix?.price ?? p.priceRange.minVariantPrice
       return {
@@ -30,6 +30,9 @@ export async function GET(req: NextRequest) {
         currency: price.currencyCode,
         from: prix?.from ?? false,
         availableForSale: p.availableForSale ?? true,
+        // Parfum ou format demandé : la fiche s'ouvre dessus (?variant=).
+        variantId: varianteId,
+        variantTitle: varianteTitre,
       }
     })
 

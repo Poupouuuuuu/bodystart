@@ -19,7 +19,29 @@
    "barre",
    "snack"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/54097477501270",
+    "title": "Salted Caramel",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54097477534038",
+    "title": "Dark Chocolate Peanut Butter",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54130802786646",
+    "title": "Chocolate Chip Cookie Dough",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54401705804118",
+    "title": "Peanut Butter Cup",
+    "availableForSale": true
+   }
+  ]
  },
  {
   "handle": "abe-energy-boisson-energisante-performance",
@@ -42,7 +64,59 @@
    "relance-40",
    "whey"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/53981939794262",
+    "title": "Choco intense",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981939827030",
+    "title": "Vanille",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981939859798",
+    "title": "Chocotella",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981939892566",
+    "title": "Cookie cream",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981939925334",
+    "title": "Chocolat au lait",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981939958102",
+    "title": "Chocolat beurre de cacahuètes",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981939990870",
+    "title": "Framboisier",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981940023638",
+    "title": "Pistache",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981940056406",
+    "title": "Neutre",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/53981940089174",
+    "title": "Café latte",
+    "availableForSale": true
+   }
+  ]
  },
  {
   "handle": "whey-native-protimuscle",
@@ -54,7 +128,84 @@
    "relance-25",
    "whey"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/54095546450262",
+    "title": "Caramel Salé Pécan / 500 g",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095546483030",
+    "title": "Chocolat / 1 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095546515798",
+    "title": "Vanille / 1 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095546548566",
+    "title": "Choco-cookie / 1 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095546581334",
+    "title": "Fraise / 1 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095546614102",
+    "title": "Chocolat / 2,25 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095546646870",
+    "title": "Vanille / 2,25 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095546679638",
+    "title": "Choco-cookie / 2,25 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54807187194198",
+    "title": "Fraise / 500 g",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54807187226966",
+    "title": "Choco-cookie / 500 g",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54807187259734",
+    "title": "Amande Pistache / 500 g",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54807187292502",
+    "title": "Matcha Latte / 500 g",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54807187325270",
+    "title": "Amande Pistache / 1 kg",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54807187358038",
+    "title": "Matcha Latte / 1 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54807187390806",
+    "title": "Caramel Salé Pécan / 1 kg",
+    "availableForSale": false
+   }
+  ]
  },
  {
   "handle": "mutant-mass",
@@ -65,7 +216,95 @@
    "gainer",
    "relance-25"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/54130625675606",
+    "title": "Triple Chocolate / 2.27kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54130625708374",
+    "title": "Chocolate Fudge Brownie / 2.27kg",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54130625741142",
+    "title": "Vanilla Ice Cream / 6.8kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54130625773910",
+    "title": "Cookies & Cream / 6.8kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54605898776918",
+    "title": "Triple Chocolate / 6.8kg",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54605898809686",
+    "title": "Vanilla Ice Cream / 2.27kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54908208578902",
+    "title": "Cookies & Cream / 2.27kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55408008790358",
+    "title": "Chocolate Fudge Brownie / 6.8kg",
+    "availableForSale": true
+   }
+  ]
+ },
+ {
+  "handle": "cream-of-rice-creme-de-riz-2-kg",
+  "title": "Cream of Rice - Crème de Riz 2 kg",
+  "vendor": "Trained by JP",
+  "productType": "Glucides",
+  "tags": [
+   "creme-de-riz",
+   "glucides",
+   "prise-de-masse",
+   "relance-55",
+   "riz"
+  ],
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/54978281537878",
+    "title": "Chocolate Fudge",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54978281570646",
+    "title": "Cookies & Cream",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54978281603414",
+    "title": "Salted Caramel",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54978281636182",
+    "title": "Triple Chocolate",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54978281668950",
+    "title": "Vanilla",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55540334035286",
+    "title": "Lemon Meringue Pie",
+    "availableForSale": true
+   }
+  ]
  },
  {
   "handle": "creme-de-riz-bio",
@@ -77,7 +316,24 @@
    "relance-25",
    "riz"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/54095549956438",
+    "title": "Neutre",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095549989206",
+    "title": "Vanille",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095550021974",
+    "title": "Chocolat",
+    "availableForSale": true
+   }
+  ]
  },
  {
   "handle": "clear-pro-creatine",
@@ -150,7 +406,24 @@
    "relance-25",
    "whey"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/54095548645718",
+    "title": "Chocolat",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095548678486",
+    "title": "Vanille",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54095548711254",
+    "title": "Choco-cookie",
+    "availableForSale": false
+   }
+  ]
  },
  {
   "handle": "clear-fusion-proteine-claire-amp-collagene",
@@ -319,7 +592,34 @@
    "relance-25",
    "whey"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/54978281374038",
+    "title": "Cherry",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54978281406806",
+    "title": "Orange",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54978281439574",
+    "title": "Pineapple",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/54978281472342",
+    "title": "Watermelon",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55540334002518",
+    "title": "Tropical",
+    "availableForSale": false
+   }
+  ]
  },
  {
   "handle": "cream-of-rice-per4m-creme-de-riz-2-kg",
@@ -333,7 +633,34 @@
    "relance-55",
    "riz"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/55556794286422",
+    "title": "White Chocolate Hazelnut",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55556794319190",
+    "title": "Cookies 'N Cream",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55556794351958",
+    "title": "Caramel Biscuit",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55556794384726",
+    "title": "Apple Strudel",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55604596015446",
+    "title": "Cinnamon Donut",
+    "availableForSale": true
+   }
+  ]
  },
  {
   "handle": "acides-amines-essentiels-eaa",
@@ -456,7 +783,34 @@
    "relance-55",
    "whey"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/55604677935446",
+    "title": "Vanilla Creme / 2kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55604677968214",
+    "title": "Vanilla Creme / 900g",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55604678000982",
+    "title": "White Chocolate / 900g",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55604678033750",
+    "title": "Strawberry Creme / 900g",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55604678066518",
+    "title": "Caramel Biscuit / 900g",
+    "availableForSale": true
+   }
+  ]
  },
  {
   "handle": "muesli-proteine-chocolat",
@@ -536,7 +890,39 @@
    "relance-25",
    "whey"
   ],
-  "availableForSale": true
+  "availableForSale": true,
+  "variantes": [
+   {
+    "id": "gid://shopify/ProductVariant/55696617177430",
+    "title": "Vanille / 900 g",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55696617210198",
+    "title": "Vanille / 1,8 kg",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55696617242966",
+    "title": "Chocolat / 900 g",
+    "availableForSale": true
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55696617275734",
+    "title": "Chocolat / 1,8 kg",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55696617308502",
+    "title": "Choco-cookie / 900 g",
+    "availableForSale": false
+   },
+   {
+    "id": "gid://shopify/ProductVariant/55696617341270",
+    "title": "Choco-cookie / 1,8 kg",
+    "availableForSale": false
+   }
+  ]
  },
  {
   "handle": "protein-pancake-per4m-mix-pancakes-1-2-kg",

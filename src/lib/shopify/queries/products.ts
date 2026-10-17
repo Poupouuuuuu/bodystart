@@ -87,7 +87,8 @@ export const GET_PRODUCTS = `
 
 // Index de la recherche du site (lib/recherche) : tout le catalogue publié,
 // dans l'ordre des meilleures ventes, avec le début de la description
-// (dernier recours de la recherche).
+// (dernier recours de la recherche) et toutes les variantes (parfums,
+// formats : « whey vanille »).
 export const INDEX_RECHERCHE = `
   ${PRODUCT_CARD_FRAGMENT}
   query IndexRecherche($first: Int!, $after: String) {
@@ -99,6 +100,13 @@ export const INDEX_RECHERCHE = `
       nodes {
         ...ProductCard
         description(truncateAt: 400)
+        variantes: variants(first: 100) {
+          nodes {
+            id
+            title
+            availableForSale
+          }
+        }
       }
     }
   }

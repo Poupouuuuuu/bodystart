@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { rechercherProduits } from '@/lib/shopify/recherche'
+import { rechercherProduits, type ResultatRecherche } from '@/lib/shopify/recherche'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import SearchBar from '@/components/ui/SearchBar'
-import type { ShopifyProduct } from '@/lib/shopify/types'
 import { Search, PackageSearch } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 
@@ -30,14 +29,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q: rawQ } = await searchParams
   const q = rawQ?.trim() ?? ''
 
-  let results: ShopifyProduct[] = []
+  let results: ResultatRecherche[] = []
   let count = 0
   if (q) {
     try {
       // Moteur du site (lib/recherche) : accents ignorés, rayon nommé
       // d'abord, en stock avant les ruptures, accessoires après.
       const r = await rechercherProduits(q, MAX_RESULTATS)
-      results = r.produits
+      results = r.resultats
       count = r.total
     } catch {
       // Shopify non configuré
@@ -115,8 +114,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           // 2 colonnes dès le mobile — même densité que /products et la home
           // (1 colonne = 1 produit géant par écran, comparaison impossible)
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-            {results.map((product) => (
-              <ProductCardShop key={product.id} product={product} />
+            {results.map(({ produit, varianteId, varianteTitre }) => (
+              <ProductCardShop key={produit.id} product={produit} varianteId={varianteId} parfum={varianteTitre} />
             ))}
           </div>
         )}

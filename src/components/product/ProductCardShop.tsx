@@ -46,9 +46,14 @@ export interface ProductCardShopProps {
   product: ShopifyProduct
   /** Stock boutique (badge « Plus que X en stock ») — /products uniquement. */
   stockAtStore?: number
+  /** Recherche « whey vanille » : la fiche s'ouvre sur cette variante (?variant=). */
+  varianteId?: string | null
+  /** Parfum ou format trouvé, affiché à la place du sous-titre. */
+  parfum?: string | null
 }
 
-export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps) {
+export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: ProductCardShopProps) {
+  const href = `/products/${product.handle}${varianteId ? `?variant=${varianteId}` : ''}`
   const variant = product.variants.nodes[0]
   const soldOut = product.availableForSale === false
   const { addItem } = useCart()
@@ -107,7 +112,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
     if (!canQuickAct) return
     if (hasMultipleVariants) {
       // Le client doit choisir sa saveur/son format sur la fiche.
-      router.push(`/products/${product.handle}`)
+      router.push(href)
       return
     }
     setAdding(true)
@@ -127,7 +132,7 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
     <div className="group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift">
       {/* Zone image avec fond vegetal */}
       <Link
-        href={`/products/${product.handle}`}
+        href={href}
         className="relative block w-full aspect-[4/5] overflow-hidden bg-cover bg-bottom bg-no-repeat"
         style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
       >
@@ -197,15 +202,15 @@ export function ProductCardShop({ product, stockAtStore }: ProductCardShopProps)
 
         {/* Titre — Fraunces : un cran plus grand qu'avant, le serif porte le nom
             du produit. min-h réservé pour aligner les prix d'une même rangée. */}
-        <Link href={`/products/${product.handle}`}>
+        <Link href={href}>
           <h3 className="mb-1.5 line-clamp-2 min-h-[2.6rem] font-display text-[16px] font-bold leading-[1.25] text-spruce transition-colors hover:text-fresh-deep">
             {product.title}
           </h3>
         </Link>
 
-        {/* Sous-titre court (optionnel) */}
-        {subtitle && (
-          <p className="text-[13px] text-ink-mute leading-snug mb-3 line-clamp-1">{subtitle}</p>
+        {/* Sous-titre court (optionnel) ; parfum trouvé par la recherche à la place */}
+        {(parfum || subtitle) && (
+          <p className="text-[13px] text-ink-mute leading-snug mb-3 line-clamp-1">{parfum || subtitle}</p>
         )}
 
         {/* Prix + bouton ajout discret (icone +) */}
