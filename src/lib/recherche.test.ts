@@ -213,6 +213,22 @@ describe('parfums et formats (variantes)', () => {
     expect(rechercherDetail(CAT, 'proteine').every((r) => r.variante === null)).toBe(true)
   })
 
+  it('la variante rendue garde ses champs (prix) pour afficher SON prix', () => {
+    const fiches = [
+      {
+        title: 'Whey Native Protimuscle',
+        productType: 'Protéines',
+        variantes: [
+          { id: 'gid://shopify/ProductVariant/1', title: 'Vanille / 500 g', availableForSale: true, price: { amount: '23.90', currencyCode: 'EUR' } },
+          { id: 'gid://shopify/ProductVariant/2', title: 'Vanille / 1 kg', availableForSale: true, price: { amount: '39.90', currencyCode: 'EUR' } },
+        ],
+      },
+    ]
+    const [r] = rechercherDetail(fiches, 'protimuscle vanille 1kg')
+    expect(r.variante).toBe(fiches[0].variantes[1])
+    expect(r.variante?.price.amount).toBe('39.90')
+  })
+
   it('deux parfums différents : la fiche est trouvée, sans variante imposée', () => {
     expect(detail('iso zero vanille pistache')).toEqual([['iso-zero-100-whey', null]])
   })

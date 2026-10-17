@@ -4,13 +4,15 @@
 
 import { unstable_cache } from 'next/cache'
 import { rechercherDetail, type VarianteRecherchable } from '@/lib/recherche'
+import { computeCardPrice, type PrixVariante } from '@/lib/product-price'
 import { shopifyFetch } from './client'
 import { withCardPrice } from './index'
 import { INDEX_RECHERCHE } from './queries/products'
 import type { ShopifyProduct } from './types'
 
-type FicheIndex = ShopifyProduct & { variantes: VarianteRecherchable[] }
-type FicheBrute = ShopifyProduct & { variantes?: { nodes: VarianteRecherchable[] } }
+type VarianteIndex = VarianteRecherchable & PrixVariante
+type FicheIndex = ShopifyProduct & { variantes: VarianteIndex[] }
+type FicheBrute = ShopifyProduct & { variantes?: { nodes: VarianteIndex[] } }
 
 type Page = {
   products: { pageInfo: { hasNextPage: boolean; endCursor: string | null }; nodes: FicheBrute[] }
@@ -32,7 +34,7 @@ async function chargerIndex(): Promise<FicheIndex[]> {
 }
 
 /** Index partagé par /api/search et /search, renouvelé toutes les 10 minutes. */
-const indexEnCache = unstable_cache(chargerIndex, ['recherche-index-v2'], { revalidate: 600 })
+const indexEnCache = unstable_cache(chargerIndex, ['recherche-index-v3'], { revalidate: 600 })
 
 /** Fiche trouvée, et la variante demandée (« whey vanille » → Vanille / 1 kg). */
 export interface ResultatRecherche {
@@ -53,7 +55,9 @@ export async function rechercherProduits(
       // Ni la description ni la liste des variantes ne partent au navigateur.
       const { variantes: _v, description: _d, ...fiche } = produit
       return {
-        produit: fiche,
+        // Variante trouvée : SON prix (« Vanille / 1 kg » n'affiche pas le
+        // « dès » du 500 g), avec sa remise si elle en a une.
+        produit: variante ? { ...fiche, cardPrice: computeCardPrice([variante]) } : fiche,
         varianteId: variante ? variante.id.split('/').pop() ?? null : null,
         varianteTitre: variante?.title ?? null,
       }

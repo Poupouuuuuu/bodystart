@@ -105,6 +105,14 @@ export const INDEX_RECHERCHE = `
             id
             title
             availableForSale
+            price {
+              amount
+              currencyCode
+            }
+            compareAtPrice {
+              amount
+              currencyCode
+            }
           }
         }
       }

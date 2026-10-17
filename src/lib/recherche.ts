@@ -280,10 +280,12 @@ interface Resultat<T> {
   enStock: boolean
 }
 
+type VarianteDe<T extends Recherchable> = NonNullable<T['variantes']>[number]
+
 /** Une fiche trouvée, et la variante qui correspond au parfum ou au format demandé. */
-export interface Trouvaille<T> {
+export interface Trouvaille<T extends Recherchable> {
   produit: T
-  variante: VarianteRecherchable | null
+  variante: VarianteDe<T> | null
 }
 
 /**
@@ -359,5 +361,6 @@ export function rechercherDetail<T extends Recherchable>(produits: T[], q: strin
       for (let i = 0; i < a.k.length; i++) if (a.k[i] !== b.k[i]) return a.k[i] - b.k[i]
       return 0
     })
-    .map(({ r }) => ({ produit: r.produit, variante: r.variante?.variante ?? null }))
+    // La variante rendue est celle de la fiche (avec ses champs en plus : prix).
+    .map(({ r }) => ({ produit: r.produit, variante: (r.variante?.variante as VarianteDe<T> | undefined) ?? null }))
 }
