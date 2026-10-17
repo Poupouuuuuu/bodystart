@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { searchProducts } from '@/lib/shopify'
-import { availableFirst } from '@/lib/product-order'
+import { rechercherProduits } from '@/lib/shopify/recherche'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import SearchBar from '@/components/ui/SearchBar'
 import type { ShopifyProduct } from '@/lib/shopify/types'
@@ -16,6 +15,9 @@ export const metadata: Metadata = buildPageMetadata({
   noIndex: true,
 })
 
+/** Plafond d'affichage (une recherche très large, comme « eric favre », reste lisible). */
+const MAX_RESULTATS = 96
+
 const BTN_PRIMARY =
   'inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-fresh-deep'
 
@@ -29,17 +31,18 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const q = rawQ?.trim() ?? ''
 
   let results: ShopifyProduct[] = []
+  let count = 0
   if (q) {
     try {
-      // Pertinence Shopify conservée, mais épuisés relégués en fin de résultats
-      // (même règle transverse que /products et /categories).
-      results = availableFirst(await searchProducts(q, 48))
+      // Moteur du site (lib/recherche) : accents ignorés, rayon nommé
+      // d'abord, en stock avant les ruptures, accessoires après.
+      const r = await rechercherProduits(q, MAX_RESULTATS)
+      results = r.produits
+      count = r.total
     } catch {
       // Shopify non configuré
     }
   }
-
-  const count = results.length
 
   return (
     <div className="min-h-screen bg-canvas">
