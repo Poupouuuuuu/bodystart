@@ -134,7 +134,11 @@ describe('synonymes', () => {
 
   it('bcaa et eaa → rayon acides aminés, les fiches qui le nomment d’abord', () => {
     const bcaa = rechercher(CAT, 'bcaa')
-    expect(bcaa.slice(0, 5).every((p) => /bcaa/i.test(p.title))).toBe(true)
+    // Toutes les fiches qui portent « BCAA » dans le titre, avant « Acides
+    // Aminés Essentiels - EAA » (trouvée par l'élargissement, vu en preview)
+    const avecBcaa = bcaa.filter((p) => /bcaa/i.test(p.title) && p.availableForSale)
+    expect(bcaa.slice(0, avecBcaa.length)).toEqual(avecBcaa)
+    expect(bcaa.map((p) => p.handle)).toContain('acides-amines-essentiels-eaa')
     expect(bcaa.map((p) => p.handle)).toContain('hit-eaa')
     const eaa = rechercher(CAT, 'eaa')
     expect(/eaa/i.test(eaa[0].title)).toBe(true)

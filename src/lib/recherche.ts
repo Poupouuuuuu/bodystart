@@ -138,8 +138,7 @@ interface Trouve {
   exact: boolean
 }
 
-function chercherMot(f: FicheIndexee, mot: string): Trouve {
-  const termes = [mot, ...(SYNONYMES[mot] ?? []), ...(ELARGISSEMENTS[mot] ?? [])]
+function chercherTermes(f: FicheIndexee, termes: string[]): Trouve {
   const champs: [string[], number][] = [
     [f.titre, NIVEAU.titre],
     [f.categorie, NIVEAU.categorie],
@@ -158,6 +157,15 @@ function chercherMot(f: FicheIndexee, mot: string): Trouve {
     if (trouve) return { niveau, exact }
   }
   return { niveau: 0, exact: false }
+}
+
+function chercherMot(f: FicheIndexee, mot: string): Trouve {
+  const direct = chercherTermes(f, [mot, ...(SYNONYMES[mot] ?? [])])
+  const elargi = ELARGISSEMENTS[mot] ? chercherTermes(f, ELARGISSEMENTS[mot]) : { niveau: 0, exact: false }
+  // Un élargissement ne vaut jamais un titre : « Acides Aminés Essentiels »
+  // ne passe pas devant les BCAA sur « bcaa ».
+  const plafonne = { niveau: Math.min(elargi.niveau, NIVEAU.categorie), exact: false }
+  return direct.niveau >= plafonne.niveau ? direct : plafonne
 }
 
 /**
