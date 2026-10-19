@@ -43,9 +43,9 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
     css: CSS_HALLOWEEN,
     VoileHero: VoileHeroHalloween,
     accentTitre: 'text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_14px_rgba(232,113,26,0.35)]',
-    // Orange plus clair que l'accent pour le petit texte : 6:1 sur le vert
-    // sapin (l'accent #E8711A n'y fait que 4:1, sous le seuil AA).
-    accentSurTitre: 'text-[#F6A456]',
+    // Orange clair pour le petit texte : AA mesuré sur la photo voilée
+    // (l'accent #E8711A n'atteint pas 4,5:1 sur le vert sapin).
+    accentSurTitre: 'text-[#FFB46B]',
     traitSurTitre: 'mr-3 inline-block h-px w-8 -translate-y-[0.3em] bg-[#E8711A] align-middle',
     accentEtoiles: 'fill-[#E8711A] text-[#E8711A]',
     Separateur: SeparateurHalloween,

@@ -6,7 +6,9 @@ import { ChauveSouris } from './formes'
 // seulement ses voiles par un vert sapin (#1E3A2C) et pose 3 chauves-souris
 // qui traversent le côté droit de la photo. Rien d'autre sur la photo.
 //
-// Voiles : vertical sous lg (le texte occupe presque toute la hauteur),
+// Voiles : vertical sous lg, en pixels depuis le haut (le texte commence
+// toujours à 144 px, pt-36, quelle que soit la hauteur du bloc ; le haut de la
+// photo reste dégagé),
 // latéral à partir de lg (plus de 90 % sur le tiers gauche, effacé vers
 // 70 % de la largeur), plus un fond bas pour les chiffres et la carte
 // boutique. Le vert sapin est plus clair que le voile habituel : opacité
@@ -28,7 +30,7 @@ export default function VoileHeroHalloween() {
     <>
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(to_top,rgba(30,58,44,0.97)_0%,rgba(30,58,44,0.94)_50%,rgba(30,58,44,0.92)_72%,rgba(30,58,44,0.88)_82%,rgba(30,58,44,0.4)_93%,rgba(30,58,44,0.15)_100%)] lg:hidden"
+        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(30,58,44,0.15)_0px,rgba(30,58,44,0.5)_84px,rgba(30,58,44,0.92)_132px,rgba(30,58,44,0.94)_60%,rgba(30,58,44,0.97)_100%)] lg:hidden"
       />
       <div
         aria-hidden="true"
@@ -36,7 +38,7 @@ export default function VoileHeroHalloween() {
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 hidden bg-[linear-gradient(to_top,rgba(30,58,44,0.97)_0%,rgba(30,58,44,0.88)_26%,rgba(30,58,44,0)_50%)] lg:block"
+        className="absolute inset-0 hidden bg-[linear-gradient(to_top,rgba(30,58,44,0.97)_0%,rgba(30,58,44,0.93)_30%,rgba(30,58,44,0)_55%)] lg:block"
       />
       {/* Chauves-souris : bande du haut sous lg, côté droit de la photo
           au-dessus (texte à gauche, jamais survolé). */}
