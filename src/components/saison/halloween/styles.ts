@@ -9,9 +9,10 @@
 import { TOILE } from '@/lib/saison'
 
 // Icônes en SVG dans le CSS (aucun fichier image) : citrouille et chauve-souris
-// des titres, chauves-souris des bandeaux de page.
+// des titres, chauves-souris des bandeaux de page. Encodage minimal (seuls
+// < > # % " sont échappés) : le CSS part dans chaque page pendant la période.
 const svg = (contenu: string, viewBox: string) =>
-  `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='${viewBox}'>${contenu}</svg>`)}")`
+  `url("data:image/svg+xml,${`<svg xmlns='http://www.w3.org/2000/svg' viewBox='${viewBox}'>${contenu}</svg>`.replace(/[<>#%"]/g, encodeURIComponent)}")`
 const CITROUILLE = svg(
   "<path fill='#3B7A3F' d='M24.6 9.4c-.5-3 .5-5.6 3-7.2l1 1.3c-1.9 1.3-2.5 3.2-2.1 5.7z'/>" +
     "<path fill='#E8711A' d='M24 10c-3.4-2-9.4-1.8-12.6 1.4C7.6 15.2 6.6 23 9.6 29c2.6 5.2 8.2 7.2 14.4 6 6.2 1.2 11.8-.8 14.4-6 3-6 2-13.8-1.8-17.6C33.4 8.2 27.4 8 24 10z'/>" +
@@ -20,11 +21,13 @@ const CITROUILLE = svg(
 )
 const AILES =
   'M16 4c.7 0 1.2.6 1.4 1.3l.5-1.6.5 1.7c1.6-1.7 4.6-3.1 8.6-2.6-1.4.7-2.3 2-2.3 3.4 1.6-.4 3.4.1 4.8 1.3-1.7-.1-3.2.7-3.9 2.1-1.2-.9-2.9-1-4.2-.2.3 1.3-.1 2.8-1.2 3.9-.8-1.3-2.4-2.1-4.2-2.1s-3.4.8-4.2 2.1c-1.1-1.1-1.5-2.6-1.2-3.9-1.3-.8-3-.7-4.2.2-.7-1.4-2.2-2.2-3.9-2.1 1.4-1.2 3.2-1.7 4.8-1.3 0-1.4-.9-2.7-2.3-3.4 4-.5 7 .9 8.6 2.6l.5-1.7.5 1.6C14.8 4.6 15.3 4 16 4z'
-const chauveSouris = (couleur: string) => svg(`<path fill='${couleur}' d='${AILES}'/>`, '2 2 28 13')
+// Masque : prend la couleur de fond de l'élément (nuit ou orange).
+const CHAUVE_SOURIS = svg(`<path d='${AILES}'/>`, '2 2 28 13')
 const CHAUVES_SOURIS = svg(
-  `<g fill='#F6A456'><path transform='translate(58 0) scale(1.5)' d='${AILES}'/>` +
-    `<path transform='translate(4 20) scale(1)' opacity='.8' d='${AILES}'/>` +
-    `<path transform='translate(96 26) scale(.7)' opacity='.65' d='${AILES}'/></g>`,
+  `<defs><path id='a' d='${AILES}'/></defs><g fill='#F6A456'>` +
+    "<use href='#a' transform='translate(58 0) scale(1.5)'/>" +
+    "<use href='#a' transform='translate(4 20)' opacity='.8'/>" +
+    "<use href='#a' transform='translate(96 26) scale(.7)' opacity='.65'/></g>",
   '0 0 120 48'
 )
 const masqueToile = (position: string) =>
@@ -77,18 +80,18 @@ export const CSS_HALLOWEEN = `
 @keyframes hw-halo{from{opacity:.72;transform:scale(.97)}to{opacity:1;transform:scale(1.03)}}
 @keyframes hw-luciole{0%,100%{opacity:.08;transform:translate3d(0,4px,0)}50%{opacity:1;transform:translate3d(0,-7px,0)}}
 /* Icônes partagées, déclarées une fois. */
-:root{--hw-toile:${TOILE};--hw-citrouille:${CITROUILLE}}
+:root{--hw-toile:${TOILE};--hw-citrouille:${CITROUILLE};--hw-chauve-souris:${CHAUVE_SOURIS}}
 /* Titres de section (saison-titre, saison-mot) : un mot en orange, une
    citrouille ou une chauve-souris au bout, collée au dernier mot (espace
    insécable) : jamais seule sur une ligne. Orange foncé #B4500E sur fond
    clair (4,6:1), orange #E8711A sur fond nuit. */
 .saison-mot{color:#B4500E}
 .saison-titre::after{content:"\\00a0";padding-right:.62em;background:var(--hw-citrouille) right center/.58em .58em no-repeat}
-.saison-titre[data-saison-icone=chauve-souris]::after{padding-right:.98em;background-image:${chauveSouris('#14101F')};background-size:.95em .45em}
+.saison-titre[data-saison-icone=chauve-souris]::after{padding-right:.98em;background:#14101F;-webkit-mask:var(--hw-chauve-souris) right center/.95em .45em no-repeat;mask:var(--hw-chauve-souris) right center/.95em .45em no-repeat}
 /* Sections en fond nuit (saison-nuit) : texte clair, cartes inchangées. */
 section.saison-nuit{background-color:#14101F}
 .saison-nuit .saison-mot{color:#E8711A}
-.saison-nuit .saison-titre[data-saison-icone=chauve-souris]::after{background-image:${chauveSouris('#E8711A')}}
+.saison-nuit .saison-titre[data-saison-icone=chauve-souris]::after{background:#E8711A}
 .saison-nuit .saison-nuit-titre{color:#FAF8F3}
 .saison-nuit .saison-nuit-libelle{color:rgba(255,255,255,.78);border-color:rgba(255,255,255,.22)}
 .saison-nuit .saison-nuit-lien{color:#FAF8F3;border-color:rgba(255,255,255,.32)}
