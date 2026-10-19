@@ -38,7 +38,12 @@ export default function SelectionSaison({
 }: SelectionSaisonProps) {
   if (packs.length + produits.length === 0) return null
   return (
-    <section className={`relative overflow-hidden py-16 md:py-24 ${fond}`} aria-labelledby="selection-saison">
+    // content-visibility : sous la ligne de flottaison, la section n'est mise
+    // en page qu'à l'approche (premier affichage de l'accueil plus rapide).
+    <section
+      className={`relative overflow-hidden py-16 [contain-intrinsic-size:auto_1500px] [content-visibility:auto] md:py-24 ${fond}`}
+      aria-labelledby="selection-saison"
+    >
       <div className="container relative">
         <div className="mb-10 flex flex-col gap-6 md:mb-12 md:flex-row md:items-end md:justify-between">
           <div className="max-w-[640px]">
@@ -48,7 +53,7 @@ export default function SelectionSaison({
               className="mt-3 font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] text-canvas md:text-[48px]"
             >
               {titre}{' '}
-              <span className="text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_28px_rgba(232,113,26,0.35)]">
+              <span className="text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_14px_rgba(232,113,26,0.35)]">
                 {motTheme}
               </span>
             </h2>

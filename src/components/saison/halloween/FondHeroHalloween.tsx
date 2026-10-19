@@ -43,7 +43,7 @@ export default function FondHeroHalloween() {
   return (
     <div aria-hidden="true" data-anim-saison="" className="pointer-events-none absolute inset-0 overflow-hidden">
       <div className="hw-ciel absolute inset-0" />
-      <div className="hw-etoiles absolute inset-0" />
+      <div className="hw-etoiles absolute inset-x-0 top-0 h-[60%]" />
 
       {/* Lune : en haut à droite. Sur mobile, elle tient dans les 144 px de
           marge haute du bloc (pt-36) : jamais sous le texte (crème sur orange,
@@ -61,7 +61,6 @@ export default function FondHeroHalloween() {
       ))}
 
       <div className="hw-brume" />
-      <div className="hw-brume hw-brume-2" />
 
       {/* Voile de lisibilité du texte, sous les lucioles. */}
       <div className="hw-voile absolute inset-0" />

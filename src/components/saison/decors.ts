@@ -39,7 +39,7 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
     css: CSS_HALLOWEEN,
     FondHero: FondHeroHalloween,
     fondHero: 'bg-[#14101F]',
-    accentTitre: 'text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_32px_rgba(232,113,26,0.4)]',
+    accentTitre: 'text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_14px_rgba(232,113,26,0.35)]',
     Separateur: SeparateurHalloween,
     Frise: FriseHalloween,
     selection: {
