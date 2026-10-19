@@ -88,17 +88,21 @@ export default async function HomePage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const coffrets = await coffretsDuMoment(searchParams)
-  const meilleures = await meilleuresVentes()
-  // Déco de saison (metafield bodystart.saison, components/saison) : haut de
-  // page, sélection et séparateurs pendant la période, rien sinon.
-  const periode = periodeActive(await getSaison(), new Date())
+  // Lectures Shopify en parallèle (régénération ISR plus courte). Les packs ne
+  // servent qu'à la sélection de saison, ignorés hors période.
+  const [coffrets, meilleures, periode, collectionPacks] = await Promise.all([
+    coffretsDuMoment(searchParams),
+    meilleuresVentes(),
+    getSaison().then((saison) => periodeActive(saison, new Date())),
+    getCollectionByHandle('packs', 24).catch(() => null),
+  ])
+  // Déco de saison (metafield bodystart.saison, components/saison) : voile du
+  // haut de page, sélection et séparateurs pendant la période, rien sinon.
   const decor = decorSaison(periode?.theme)
   // Packs : collection `packs`, comme la page /packs (mêmes cartes). Les
   // meilleures ventes proposées à côté ne répètent ni le bloc « Meilleures
   // ventes » ni un produit déjà contenu dans un pack.
-  const packs =
-    periode && decor ? ((await getCollectionByHandle('packs', 24).catch(() => null))?.products?.nodes ?? []) : []
+  const packs = periode && decor ? (collectionPacks?.products?.nodes ?? []) : []
   const selection =
     periode && decor
       ? composerSelection(packs, meilleures, [
