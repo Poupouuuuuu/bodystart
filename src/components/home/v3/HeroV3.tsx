@@ -27,9 +27,9 @@ import type { DecorSaisonPremium } from '@/components/saison/decors'
  *   4G lent + CPU ×4).
  *
  * Saison décorée (components/saison, 19/10/2026) : même photo, chargée de la
- * même façon ; seuls les voiles changent (ceux du thème) et quelques accents
- * de couleur (sur-titre, étoiles, 2e ligne du titre). Textes et boutons
- * inchangés.
+ * même façon ; seuls les voiles changent (ceux du thème), le cadrage sous lg
+ * et quelques accents de couleur (sur-titre, étoiles, 2e ligne du titre).
+ * Textes et boutons inchangés.
  */
 export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPremium | null }) {
   const rating = await getGoogleRating()
@@ -45,7 +45,7 @@ export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPrem
         fetchPriority="high"
         quality={72}
         sizes="(max-width: 640px) 70vw, 100vw"
-        className="object-cover object-[50%_38%]"
+        className={`object-cover object-[50%_38%] ${decor ? decor.cadragePhotoMobile : ''}`}
       />
       {VoileHero ? (
         <VoileHero />
@@ -137,7 +137,8 @@ export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPrem
           <div className="hero-rise hero-rise-3 lg:justify-self-end">
             <div className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl">
               <div className="rounded-[calc(1.6rem-0.375rem)] bg-white/[0.08] px-5 py-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/60">
+                {/* Blanc 75 % : 10 px, il faut 4,5:1 sur le verre (60 % donnait 3,6:1). */}
+                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/75">
                   La boutique
                 </p>
                 <p className="mt-1.5 font-display text-[21px] font-bold leading-tight text-canvas">
