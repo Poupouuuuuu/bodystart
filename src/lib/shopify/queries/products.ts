@@ -250,16 +250,11 @@ export const GET_PRODUCT_BY_HANDLE = `
   }
 `
 
-// Featured = 8 meilleures ventes, AVEC les composants de bundle (pour que
-// les cartes packs affichent les pots empiles en cross-sell — CrossSellV2
-// utilise getFeaturedProducts() en fallback).
-// Requete dediee (pas le fragment ProductCard partage) : on n'ajoute PAS
-// les composants au fragment global, sinon la requete catalogue (first:250)
-// exploserait le cout Storefront. Ici first:8 → cout maitrise.
-export const GET_FEATURED_PRODUCTS = `
-  query GetFeaturedProducts {
-    products(first: 20, sortKey: BEST_SELLING) {
-      nodes {
+// Champs des cartes de l'accueil (meilleures ventes, vedettes), AVEC les
+// composants de bundle (cross-sell). Requêtes dédiées (pas le fragment
+// ProductCard partagé) : on n'ajoute PAS les composants au fragment global,
+// sinon la requête catalogue (first:250) exploserait le coût Storefront.
+const CHAMPS_CARTE_ACCUEIL = `
         id
         handle
         title
@@ -352,6 +347,35 @@ export const GET_FEATURED_PRODUCTS = `
             }
           }
         }
+`
+
+// Featured = 20 meilleures ventes (CrossSellV2 l'utilise en repli).
+export const GET_FEATURED_PRODUCTS = `
+  query GetFeaturedProducts {
+    products(first: 20, sortKey: BEST_SELLING) {
+      nodes {
+${CHAMPS_CARTE_ACCUEIL}
+      }
+    }
+  }
+`
+
+// Produits mis en avant sur l'accueil (metafield bodystart.accueil_vedettes),
+// par handle : un alias par produit, dans l'ordre. null pour un produit non
+// publié sur le site (Storefront).
+export function requeteProduitsParHandles(n: number): string {
+  const variables = Array.from({ length: n }, (_, i) => `$h${i}: String!`).join(', ')
+  const produits = Array.from({ length: n }, (_, i) => `p${i}: product(handle: $h${i}) { ${CHAMPS_CARTE_ACCUEIL} }`).join('\n')
+  return `query ProduitsAccueil(${variables}) { ${produits} }`
+}
+
+// Mêmes champs, par identifiant (complément des vedettes : meilleures ventes
+// en chiffre d'affaires, lib/shopify/vedettes). null si non publié.
+export const GET_PRODUITS_PAR_IDS = `
+  query ProduitsParIds($ids: [ID!]!) {
+    nodes(ids: $ids) {
+      ... on Product {
+${CHAMPS_CARTE_ACCUEIL}
       }
     }
   }

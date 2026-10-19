@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { familyOf, homeBestSellers, isAutoPromotable, pickComplements } from './merchandising'
+import { familyOf, isAutoPromotable, pickComplements } from './merchandising'
 
 // Types et marques réels du catalogue (08/10/2026).
 const p = (handle: string, productType: string, vendor = 'DY Nutrition', tags: string[] = [], availableForSale = true) => ({
@@ -89,24 +89,5 @@ describe('pickComplements, choix varié par fiche', () => {
   it('famille plus courte que parmi : pas de trou', () => {
     const out = pickComplements(wheys[0], [p('creatine-seule', 'Créatine')], 4, 3)
     expect(out.map((x) => x.handle)).toEqual(['creatine-seule'])
-  })
-})
-
-describe('homeBestSellers', () => {
-  it('Whey Native Protimuscle en tête, marques exclues retirées', () => {
-    const out = homeBestSellers(POOL).map((x) => x.handle)
-    expect(out[0]).toBe('whey-native-protimuscle')
-    expect(out).not.toContain('iso-zero-100-whey')
-    expect(out).not.toContain('french-pump')
-    expect(out.filter((h) => h === 'whey-native-protimuscle')).toHaveLength(1)
-  })
-  it('carte mise en avant hors des meilleures ventes : ajoutée en tête', () => {
-    const featured = p('whey-native-protimuscle', 'Protéines', 'Nutrimuscle')
-    const out = homeBestSellers([POOL[6], POOL[10]], featured).map((x) => x.handle)
-    expect(out).toEqual(['whey-native-protimuscle', 'creatine-dy', 'cream-of-rice'])
-  })
-  it('carte mise en avant épuisée : pas en tête', () => {
-    const featured = p('whey-native-protimuscle', 'Protéines', 'Nutrimuscle', [], false)
-    expect(homeBestSellers([POOL[6]], featured).map((x) => x.handle)).toEqual(['creatine-dy'])
   })
 })

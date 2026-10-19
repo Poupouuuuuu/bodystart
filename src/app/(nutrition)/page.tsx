@@ -10,8 +10,8 @@ import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import Reveal from '@/components/ui/Reveal'
-import { getCoffrets, getCollectionByHandle, getFeaturedProducts, getProductByHandle } from '@/lib/shopify'
-import { HOME_FEATURED_HANDLE, homeBestSellers } from '@/lib/merchandising'
+import { getCoffrets, getCollectionByHandle } from '@/lib/shopify'
+import { getVedettesAccueil } from '@/lib/shopify/vedettes'
 import { buildPageMetadata } from '@/lib/seo'
 import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 import CoffretsNoelV3 from '@/components/home/v3/CoffretsNoelV3'
@@ -21,7 +21,6 @@ import { getSaison } from '@/lib/shopify/saison'
 import { composerSelection, MEILLEURES_VENTES_AFFICHEES } from '@/lib/selection-saison'
 import { decorSaison } from '@/components/saison/decors'
 import SelectionSaison from '@/components/saison/SelectionSaison'
-import type { ShopifyProduct } from '@/lib/shopify/types'
 
 // REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
 // Ordre des sections : §B.Home.1-8 (avis retire, cf. site-rewrite-copy-v1.md §3.6)
@@ -47,31 +46,17 @@ export const metadata: Metadata = {
 // placeholder "BS" sur les produits ajoutés/imagés après le dernier déploiement.
 export const revalidate = 3600
 
-// Meilleures ventes : rendues avec la page, SANS <Suspense> (08/10/2026). La
-// page est en ISR (HTML régénéré au plus toutes les heures, servi depuis le
-// cache) : le streaming n'apportait rien au visiteur et envoyait la section
-// dans un bloc caché, invisible sans JS. Lues une fois : le bloc « Meilleures
-// ventes » et la sélection de saison (sans doublon entre les deux).
 /** Hors saison décorée : pas de séparateur entre les sections. */
 function SansSeparateur() {
   return null
 }
 
-async function meilleuresVentes(): Promise<ShopifyProduct[]> {
-  try {
-    // Meilleures ventes sans les marques exclues, carte « Best-seller » choisie
-    // à la main en tête (lib/merchandising) ; lue à part si elle n'est pas
-    // dans les meilleures ventes du moment.
-    const best = await getFeaturedProducts()
-    const featured = best.some((p) => p.handle === HOME_FEATURED_HANDLE)
-      ? null
-      : await getProductByHandle(HOME_FEATURED_HANDLE).catch(() => null)
-    return homeBestSellers(best, featured)
-  } catch {
-    // Sans cles API, section vide
-    return []
-  }
-}
+// Produits mis en avant (metafield bodystart.accueil_vedettes, lib/vedettes) :
+// rendus avec la page, SANS <Suspense> (08/10/2026 : en ISR, le streaming
+// envoyait la section dans un bloc caché, invisible sans JS). Lus une fois
+// pour le bloc « Ce qui part vite » (5 cartes) et la sélection de saison
+// (3 produits de plus, sans doublon) : 8 places.
+const PLACES_VEDETTES = MEILLEURES_VENTES_AFFICHEES + 3
 
 // Coffrets de Noël : du 2/11 au 24/12, heure de Paris (lib/coffrets). Hors
 // production, ?coffrets_date=2026-11-10 force la date (la page devient alors
@@ -99,9 +84,9 @@ export default async function HomePage({
 }) {
   // Lectures Shopify en parallèle (régénération ISR plus courte). Les packs ne
   // servent qu'à la sélection de saison, ignorés hors période.
-  const [coffrets, meilleures, periode, collectionPacks, variante] = await Promise.all([
+  const [coffrets, vedettes, periode, collectionPacks, variante] = await Promise.all([
     coffretsDuMoment(searchParams),
-    meilleuresVentes(),
+    getVedettesAccueil(PLACES_VEDETTES),
     getSaison().then((saison) => periodeActive(saison, new Date())),
     getCollectionByHandle('packs', 24).catch(() => null),
     varianteHero(searchParams),
@@ -111,13 +96,13 @@ export default async function HomePage({
   // sinon.
   const decor = decorSaison(periode?.theme)
   // Packs : collection `packs`, comme la page /packs (mêmes cartes). Les
-  // meilleures ventes proposées à côté ne répètent ni le bloc « Meilleures
-  // ventes » ni un produit déjà contenu dans un pack.
+  // vedettes proposées à côté ne répètent ni le bloc « Ce qui part vite » ni
+  // un produit déjà contenu dans un pack.
   const packs = periode && decor ? (collectionPacks?.products?.nodes ?? []) : []
   const selection =
     periode && decor
-      ? composerSelection(packs, meilleures, [
-          ...meilleures.slice(0, MEILLEURES_VENTES_AFFICHEES).map((p) => p.handle),
+      ? composerSelection(packs, vedettes, [
+          ...vedettes.slice(0, MEILLEURES_VENTES_AFFICHEES).map((p) => p.handle),
           ...packs.flatMap((p) =>
             p.variants.nodes.flatMap((v) => v.components?.nodes.map((c) => c.productVariant.product.handle) ?? [])
           ),
@@ -147,10 +132,10 @@ export default async function HomePage({
 
       {/* 3. Best-sellers (data Shopify, streame) */}
       <Reveal>
-        <BestSellersV3 products={meilleures} />
+        <BestSellersV3 products={vedettes} />
       </Reveal>
 
-      {/* 3 ter. Sélection de saison (packs puis meilleures ventes), pendant
+      {/* 3 ter. Sélection de saison (packs puis vedettes), pendant
              une période décorée seulement. Après les meilleures ventes et pas
              sous le haut de page : ses images partaient avec la photo (LCP
              mobile +0,6 s mesuré le 19/10/2026). */}

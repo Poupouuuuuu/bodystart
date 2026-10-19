@@ -8,13 +8,14 @@ import type { ReactNode } from 'react'
  *   - les cartes /packs (PackCardV2)          → variant="card"
  *   - la vignette panier (CartDrawer)         → variant="thumb"
  *
- * Les bundles n'ont pas d'image propre (volontaire) : on construit le visuel
- * à partir des images des composants. On évite ainsi de dupliquer le markup
- * "pots empilés sur fond végétal" dans chaque contexte.
+ * Depuis le 19/10/2026, les packs ont leur propre image (PNG détouré, pots
+ * aux proportions réelles, préparée par Claude Gestion) : la pile de pots
+ * composée ici donnait de fausses proportions (une créatine 400 g plus
+ * grosse qu'une whey 1 kg). L'image du pack passe donc en premier.
  *
  * Le composant gère trois cas, dans l'ordre :
- *   1. images de composants présentes → pile sur fond végétal
- *   2. sinon fallbackImage (featuredImage du bundle si elle existe) → image seule
+ *   1. imagePack (image principale du pack) → image seule sur fond végétal
+ *   2. sinon images des composants → pile sur fond végétal
  *   3. sinon placeholder (icône Package par défaut)
  */
 export interface BundleCompositeImage {
@@ -29,8 +30,8 @@ interface BundleCompositeProps {
   className?: string
   /** 'card' = grandes cartes /packs ; 'thumb' = vignette panier (compacte). */
   variant?: 'card' | 'thumb'
-  /** Image de repli si aucun composant (rare : bundle avec featuredImage). */
-  fallbackImage?: BundleCompositeImage | null
+  /** Image principale du pack : prioritaire sur la pile des composants. */
+  imagePack?: BundleCompositeImage | null
   /** Placeholder ultime si ni composants ni fallback. */
   placeholder?: ReactNode
   sizes?: string
@@ -44,7 +45,7 @@ export default function BundleComposite({
   alt,
   className = '',
   variant = 'card',
-  fallbackImage = null,
+  imagePack = null,
   placeholder,
   sizes,
   priority = false,
@@ -89,7 +90,23 @@ export default function BundleComposite({
       className={`relative w-full h-full bg-cover bg-bottom bg-no-repeat overflow-hidden ${className}`}
       style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
     >
-      {n > 0 ? (
+      {imagePack ? (
+        <div className={`absolute inset-0 flex items-end justify-center ${padClass}`}>
+          <Image
+            src={imagePack.url}
+            alt={imagePack.altText ?? alt}
+            width={intrinsic}
+            height={intrinsic}
+            sizes={sizes}
+            priority={priority}
+            className={`relative z-10 w-auto ${
+              isThumb ? 'h-[80%]' : 'h-[85%]'
+            } object-contain ${isThumb ? 'drop-shadow-sm' : 'drop-shadow-2xl'} ${
+              isThumb ? '' : 'transition-transform duration-500 group-hover:scale-105'
+            }`}
+          />
+        </div>
+      ) : n > 0 ? (
         <div className={`absolute inset-0 flex items-end justify-center ${padClass}`}>
           <div
             className={`flex items-end justify-center w-full ${overlap} ${
@@ -110,22 +127,6 @@ export default function BundleComposite({
               />
             ))}
           </div>
-        </div>
-      ) : fallbackImage ? (
-        <div className={`absolute inset-0 flex items-end justify-center ${padClass}`}>
-          <Image
-            src={fallbackImage.url}
-            alt={fallbackImage.altText ?? alt}
-            width={intrinsic}
-            height={intrinsic}
-            sizes={sizes}
-            priority={priority}
-            className={`relative z-10 w-auto ${
-              isThumb ? 'h-[80%]' : 'h-[85%]'
-            } object-contain ${isThumb ? 'drop-shadow-sm' : 'drop-shadow-2xl'} ${
-              isThumb ? '' : 'transition-transform duration-500 group-hover:scale-105'
-            }`}
-          />
         </div>
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">

@@ -4,7 +4,6 @@ import { ArrowRight } from 'lucide-react'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import { cn, formatPrice } from '@/lib/utils'
-import { HOME_FEATURED_HANDLE } from '@/lib/merchandising'
 import { cardPriceOf } from '@/lib/product-price'
 import { altImage, altProduit } from '@/lib/alt-produit'
 
@@ -107,18 +106,10 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
 export default function BestSellersV3({ products }: BestSellersV3Props) {
   const items = products.slice(0, 5)
   if (items.length === 0) return null
-  // La grande tuile met en scène un produit qui la remplit : la carte choisie
-  // à la main (HOME_FEATURED_HANDLE, 08/10/2026), sinon un produit tagué
-  // best-seller, sinon le plus cher des 5 (un pot de whey ou de créatine, pas
-  // une barre à 2,90 € perdue dans 600 px de fond végétal).
-  // Un produit épuisé ne prend la grande tuile que s'il n'y a rien d'autre.
-  const priceOf = (p: ShopifyProduct) => parseFloat(cardPriceOf(p)?.price.amount ?? '0')
-  const enStock = items.filter((p) => p.availableForSale !== false)
-  const candidats = enStock.length ? enStock : items
-  const featured =
-    candidats.find((p) => p.handle === HOME_FEATURED_HANDLE) ??
-    candidats.find((p) => (p.tags ?? []).some((t) => /best.?seller/i.test(t))) ??
-    [...candidats].sort((a, b) => priceOf(b) - priceOf(a))[0]
+  // Ordre imposé par le metafield bodystart.accueil_vedettes (19/10/2026) :
+  // le premier produit prend la grande tuile, les 4 suivants les cartes. Un
+  // produit épuisé ne prend la grande tuile que s'il n'y a rien d'autre.
+  const featured = items.find((p) => p.availableForSale !== false) ?? items[0]
   const rest = items.filter((p) => p.id !== featured.id).slice(0, 4)
 
   return (
