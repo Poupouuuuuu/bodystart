@@ -79,11 +79,12 @@ export const CSS_HALLOWEEN = `
 /* Icônes partagées, déclarées une fois. */
 :root{--hw-toile:${TOILE};--hw-citrouille:${CITROUILLE}}
 /* Titres de section (saison-titre, saison-mot) : un mot en orange, une
-   citrouille ou une chauve-souris au bout. Orange foncé #B4500E sur fond
+   citrouille ou une chauve-souris au bout, collée au dernier mot (espace
+   insécable) : jamais seule sur une ligne. Orange foncé #B4500E sur fond
    clair (4,6:1), orange #E8711A sur fond nuit. */
 .saison-mot{color:#B4500E}
-.saison-titre::after{content:"";display:inline-block;width:.6em;height:.58em;margin-left:.22em;vertical-align:-.02em;background:var(--hw-citrouille) center/contain no-repeat}
-.saison-titre[data-saison-icone=chauve-souris]::after{width:.95em;height:.45em;vertical-align:.08em;background-image:${chauveSouris('#14101F')}}
+.saison-titre::after{content:"\\00a0";padding-right:.62em;background:var(--hw-citrouille) right center/.58em .58em no-repeat}
+.saison-titre[data-saison-icone=chauve-souris]::after{padding-right:.98em;background-image:${chauveSouris('#14101F')};background-size:.95em .45em}
 /* Sections en fond nuit (saison-nuit) : texte clair, cartes inchangées. */
 section.saison-nuit{background-color:#14101F}
 .saison-nuit .saison-mot{color:#E8711A}
@@ -100,8 +101,8 @@ section.saison-nuit{background-color:#14101F}
    toile dans un coin, 3 chauves-souris immobiles. */
 .saison-bandeau{position:relative;background-color:#14101F;box-shadow:0 0 0 100vmax #14101F;clip-path:inset(0 -100vmax);padding-bottom:2.25rem;margin-bottom:1.75rem}
 .saison-bandeau-haut{clip-path:inset(-100vmax -100vmax 0)}
-.saison-bandeau-haut::before{top:-28px}
-.saison-bandeau-haut::after{top:-30px;width:clamp(72px,10vw,150px)}
+.saison-bandeau.saison-bandeau-haut::before{top:-28px}
+.saison-bandeau.saison-bandeau-haut::after{top:-30px;width:clamp(72px,10vw,150px)}
 .saison-bandeau h1,.saison-bandeau .text-spruce{color:#FAF8F3}
 .saison-bandeau p,.saison-bandeau nav{color:rgba(255,255,255,.8)}
 .saison-bandeau a{color:#FFB46B}

@@ -89,7 +89,7 @@ export default function ObjectifsV3() {
             Par objectif
           </span>
           <h2 className="saison-titre mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px]">
-            Tu cherches <span className="saison-mot">quoi</span> ?
+            Tu cherches <span className="saison-mot">quoi</span>&nbsp;?
           </h2>
         </div>
 
