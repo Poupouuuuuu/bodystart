@@ -16,6 +16,12 @@ import { buildPageMetadata } from '@/lib/seo'
 import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 import CoffretsNoelV3 from '@/components/home/v3/CoffretsNoelV3'
 import { coffretsVisibles, dateCoffrets } from '@/lib/coffrets'
+import { finPeriode, periodeActive } from '@/lib/saison'
+import { getCartesCollection, getSaison } from '@/lib/shopify/saison'
+import { composerSelection, MEILLEURES_VENTES_AFFICHEES } from '@/lib/selection-saison'
+import { decorSaison } from '@/components/saison/decors'
+import SelectionSaison from '@/components/saison/SelectionSaison'
+import type { ShopifyProduct } from '@/lib/shopify/types'
 
 // REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
 // Ordre des sections : §B.Home.1-8 (avis retire, cf. site-rewrite-copy-v1.md §3.6)
@@ -44,9 +50,14 @@ export const revalidate = 3600
 // Meilleures ventes : rendues avec la page, SANS <Suspense> (08/10/2026). La
 // page est en ISR (HTML régénéré au plus toutes les heures, servi depuis le
 // cache) : le streaming n'apportait rien au visiteur et envoyait la section
-// dans un bloc caché, invisible sans JS.
-async function BestSellersAsync() {
-  let products: import('@/lib/shopify/types').ShopifyProduct[] = []
+// dans un bloc caché, invisible sans JS. Lues une fois : le bloc « Meilleures
+// ventes » et la sélection de saison (sans doublon entre les deux).
+/** Hors saison décorée : pas de séparateur entre les sections. */
+function SansSeparateur() {
+  return null
+}
+
+async function meilleuresVentes(): Promise<ShopifyProduct[]> {
   try {
     // Meilleures ventes sans les marques exclues, carte « Best-seller » choisie
     // à la main en tête (lib/merchandising) ; lue à part si elle n'est pas
@@ -55,11 +66,11 @@ async function BestSellersAsync() {
     const featured = best.some((p) => p.handle === HOME_FEATURED_HANDLE)
       ? null
       : await getProductByHandle(HOME_FEATURED_HANDLE).catch(() => null)
-    products = homeBestSellers(best, featured)
+    return homeBestSellers(best, featured)
   } catch {
     // Sans cles API, section vide
+    return []
   }
-  return <BestSellersV3 products={products} />
 }
 
 // Coffrets de Noël : du 2/11 au 24/12, heure de Paris (lib/coffrets). Hors
@@ -78,10 +89,24 @@ export default async function HomePage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const coffrets = await coffretsDuMoment(searchParams)
+  const meilleures = await meilleuresVentes()
+  // Déco de saison (metafield bodystart.saison, components/saison) : haut de
+  // page, sélection et séparateurs pendant la période, rien sinon.
+  const periode = periodeActive(await getSaison(), new Date())
+  const decor = decorSaison(periode?.theme)
+  const selection =
+    periode && decor
+      ? composerSelection(
+          await getCartesCollection('packs'),
+          meilleures,
+          meilleures.slice(0, MEILLEURES_VENTES_AFFICHEES).map((p) => p.handle)
+        )
+      : []
+  const Separateur = decor?.Separateur ?? SansSeparateur
   return (
     <>
       {/* 1. Hero (LCP, rendu immediat — jamais enveloppe dans <Reveal>) */}
-      <HeroV3 />
+      <HeroV3 decor={decor} />
 
       {/* 2. Bandeau reassurance — volontairement SANS reveal : il est visible
              des le chargement sur desktop, l'animer donnerait l'impression que
@@ -92,6 +117,18 @@ export default async function HomePage({
           douceur a l'entree dans l'ecran. Sans JS ou en prefers-reduced-motion,
           <Reveal> n'applique aucun masquage (cf. globals.css .reveal). */}
 
+      {/* 1 bis. Sélection de saison (packs puis meilleures ventes), pendant
+             une période décorée seulement */}
+      {periode && decor && selection.length > 0 && (
+        <Reveal>
+          <SelectionSaison
+            produits={selection}
+            surTitre={`Jusqu'au ${finPeriode(periode)}`}
+            {...decor.selection}
+          />
+        </Reveal>
+      )}
+
       {/* 2 bis. Coffrets de Noël, en saison seulement (rien sinon) */}
       {coffrets.length > 0 && (
         <Reveal>
@@ -101,22 +138,28 @@ export default async function HomePage({
 
       {/* 3. Best-sellers (data Shopify, streame) */}
       <Reveal>
-        <BestSellersAsync />
+        <BestSellersV3 products={meilleures} />
       </Reveal>
 
       {/* 3 bis. Vu sur Instagram — vidéos d'influenceurs tournées à la boutique.
           Masqué tant que src/lib/social-proof.ts est vide (Reveal interne). */}
       <VuSurInstagramV3 />
 
+      <Separateur />
+
       {/* 4. Objectifs — liste typographique */}
       <Reveal>
         <ObjectifsV3 />
       </Reveal>
 
+      <Separateur />
+
       {/* 5. Le conseil qu'aucun site n'a (differenciateur) */}
       <Reveal>
         <ConseilV3 />
       </Reveal>
+
+      <Separateur />
 
       {/* 5a. Nos guides : maillage vers le blog (audit SEO du 10/10/2026) */}
       <Reveal>
@@ -133,10 +176,14 @@ export default async function HomePage({
         <BandeauParrainageV2 />
       </Reveal>
 
+      <Separateur />
+
       {/* 7a. Galerie boutique (vraies photos du magasin, 07/2026) */}
       <Reveal>
         <BoutiqueGalleryV2 />
       </Reveal>
+
+      <Separateur />
 
       {/* 7b. Boutique & Click & Collect */}
       <Reveal>

@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { ArrowRight, ArrowUpRight, MapPin, Star } from 'lucide-react'
 import { GOOGLE_LISTING_URL } from '@/lib/store-info'
 import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
+import type { DecorSaisonPremium } from '@/components/saison/decors'
 
 /**
  * HERO V3 — immersif, pleine largeur.
@@ -24,32 +25,45 @@ import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
  *   la photo, sous un voile sombre : différence invisible (captures 390 px
  *   ×3 comparées), LCP mobile −550 ms à lui seul (mesure du 08/10/2026,
  *   4G lent + CPU ×4).
+ *
+ * Saison décorée (components/saison, 19/10/2026) : la scène du thème remplace
+ * la photo et ses voiles ; plus aucune image à charger, l'élément LCP devient
+ * le titre. Textes, boutons et carte boutique inchangés.
  */
-export default async function HeroV3() {
+export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPremium | null }) {
   const rating = await getGoogleRating()
+  const FondHero = decor?.FondHero
 
   return (
-    <section className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-[#0f160f]">
-      <Image
-        src="/assets/interieur.webp"
-        alt="Intérieur de la boutique BodyStart Nutrition à Coignières : rayons de compléments, mur végétal et comptoir"
-        fill
-        priority
-        fetchPriority="high"
-        quality={72}
-        sizes="(max-width: 640px) 70vw, 100vw"
-        className="object-cover object-[50%_38%]"
-      />
-      {/* Voiles : sombre en bas (lisibilité du texte), plus léger en haut pour
-          laisser respirer la photo ; second voile latéral côté texte. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(to_top,rgba(15,22,15,0.97)_0%,rgba(15,22,15,0.74)_36%,rgba(15,22,15,0.28)_68%,rgba(15,22,15,0.38)_100%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(100deg,rgba(15,22,15,0.6)_0%,rgba(15,22,15,0)_58%)]"
-      />
+    <section
+      className={`relative isolate flex min-h-[92dvh] items-end overflow-hidden ${decor ? decor.fondHero : 'bg-[#0f160f]'}`}
+    >
+      {FondHero ? (
+        <FondHero />
+      ) : (
+        <>
+          <Image
+            src="/assets/interieur.webp"
+            alt="Intérieur de la boutique BodyStart Nutrition à Coignières : rayons de compléments, mur végétal et comptoir"
+            fill
+            priority
+            fetchPriority="high"
+            quality={72}
+            sizes="(max-width: 640px) 70vw, 100vw"
+            className="object-cover object-[50%_38%]"
+          />
+          {/* Voiles : sombre en bas (lisibilité du texte), plus léger en haut
+              pour laisser respirer la photo ; second voile latéral côté texte. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[linear-gradient(to_top,rgba(15,22,15,0.97)_0%,rgba(15,22,15,0.74)_36%,rgba(15,22,15,0.28)_68%,rgba(15,22,15,0.38)_100%)]"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[linear-gradient(100deg,rgba(15,22,15,0.6)_0%,rgba(15,22,15,0)_58%)]"
+          />
+        </>
+      )}
 
       <div className="container relative pb-10 pt-36 md:pb-14 md:pt-44">
         <div className="grid items-end gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
@@ -81,7 +95,7 @@ export default async function HeroV3() {
             <p className="display-hero font-display text-[46px] font-extrabold leading-[0.94] tracking-[-0.025em] text-canvas sm:text-[60px] md:text-[76px] lg:text-[92px] xl:text-[104px]">
               Les bons compléments.
               <br />
-              <span className="text-sage">Le bon conseil.</span>
+              <span className={decor ? decor.accentTitre : 'text-sage'}>Le bon conseil.</span>
             </p>
 
             <p className="hero-rise hero-rise-1 mt-7 max-w-[560px] text-[17px] leading-[1.6] text-white/80 md:text-[19px]">

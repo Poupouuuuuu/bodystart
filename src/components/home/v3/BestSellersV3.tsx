@@ -35,7 +35,7 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
       aria-label={`Voir ${product.title}`}
     >
       {/* Double enceinte : plateau crème-vert + cœur blanc, rayons concentriques. */}
-      <div className="h-full rounded-[2rem] bg-spruce/[0.06] p-1.5 ring-1 ring-spruce/10 transition-all duration-700 ease-out-expo group-hover:-translate-y-1.5 group-hover:shadow-lift">
+      <div className="carte-produit h-full rounded-[2rem] bg-spruce/[0.06] p-1.5 ring-1 ring-spruce/10 transition-all duration-700 ease-out-expo group-hover:-translate-y-1.5 group-hover:shadow-lift">
         <div className="flex h-full flex-col overflow-hidden rounded-[calc(2rem-0.375rem)] bg-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)]">
           <div
             className="relative flex min-h-[300px] flex-1 items-center justify-center bg-cover bg-center sm:min-h-[380px] lg:min-h-0"

@@ -1,3 +1,5 @@
+import { PRODUCT_CARD_FRAGMENT } from './products'
+
 export const GET_COLLECTIONS = `
   query GetCollections($first: Int!) {
     collections(first: $first) {
@@ -110,6 +112,21 @@ export const GET_COLLECTION_BY_HANDLE = `
             value
             type
           }
+        }
+      }
+    }
+  }
+`
+
+// Produits d'une collection au format carte catalogue (variantes et prix de
+// carte), meilleures ventes d'abord : sélection de saison de l'accueil.
+export const GET_COLLECTION_CARTES = `
+  ${PRODUCT_CARD_FRAGMENT}
+  query CollectionCartes($handle: String!, $first: Int!) {
+    collection(handle: $handle) {
+      products(first: $first, sortKey: BEST_SELLING) {
+        nodes {
+          ...ProductCard
         }
       }
     }
