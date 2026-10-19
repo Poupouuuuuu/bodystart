@@ -1,6 +1,8 @@
 import { Suspense } from 'react'
 
-export const revalidate = 3600
+// 15 min (19/10/2026, mode saison) : le texte du bandeau suit le metafield
+// bodystart.saison dans ce délai, même sans JS. Avant : 3600.
+export const revalidate = 900
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import CartDrawerLazy from '@/components/cart/CartDrawerLazy'
@@ -9,6 +11,8 @@ import BirthdayBanner from '@/components/marketing/BirthdayBanner'
 import VenometteBanner from '@/components/marketing/VenometteBanner'
 import NavigationTracker from '@/components/layout/NavigationTracker'
 import { getCollections } from '@/lib/shopify'
+import { getSaison } from '@/lib/shopify/saison'
+import { periodeActive } from '@/lib/saison'
 import type { ShopifyCollection } from '@/lib/shopify/types'
 import { organizationJsonLd, storeJsonLd } from '@/lib/jsonld/local'
 
@@ -42,6 +46,10 @@ export default async function NutritionLayout({ children }: { children: React.Re
   } catch {
     // Shopify non configuré — navigation vide
   }
+  // Mode saison : toutes les périodes partent au header, qui recalcule la
+  // période active à l'heure pile côté navigateur (le HTML est en cache).
+  const saison = await getSaison()
+  const themeServeur = periodeActive(saison, new Date())?.theme ?? null
 
   return (
     <>
@@ -76,7 +84,12 @@ export default async function NutritionLayout({ children }: { children: React.Re
           autour d'un composant client fait partir son HTML dans un bloc caché,
           révélé par un script. Sans JS (ou si le script échoue), plus de menu
           ni de pied de page. Aucun des deux n'utilise useSearchParams. */}
-      <Header collections={collections} />
+      <Header
+        collections={collections}
+        saison={saison}
+        themeServeur={themeServeur}
+        previsualisation={process.env.VERCEL_ENV !== 'production'}
+      />
       <Suspense fallback={null}>
         <CartDrawerLazy />
       </Suspense>

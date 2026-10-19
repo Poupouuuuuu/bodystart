@@ -99,7 +99,8 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
     ...(discountPct
       ? [{ label: `-${discountPct}%`, className: 'bg-terracotta text-white' }]
       : []),
-    ...(isBest ? [{ label: 'Best-seller', className: 'bg-mustard text-mustard-ink' }] : []),
+    // badge-saison : couleur d'accent pendant une période du mode saison (lib/saison)
+    ...(isBest ? [{ label: 'Best-seller', className: 'badge-saison bg-mustard text-mustard-ink' }] : []),
     ...(showLowStock
       ? [{ label: `Plus que ${stockAtStore}`, className: 'bg-terracotta/90 text-white' }]
       : []),

@@ -154,7 +154,7 @@ export default function BoutiqueGalleryV2() {
           </dl>
           <Link
             href="/pourquoi-bodystart"
-            className="inline-flex min-h-[44px] items-center gap-2 text-[14px] font-semibold text-spruce hover:text-fresh-deep transition-colors underline underline-offset-4 flex-shrink-0"
+            className="inline-flex min-h-[44px] items-center gap-2 text-[14px] font-semibold text-spruce hover:text-fresh-deep transition-colors underline underline-offset-4 souligne-saison flex-shrink-0"
           >
             Pourquoi choisir BodyStart ?
             <ArrowRight className="w-4 h-4" />

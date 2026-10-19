@@ -346,3 +346,12 @@
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
 }
+
+/* Mode saison (19/10/2026, lib/saison) : une seule animation par thème, dans le
+   décor du bandeau, seulement si le système ne demande pas moins de mouvement. */
+@media (prefers-reduced-motion: no-preference) {
+  .saison-anim-flotte { animation: saison-flotte 2.8s ease-in-out infinite alternate; }
+  .saison-anim-tourne { animation: saison-tourne 14s linear infinite; }
+}
+@keyframes saison-flotte { from { transform: translateY(-1.5px); } to { transform: translateY(1.5px); } }
+@keyframes saison-tourne { to { transform: rotate(360deg); } }

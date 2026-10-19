@@ -15,6 +15,8 @@ import { cn, formatPrice } from '@/lib/utils'
 import { BODY_START_STORES, type ShopifyCollection } from '@/lib/shopify/types'
 import { GOOGLE_DIRECTIONS_URL } from '@/lib/store-info'
 import { FREE_SHIPPING_LABEL } from '@/lib/shipping'
+import { cssSaison, dateSaison, periodeActive, prochainChangement, type PeriodeSaison, type ThemeSaison } from '@/lib/saison'
+import DecorSaison from './DecorSaison'
 
 type SearchResult = {
   id: string
@@ -63,13 +65,19 @@ const MOBILE_CATEGORY_LINKS: { label: string; href: string }[] = [
 
 interface HeaderProps {
   collections?: ShopifyCollection[]
+  /** Mode saison : périodes du metafield bodystart.saison (lib/saison). */
+  saison?: PeriodeSaison[]
+  /** Période active au moment du rendu serveur (HTML en cache). */
+  themeServeur?: ThemeSaison | null
+  /** Hors production : ?saison_date=AAAA-MM-JJ force la date (preview). */
+  previsualisation?: boolean
 }
 
 const STORE = BODY_START_STORES.find((s) => s.isActive) ?? BODY_START_STORES[0]
 // « 07 61 84 75 80 » → tel:+33761847580
 const STORE_TEL = `tel:+33${STORE.phone.replace(/\s/g, '').replace(/^0/, '')}`
 
-export default function Header(_props: HeaderProps) {
+export default function Header({ saison = [], themeServeur = null, previsualisation = false }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileCatsOpen, setMobileCatsOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -87,6 +95,31 @@ export default function Header(_props: HeaderProps) {
   const pathname = usePathname()
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchResultsRef = useRef<HTMLDivElement>(null)
+
+  // Mode saison : le serveur rend la période active à l'heure du rendu (HTML
+  // en cache jusqu'à 15 min) ; le navigateur la recalcule à l'heure pile et
+  // rebascule tout seul à la prochaine borne, sans recharger.
+  const [theme, setTheme] = useState<ThemeSaison | null>(themeServeur)
+  useEffect(() => {
+    if (saison.length === 0) return
+    const forcee = previsualisation ? new URLSearchParams(window.location.search).get('saison_date') : null
+    if (forcee) {
+      setTheme(periodeActive(saison, dateSaison(forcee, previsualisation))?.theme ?? null)
+      return
+    }
+    let minuterie: ReturnType<typeof setTimeout> | undefined
+    const maj = () => {
+      const now = new Date()
+      setTheme(periodeActive(saison, now)?.theme ?? null)
+      const prochain = prochainChangement(saison, now)
+      const delai = prochain ? prochain.getTime() - now.getTime() : null
+      // setTimeout plafonne à ~24 j ; au-delà, la page aura été rechargée.
+      if (delai !== null && delai < 24 * 3600 * 1000) minuterie = setTimeout(maj, delai + 500)
+    }
+    maj()
+    return () => clearTimeout(minuterie)
+  }, [saison, previsualisation])
+  const periode = saison.find((p) => p.theme === theme) ?? null
 
   // Mobile (bug du 17/10/2026) : le clavier restait ouvert et cachait les
   // résultats. Il se ferme sur Entrée/« Rechercher » et dès qu'on fait défiler
@@ -200,14 +233,39 @@ export default function Header(_props: HeaderProps) {
       'sticky top-0 z-50 transition-shadow duration-300',
       scrolled ? 'shadow-md' : 'shadow-none'
     )}>
-      {/* ─── Bandeau promo (top bar) ─── */}
-      <div className="bg-ink relative z-50">
-        <div className="container">
-          <p className="text-center text-[11px] text-white/80 font-medium py-2">
-            Livraison offerte {FREE_SHIPPING_LABEL} · Click &amp; Collect gratuit · Conseil gratuit en boutique
-          </p>
+      {/* ─── Bandeau promo (top bar) ─── Mode saison (lib/saison) : même
+          bandeau, texte, lien et couleurs de la période ; liseré accent_2 en
+          ombre intérieure (hauteur inchangée) ; décor aux deux bouts. */}
+      {periode ? (
+        <div
+          className="relative z-50"
+          style={{ backgroundColor: periode.accent, color: periode.texteSurAccent, boxShadow: `inset 0 -2px 0 ${periode.accent2}` }}
+          data-saison={periode.theme}
+        >
+          <style>{cssSaison(periode)}</style>
+          <div className="container relative">
+            <DecorSaison decor={periode.decor} />
+            {periode.lien ? (
+              <Link
+                href={periode.lien}
+                className={cn('block text-center text-[11px] font-semibold py-2 underline-offset-2 hover:underline', periode.decor && 'px-8 sm:px-10')}
+              >
+                {periode.texte}
+              </Link>
+            ) : (
+              <p className={cn('text-center text-[11px] font-semibold py-2', periode.decor && 'px-8 sm:px-10')}>{periode.texte}</p>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-ink relative z-50">
+          <div className="container">
+            <p className="text-center text-[11px] text-white/80 font-medium py-2">
+              Livraison offerte {FREE_SHIPPING_LABEL} · Click &amp; Collect gratuit · Conseil gratuit en boutique
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ─── Header principal ─── */}
       <div className="border-b transition-colors relative z-40 bg-white border-spruce/10">
