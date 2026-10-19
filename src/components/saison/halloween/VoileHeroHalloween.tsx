@@ -27,7 +27,7 @@ export default function VoileHeroHalloween() {
     <>
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(to_top,rgba(30,58,44,0.97)_0%,rgba(30,58,44,0.92)_45%,rgba(30,58,44,0.8)_72%,rgba(30,58,44,0.5)_100%)] lg:hidden"
+        className="absolute inset-0 bg-[linear-gradient(to_top,rgba(30,58,44,0.97)_0%,rgba(30,58,44,0.92)_50%,rgba(30,58,44,0.84)_70%,rgba(30,58,44,0.5)_84%,rgba(30,58,44,0.18)_100%)] lg:hidden"
       />
       <div
         aria-hidden="true"
@@ -35,7 +35,7 @@ export default function VoileHeroHalloween() {
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 hidden bg-[linear-gradient(to_top,rgba(30,58,44,0.8)_0%,rgba(30,58,44,0)_34%)] lg:block"
+        className="absolute inset-0 hidden bg-[linear-gradient(to_top,rgba(30,58,44,0.94)_0%,rgba(30,58,44,0.75)_24%,rgba(30,58,44,0)_46%)] lg:block"
       />
       {/* Chauves-souris : bande du haut sous lg, côté droit de la photo
           au-dessus (texte à gauche, jamais survolé). */}
