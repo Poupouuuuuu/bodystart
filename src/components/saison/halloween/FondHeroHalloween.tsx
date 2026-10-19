@@ -45,9 +45,10 @@ export default function FondHeroHalloween() {
       <div className="hw-ciel absolute inset-0" />
       <div className="hw-etoiles absolute inset-0" />
 
-      {/* Lune : en haut à droite, assez haut sur mobile pour ne jamais passer
-          sous le titre (texte crème sur orange : contraste insuffisant). */}
-      <div className="absolute right-[-16vw] top-[2%] aspect-square w-[60vw] sm:right-[4%] sm:top-[8%] sm:w-[40vw] lg:w-[33vw] lg:max-w-[500px]">
+      {/* Lune : en haut à droite. Sur mobile, elle tient dans les 144 px de
+          marge haute du bloc (pt-36) : jamais sous le texte (crème sur orange,
+          contraste insuffisant), quelle que soit la hauteur d'écran. */}
+      <div className="absolute right-[-30px] top-[-30px] aspect-square w-[150px] sm:right-[4%] sm:top-[8%] sm:w-[40vw] lg:w-[33vw] lg:max-w-[500px]">
         <div className="hw-halo absolute inset-[-48%] rounded-full" />
         <div className="hw-lune absolute inset-0 rounded-full" />
         <Branche className="absolute -bottom-[12%] right-[-6%] w-[118%] sm:right-[-30%]" />

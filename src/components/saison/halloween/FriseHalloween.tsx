@@ -1,9 +1,10 @@
 import type { CSSProperties } from 'react'
-import { ChauveSouris, Citrouille, Herbes } from './formes'
+import { ChauveSouris, Citrouille, Colline, Touffe } from './formes'
 
-// Frise du pied de page pendant Halloween : herbes, citrouilles (une au visage
-// éclairé) et chauves-souris en silhouette sur une nuit qui s'éclaire en
-// orange à l'horizon. Décorative.
+// Frise du pied de page pendant Halloween : colline, touffes d'herbes,
+// citrouilles (une au visage éclairé) et chauves-souris en silhouette sur une
+// nuit qui s'éclaire en orange à l'horizon, liseré orange sur les contours.
+// Décorative.
 
 type Var = CSSProperties & Record<`--${string}`, string>
 
@@ -39,15 +40,27 @@ export default function FriseHalloween() {
           <ChauveSouris largeur={v.largeur} />
         </span>
       ))}
-      <Herbes className="absolute inset-x-0 bottom-0 h-[44%] w-full" />
-      <span className="absolute bottom-[6%] left-[9%]">
-        <Citrouille largeur={40} />
+      <Colline className="hw-lisere absolute inset-x-0 bottom-0 h-[46%] w-full" />
+      <span className="absolute bottom-[30%] left-[4%]">
+        <Touffe largeur={30} />
       </span>
-      <span className="absolute bottom-[4%] left-[44%] hidden sm:block">
-        <Citrouille largeur={28} />
+      <span className="absolute bottom-[26%] left-[30%]">
+        <Touffe largeur={22} />
       </span>
-      <span className="absolute bottom-[5%] right-[16%]">
-        <Citrouille largeur={52} visage />
+      <span className="absolute bottom-[30%] left-[62%] hidden sm:block">
+        <Touffe largeur={26} />
+      </span>
+      <span className="absolute bottom-[34%] right-[4%]">
+        <Touffe largeur={24} />
+      </span>
+      <span className="hw-lisere absolute bottom-[22%] left-[12%]">
+        <Citrouille largeur={38} />
+      </span>
+      <span className="hw-lisere absolute bottom-[24%] left-[45%] hidden sm:block">
+        <Citrouille largeur={26} />
+      </span>
+      <span className="hw-lisere absolute bottom-[26%] right-[15%]">
+        <Citrouille largeur={50} visage />
       </span>
       {LUCIOLES.map((style, i) => (
         <span key={i} className="hw-luciole" style={style} />

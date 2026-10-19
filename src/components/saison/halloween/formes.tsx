@@ -71,30 +71,30 @@ export function Branche({ className }: { className?: string }) {
   )
 }
 
-/**
- * Bande d'herbes hautes (viewBox 400 × 40, étirée en largeur). Tracé calculé
- * une fois au chargement du module, identique à chaque rendu.
- */
-const HERBES = (() => {
-  const r = (n: number) => Math.round(n * 10) / 10
-  let d = 'M0 40V34'
-  let x = 0
-  let i = 0
-  while (x < 400) {
-    const h = 8 + ((i * 37) % 22)
-    const w = 4 + ((i * 13) % 5)
-    const pointe = x + w / 2 + (((i * 7) % 5) - 2)
-    d += `Q${r(x + w * 0.25)} ${r(34 - h * 0.5)} ${r(pointe)} ${34 - h}Q${r(x + w * 0.75)} ${r(34 - h * 0.45)} ${x + w} 34`
-    x += w
-    i++
-  }
-  return `${d}V40z`
-})()
-
-export function Herbes({ className }: { className?: string }) {
+/** Colline douce de l'horizon (viewBox 400 × 40, étirée en largeur). */
+export function Colline({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 400 40" preserveAspectRatio="none" className={className} aria-hidden="true" focusable="false">
-      <path fill={NUIT_SILHOUETTE} d={HERBES} />
+      <path fill={NUIT_SILHOUETTE} d="M0 40V24C48 15 96 12 150 17s98 13 150 9 70-11 100-8v18z" />
+    </svg>
+  )
+}
+
+/** Touffe d'herbes fines (viewBox 28 × 18), posée sur la colline. */
+export function Touffe({ largeur, className }: { largeur: number; className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 28 18"
+      width={largeur}
+      height={(largeur * 18) / 28}
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        fill={NUIT_SILHOUETTE}
+        d="M3 18c1-5 .6-9-1.6-12 3 2.4 4.4 6.6 4.2 12zM8 18c.4-6 2-11 5-14-2 4-3 9-2.6 14zM13 18c0-7 1.4-13 1.2-17 1.6 4.4 1.8 10.6 1.2 17zM18 18c-.2-5.6-2-10.4-5-13.6 4 2.4 6.6 7.4 7.6 13.6zM22 18c.6-4.4 2.4-8 5.4-10.6-2 3.4-2.8 6.8-2.8 10.6z"
+      />
     </svg>
   )
 }
