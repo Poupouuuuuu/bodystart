@@ -35,3 +35,22 @@ export const FLOCONS: Var[] = BASE.map(([x, y, t, o, d, r, dx]) => ({
   '--r': `${r}s`,
   '--dx': `${dx}px`,
 }))
+
+/**
+ * Neige fine sur tout le haut de l'accueil, texte compris : 26 petits flocons
+ * (2 à 3,5 px), assez transparents pour ne pas gêner la lecture. Positions
+ * calculées une fois (suite fixe, pas de hasard au rendu).
+ */
+export const FLOCONS_HERO: Var[] = Array.from({ length: 26 }, (_, i) => {
+  const x = (i * 37 + 11) % 100
+  const y = (i * 53 + 7) % 100
+  return {
+    '--x': `${x}%`,
+    '--y': `${y}%`,
+    '--t': `${2 + (i % 4) * 0.5}px`,
+    '--o': String(0.55 + (i % 3) * 0.12),
+    '--d': `${12 + (i % 5) * 1.5}s`,
+    '--r': `${-((i * 7) % 18)}s`,
+    '--dx': `${((i % 2 ? 1 : -1) * (8 + (i % 4) * 4))}px`,
+  }
+})

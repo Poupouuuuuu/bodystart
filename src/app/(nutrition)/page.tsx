@@ -118,10 +118,13 @@ export default async function HomePage({
         ])
       : null
   const Separateur = decor?.Separateur ?? SansSeparateur
+  const SousHero = decor?.SousHero
   return (
     <>
       {/* 1. Hero (LCP, rendu immediat — jamais enveloppe dans <Reveal>) */}
       <HeroV3 decor={decor} variante={variante} />
+      {/* Bande de saison juste sous le haut de page (Noël : guirlande). */}
+      {SousHero && <SousHero />}
 
       {/* 2. Bandeau reassurance — volontairement SANS reveal : il est visible
              des le chargement sur desktop, l'animer donnerait l'impression que

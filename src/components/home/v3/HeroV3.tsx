@@ -3,6 +3,7 @@ import Image from 'next/image'
 import type { CSSProperties } from 'react'
 import { ArrowRight, ArrowUpRight, MapPin, Star } from 'lucide-react'
 import { GOOGLE_LISTING_URL } from '@/lib/store-info'
+import { cn } from '@/lib/utils'
 import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
 import type { DecorSaisonPremium } from '@/components/saison/decors'
 
@@ -102,6 +103,7 @@ function HeroScinde({
 }) {
   const palette = (variante && hero.palettes[variante]) || hero.palettes[hero.defaut]
   const DecorPhoto = hero.DecorPhoto
+  const DecorHero = hero.DecorHero
   return (
     <section
       className="relative isolate overflow-hidden bg-[color:var(--h-fond)]"
@@ -126,11 +128,19 @@ function HeroScinde({
         />
       </div>
 
-      <div className="container relative pb-10 pt-9 lg:static lg:flex lg:min-h-[calc(100dvh-7.25rem)] lg:items-center lg:py-14">
+      <div
+        className={cn(
+          'container relative pb-10 pt-9 lg:static lg:flex lg:min-h-[calc(100dvh-7.25rem)] lg:items-center lg:py-14',
+          hero.espaceBas
+        )}
+      >
         <div className="lg:w-[calc(50vw_-_max(2rem,50vw_-_568px)_-_3rem)]">
           <ContenuHero c={CLASSES_SCINDE} rating={rating} />
         </div>
       </div>
+      {/* Décor sur toute la section (Noël : neige, sol enneigé), au-dessus du
+          texte mais sans clic. */}
+      {DecorHero && <DecorHero />}
     </section>
   )
 }
