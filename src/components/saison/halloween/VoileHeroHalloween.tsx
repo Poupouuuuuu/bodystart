@@ -7,9 +7,8 @@ import { ChauveSouris } from './formes'
 // qui traversent le côté droit de la photo. Rien d'autre sur la photo.
 //
 // Voiles : vertical sous lg, en pixels depuis le haut (le texte commence
-// toujours à 144 px, pt-36, quelle que soit la hauteur du bloc) : la bande du
-// haut reste presque nette jusqu'à 88 px (mur végétal et étagères, photo
-// recadrée par decors.ts) puis le voile est dense dès 140 px, sous le texte ;
+// toujours à 144 px, pt-36, quelle que soit la hauteur du bloc ; le haut de la
+// photo reste dégagé),
 // latéral à partir de lg (plus de 90 % sur le tiers gauche, effacé vers
 // 70 % de la largeur), plus un fond bas pour les chiffres et la carte
 // boutique. Le vert sapin est plus clair que le voile habituel : opacité
@@ -31,7 +30,7 @@ export default function VoileHeroHalloween() {
     <>
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(30,58,44,0)_0px,rgba(30,58,44,0.12)_88px,rgba(30,58,44,0.6)_118px,rgba(30,58,44,0.92)_140px,rgba(30,58,44,0.94)_60%,rgba(30,58,44,0.97)_100%)] lg:hidden"
+        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(30,58,44,0.15)_0px,rgba(30,58,44,0.5)_84px,rgba(30,58,44,0.92)_132px,rgba(30,58,44,0.94)_60%,rgba(30,58,44,0.97)_100%)] lg:hidden"
       />
       <div
         aria-hidden="true"

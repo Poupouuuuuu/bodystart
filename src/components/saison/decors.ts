@@ -23,9 +23,6 @@ export interface DecorSaisonPremium {
   /** Voiles et décor posés sur la photo du haut de l'accueil, à la place
    * des voiles habituels (la photo reste chargée comme hors saison). */
   VoileHero: ComponentType
-  /** Classes ajoutées à la photo du haut de l'accueil, sous lg seulement
-   * (cadrage) : même fichier, mêmes tailles, même priorité. */
-  cadragePhotoMobile: string
   /** Deuxième ligne du titre du haut de l'accueil (« Le bon conseil. »). */
   accentTitre: string
   /** Sur-titre (h1) du haut de l'accueil et son trait. */
@@ -45,10 +42,6 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
   halloween: {
     css: CSS_HALLOWEEN,
     VoileHero: VoileHeroHalloween,
-    // Sous lg, le haut de la photo n'est que du plafond : zoom ×1,4 ancré en
-    // bas à droite, la bande du haut montre le mur végétal, les enseignes et
-    // les étagères éclairées du mur de droite (retouche du 19/10/2026).
-    cadragePhotoMobile: 'max-lg:origin-bottom-right max-lg:scale-[1.4] max-lg:object-[100%_38%]',
     accentTitre: 'text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_14px_rgba(232,113,26,0.35)]',
     // Orange clair pour le petit texte : AA mesuré sur la photo voilée
     // (l'accent #E8711A n'atteint pas 4,5:1 sur le vert sapin).

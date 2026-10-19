@@ -27,9 +27,9 @@ import type { DecorSaisonPremium } from '@/components/saison/decors'
  *   4G lent + CPU ×4).
  *
  * Saison décorée (components/saison, 19/10/2026) : même photo, chargée de la
- * même façon ; seuls les voiles changent (ceux du thème), le cadrage sous lg
- * et quelques accents de couleur (sur-titre, étoiles, 2e ligne du titre).
- * Textes et boutons inchangés.
+ * même façon ; seuls les voiles changent (ceux du thème) et quelques accents
+ * de couleur (sur-titre, étoiles, 2e ligne du titre). Textes et boutons
+ * inchangés.
  */
 export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPremium | null }) {
   const rating = await getGoogleRating()
@@ -45,7 +45,7 @@ export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPrem
         fetchPriority="high"
         quality={72}
         sizes="(max-width: 640px) 70vw, 100vw"
-        className={`object-cover object-[50%_38%] ${decor ? decor.cadragePhotoMobile : ''}`}
+        className="object-cover object-[50%_38%]"
       />
       {VoileHero ? (
         <VoileHero />
