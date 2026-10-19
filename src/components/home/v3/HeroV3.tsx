@@ -137,7 +137,8 @@ export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPrem
           <div className="hero-rise hero-rise-3 lg:justify-self-end">
             <div className="rounded-[1.6rem] border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl">
               <div className="rounded-[calc(1.6rem-0.375rem)] bg-white/[0.08] px-5 py-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]">
-                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/60">
+                {/* Blanc 75 % : 10 px, il faut 4,5:1 sur le verre (60 % donnait 3,6:1). */}
+                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/75">
                   La boutique
                 </p>
                 <p className="mt-1.5 font-display text-[21px] font-bold leading-tight text-canvas">
