@@ -94,14 +94,19 @@ export default async function HomePage({
   // page, sélection et séparateurs pendant la période, rien sinon.
   const periode = periodeActive(await getSaison(), new Date())
   const decor = decorSaison(periode?.theme)
-  // Packs : collection `packs`, comme la page /packs (mêmes cartes).
+  // Packs : collection `packs`, comme la page /packs (mêmes cartes). Les
+  // meilleures ventes proposées à côté ne répètent ni le bloc « Meilleures
+  // ventes » ni un produit déjà contenu dans un pack.
+  const packs =
+    periode && decor ? ((await getCollectionByHandle('packs', 24).catch(() => null))?.products?.nodes ?? []) : []
   const selection =
     periode && decor
-      ? composerSelection(
-          (await getCollectionByHandle('packs', 24).catch(() => null))?.products?.nodes ?? [],
-          meilleures,
-          meilleures.slice(0, MEILLEURES_VENTES_AFFICHEES).map((p) => p.handle)
-        )
+      ? composerSelection(packs, meilleures, [
+          ...meilleures.slice(0, MEILLEURES_VENTES_AFFICHEES).map((p) => p.handle),
+          ...packs.flatMap((p) =>
+            p.variants.nodes.flatMap((v) => v.components?.nodes.map((c) => c.productVariant.product.handle) ?? [])
+          ),
+        ])
       : null
   const Separateur = decor?.Separateur ?? SansSeparateur
   return (
