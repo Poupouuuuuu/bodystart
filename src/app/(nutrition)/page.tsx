@@ -83,6 +83,15 @@ async function coffretsDuMoment(searchParams: Promise<Record<string, string | st
   return getCoffrets().catch(() => [])
 }
 
+// Variante de couleur du haut de page en saison (?hero=a|b) : hors production
+// seulement, pour comparer sur la preview. En production searchParams n'est
+// jamais lu (ISR).
+async function varianteHero(searchParams: Promise<Record<string, string | string[] | undefined>>) {
+  if (process.env.VERCEL_ENV === 'production') return undefined
+  const v = (await searchParams).hero
+  return typeof v === 'string' ? v : undefined
+}
+
 export default async function HomePage({
   searchParams,
 }: {
@@ -90,14 +99,16 @@ export default async function HomePage({
 }) {
   // Lectures Shopify en parallèle (régénération ISR plus courte). Les packs ne
   // servent qu'à la sélection de saison, ignorés hors période.
-  const [coffrets, meilleures, periode, collectionPacks] = await Promise.all([
+  const [coffrets, meilleures, periode, collectionPacks, variante] = await Promise.all([
     coffretsDuMoment(searchParams),
     meilleuresVentes(),
     getSaison().then((saison) => periodeActive(saison, new Date())),
     getCollectionByHandle('packs', 24).catch(() => null),
+    varianteHero(searchParams),
   ])
-  // Déco de saison (metafield bodystart.saison, components/saison) : voile du
-  // haut de page, sélection et séparateurs pendant la période, rien sinon.
+  // Déco de saison (metafield bodystart.saison, components/saison) : haut de
+  // page en deux parties, sélection et séparateurs pendant la période, rien
+  // sinon.
   const decor = decorSaison(periode?.theme)
   // Packs : collection `packs`, comme la page /packs (mêmes cartes). Les
   // meilleures ventes proposées à côté ne répètent ni le bloc « Meilleures
@@ -116,7 +127,7 @@ export default async function HomePage({
   return (
     <>
       {/* 1. Hero (LCP, rendu immediat — jamais enveloppe dans <Reveal>) */}
-      <HeroV3 decor={decor} />
+      <HeroV3 decor={decor} variante={variante} />
 
       {/* 2. Bandeau reassurance — volontairement SANS reveal : il est visible
              des le chargement sur desktop, l'animer donnerait l'impression que
