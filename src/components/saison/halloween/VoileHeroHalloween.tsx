@@ -7,9 +7,10 @@ import { ChauveSouris } from './formes'
 // qui traversent le côté droit de la photo. Rien d'autre sur la photo.
 //
 // Voiles : vertical sous lg (le texte occupe presque toute la hauteur),
-// latéral à partir de lg (environ 90 % sur le tiers gauche, effacé vers
-// 68 % de la largeur), plus un fond bas pour les chiffres et la carte
-// boutique. Contraste AA du texte sur le vert.
+// latéral à partir de lg (plus de 90 % sur le tiers gauche, effacé vers
+// 70 % de la largeur), plus un fond bas pour les chiffres et la carte
+// boutique. Le vert sapin est plus clair que le voile habituel : opacité
+// réglée pour le contraste AA mesuré sur la photo (spots du plafond compris).
 
 type Var = CSSProperties & Record<`--${string}`, string>
 
@@ -27,15 +28,15 @@ export default function VoileHeroHalloween() {
     <>
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(to_top,rgba(30,58,44,0.97)_0%,rgba(30,58,44,0.92)_50%,rgba(30,58,44,0.84)_70%,rgba(30,58,44,0.5)_84%,rgba(30,58,44,0.18)_100%)] lg:hidden"
+        className="absolute inset-0 bg-[linear-gradient(to_top,rgba(30,58,44,0.97)_0%,rgba(30,58,44,0.94)_50%,rgba(30,58,44,0.92)_72%,rgba(30,58,44,0.88)_82%,rgba(30,58,44,0.4)_93%,rgba(30,58,44,0.15)_100%)] lg:hidden"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(30,58,44,0.92)_0%,rgba(30,58,44,0.9)_33%,rgba(30,58,44,0.45)_55%,rgba(30,58,44,0)_68%)] lg:block"
+        className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(30,58,44,0.95)_0%,rgba(30,58,44,0.94)_42%,rgba(30,58,44,0.75)_54%,rgba(30,58,44,0.35)_63%,rgba(30,58,44,0)_72%)] lg:block"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 hidden bg-[linear-gradient(to_top,rgba(30,58,44,0.94)_0%,rgba(30,58,44,0.75)_24%,rgba(30,58,44,0)_46%)] lg:block"
+        className="absolute inset-0 hidden bg-[linear-gradient(to_top,rgba(30,58,44,0.97)_0%,rgba(30,58,44,0.88)_26%,rgba(30,58,44,0)_50%)] lg:block"
       />
       {/* Chauves-souris : bande du haut sous lg, côté droit de la photo
           au-dessus (texte à gauche, jamais survolé). */}
