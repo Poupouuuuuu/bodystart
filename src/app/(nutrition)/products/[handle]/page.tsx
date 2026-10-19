@@ -315,6 +315,7 @@ export default async function ProductPage({ params }: Props) {
             composantsSansFiche={sansFiche}
             surTitre={surTitre}
             photoCoffret={coffret ? (images[0] ?? null) : null}
+            imagePack={productIsBundle && !coffret ? (images[0] ?? null) : null}
             altImages={altProduit({ title: product.title, vendor: product.vendor, format })}
             rating={rating}
             googleRating={googleRating}

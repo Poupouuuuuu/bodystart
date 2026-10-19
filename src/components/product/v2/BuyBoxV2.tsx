@@ -65,6 +65,8 @@ interface BuyBoxV2Props {
   surTitre?: { label: string; href: string } | null
   /** Coffret : sa photo en tête de galerie, avant les composants (cf. BundleGalleryV2). */
   photoCoffret?: ShopifyImage | null
+  /** Pack : son image principale en tête de galerie, à la place des pots empilés (cf. BundleGalleryV2). */
+  imagePack?: ShopifyImage | null
   /** Texte alternatif des images de la galerie (lib/alt-produit), sinon le titre. */
   altImages?: string
 }
@@ -107,6 +109,7 @@ export default function BuyBoxV2({
   googleRating = GOOGLE_RATING,
   surTitre = null,
   photoCoffret = null,
+  imagePack = null,
   altImages,
 }: BuyBoxV2Props) {
   // Variante d'ouverture (rendu serveur, donc sans ?variant=) :
@@ -362,6 +365,7 @@ export default function BuyBoxV2({
               title={title}
               discountPct={discountPctOf(selectedVariant)}
               photo={photoCoffret}
+              imagePack={imagePack}
               sansFiche={composantsSansFiche}
               libelleComposants={photoCoffret ? 'Dans ce coffret' : undefined}
             />

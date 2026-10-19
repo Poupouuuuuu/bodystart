@@ -21,6 +21,12 @@ interface BundleGalleryV2Props {
    * voit d'abord ce qu'il reçoit, les composants suivent dans la bande.
    */
   photo?: ShopifyImage | null
+  /**
+   * Image principale du pack (PNG détouré, proportions réelles). Si présente,
+   * elle remplace les pots empilés en tête de galerie, sur le fond végétal
+   * (même règle que les cartes de pack, cf. BundleComposite).
+   */
+  imagePack?: ShopifyImage | null
   /** Titre de la bande des composants (« Dans ce pack » par défaut). */
   libelleComposants?: string
   /**
@@ -34,12 +40,15 @@ interface BundleGalleryV2Props {
  * Galerie V2 specifique aux bundles (Shopify Bundles).
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Fiche pack
  *
- * Source de verite visuelle : les featured images des produits composants
- * du bundle. Les bundles n'ont pas (et n'auront pas) d'image propre.
+ * Hero, dans l'ordre (19/10/2026, Claude Gestion) :
+ * - coffret : sa photo (carrée, fond blanc) ;
+ * - pack : son image principale sur bg-vegetal-800.webp, comme les cartes de
+ *   pack (la pile des pots donnait des proportions fausses : créatine deux
+ *   fois plus grosse que la whey) ;
+ * - sinon (pack sans image) : pots des composants en ligne, leger overlap,
+ *   sur bg-vegetal-800.webp.
  *
  * Rendu :
- * - Hero : pots des composants en ligne, leger overlap, sur bg-vegetal-800.webp
- *   (coherent avec PackCardV2 mais en plus grand).
  * - Sous le hero : strip horizontale avec les noms des composants
  *   (et leur quantite si > 1), chaque carte cliquable vers la fiche quand
  *   le composant en a une sur le site (pas s'il est vendu seulement en caisse).
@@ -54,10 +63,11 @@ export default function BundleGalleryV2({
   title,
   discountPct,
   photo = null,
+  imagePack = null,
   libelleComposants = 'Dans ce pack',
   sansFiche = [],
 }: BundleGalleryV2Props) {
-  if (components.length === 0 && !photo) {
+  if (components.length === 0 && !photo && !imagePack) {
     // Securite : ce composant ne devrait etre rendu que si components > 0
     // (la fiche fait deja la detection). Mais on garde un fallback propre.
     return (
@@ -100,6 +110,37 @@ export default function BundleGalleryV2({
             sizes="(max-width: 1024px) calc(100vw - 32px), 580px"
             className="object-cover"
           />
+        </div>
+      ) : imagePack ? (
+        /* ─── Hero pack : son image sur fond végétal, image LCP de la fiche ───
+            Fond en <Image priority unoptimized> comme ProductGalleryV2 (préchargé
+            avec le HTML, même URL que le fond des cartes). */
+        <div className="saison-toile saison-toile-droite relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-sage">
+          <Image
+            src="/bg-vegetal-800.webp"
+            alt=""
+            aria-hidden="true"
+            fill
+            priority
+            unoptimized
+            className="object-cover object-bottom"
+          />
+          {discountPct !== null && (
+            <div className="saison-badge-citrouille saison-badge-citrouille-droite absolute top-4 left-4 z-30 bg-terracotta text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+              −{discountPct}%
+            </div>
+          )}
+          <div className="absolute inset-x-[7%] top-[10%] bottom-[7%]">
+            <Image
+              src={imagePack.url}
+              alt={imagePack.altText ?? title}
+              fill
+              priority
+              fetchPriority="high"
+              sizes="(max-width: 1024px) calc(100vw - 32px), 580px"
+              className="object-contain object-bottom [filter:drop-shadow(0_22px_28px_rgba(45,90,45,0.30))]"
+            />
+          </div>
         </div>
       ) : (
       /* ─── Hero : pots empiles sur fond vegetal ─── */
