@@ -47,7 +47,7 @@ function FeaturedTile({ product }: { product: ShopifyProduct }) {
                 Épuisé
               </span>
             ) : (
-              <span className="absolute left-5 top-5 z-10 inline-flex items-center rounded-lg bg-mustard px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-mustard-ink shadow-soft">
+              <span className="absolute left-5 top-5 z-10 badge-saison inline-flex items-center rounded-lg bg-mustard px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-mustard-ink shadow-soft">
                 Best-seller
               </span>
             )}

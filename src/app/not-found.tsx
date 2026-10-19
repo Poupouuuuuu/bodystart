@@ -6,6 +6,8 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import CartDrawerLazy from '@/components/cart/CartDrawerLazy'
 import { getCollections } from '@/lib/shopify'
+import { getSaison } from '@/lib/shopify/saison'
+import { periodeActive } from '@/lib/saison'
 import type { ShopifyCollection } from '@/lib/shopify/types'
 
 // Raccourcis vers les rayons les plus demandés : une 404 doit remettre le
@@ -45,11 +47,17 @@ export default async function NotFound() {
   } catch {
     // Shopify indisponible — navigation sans sous-menus
   }
+  const saison = await getSaison()
 
   return (
     <>
       {/* Header et Footer hors <Suspense> : visibles sans JS (cf. layout Nutrition). */}
-      <Header collections={collections} />
+      <Header
+        collections={collections}
+        saison={saison}
+        themeServeur={periodeActive(saison, new Date())?.theme ?? null}
+        previsualisation={process.env.VERCEL_ENV !== 'production'}
+      />
       <Suspense fallback={null}>
         <CartDrawerLazy />
       </Suspense>
