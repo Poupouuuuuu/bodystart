@@ -5,6 +5,10 @@ import FriseBlackWeek from './black-week/FriseBlackWeek'
 import SeparateurBlackWeek from './black-week/SeparateurBlackWeek'
 import { CSS_BLACK_WEEK } from './black-week/styles'
 import ChauvesSourisPhoto from './halloween/ChauvesSourisPhoto'
+import FriseNoel from './noel/FriseNoel'
+import NeigePhoto from './noel/NeigePhoto'
+import SeparateurNoel from './noel/SeparateurNoel'
+import { CSS_NOEL } from './noel/styles'
 import FriseHalloween from './halloween/FriseHalloween'
 import SeparateurHalloween from './halloween/SeparateurHalloween'
 import { CSS_HALLOWEEN } from './halloween/styles'
@@ -17,8 +21,8 @@ import { CSS_HALLOWEEN } from './halloween/styles'
 export type PaletteHero = Record<`--h-${string}`, string>
 
 /**
- * Déco de saison complète, par thème (Halloween le 19/10/2026, Black Week le
- * 19/10/2026 ; Noël du 29/11 au 24/12 se branche ici avec les mêmes champs). Le thème vient du metafield
+ * Déco de saison complète, par thème (Halloween, Black Week et Noël, PR du
+ * 19/10/2026 ; un nouveau thème se branche ici avec les mêmes champs). Le thème vient du metafield
  * bodystart.saison (lib/saison) : hors période, aucune déco ni CSS.
  *
  * Rendu serveur (pages en ISR, 15 min) : au changement de période, la déco
@@ -172,6 +176,65 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
         'Nos packs et des produits que nos clients reprennent le plus. Retrait gratuit en boutique à Coignières, livraison partout en France.',
       fond: 'bw-selection',
       couleurs: { '--sel-sur-titre': '#F2C200', '--sel-mot': '#F2C200', '--sel-halo': 'none' },
+    },
+  },
+  // Noël (29/11 au 24/12) : bordeaux #6E1423 et or #F2D28A (8:1), rouge
+  // #C62828 en accent, neige qui tombe. Jamais de vert en grande surface.
+  noel: {
+    css: CSS_NOEL,
+    hero: {
+      palettes: {
+        // A : fond bordeaux, texte crème, accents dorés.
+        a: {
+          '--h-fond': '#6E1423',
+          '--h-texte': '#FAF8F3',
+          '--h-texte-doux': 'rgba(255,255,255,0.82)',
+          '--h-sur-titre': 'rgba(255,255,255,0.86)',
+          '--h-accent': '#F2D28A',
+          '--h-trait': '#F2D28A',
+          '--h-ligne': 'rgba(255,255,255,0.16)',
+          '--h-ligne-forte': 'rgba(255,255,255,0.32)',
+          '--h-voile': 'rgba(255,255,255,0.07)',
+          '--h-voile-fort': 'rgba(255,255,255,0.15)',
+          '--h-bouton': '#FAF8F3',
+          '--h-bouton-texte': '#6E1423',
+          '--h-rond': '#F2D28A',
+          '--h-rond-texte': '#6E1423',
+          '--h-lien': '#F2D28A',
+          '--h-liseret': '#F2D28A',
+        },
+        // B : fond bleu nuit, texte crème, accents dorés (or sur nuit : 10,9:1).
+        b: {
+          '--h-fond': '#172238',
+          '--h-texte': '#FAF8F3',
+          '--h-texte-doux': 'rgba(255,255,255,0.82)',
+          '--h-sur-titre': 'rgba(255,255,255,0.86)',
+          '--h-accent': '#F2D28A',
+          '--h-trait': '#C62828',
+          '--h-ligne': 'rgba(255,255,255,0.16)',
+          '--h-ligne-forte': 'rgba(255,255,255,0.32)',
+          '--h-voile': 'rgba(255,255,255,0.07)',
+          '--h-voile-fort': 'rgba(255,255,255,0.15)',
+          '--h-bouton': '#FAF8F3',
+          '--h-bouton-texte': '#172238',
+          '--h-rond': '#C62828',
+          '--h-rond-texte': '#FFFFFF',
+          '--h-lien': '#F2D28A',
+          '--h-liseret': '#F2D28A',
+        },
+      },
+      defaut: 'a',
+      DecorPhoto: NeigePhoto,
+    },
+    Separateur: SeparateurNoel,
+    Frise: FriseNoel,
+    selection: {
+      titre: 'La sélection de',
+      motTheme: 'Noël',
+      intro:
+        'Nos packs et des produits que nos clients reprennent le plus, à offrir ou à garder pour soi. Retrait gratuit en boutique à Coignières, livraison partout en France.',
+      fond: 'nl-selection',
+      couleurs: { '--sel-sur-titre': '#F2D28A', '--sel-mot': '#F2D28A', '--sel-halo': '0 0 14px rgba(242,210,138,0.3)' },
     },
   },
 }

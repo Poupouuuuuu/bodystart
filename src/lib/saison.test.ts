@@ -140,6 +140,14 @@ describe('CSS de la période', () => {
     expect(css).toContain('.souligne-saison{')
     expect(css).not.toMatch(/[<>]/)
   })
+  it('Noël : liseré rouge, flocon des badges de la couleur du texte', () => {
+    const noel = P.find((p) => p.theme === 'noel')!
+    const css = cssSaison(noel)
+    expect(css).toContain('--saison-accent:#C62828')
+    expect(css).toContain('.saison-entete{box-shadow:inset 0 -3px 0 var(--saison-accent)}')
+    expect(css).toContain(`stroke='%23${noel.texteSurAccent.slice(1)}'`)
+    expect(css).not.toMatch(/[<>]/)
+  })
   it('Black Week : liseré et soulignés jaunes (accent_2), pas d’ombre noire', () => {
     const bw = P.find((p) => p.theme === 'black-week')!
     const css = cssSaison(bw)
