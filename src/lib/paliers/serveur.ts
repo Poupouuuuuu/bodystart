@@ -11,7 +11,7 @@
 
 import { unstable_cache } from 'next/cache'
 import { shopifyAdminFetch, shopifyFetch } from '@/lib/shopify/client'
-import { idNumerique, parsePaliers, type Palier, type Periode } from './index'
+import { idNumerique, parsePaliers, type Palier, type PaliersConfig, type Periode } from './index'
 
 const GET_PALIERS = /* GraphQL */ `
   query PaliersCadeaux {
@@ -185,3 +185,16 @@ export async function chargerPaliers(): Promise<PaliersPublics | null> {
 
   return { periodes, ensembles, stock, titres, dateForcable: process.env.VERCEL_ENV !== 'production' }
 }
+
+/**
+ * Métachamp seul (sans l'API Admin), relu au plus toutes les 15 min : pour la
+ * mention du cadeau sur sa fiche produit. Une erreur n'est pas mise en cache.
+ */
+export const lirePaliers = unstable_cache(
+  async (): Promise<PaliersConfig | null> => {
+    const data = await shopifyFetch<{ shop: { metafield: { value: string } | null } }>(GET_PALIERS)
+    return parsePaliers(data.shop.metafield?.value)
+  },
+  ['paliers-config-v1'],
+  { revalidate: 900 }
+)

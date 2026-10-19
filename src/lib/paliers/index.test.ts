@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import {
   parsePaliers, periodeActive, dateDeReference, baseCadeaux, baseLivraison, etatPaliers, planCadeaux,
-  cadeauxPayants, prochainPalier, type LigneCadeau, type ContextePaliers,
+  cadeauxPayants, prochainPalier, cadeauDeFiche, mentionCadeauFiche, type LigneCadeau, type ContextePaliers,
 } from './index'
 
 const RAW = fs.readFileSync(path.join(__dirname, 'fixtures/paliers-2026-10-13.json'), 'utf8')
@@ -135,5 +135,27 @@ describe('états et plan', () => {
   it('cadeau facturé (non passé à 0 €) : signalé', () => {
     const lignes = [ligne({ id: 'g', cadeau: 60, subtotal: 2.9, total: 2.9 }), ligne({ id: 'h', cadeau: 100, subtotal: 6.9, total: 0 })]
     expect(cadeauxPayants(lignes).map((l) => l.id)).toEqual(['g'])
+  })
+})
+
+describe('fiche du cadeau (Black Week)', () => {
+  const CREA_1KG = 'gid://shopify/ProductVariant/54978281374038'
+  const pendant = new Date('2026-11-24T10:00:00Z')
+  it('palier de la période qui offre une variante en stock de la fiche', () => {
+    const c = cadeauDeFiche(config, pendant, [CREA, CREA_1KG])!
+    expect(c.periode).toBe('Black Week')
+    expect(c.palier.montant).toBe(100)
+  })
+  it('rien hors période, ni si le cadeau est épuisé', () => {
+    expect(cadeauDeFiche(config, new Date('2026-11-30T10:00:00Z'), [CREA, CREA_1KG])).toBeNull()
+    expect(cadeauDeFiche(config, pendant, [CREA_1KG])).toBeNull()
+    expect(cadeauDeFiche(null, pendant, [CREA])).toBeNull()
+  })
+  it('texte : « offerte » sur la variante cadeau, le libellé du palier sinon', () => {
+    const c = cadeauDeFiche(config, pendant, [CREA, CREA_1KG])!
+    expect(mentionCadeauFiche(c, CREA)).toBe('Black Week : offerte dès 100\u00a0€ de compléments, ajoutée au panier automatiquement')
+    expect(mentionCadeauFiche(c, CREA_1KG)).toBe(
+      'Black Week : Créatine Dedicated 500 g offerte dès 100\u00a0€ de compléments, ajoutée au panier automatiquement'
+    )
   })
 })

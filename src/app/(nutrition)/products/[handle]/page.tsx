@@ -26,6 +26,10 @@ import { composantsSansFiche } from '@/lib/shopify/composants-sans-fiche'
 import { productSchema } from '@/lib/jsonld/product'
 import { guidesDeFiche, rayonDeFiche } from '@/lib/rayon-fiche'
 import { altProduit } from '@/lib/alt-produit'
+import { cadeauDeFiche, type CadeauFiche } from '@/lib/paliers'
+import { lirePaliers } from '@/lib/paliers/serveur'
+import { periodeServeur } from '@/lib/saison'
+import { apercuSaison, getSaison } from '@/lib/shopify/saison'
 import { BLOG_ARTICLES } from '@/content/blog'
 
 // ISR 3 min (sprint perf 2026-07-04) : la page était en revalidate=0 +
@@ -183,6 +187,10 @@ export default async function ProductPage({ params }: Props) {
     const article = BLOG_ARTICLES.find((a) => a.slug === slug)
     return article ? [{ slug, title: article.title, excerpt: article.excerpt }] : []
   })
+  // Black Week : la fiche du cadeau d'un palier le dit sous le prix (palier de
+  // bodystart.paliers_cadeaux à la date de la période, rien en dur). Hors
+  // production, ?saison=black-week (cookie) montre la mention avant les dates.
+  const cadeauFiche = await cadeauBlackWeek(product.variants.nodes)
   const collectionName = product.collections?.nodes?.[0]?.title ?? null
   const collectionHandle = product.collections?.nodes?.[0]?.handle ?? null
   const benefits = extractBenefits(product.tags ?? [], product.title)
@@ -317,6 +325,7 @@ export default async function ProductPage({ params }: Props) {
             photoCoffret={coffret ? (images[0] ?? null) : null}
             imagePack={productIsBundle && !coffret ? (images[0] ?? null) : null}
             altImages={altProduit({ title: product.title, vendor: product.vendor, format })}
+            cadeauFiche={cadeauFiche}
             rating={rating}
             googleRating={googleRating}
           />
@@ -362,4 +371,15 @@ export default async function ProductPage({ params }: Props) {
       {showPrecautions && <PrecautionsEmploiV2 />}
     </>
   )
+}
+
+/** Palier Black Week qui offre une variante en stock de cette fiche, sinon null. */
+async function cadeauBlackWeek(variantes: { id: string; availableForSale: boolean }[]): Promise<CadeauFiche | null> {
+  const [saison, apercu] = await Promise.all([getSaison(), apercuSaison()])
+  const periode = periodeServeur(saison, new Date(), apercu)
+  if (periode?.theme !== 'black-week') return null
+  // Aperçu avant les dates : les paliers du premier jour de la période.
+  const date = apercu ? new Date(Math.max(Date.now(), Date.parse(periode.du))) : new Date()
+  const config = await lirePaliers().catch(() => null)
+  return cadeauDeFiche(config, date, variantes.filter((v) => v.availableForSale).map((v) => v.id))
 }
