@@ -100,6 +100,8 @@ section.saison-nuit{background-color:#14101F}
    toile dans un coin, 3 chauves-souris immobiles. */
 .saison-bandeau{position:relative;background-color:#14101F;box-shadow:0 0 0 100vmax #14101F;clip-path:inset(0 -100vmax);padding-bottom:2.25rem;margin-bottom:1.75rem}
 .saison-bandeau-haut{clip-path:inset(-100vmax -100vmax 0)}
+.saison-bandeau-haut::before{top:-28px}
+.saison-bandeau-haut::after{top:-30px;width:clamp(72px,10vw,150px)}
 .saison-bandeau h1,.saison-bandeau .text-spruce{color:#FAF8F3}
 .saison-bandeau p,.saison-bandeau nav{color:rgba(255,255,255,.8)}
 .saison-bandeau a{color:#FFB46B}

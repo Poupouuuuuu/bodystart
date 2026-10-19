@@ -85,7 +85,7 @@ type Note = Awaited<ReturnType<typeof getGoogleRating>>
  * du thème (variables --h-*, components/saison/decors.ts).
  * - `sizes` : 70vw sous 640 px comme hors saison (variante 828 px au
  *   téléphone) ; à partir de lg, un peu plus que la moitié de l'écran (photo
- *   agrandie ×1,22 pour la cadrer).
+ *   agrandie ×1,35 pour la cadrer).
  * - Photo cadrée sur le mur végétal et les étagères éclairées (zoom léger,
  *   moins de plafond).
  * - À partir de lg, la carte boutique est posée en bas de la photo : le
@@ -116,7 +116,7 @@ function HeroScinde({
           fetchPriority="high"
           quality={72}
           sizes="(max-width: 640px) 70vw, (max-width: 1023px) 100vw, 64vw"
-          className="origin-[50%_58%] scale-[1.22] object-cover object-[50%_48%] lg:origin-[55%_62%] lg:object-[55%_55%]"
+          className="origin-[50%_58%] scale-[1.22] object-cover object-[50%_48%] lg:origin-[55%_75%] lg:scale-[1.35] lg:object-[55%_55%]"
         />
         <DecorPhoto />
         {/* Jonction franche entre la photo et le fond uni. */}
