@@ -10,14 +10,14 @@ import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
 import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import Reveal from '@/components/ui/Reveal'
-import { getCoffrets, getFeaturedProducts, getProductByHandle } from '@/lib/shopify'
+import { getCoffrets, getCollectionByHandle, getFeaturedProducts, getProductByHandle } from '@/lib/shopify'
 import { HOME_FEATURED_HANDLE, homeBestSellers } from '@/lib/merchandising'
 import { buildPageMetadata } from '@/lib/seo'
 import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 import CoffretsNoelV3 from '@/components/home/v3/CoffretsNoelV3'
 import { coffretsVisibles, dateCoffrets } from '@/lib/coffrets'
 import { finPeriode, periodeActive } from '@/lib/saison'
-import { getCartesCollection, getSaison } from '@/lib/shopify/saison'
+import { getSaison } from '@/lib/shopify/saison'
 import { composerSelection, MEILLEURES_VENTES_AFFICHEES } from '@/lib/selection-saison'
 import { decorSaison } from '@/components/saison/decors'
 import SelectionSaison from '@/components/saison/SelectionSaison'
@@ -94,14 +94,15 @@ export default async function HomePage({
   // page, sélection et séparateurs pendant la période, rien sinon.
   const periode = periodeActive(await getSaison(), new Date())
   const decor = decorSaison(periode?.theme)
+  // Packs : collection `packs`, comme la page /packs (mêmes cartes).
   const selection =
     periode && decor
       ? composerSelection(
-          await getCartesCollection('packs'),
+          (await getCollectionByHandle('packs', 24).catch(() => null))?.products?.nodes ?? [],
           meilleures,
           meilleures.slice(0, MEILLEURES_VENTES_AFFICHEES).map((p) => p.handle)
         )
-      : []
+      : null
   const Separateur = decor?.Separateur ?? SansSeparateur
   return (
     <>
@@ -119,10 +120,11 @@ export default async function HomePage({
 
       {/* 1 bis. Sélection de saison (packs puis meilleures ventes), pendant
              une période décorée seulement */}
-      {periode && decor && selection.length > 0 && (
+      {periode && decor && selection && (
         <Reveal>
           <SelectionSaison
-            produits={selection}
+            packs={selection.packs}
+            produits={selection.produits}
             surTitre={`Jusqu'au ${finPeriode(periode)}`}
             {...decor.selection}
           />

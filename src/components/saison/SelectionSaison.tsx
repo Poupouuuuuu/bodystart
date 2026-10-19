@@ -1,14 +1,18 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import PackCardV2 from '@/components/pack/v2/PackCardV2'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 
 // Section « La sélection de saison » de l'accueil (déco Halloween du
-// 19/10/2026, réutilisable pour Noël) : packs puis meilleures ventes, prix
-// Shopify tels quels (lib/selection-saison). Cartes catalogue normales :
-// boutons d'achat et prix inchangés.
+// 19/10/2026, réutilisable pour Noël) : une rangée de packs (mêmes cartes que
+// /packs) puis une rangée de meilleures ventes (cartes du catalogue). Prix
+// Shopify tels quels, boutons d'achat inchangés (lib/selection-saison).
+// Sous lg, chaque rangée défile à l'horizontale (CSS seul) : la section reste
+// courte sur téléphone.
 
 interface SelectionSaisonProps {
+  packs: ShopifyProduct[]
   produits: ShopifyProduct[]
   /** Sur-titre (« Jusqu'au 31/10 »). */
   surTitre: string
@@ -20,8 +24,19 @@ interface SelectionSaisonProps {
   fond: string
 }
 
-export default function SelectionSaison({ produits, surTitre, titre, motTheme, intro, fond }: SelectionSaisonProps) {
-  if (produits.length === 0) return null
+const RANGEE =
+  '-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:-mx-6 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0'
+
+export default function SelectionSaison({
+  packs,
+  produits,
+  surTitre,
+  titre,
+  motTheme,
+  intro,
+  fond,
+}: SelectionSaisonProps) {
+  if (packs.length + produits.length === 0) return null
   return (
     <section className={`relative overflow-hidden py-16 md:py-24 ${fond}`} aria-labelledby="selection-saison">
       <div className="container relative">
@@ -50,11 +65,26 @@ export default function SelectionSaison({ produits, surTitre, titre, motTheme, i
             />
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 lg:gap-6">
-          {produits.map((p) => (
-            <ProductCardShop key={p.id} product={p} />
-          ))}
-        </div>
+
+        {packs.length > 0 && (
+          <div className={RANGEE}>
+            {packs.map((p) => (
+              <div key={p.id} className="flex w-[84%] shrink-0 snap-start sm:w-[46%] lg:w-auto [&>*]:w-full">
+                <PackCardV2 product={p} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {produits.length > 0 && (
+          <div className={`${RANGEE} ${packs.length > 0 ? 'mt-6 lg:mt-8' : ''}`}>
+            {produits.map((p) => (
+              <div key={p.id} className="flex w-[62%] shrink-0 snap-start sm:w-[38%] lg:w-auto [&>*]:w-full">
+                <ProductCardShop product={p} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

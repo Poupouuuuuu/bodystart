@@ -12,24 +12,26 @@ interface Candidat {
 }
 
 /**
- * Jusqu'à `max` produits : `maxPacks` packs au plus, complétés par les
- * meilleures ventes. Moins de 4 au total : rien (la section n'est pas
- * affichée plutôt que de montrer une grille à moitié vide).
+ * Les packs (en stock, `maxPacks` au plus) et des meilleures ventes (en stock,
+ * ni pack ni déjà dans le bloc « Meilleures ventes », `maxProduits` au plus).
+ * Moins de 4 au total : rien (la section n'est pas affichée plutôt que de
+ * montrer une grille à moitié vide).
  */
 export function composerSelection<T extends Candidat>(
   packs: T[],
   meilleures: T[],
   dejaAffiches: string[],
-  { max = 6, maxPacks = 4 }: { max?: number; maxPacks?: number } = {}
-): T[] {
+  { maxPacks = 3, maxProduits = 3 }: { maxPacks?: number; maxProduits?: number } = {}
+): { packs: T[]; produits: T[] } {
   const enStock = (p: T) => p.availableForSale !== false
   const choisis = packs.filter(enStock).slice(0, maxPacks)
-  const pris = new Set([...choisis.map((p) => p.handle), ...dejaAffiches])
+  const pris = new Set([...packs.map((p) => p.handle), ...dejaAffiches])
+  const produits: T[] = []
   for (const p of meilleures) {
-    if (choisis.length >= max) break
+    if (produits.length >= maxProduits) break
     if (!enStock(p) || pris.has(p.handle)) continue
-    choisis.push(p)
+    produits.push(p)
     pris.add(p.handle)
   }
-  return choisis.length >= 4 ? choisis : []
+  return choisis.length + produits.length >= 4 ? { packs: choisis, produits } : { packs: [], produits: [] }
 }

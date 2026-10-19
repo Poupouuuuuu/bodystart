@@ -6,9 +6,6 @@
 import { unstable_cache } from 'next/cache'
 import { lireSaison, type PeriodeSaison } from '@/lib/saison'
 import { shopifyFetch } from './client'
-import { withCardPrice } from './index'
-import { GET_COLLECTION_CARTES } from './queries/collections'
-import type { ShopifyProduct } from './types'
 
 const GET_SAISON = `query Saison { shop { metafield(namespace: "bodystart", key: "saison") { value } } }`
 
@@ -26,19 +23,6 @@ const saisonEnCache = unstable_cache(
 export async function getSaison(): Promise<PeriodeSaison[]> {
   try {
     return await saisonEnCache()
-  } catch {
-    return []
-  }
-}
-
-/** Produits d'une collection au format carte (packs de la sélection de saison). */
-export async function getCartesCollection(handle: string, first = 12): Promise<ShopifyProduct[]> {
-  try {
-    const data = await shopifyFetch<{ collection: { products: { nodes: ShopifyProduct[] } } | null }>(
-      GET_COLLECTION_CARTES,
-      { handle, first }
-    )
-    return (data.collection?.products.nodes ?? []).map(withCardPrice)
   } catch {
     return []
   }
