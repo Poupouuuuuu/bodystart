@@ -98,23 +98,28 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       )}
 
-      <div className="container py-12 md:py-16">
-        {/* Fil d'ariane */}
-        <nav aria-label="Fil d'ariane" className="mb-8 text-[12px] font-semibold text-ink-mute">
-          <ol className="flex flex-wrap items-center gap-2">
-            <li><Link href="/" className="-mx-2.5 -my-3.5 inline-flex min-h-[44px] items-center px-2.5 hover:text-spruce transition-colors">Accueil</Link></li>
-            <li aria-hidden="true">/</li>
-            <li><Link href="/products" className="-mx-2.5 -my-3.5 inline-flex min-h-[44px] items-center px-2.5 hover:text-spruce transition-colors">Produits</Link></li>
-            <li aria-hidden="true">/</li>
-            <li className="text-spruce" aria-current="page">{cat.label}</li>
-          </ol>
-        </nav>
-
-        {/* Intro answer-first */}
-        <div className="max-w-[760px] mb-10">
-          <h1 className="font-display text-[32px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
+      {/* Fil d'Ariane et titre : section à part, fond du thème pendant une
+          période décorée (saison-bandeau), rien hors période. */}
+      <section className="saison-bandeau">
+        <div className="container pt-12 md:pt-16">
+          <nav aria-label="Fil d'ariane" className="mb-8 text-[12px] font-semibold text-ink-mute">
+            <ol className="flex flex-wrap items-center gap-2">
+              <li><Link href="/" className="-mx-2.5 -my-3.5 inline-flex min-h-[44px] items-center px-2.5 hover:text-spruce transition-colors">Accueil</Link></li>
+              <li aria-hidden="true">/</li>
+              <li><Link href="/products" className="-mx-2.5 -my-3.5 inline-flex min-h-[44px] items-center px-2.5 hover:text-spruce transition-colors">Produits</Link></li>
+              <li aria-hidden="true">/</li>
+              <li className="text-spruce" aria-current="page">{cat.label}</li>
+            </ol>
+          </nav>
+          <h1 className="max-w-[760px] font-display text-[32px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
             {cat.h1}
           </h1>
+        </div>
+      </section>
+
+      <div className="container pb-12 md:pb-16">
+        {/* Intro answer-first */}
+        <div className="max-w-[760px] mb-10">
           {/* MOBILE FIRST : l'intro (2-3 paragraphes) repoussait les produits a
               plus d'un ecran sur telephone -> repliee a ~7 lignes sous md, avec
               « Lire la suite ». Le texte reste entier dans le DOM (SEO, a11y). */}

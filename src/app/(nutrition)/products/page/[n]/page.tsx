@@ -37,7 +37,7 @@ export default async function CataloguePage({ params }: Props) {
 
   return (
     <div className="bg-canvas min-h-screen">
-      <section className="pt-10 pb-4 md:pt-12 md:pb-6">
+      <section className="saison-bandeau pt-10 pb-4 md:pt-12 md:pb-6">
         <div className="container">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute">Catalogue</p>
           <h1 className="font-display text-[34px] font-extrabold leading-[1.05] tracking-tight text-spruce md:text-[44px]">

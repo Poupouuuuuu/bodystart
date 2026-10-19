@@ -23,6 +23,7 @@ import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
 import PaliersCadeaux from './PaliersCadeaux'
+import TitrePanierVide from '@/components/saison/PanierVideSaison'
 import { gaBeginCheckout } from '@/lib/analytics'
 
 const activeStore = BODY_START_STORES.find((s) => s.isActive)
@@ -316,7 +317,8 @@ export default function CartDrawer() {
       >
         {/* ─── Header (toujours visible) ─── */}
         <div className="flex-shrink-0 flex items-center justify-between px-8 py-6">
-          <h2 className="font-display text-[20px] font-extrabold tracking-tight text-spruce">
+          {/* saison-titre : petite icône du thème pendant une période décorée. */}
+          <h2 className="saison-titre font-display text-[20px] font-extrabold tracking-tight text-spruce">
             Mon panier
           </h2>
           <button
@@ -348,7 +350,7 @@ export default function CartDrawer() {
         ) : isEmpty ? (
           /* Panier vide */
           <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 text-center text-ink">
-            <p className="font-display font-bold text-lg text-spruce mb-2">Ton panier est vide</p>
+            <TitrePanierVide className="font-display font-bold text-lg text-spruce mb-2" />
             <p className="text-ink-mute font-medium mb-8 max-w-[250px] text-sm">
               Ajoute des produits pour voir ton résumé de commande.
             </p>

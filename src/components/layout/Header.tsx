@@ -269,7 +269,9 @@ export default function Header({ saison = [], themeServeur = null, previsualisat
       )}
 
       {/* ─── Header principal ─── */}
-      <div className="border-b transition-colors relative z-40 bg-white border-spruce/10">
+      {/* saison-entete, saison-lien-nav : liseré et soulignés du thème pendant
+          une période décorée (lib/saison, CSS_THEME), rien hors période. */}
+      <div className="saison-entete border-b transition-colors relative z-40 bg-white border-spruce/10">
         <nav className="container relative">
           <div className="flex items-center justify-between h-16 gap-4">
 
@@ -299,7 +301,7 @@ export default function Header({ saison = [], themeServeur = null, previsualisat
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'flex items-center gap-1.5 px-3 py-2 rounded-full text-sm transition-colors whitespace-nowrap',
+                      'saison-lien-nav flex items-center gap-1.5 px-3 py-2 rounded-full text-sm transition-colors whitespace-nowrap',
                       active
                         ? 'text-spruce bg-sage font-semibold'
                         : 'font-medium text-ink hover:text-spruce hover:bg-sage'
@@ -556,7 +558,7 @@ export default function Header({ saison = [], themeServeur = null, previsualisat
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'flex items-center justify-between px-4 py-3.5 text-sm transition-colors rounded-2xl',
+                      'saison-lien-nav flex items-center justify-between px-4 py-3.5 text-sm transition-colors rounded-2xl',
                       active
                         ? 'text-spruce bg-sage font-semibold'
                         : 'font-medium text-ink hover:text-spruce hover:bg-sage'

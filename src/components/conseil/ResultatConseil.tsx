@@ -188,14 +188,16 @@ export default function ResultatConseil({ resultat, reponses, objectifLibelle, t
 
   return (
     <div className="container max-w-2xl pb-16 pt-8 md:pb-24 md:pt-14">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink">{recap}</p>
-      <h1
-        ref={titreRef}
-        tabIndex={-1}
-        className="mt-3 font-display text-[34px] font-extrabold leading-[1.05] tracking-tight text-spruce outline-none sm:text-[44px]"
-      >
-        {titre}
-      </h1>
+      <div className="saison-bandeau saison-bandeau-haut">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink">{recap}</p>
+        <h1
+          ref={titreRef}
+          tabIndex={-1}
+          className="mt-3 font-display text-[34px] font-extrabold leading-[1.05] tracking-tight text-spruce outline-none sm:text-[44px]"
+        >
+          {titre}
+        </h1>
+      </div>
 
       {resultat.type === 'selection' ? (
         <p className="mt-4 text-[16px] leading-[1.6] text-ink-mute md:text-[17px]">

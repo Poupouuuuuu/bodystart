@@ -21,7 +21,9 @@ export default async function ProductsPage() {
   return (
     <div className="bg-canvas min-h-screen">
       {/* H1 rendu côté serveur, hors du Suspense : il ne dépend pas de l'URL. */}
-      <section className="pt-10 pb-4 md:pt-12 md:pb-6">
+      {/* saison-bandeau : fond du thème pendant une période décorée
+          (components/saison/halloween/styles.ts), rien hors période. */}
+      <section className="saison-bandeau pt-10 pb-4 md:pt-12 md:pb-6">
         <div className="container">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
             Catalogue

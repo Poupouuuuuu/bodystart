@@ -159,19 +159,26 @@ export function dateSaison(forcee: string | null | undefined, previsualisation: 
 
 // Toile d'araignée (coin haut droit des badges « Best-seller », Halloween),
 // en masque : elle prend la couleur du texte du badge, lisible sur l'accent.
-const TOILE =
+export const TOILE =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='.6'%3E%3Cpath d='M16 0V16M16 0 3 13M16 0 0 7M16 0H0M16 5 12.5 3.5 11.4 2 11 0M16 10 8.9 7.1 6.8 4 6 0M16 14.5 5.7 10.3 2.7 5.8 1.5 0'/%3E%3C/svg%3E\")"
 
 /**
  * Règles propres à chaque thème, en plus de l'accent : décor léger des cartes
- * produit et des badges (déco Halloween du 19/10/2026). Couleurs tirées des
+ * produit, des badges et de l'en-tête (déco Halloween du 19/10/2026), qui
+ * basculent à l'heure pile avec le header. Couleurs tirées des
  * variables validées, jamais du metafield en clair.
  */
 const CSS_THEME: Partial<Record<ThemeSaison, string>> = {
   halloween:
     `.carte-produit:hover{box-shadow:0 0 0 1px color-mix(in srgb,var(--saison-accent) 32%,transparent),0 18px 44px -14px color-mix(in srgb,var(--saison-accent) 60%,transparent)!important}` +
     `.badge-saison:not(.absolute){position:relative}` +
-    `.badge-saison::after{content:"";position:absolute;top:0;right:0;width:15px;height:15px;pointer-events:none;opacity:.5;background-color:currentColor;-webkit-mask:${TOILE} no-repeat top right/contain;mask:${TOILE} no-repeat top right/contain}`,
+    `.badge-saison::after{content:"";position:absolute;top:0;right:0;width:15px;height:15px;pointer-events:none;opacity:.5;background-color:currentColor;-webkit-mask:${TOILE} no-repeat top right/contain;mask:${TOILE} no-repeat top right/contain}` +
+    // En-tête (Header : saison-entete, saison-lien-nav) : liseré orange sous
+    // la barre, soulignement orange du lien actif et au survol. Sans
+    // changement de hauteur (ombre intérieure, soulignement).
+    `.saison-entete{box-shadow:inset 0 -2px 0 var(--saison-accent)}` +
+    `.saison-lien-nav{text-decoration-line:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:transparent;transition:text-decoration-color .3s}` +
+    `.saison-lien-nav:hover,.saison-lien-nav[aria-current=page]{text-decoration-color:var(--saison-accent)}`,
 }
 
 /**

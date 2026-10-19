@@ -214,24 +214,28 @@ export default function GuideConseil({ guide, catalogue }: Props) {
 
   return (
     <div ref={zoneRef} className="container max-w-2xl scroll-mt-24 pb-16 pt-8 md:pb-24 md:pt-14">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink">
-        Conseil gratuit · Coignières
-      </p>
-      <h1
-        className={cn(
-          'mt-3 font-display font-extrabold tracking-tight text-spruce',
-          premier ? 'text-[34px] leading-[1.05] sm:text-[44px]' : 'text-[20px] leading-tight'
-        )}
-      >
-        Trouve ton produit en 1 minute
-      </h1>
-      {premier && (
-        <p className="mt-4 text-[16px] leading-[1.6] text-ink-mute md:text-[17px]">
-          {frenchSpacing(
-            'Réponds à quelques questions : on te montre tout de suite ce qu’on te conseillerait au comptoir, parmi les produits en stock dans notre boutique de Coignières. Pas besoin de laisser tes coordonnées.'
-          )}
+      {/* saison-bandeau : fond du thème pendant une période décorée, rien hors
+          période (components/saison/halloween/styles.ts). */}
+      <div className="saison-bandeau saison-bandeau-haut">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink">
+          Conseil gratuit · Coignières
         </p>
-      )}
+        <h1
+          className={cn(
+            'mt-3 font-display font-extrabold tracking-tight text-spruce',
+            premier ? 'text-[34px] leading-[1.05] sm:text-[44px]' : 'text-[20px] leading-tight'
+          )}
+        >
+          Trouve ton produit en 1 minute
+        </h1>
+        {premier && (
+          <p className="mt-4 text-[16px] leading-[1.6] text-ink-mute md:text-[17px]">
+            {frenchSpacing(
+              'Réponds à quelques questions : on te montre tout de suite ce qu’on te conseillerait au comptoir, parmi les produits en stock dans notre boutique de Coignières. Pas besoin de laisser tes coordonnées.'
+            )}
+          </p>
+        )}
+      </div>
 
       <div className="mt-8 flex min-h-[44px] items-center justify-between gap-4">
         {premier ? (

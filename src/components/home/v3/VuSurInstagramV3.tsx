@@ -21,8 +21,11 @@ export default function VuSurInstagramV3() {
               <Clapperboard className="h-3.5 w-3.5" aria-hidden="true" />
               Vu sur Instagram
             </span>
-            <h2 className="mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px] [text-wrap:balance]">
-              Ils sont passés à la boutique
+            <h2
+              data-saison-icone="chauve-souris"
+              className="saison-titre mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px] [text-wrap:balance]"
+            >
+              Ils sont passés à la <span className="saison-mot">boutique</span>
             </h2>
             <p className="mt-4 text-[16px] leading-relaxed text-ink-mute md:text-[18px]">
               Des athlètes qu&apos;on suit, filmés à Coignières, sans script. Leur avis, leurs produits,

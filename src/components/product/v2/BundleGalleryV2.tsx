@@ -85,9 +85,9 @@ export default function BundleGalleryV2({
     <div className="w-full">
       {photo ? (
         /* ─── Hero coffret : sa photo, image LCP de la fiche ─── */
-        <div className="relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-white">
+        <div className="saison-toile saison-toile-droite relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-white">
           {discountPct !== null && (
-            <div className="absolute top-4 left-4 z-30 bg-terracotta text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+            <div className="saison-badge-citrouille saison-badge-citrouille-droite absolute top-4 left-4 z-30 bg-terracotta text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
               −{discountPct}%
             </div>
           )}
@@ -104,12 +104,12 @@ export default function BundleGalleryV2({
       ) : (
       /* ─── Hero : pots empiles sur fond vegetal ─── */
       <div
-        className="relative w-full aspect-square bg-cover bg-bottom bg-no-repeat overflow-hidden rounded-2xl border border-spruce/10"
+        className="saison-toile saison-toile-droite relative w-full aspect-square bg-cover bg-bottom bg-no-repeat overflow-hidden rounded-2xl border border-spruce/10"
         style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
       >
         {/* Badge promo eventuel (coherence avec ProductGalleryV2) */}
         {discountPct !== null && (
-          <div className="absolute top-4 left-4 z-30 bg-terracotta text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+          <div className="saison-badge-citrouille saison-badge-citrouille-droite absolute top-4 left-4 z-30 bg-terracotta text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
             −{discountPct}%
           </div>
         )}

@@ -10,12 +10,14 @@ import RappelForm from './RappelForm'
 export default function ConseilRepli() {
   return (
     <div className="container max-w-2xl pb-16 pt-8 md:pb-24 md:pt-14">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink">
-        Conseil gratuit · Coignières
-      </p>
-      <h1 className="mt-3 font-display text-[34px] font-extrabold leading-[1.05] tracking-tight text-spruce sm:text-[44px]">
-        On te conseille en boutique
-      </h1>
+      <div className="saison-bandeau saison-bandeau-haut">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-mustard-ink">
+          Conseil gratuit · Coignières
+        </p>
+        <h1 className="mt-3 font-display text-[34px] font-extrabold leading-[1.05] tracking-tight text-spruce sm:text-[44px]">
+          On te conseille en boutique
+        </h1>
+      </div>
       <p className="mt-4 text-[16px] leading-[1.6] text-ink md:text-[17px]">
         {frenchSpacing(
           'Notre guide en ligne est en pause pour le moment. Passe nous voir à Coignières, ou laisse-nous tes coordonnées : on te rappelle pour faire le point ensemble, sans engagement.'

@@ -122,22 +122,24 @@ export default function BestSellersV3({ products }: BestSellersV3Props) {
   const rest = items.filter((p) => p.id !== featured.id).slice(0, 4)
 
   return (
-    <section className="bg-canvas">
+    // saison-* : marqueurs de la déco de saison (fond nuit, mot et icône du
+    // titre), sans effet hors période (components/saison/halloween/styles.ts).
+    <section className="saison-nuit bg-canvas">
       <div className="container py-14 md:py-28">
         <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
           <div>
-            <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-ink-mute">
+            <span className="saison-nuit-libelle inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-ink-mute">
               Les plus pris en boutique
             </span>
-            <h2 className="mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px] lg:text-[64px] [text-wrap:balance]">
-              Ce qui part vite
+            <h2 className="saison-titre saison-nuit-titre mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px] lg:text-[64px] [text-wrap:balance]">
+              Ce qui part <span className="saison-mot">vite</span>
               <br />
               chez nous.
             </h2>
           </div>
           <Link
             href="/products"
-            className="group inline-flex w-max items-center gap-3 rounded-full border border-spruce/20 py-1.5 pl-5 pr-1.5 text-[14px] font-semibold text-spruce transition-all duration-500 ease-out-expo hover:border-spruce hover:bg-white"
+            className="saison-nuit-lien group inline-flex w-max items-center gap-3 rounded-full border border-spruce/20 py-1.5 pl-5 pr-1.5 text-[14px] font-semibold text-spruce transition-all duration-500 ease-out-expo hover:border-spruce hover:bg-white"
           >
             Tout le catalogue
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sage text-spruce transition-all duration-500 ease-out-expo group-hover:translate-x-0.5 group-hover:bg-spruce group-hover:text-canvas">

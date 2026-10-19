@@ -50,7 +50,7 @@ export default function SelectionSaison({
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#F6A456]">{surTitre}</p>
             <h2
               id="selection-saison"
-              className="mt-3 font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] text-canvas md:text-[48px]"
+              className="saison-titre mt-3 font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] text-canvas md:text-[48px]"
             >
               {titre}{' '}
               <span className="text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_14px_rgba(232,113,26,0.35)]">
