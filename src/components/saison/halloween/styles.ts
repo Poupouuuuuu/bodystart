@@ -6,6 +6,33 @@
 // components/saison/AnimationsSaison). Sans animation, tout reste en place et
 // visible (chauves-souris arrêtées sur le ciel, lucioles allumées).
 
+import { TOILE } from '@/lib/saison'
+
+// Icônes en SVG dans le CSS (aucun fichier image) : citrouille et chauve-souris
+// des titres, chauves-souris des bandeaux de page. Encodage minimal (seuls
+// < > # % " sont échappés) : le CSS part dans chaque page pendant la période.
+const svg = (contenu: string, viewBox: string) =>
+  `url("data:image/svg+xml,${`<svg xmlns='http://www.w3.org/2000/svg' viewBox='${viewBox}'>${contenu}</svg>`.replace(/[<>#%"]/g, encodeURIComponent)}")`
+const CITROUILLE = svg(
+  "<path fill='#3B7A3F' d='M24.6 9.4c-.5-3 .5-5.6 3-7.2l1 1.3c-1.9 1.3-2.5 3.2-2.1 5.7z'/>" +
+    "<path fill='#E8711A' d='M24 10c-3.4-2-9.4-1.8-12.6 1.4C7.6 15.2 6.6 23 9.6 29c2.6 5.2 8.2 7.2 14.4 6 6.2 1.2 11.8-.8 14.4-6 3-6 2-13.8-1.8-17.6C33.4 8.2 27.4 8 24 10z'/>" +
+    "<path fill='none' stroke='#A9480C' stroke-width='1.5' d='M24 11v23.6M17.2 12c-2.6 6-2.6 16.6 0 22.6M30.8 12c2.6 6 2.6 16.6 0 22.6'/>",
+  '6 1 36 35'
+)
+const AILES =
+  'M16 4c.7 0 1.2.6 1.4 1.3l.5-1.6.5 1.7c1.6-1.7 4.6-3.1 8.6-2.6-1.4.7-2.3 2-2.3 3.4 1.6-.4 3.4.1 4.8 1.3-1.7-.1-3.2.7-3.9 2.1-1.2-.9-2.9-1-4.2-.2.3 1.3-.1 2.8-1.2 3.9-.8-1.3-2.4-2.1-4.2-2.1s-3.4.8-4.2 2.1c-1.1-1.1-1.5-2.6-1.2-3.9-1.3-.8-3-.7-4.2.2-.7-1.4-2.2-2.2-3.9-2.1 1.4-1.2 3.2-1.7 4.8-1.3 0-1.4-.9-2.7-2.3-3.4 4-.5 7 .9 8.6 2.6l.5-1.7.5 1.6C14.8 4.6 15.3 4 16 4z'
+// Masque : prend la couleur de fond de l'élément (nuit ou orange).
+const CHAUVE_SOURIS = svg(`<path d='${AILES}'/>`, '2 2 28 13')
+const CHAUVES_SOURIS = svg(
+  `<defs><path id='a' d='${AILES}'/></defs><g fill='#F6A456'>` +
+    "<use href='#a' transform='translate(58 0) scale(1.5)'/>" +
+    "<use href='#a' transform='translate(4 20)' opacity='.8'/>" +
+    "<use href='#a' transform='translate(96 26) scale(.7)' opacity='.65'/></g>",
+  '0 0 120 48'
+)
+const masqueToile = (position: string) =>
+  `-webkit-mask:var(--hw-toile) no-repeat ${position}/contain;mask:var(--hw-toile) no-repeat ${position}/contain`
+
 const ETOILES = [
   [6, 10],
   [17, 28],
@@ -52,4 +79,49 @@ export const CSS_HALLOWEEN = `
 @keyframes hw-aile{from{transform:scaleY(1)}to{transform:scaleY(.6)}}
 @keyframes hw-halo{from{opacity:.72;transform:scale(.97)}to{opacity:1;transform:scale(1.03)}}
 @keyframes hw-luciole{0%,100%{opacity:.08;transform:translate3d(0,4px,0)}50%{opacity:1;transform:translate3d(0,-7px,0)}}
+/* Icônes partagées, déclarées une fois. */
+:root{--hw-toile:${TOILE};--hw-citrouille:${CITROUILLE};--hw-chauve-souris:${CHAUVE_SOURIS}}
+/* Titres de section (saison-titre, saison-mot) : un mot en orange, une
+   citrouille ou une chauve-souris au bout, collée au dernier mot (espace
+   insécable) : jamais seule sur une ligne. Orange foncé #B4500E sur fond
+   clair (4,6:1), orange #E8711A sur fond nuit. */
+.saison-mot{color:#B4500E}
+.saison-titre::after{content:"\\00a0";padding-right:.62em;background:var(--hw-citrouille) right center/.58em .58em no-repeat}
+.saison-titre[data-saison-icone=chauve-souris]::after{padding-right:.98em;background:#14101F;-webkit-mask:var(--hw-chauve-souris) right center/.95em .45em no-repeat;mask:var(--hw-chauve-souris) right center/.95em .45em no-repeat}
+/* Sections en fond nuit (saison-nuit) : texte clair, cartes inchangées. */
+section.saison-nuit{background-color:#14101F}
+.saison-nuit .saison-mot{color:#E8711A}
+.saison-nuit .saison-titre[data-saison-icone=chauve-souris]::after{background:#E8711A}
+.saison-nuit .saison-nuit-titre{color:#FAF8F3}
+.saison-nuit .saison-nuit-libelle{color:rgba(255,255,255,.78);border-color:rgba(255,255,255,.22)}
+.saison-nuit .saison-nuit-lien{color:#FAF8F3;border-color:rgba(255,255,255,.32)}
+.saison-nuit .saison-nuit-lien:hover{background-color:rgba(255,255,255,.08);border-color:#E8711A}
+/* Toiles discrètes dans un coin de section (saison-coin). */
+.saison-coin{position:relative}
+.saison-coin::before{content:"";position:absolute;top:0;right:0;width:clamp(64px,9vw,120px);aspect-ratio:1;pointer-events:none;background-color:#14101F;opacity:.13;${masqueToile('top right')}}
+.saison-coin-gauche::before{right:auto;left:0;transform:scaleX(-1)}
+/* Bandeau de titre des pages (saison-bandeau) : fond nuit pleine largeur,
+   toile dans un coin, 3 chauves-souris immobiles. */
+.saison-bandeau{position:relative;background-color:#14101F;box-shadow:0 0 0 100vmax #14101F;clip-path:inset(0 -100vmax);padding-bottom:2.25rem;margin-bottom:1.75rem}
+.saison-bandeau-haut{clip-path:inset(-100vmax -100vmax 0)}
+.saison-bandeau.saison-bandeau-haut::before{top:-28px}
+.saison-bandeau.saison-bandeau-haut::after{top:-30px;width:clamp(72px,10vw,150px)}
+.saison-bandeau h1,.saison-bandeau .text-spruce{color:#FAF8F3}
+.saison-bandeau p,.saison-bandeau nav{color:rgba(255,255,255,.8)}
+.saison-bandeau a{color:#FFB46B}
+.saison-bandeau a:hover{color:#FFD2A6}
+.saison-bandeau::before{content:"";position:absolute;top:0;right:0;width:clamp(56px,8vw,104px);aspect-ratio:1;pointer-events:none;background-color:#fff;opacity:.16;${masqueToile('top right')}}
+.saison-bandeau::after{content:"";position:absolute;top:18px;right:calc(clamp(56px,8vw,104px) + 2%);width:clamp(88px,13vw,170px);aspect-ratio:120/48;pointer-events:none;background:${CHAUVES_SOURIS} center/contain no-repeat;opacity:.9}
+/* Filtres, onglets et page courante actifs (saison-actif, saison-actif-doux). */
+.saison-actif{background-color:#B4500E!important;color:#fff!important}
+.saison-actif *{color:#fff!important}
+.saison-actif-doux{background-color:#FCE3CF!important;color:#8A3A06!important;border-color:rgba(180,80,14,.28)!important}
+/* Fiche produit : toile dans un coin de la galerie, liseré sur la
+   réassurance, citrouille à côté du badge de remise. */
+.saison-toile::after{content:"";position:absolute;top:0;left:0;z-index:20;width:clamp(56px,16%,104px);aspect-ratio:1;pointer-events:none;background-color:#14101F;opacity:.2;transform:scaleX(-1);${masqueToile('top right')}}
+.saison-toile-droite::after{left:auto;right:0;transform:none}
+.saison-reassurance{border-left:3px solid #E8711A;padding-left:14px}
+.saison-badge-citrouille:not(.absolute){position:relative}
+.saison-badge-citrouille::before{content:"";position:absolute;top:50%;right:calc(100% + 6px);width:22px;height:21px;transform:translateY(-50%);pointer-events:none;background:var(--hw-citrouille) center/contain no-repeat}
+.saison-badge-citrouille-droite::before{right:auto;left:calc(100% + 6px)}
 `

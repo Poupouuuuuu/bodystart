@@ -23,13 +23,13 @@ export default function NosGuidesV3() {
   if (articles.length === 0) return null
 
   return (
-    <section className="bg-canvas">
+    <section className="saison-coin bg-canvas">
       <div className="container py-16 md:py-24">
         <div className="mb-9 flex flex-wrap items-end justify-between gap-4">
           <div className="max-w-2xl">
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute">Nos guides</p>
-            <h2 className="font-display text-[28px] font-extrabold leading-[1.1] tracking-tight text-spruce md:text-[40px]">
-              Les réponses qu&apos;on donne au comptoir
+            <h2 className="saison-titre font-display text-[28px] font-extrabold leading-[1.1] tracking-tight text-spruce md:text-[40px]">
+              Les réponses qu&apos;on donne au <span className="saison-mot">comptoir</span>
             </h2>
           </div>
           <Link

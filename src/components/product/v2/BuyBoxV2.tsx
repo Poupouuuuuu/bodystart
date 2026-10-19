@@ -593,7 +593,7 @@ export default function BuyBoxV2({
           </div>
 
           {/* Reassurance sous le bouton (DA §B.Fiche produit.1) */}
-          <ul className="mt-6 space-y-2.5 text-[13px] text-ink">
+          <ul className="saison-reassurance mt-6 space-y-2.5 text-[13px] text-ink">
             <li className="flex items-center gap-2.5">
               <Truck className="w-4 h-4 text-spruce flex-shrink-0" />
               <span>

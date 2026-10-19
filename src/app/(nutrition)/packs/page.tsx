@@ -45,7 +45,7 @@ export default async function PacksPage() {
   return (
     <div className="bg-canvas min-h-screen">
       {/* ─── Hero court (padding-top aligné sur /products : pt-10 md:pt-12) ─── */}
-      <section className="pt-10 md:pt-12">
+      <section className="saison-bandeau pt-10 md:pt-12">
         <div className="container">
           <div className="max-w-3xl">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-4">

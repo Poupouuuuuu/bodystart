@@ -88,8 +88,8 @@ export default function ObjectifsV3() {
           <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-ink-mute">
             Par objectif
           </span>
-          <h2 className="mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px]">
-            Tu cherches quoi ?
+          <h2 className="saison-titre mt-5 font-display text-[40px] font-extrabold leading-[0.98] tracking-tight text-spruce md:text-[56px]">
+            Tu cherches <span className="saison-mot">quoi</span>&nbsp;?
           </h2>
         </div>
 

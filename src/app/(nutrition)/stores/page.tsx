@@ -91,7 +91,7 @@ export default async function StoresPage() {
       />
 
       {/* ─── 1. Hero court (sans photo) ─── */}
-      <section className="pt-12 md:pt-16 pb-8">
+      <section className="saison-bandeau pt-12 md:pt-16 pb-8">
         <div className="container">
           <div className="max-w-2xl">
             <p className={EYEBROW}>Coignières · 78</p>

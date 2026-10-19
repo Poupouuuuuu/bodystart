@@ -103,8 +103,11 @@ export default function BoutiqueGalleryV2() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
                 La boutique
               </p>
-              <h2 className="font-display text-[32px] md:text-[42px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
-                Une vraie boutique, pas un entrepôt.
+              <h2
+                data-saison-icone="chauve-souris"
+                className="saison-titre font-display text-[32px] md:text-[42px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5"
+              >
+                Une <span className="saison-mot">vraie boutique</span>, pas un entrepôt.
               </h2>
               <p className="text-ink-mute text-[17px] leading-[1.65]">
                 Des rayons pleins, des produits que tu peux prendre en main, et

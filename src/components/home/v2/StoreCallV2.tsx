@@ -13,7 +13,7 @@ export default function StoreCallV2() {
   const store = BODY_START_STORES.find((s) => s.isActive) ?? BODY_START_STORES[0]
 
   return (
-    <section className="bg-canvas">
+    <section className="saison-coin saison-coin-gauche bg-canvas">
       <div className="container py-14 md:py-18">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-10 lg:gap-14 items-center">
           {/* Texte */}
@@ -21,8 +21,8 @@ export default function StoreCallV2() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
               Notre boutique
             </p>
-            <h2 className="font-display text-[32px] md:text-[42px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-6">
-              Passe nous voir en boutique.
+            <h2 className="saison-titre font-display text-[32px] md:text-[42px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-6">
+              Passe nous voir <span className="saison-mot">en boutique</span>.
             </h2>
             <p className="text-ink-mute text-[17px] leading-[1.65] mb-8 max-w-[520px]">
               Commande en ligne, récupère à Coignières : retrait immédiat pour les produits

@@ -596,7 +596,7 @@ export function ProductsCatalog({
                 }}
                 className={cn(
                   'flex items-center justify-between w-full text-left text-[13px] py-2 px-3 rounded-xl transition-colors mb-1 font-semibold',
-                  !activeCategory ? 'bg-spruce text-white' : 'text-ink hover:bg-spruce/5'
+                  !activeCategory ? 'saison-actif bg-spruce text-white' : 'text-ink hover:bg-spruce/5'
                 )}
               >
                 <span>Tous les produits</span>
@@ -619,9 +619,9 @@ export function ProductsCatalog({
                       className={cn(
                         'flex items-center justify-between w-full text-left text-[13px] py-2 px-3 rounded-xl transition-colors font-semibold',
                         isActive && !activeTag
-                          ? 'bg-spruce text-white'
+                          ? 'saison-actif bg-spruce text-white'
                           : isActive
-                            ? 'text-spruce bg-sage/40'
+                            ? 'saison-actif-doux text-spruce bg-sage/40'
                             : 'text-ink hover:bg-spruce/5'
                       )}
                     >
@@ -666,7 +666,7 @@ export function ProductsCatalog({
                               className={cn(
                                 'flex items-center w-full text-left text-[13px] py-1.5 px-3 rounded-lg transition-colors',
                                 isActive && activeTag === sub.key
-                                  ? 'bg-sage text-spruce font-semibold'
+                                  ? 'saison-actif-doux bg-sage text-spruce font-semibold'
                                   : 'text-ink-mute hover:text-spruce hover:bg-spruce/5'
                               )}
                             >
@@ -715,7 +715,7 @@ export function ProductsCatalog({
                       setActiveGoal('all')
                       syncFiltersToUrl('all', activeCategory, activeTag)
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
+                    className="saison-actif-doux inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {GOALS.find((g) => g.key === activeGoal)?.label}
                     <X className="w-3 h-3" />
@@ -728,7 +728,7 @@ export function ProductsCatalog({
                       setActiveTag(null)
                       syncFiltersToUrl(activeGoal, null, null)
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
+                    className="saison-actif-doux inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {currentCategory.label}
                     <X className="w-3 h-3" />
@@ -740,7 +740,7 @@ export function ProductsCatalog({
                       setActiveTag(null)
                       syncFiltersToUrl(activeGoal, activeCategory, null)
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
+                    className="saison-actif-doux inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {currentCategory.subcategories.find((s) => s.key === activeTag)?.label ?? activeTag}
                     <X className="w-3 h-3" />
@@ -749,7 +749,7 @@ export function ProductsCatalog({
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
+                    className="saison-actif-doux inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     « {searchQuery} »
                     <X className="w-3 h-3" />
@@ -758,7 +758,7 @@ export function ProductsCatalog({
                 {priceRange[1] < 200 && (
                   <button
                     onClick={() => setPriceRange([0, 200])}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
+                    className="saison-actif-doux inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     Max {priceRange[1]} €
                     <X className="w-3 h-3" />

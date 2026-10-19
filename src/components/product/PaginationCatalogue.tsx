@@ -29,7 +29,7 @@ export default function PaginationCatalogue({ page, pages }: { page: number; pag
         {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
           <li key={n}>
             {n === page ? (
-              <span aria-current="page" className={cn(pastille, 'bg-spruce text-white')}>
+              <span aria-current="page" className={cn(pastille, 'saison-actif bg-spruce text-white')}>
                 {n}
               </span>
             ) : (

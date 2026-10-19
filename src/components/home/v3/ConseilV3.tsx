@@ -42,8 +42,11 @@ export default function ConseilV3() {
             <span className="inline-flex items-center rounded-full border border-spruce/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-ink-mute">
               Le conseil qu&apos;aucun site n&apos;a
             </span>
-            <h2 className="mt-5 font-display text-[38px] font-extrabold leading-[1] tracking-tight text-spruce md:text-[52px] lg:text-[60px] [text-wrap:balance]">
-              Un humain qui connaît ce qu&apos;il vend.
+            <h2
+              data-saison-icone="chauve-souris"
+              className="saison-titre mt-5 font-display text-[38px] font-extrabold leading-[1] tracking-tight text-spruce md:text-[52px] lg:text-[60px] [text-wrap:balance]"
+            >
+              Un <span className="saison-mot">humain</span> qui connaît ce qu&apos;il vend.
             </h2>
             <p className="mt-7 max-w-[520px] text-[17px] leading-[1.65] text-ink-mute md:text-[18px]">
               On ne référence pas tout ce qui existe. On teste les marques, on lit les

@@ -1,9 +1,16 @@
 import type { ComponentType } from 'react'
 import type { ThemeSaison } from '@/lib/saison'
-import VoileHeroHalloween from './halloween/VoileHeroHalloween'
+import ChauvesSourisPhoto from './halloween/ChauvesSourisPhoto'
 import FriseHalloween from './halloween/FriseHalloween'
 import SeparateurHalloween from './halloween/SeparateurHalloween'
 import { CSS_HALLOWEEN } from './halloween/styles'
+
+/**
+ * Couleurs du haut de l'accueil en deux parties (variables CSS lues par
+ * HeroV3). Texte principal, texte secondaire et lien : 4,5:1 sur --h-fond ;
+ * --h-accent (« Le bon conseil. », 46 px et plus) : 3:1.
+ */
+export type PaletteHero = Record<`--h-${string}`, string>
 
 /**
  * Déco de saison complète, par thème (Halloween le 19/10/2026 ; Noël du 29/11
@@ -20,16 +27,15 @@ import { CSS_HALLOWEEN } from './halloween/styles'
 export interface DecorSaisonPremium {
   /** CSS du thème, émis une fois par le layout pendant la période. */
   css: string
-  /** Voiles et décor posés sur la photo du haut de l'accueil, à la place
-   * des voiles habituels (la photo reste chargée comme hors saison). */
-  VoileHero: ComponentType
-  /** Deuxième ligne du titre du haut de l'accueil (« Le bon conseil. »). */
-  accentTitre: string
-  /** Sur-titre (h1) du haut de l'accueil et son trait. */
-  accentSurTitre: string
-  traitSurTitre: string
-  /** Étoiles de l'avis Google du haut de l'accueil. */
-  accentEtoiles: string
+  /** Haut de l'accueil en deux parties : photo nette à droite (en bandeau
+   * sous lg), fond uni derrière le texte. Photo chargée comme hors saison. */
+  hero: {
+    /** Variantes de couleur ; `?hero=` les choisit hors production. */
+    palettes: Record<string, PaletteHero>
+    defaut: string
+    /** Décor posé sur la photo, jamais sur le texte. */
+    DecorPhoto: ComponentType
+  }
   /** Séparateur fin entre les grandes sections de l'accueil. */
   Separateur: ComponentType
   /** Frise en tête du pied de page. */
@@ -41,13 +47,51 @@ export interface DecorSaisonPremium {
 const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
   halloween: {
     css: CSS_HALLOWEEN,
-    VoileHero: VoileHeroHalloween,
-    accentTitre: 'text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_14px_rgba(232,113,26,0.35)]',
-    // Orange clair pour le petit texte : AA mesuré sur la photo voilée
-    // (l'accent #E8711A n'atteint pas 4,5:1 sur le vert sapin).
-    accentSurTitre: 'text-[#FFB46B]',
-    traitSurTitre: 'mr-3 inline-block h-px w-8 -translate-y-[0.3em] bg-[#E8711A] align-middle',
-    accentEtoiles: 'fill-[#E8711A] text-[#E8711A]',
+    hero: {
+      palettes: {
+        // A : fond nuit, texte clair, accents orange.
+        a: {
+          '--h-fond': '#14101F',
+          '--h-texte': '#FAF8F3',
+          '--h-texte-doux': 'rgba(255,255,255,0.8)',
+          '--h-sur-titre': 'rgba(255,255,255,0.85)',
+          '--h-accent': '#E8711A',
+          '--h-trait': '#E8711A',
+          '--h-ligne': 'rgba(255,255,255,0.14)',
+          '--h-ligne-forte': 'rgba(255,255,255,0.3)',
+          '--h-voile': 'rgba(255,255,255,0.06)',
+          '--h-voile-fort': 'rgba(255,255,255,0.14)',
+          '--h-bouton': '#FAF8F3',
+          '--h-bouton-texte': '#14101F',
+          '--h-rond': '#E8711A',
+          '--h-rond-texte': '#14101F',
+          '--h-lien': '#FFB46B',
+          '--h-liseret': '#E8711A',
+        },
+        // B : fond orange, texte nuit (le blanc n'atteint que 3,1:1 sur
+        // #E8711A : réservé au grand titre).
+        b: {
+          '--h-fond': '#E8711A',
+          '--h-texte': '#14101F',
+          '--h-texte-doux': 'rgba(20,16,31,0.86)',
+          '--h-sur-titre': '#14101F',
+          '--h-accent': '#FFFFFF',
+          '--h-trait': '#14101F',
+          '--h-ligne': 'rgba(20,16,31,0.24)',
+          '--h-ligne-forte': 'rgba(20,16,31,0.5)',
+          '--h-voile': 'rgba(20,16,31,0.06)',
+          '--h-voile-fort': 'rgba(20,16,31,0.12)',
+          '--h-bouton': '#14101F',
+          '--h-bouton-texte': '#FAF8F3',
+          '--h-rond': '#E8711A',
+          '--h-rond-texte': '#14101F',
+          '--h-lien': '#14101F',
+          '--h-liseret': '#14101F',
+        },
+      },
+      defaut: 'a',
+      DecorPhoto: ChauvesSourisPhoto,
+    },
     Separateur: SeparateurHalloween,
     Frise: FriseHalloween,
     selection: {

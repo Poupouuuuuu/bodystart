@@ -118,7 +118,9 @@ export default function ProductGalleryV2({
             perd rien) et MEME URL que le fond des cartes produit plus bas
             (cross-sell) : un seul telechargement par fiche au lieu de deux
             (43 + 44 Ko avant le 08/10/2026). */}
-        <div className="group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-sage shadow-card">
+        {/* saison-toile, saison-badge-citrouille : déco du thème pendant une
+            période décorée (components/saison/halloween/styles.ts). */}
+        <div className="saison-toile group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-sage shadow-card">
           <Image
             src="/bg-vegetal-800.webp"
             alt=""
@@ -167,7 +169,7 @@ export default function ProductGalleryV2({
           {discountPct && (
             <div className="absolute top-4 right-4 pointer-events-auto">
               {/* Étiquette à coins doux, comme sur les cartes produit (vague 2). */}
-              <span className="inline-flex items-center rounded-lg bg-terracotta px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white shadow-soft">
+              <span className="saison-badge-citrouille inline-flex items-center rounded-lg bg-terracotta px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white shadow-soft">
                 -{discountPct}%
               </span>
             </div>
