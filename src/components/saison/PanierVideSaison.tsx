@@ -6,7 +6,7 @@ import type { ThemeSaison } from '@/lib/saison'
 /**
  * Titre du panier vide, aux couleurs de la saison (Halloween : citrouille et
  * « Ton panier est vide… pour l’instant », 19/10/2026 ; Black Week : étiquette
- * de prix ; Noël se branche dans PANIER_VIDE). Hors période : le titre habituel.
+ * de prix ; Noël : paquet cadeau). Hors période : le titre habituel.
  *
  * Le tiroir du panier n'est rendu que côté navigateur (CartDrawerLazy) : le
  * thème est lu sur le bandeau du header ([data-saison], qui bascule à l'heure
@@ -37,6 +37,20 @@ function sansAbonnement() {
 const PANIER_VIDE: Partial<Record<ThemeSaison, { titre: string; Illustration: ComponentType }>> = {
   halloween: { titre: 'Ton panier est vide… pour l’instant', Illustration: CitrouillePanier },
   'black-week': { titre: 'Ton panier est vide… pour l’instant', Illustration: EtiquettePanier },
+  noel: { titre: 'Ton panier est vide… pour l’instant', Illustration: CadeauPanier },
+}
+
+/** Paquet cadeau rouge, ruban doré (viewBox 48 × 44), décoratif. */
+function CadeauPanier() {
+  return (
+    <svg viewBox="0 0 48 44" width="76" height="70" className="mb-5" aria-hidden="true" focusable="false">
+      <ellipse cx="24" cy="40.5" rx="15" ry="2.2" fill="#6E1423" opacity=".12" />
+      <rect x="10" y="17" width="28" height="21" rx="2" fill="#C62828" />
+      <rect x="8" y="12" width="32" height="7" rx="1.6" fill="#B3261E" />
+      <rect x="21.6" y="12" width="4.8" height="26" fill="#F2D28A" />
+      <path fill="none" stroke="#C9A24A" strokeWidth="2.2" strokeLinecap="round" d="M24 12c-3-5.5-9.5-6.5-9.5-2.4 0 2.6 5 2.6 9.5 2.4zM24 12c3-5.5 9.5-6.5 9.5-2.4 0 2.6-5 2.6-9.5 2.4z" />
+    </svg>
+  )
 }
 
 /** Étiquette de prix noire et jaune (viewBox 48 × 44), décorative. */
