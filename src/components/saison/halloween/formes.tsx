@@ -1,5 +1,5 @@
 // Silhouettes SVG de la déco Halloween (19/10/2026), partagées par le haut de
-// l'accueil, la frise du pied de page et le logo. Décoratives : aria-hidden.
+// l'accueil et la frise du pied de page. Décoratives : aria-hidden.
 // Couleurs fixes de la direction artistique « nuit » (pas du metafield).
 
 /** Nuit la plus sombre : silhouettes. */
@@ -45,28 +45,6 @@ export function Citrouille({ largeur, visage = false }: { largeur: number; visag
           <path d="M13.8 27.2c3.2 2.6 7 3.6 10.2 3.6s7-1 10.2-3.6c-1 2.8-4.6 5-10.2 5s-9.2-2.2-10.2-5z" />
         </g>
       )}
-    </svg>
-  )
-}
-
-/** Branche nue qui entre par la droite, posée devant la lune (viewBox 300 × 130). */
-export function Branche({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 300 130"
-      className={className}
-      aria-hidden="true"
-      focusable="false"
-      preserveAspectRatio="xMaxYMid meet"
-    >
-      <g fill={NUIT_SILHOUETTE}>
-        <path d="M300 34c-38 6-72 18-104 36-26 15-50 26-78 32-16 4-30 4-44 2v-3c16 0 30-2 44-6 28-7 50-19 74-33 32-18 68-32 108-36z" />
-        <path d="M196 70c-6-14-12-24-20-32l-2 1c7 9 13 20 18 33z" />
-        <path d="M150 92c-4 12-10 22-18 30l2 1c8-8 15-18 20-30z" />
-        <path d="M118 99c-10-11-18-17-28-21l-1 2c10 5 18 12 26 21z" />
-        <path d="M74 104c-8 2-16 6-22 12l1 2c7-6 14-10 22-12z" />
-        <path d="M240 50c-2-10-6-18-12-24l-2 1c5 6 9 14 11 24z" />
-      </g>
     </svg>
   )
 }

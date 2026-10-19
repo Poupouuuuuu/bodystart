@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react'
 import type { ThemeSaison } from '@/lib/saison'
-import FondHeroHalloween from './halloween/FondHeroHalloween'
+import VoileHeroHalloween from './halloween/VoileHeroHalloween'
 import FriseHalloween from './halloween/FriseHalloween'
 import SeparateurHalloween from './halloween/SeparateurHalloween'
 import { CSS_HALLOWEEN } from './halloween/styles'
@@ -20,12 +20,16 @@ import { CSS_HALLOWEEN } from './halloween/styles'
 export interface DecorSaisonPremium {
   /** CSS du thème, émis une fois par le layout pendant la période. */
   css: string
-  /** Haut de l'accueil : remplace la photo (aucune image chargée). */
-  FondHero: ComponentType
-  /** Fond de la section hero (couleur de base sous la scène). */
-  fondHero: string
+  /** Voiles et décor posés sur la photo du haut de l'accueil, à la place
+   * des voiles habituels (la photo reste chargée comme hors saison). */
+  VoileHero: ComponentType
   /** Deuxième ligne du titre du haut de l'accueil (« Le bon conseil. »). */
   accentTitre: string
+  /** Sur-titre (h1) du haut de l'accueil et son trait. */
+  accentSurTitre: string
+  traitSurTitre: string
+  /** Étoiles de l'avis Google du haut de l'accueil. */
+  accentEtoiles: string
   /** Séparateur fin entre les grandes sections de l'accueil. */
   Separateur: ComponentType
   /** Frise en tête du pied de page. */
@@ -37,9 +41,13 @@ export interface DecorSaisonPremium {
 const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
   halloween: {
     css: CSS_HALLOWEEN,
-    FondHero: FondHeroHalloween,
-    fondHero: 'bg-[#14101F]',
+    VoileHero: VoileHeroHalloween,
     accentTitre: 'text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_14px_rgba(232,113,26,0.35)]',
+    // Orange plus clair que l'accent pour le petit texte : 6:1 sur le vert
+    // sapin (l'accent #E8711A n'y fait que 4:1, sous le seuil AA).
+    accentSurTitre: 'text-[#F6A456]',
+    traitSurTitre: 'mr-3 inline-block h-px w-8 -translate-y-[0.3em] bg-[#E8711A] align-middle',
+    accentEtoiles: 'fill-[#E8711A] text-[#E8711A]',
     Separateur: SeparateurHalloween,
     Frise: FriseHalloween,
     selection: {

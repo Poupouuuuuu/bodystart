@@ -26,32 +26,31 @@ import type { DecorSaisonPremium } from '@/components/saison/decors'
  *   ×3 comparées), LCP mobile −550 ms à lui seul (mesure du 08/10/2026,
  *   4G lent + CPU ×4).
  *
- * Saison décorée (components/saison, 19/10/2026) : la scène du thème remplace
- * la photo et ses voiles ; plus aucune image à charger, l'élément LCP devient
- * le titre. Textes, boutons et carte boutique inchangés.
+ * Saison décorée (components/saison, 19/10/2026) : même photo, chargée de la
+ * même façon ; seuls les voiles changent (ceux du thème) et quelques accents
+ * de couleur (sur-titre, étoiles, 2e ligne du titre). Textes et boutons
+ * inchangés.
  */
 export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPremium | null }) {
   const rating = await getGoogleRating()
-  const FondHero = decor?.FondHero
+  const VoileHero = decor?.VoileHero
 
   return (
-    <section
-      className={`relative isolate flex min-h-[92dvh] items-end overflow-hidden ${decor ? decor.fondHero : 'bg-[#0f160f]'}`}
-    >
-      {FondHero ? (
-        <FondHero />
+    <section className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-[#0f160f]">
+      <Image
+        src="/assets/interieur.webp"
+        alt="Intérieur de la boutique BodyStart Nutrition à Coignières : rayons de compléments, mur végétal et comptoir"
+        fill
+        priority
+        fetchPriority="high"
+        quality={72}
+        sizes="(max-width: 640px) 70vw, 100vw"
+        className="object-cover object-[50%_38%]"
+      />
+      {VoileHero ? (
+        <VoileHero />
       ) : (
         <>
-          <Image
-            src="/assets/interieur.webp"
-            alt="Intérieur de la boutique BodyStart Nutrition à Coignières : rayons de compléments, mur végétal et comptoir"
-            fill
-            priority
-            fetchPriority="high"
-            quality={72}
-            sizes="(max-width: 640px) 70vw, 100vw"
-            className="object-cover object-[50%_38%]"
-          />
           {/* Voiles : sombre en bas (lisibilité du texte), plus léger en haut
               pour laisser respirer la photo ; second voile latéral côté texte. */}
           <div
@@ -72,7 +71,10 @@ export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPrem
             {/* h1 = la requête visée (audit SEO du 10/10/2026), en surtitre ; le
                 slogan reste l'élément dominant (et l'élément LCP texte), en <p>.
                 Pas d'animation sur le h1 (règle V2). */}
-            <h1 className="mb-5 max-w-[640px] text-[14px] font-semibold leading-snug text-white/85 md:text-[15px]">
+            <h1
+              className={`mb-5 max-w-[640px] text-[14px] font-semibold leading-snug md:text-[15px] ${decor ? decor.accentSurTitre : 'text-white/85'}`}
+            >
+              {decor && <span aria-hidden="true" className={decor.traitSurTitre} />}
               Compléments alimentaires et nutrition sportive à Coignières
             </h1>
 
@@ -86,7 +88,10 @@ export default async function HeroV3({ decor = null }: { decor?: DecorSaisonPrem
                 className="group -my-1 inline-flex min-h-[44px] items-center"
               >
                 <span className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md transition-colors duration-500 ease-out-expo group-hover:bg-white/20">
-                  <Star className="h-3.5 w-3.5 fill-mustard text-mustard" aria-hidden="true" />
+                  <Star
+                    className={`h-3.5 w-3.5 ${decor ? decor.accentEtoiles : 'fill-mustard text-mustard'}`}
+                    aria-hidden="true"
+                  />
                   {formatRating(rating)}/5 · {rating.count} avis Google
                 </span>
               </a>
