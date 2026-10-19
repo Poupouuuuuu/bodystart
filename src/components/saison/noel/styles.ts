@@ -134,8 +134,11 @@ export const CSS_NOEL = `
 @keyframes nl-scintille{from{opacity:.15}to{opacity:1}}
 @keyframes nl-balance{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
 :root{--nl-boule:${BOULE};--nl-houx:${HOUX}}
-/* En-tête : guirlande pleine largeur juste sous la barre (calque des halos
-   sur la barre elle-même, la guirlande dessous). */
+/* En-tête : guirlande pleine largeur juste sous la barre, en haut de page
+   seulement : elle s'efface dès que la page défile (header[data-defile]),
+   pour ne jamais couvrir le texte. */
+.saison-entete::before,.saison-entete::after{transition:opacity .3s}
+header[data-defile] .saison-entete::before,header[data-defile] .saison-entete::after{opacity:0!important;animation:none}
 .saison-entete::before{inset:auto 0 auto 0;top:100%;height:24px}
 .saison-entete::after{content:"";position:absolute;left:0;right:0;top:100%;height:24px;pointer-events:none;background:${GUIRLANDE} left top/120px 24px repeat-x}
 /* Badge « Best-seller » : neige posée dessus. */

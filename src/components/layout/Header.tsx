@@ -265,10 +265,12 @@ export default function Header({ saison = [], themeServeur = null, apercu = null
   }, [pathname])
 
   return (
-    <header className={cn(
-      'sticky top-0 z-50 transition-shadow duration-300',
-      scrolled ? 'shadow-md' : 'shadow-none'
-    )}>
+    // data-defile : page défilée (le décor de saison sous l'en-tête, comme la
+    // guirlande de Noël, s'efface pour ne pas couvrir le contenu).
+    <header
+      data-defile={scrolled || undefined}
+      className={cn('sticky top-0 z-50 transition-shadow duration-300', scrolled ? 'shadow-md' : 'shadow-none')}
+    >
       {/* ─── Bandeau promo (top bar) ─── Mode saison (lib/saison) : même
           bandeau, texte, lien et couleurs de la période ; liseré accent_2 en
           ombre intérieure (hauteur inchangée) ; décor aux deux bouts. */}
