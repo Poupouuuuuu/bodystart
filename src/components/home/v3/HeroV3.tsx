@@ -80,12 +80,16 @@ type Note = Awaited<ReturnType<typeof getGoogleRating>>
 
 /**
  * Haut de page en deux parties (saison décorée) : photo nette à droite
- * (52 %, à partir de lg) ou en bandeau en haut (240 px, en dessous), fond uni
- * derrière le texte. Les couleurs viennent de la palette du thème (variables
- * --h-*, components/saison/decors.ts).
+ * (la moitié de l'écran, à partir de lg) ou en bandeau en haut (240 px, en
+ * dessous), fond uni derrière le texte. Les couleurs viennent de la palette
+ * du thème (variables --h-*, components/saison/decors.ts).
  * - `sizes` : 70vw sous 640 px comme hors saison (variante 828 px au
- *   téléphone), la moitié de l'écran à partir de lg.
- * - Le bandeau mobile est cadré sur le mur végétal et les étagères éclairées.
+ *   téléphone) ; à partir de lg, un peu plus que la moitié de l'écran (photo
+ *   agrandie ×1,22 pour la cadrer).
+ * - Photo cadrée sur le mur végétal et les étagères éclairées (zoom léger,
+ *   moins de plafond).
+ * - À partir de lg, la carte boutique est posée en bas de la photo : le
+ *   texte tient dans le premier écran.
  */
 function HeroScinde({
   hero,
@@ -103,7 +107,7 @@ function HeroScinde({
       className="relative isolate overflow-hidden bg-[color:var(--h-fond)]"
       style={palette as CSSProperties}
     >
-      <div className="relative h-[240px] sm:h-[260px] lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[52%]">
+      <div className="relative h-[240px] overflow-hidden sm:h-[260px] lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-1/2">
         <Image
           src="/assets/interieur.webp"
           alt={ALT_PHOTO}
@@ -111,8 +115,8 @@ function HeroScinde({
           priority
           fetchPriority="high"
           quality={72}
-          sizes="(max-width: 640px) 70vw, (max-width: 1023px) 100vw, 52vw"
-          className="object-cover object-[50%_44%] lg:object-[56%_50%]"
+          sizes="(max-width: 640px) 70vw, (max-width: 1023px) 100vw, 64vw"
+          className="origin-[50%_58%] scale-[1.22] object-cover object-[50%_48%] lg:origin-[55%_62%] lg:object-[55%_55%]"
         />
         <DecorPhoto />
         {/* Jonction franche entre la photo et le fond uni. */}
@@ -122,8 +126,8 @@ function HeroScinde({
         />
       </div>
 
-      <div className="container relative pb-10 pt-9 lg:flex lg:min-h-[calc(92dvh-7rem)] lg:items-center lg:py-16">
-        <div className="lg:w-[calc(48vw_-_max(2rem,50vw_-_568px)_-_3rem)]">
+      <div className="container relative pb-10 pt-9 lg:static lg:flex lg:min-h-[calc(100dvh-7.25rem)] lg:items-center lg:py-14">
+        <div className="lg:w-[calc(50vw_-_max(2rem,50vw_-_568px)_-_3rem)]">
           <ContenuHero c={CLASSES_SCINDE} rating={rating} />
         </div>
       </div>
@@ -208,8 +212,10 @@ const CLASSES_SCINDE: ClassesHero = {
   rond: 'flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--h-rond)] text-[color:var(--h-rond-texte)] transition-transform duration-500 ease-out-expo group-hover:translate-x-0.5 group-hover:scale-105',
   boutonSecondaire:
     'press group inline-flex min-h-[52px] items-center gap-2 rounded-full border border-[color:var(--h-ligne-forte)] bg-[color:var(--h-voile)] px-6 text-[15px] font-semibold text-[color:var(--h-texte)] transition-colors duration-500 ease-out-expo hover:bg-[color:var(--h-voile-fort)]',
-  carteBloc: 'hero-rise hero-rise-3 max-w-[440px]',
-  carteExterieur: 'rounded-[1.6rem] border border-[color:var(--h-ligne)] p-1.5',
+  carteBloc:
+    'hero-rise hero-rise-3 max-w-[440px] lg:absolute lg:bottom-10 lg:left-[calc(50%_+_2.5rem)] lg:z-10 lg:w-[360px]',
+  carteExterieur:
+    'rounded-[1.6rem] border border-[color:var(--h-ligne)] p-1.5 lg:bg-[color:var(--h-fond)] lg:shadow-[0_18px_40px_-12px_rgba(0,0,0,0.5)]',
   carteInterieur: 'rounded-[calc(1.6rem-0.375rem)] bg-[color:var(--h-voile)] px-5 py-4',
   carteLibelle: 'text-[10px] font-medium uppercase tracking-[0.2em] text-[color:var(--h-texte-doux)]',
   carteTitre: 'mt-1.5 font-display text-[21px] font-bold leading-tight text-[color:var(--h-texte)]',
