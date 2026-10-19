@@ -41,15 +41,16 @@ section.saison-nuit{background-color:#111111}
 .saison-coin::before{content:"";position:absolute;top:20px;right:20px;width:clamp(26px,3.5vw,40px);aspect-ratio:1;pointer-events:none;border-top:3px solid #F2C200;border-right:3px solid #F2C200}
 .saison-coin-gauche::before{right:auto;left:20px;border-right:0;border-left:3px solid #F2C200}
 /* Bandeau de titre des pages (saison-bandeau) : fond noir pleine largeur,
-   filet jaune en bas, équerre dans le coin. */
+   filet jaune en bas. Le filet déborde par border-image (débordement peint,
+   pas de défilement horizontal ; avec left/right négatifs, la page faisait
+   2 880 px de large en 1440). */
 .saison-bandeau{position:relative;background-color:#111111;box-shadow:0 0 0 100vmax #111111;clip-path:inset(0 -100vmax);padding-bottom:2.25rem;margin-bottom:1.75rem}
 .saison-bandeau-haut{clip-path:inset(-100vmax -100vmax 0)}
 .saison-bandeau h1,.saison-bandeau .text-spruce{color:#FAF8F3}
 .saison-bandeau p,.saison-bandeau nav{color:rgba(255,255,255,.8)}
 .saison-bandeau a{color:#F2C200}
 .saison-bandeau a:hover{color:#FFE066}
-.saison-bandeau::before{content:"";position:absolute;top:18px;right:0;width:clamp(26px,3.5vw,40px);aspect-ratio:1;pointer-events:none;border-top:3px solid #F2C200;border-right:3px solid #F2C200}
-.saison-bandeau::after{content:"";position:absolute;bottom:0;left:-100vmax;right:-100vmax;height:3px;pointer-events:none;background:#F2C200}
+.saison-bandeau::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;pointer-events:none;background:#F2C200;border-image:linear-gradient(#F2C200 0 0) fill 0//0 100vmax}
 /* Filtres, onglets et page courante actifs (saison-actif, saison-actif-doux). */
 .saison-actif{background-color:#111111!important;color:#fff!important}
 .saison-actif *{color:#fff!important}
