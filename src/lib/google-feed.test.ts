@@ -120,6 +120,13 @@ describe('buildGoogleFeedXml', () => {
     expect(xml).toContain('<g:sale_price>29.90 EUR</g:sale_price>')
   })
 
+  it('lot à composants (pack, coffret) : g:is_bundle yes, sinon absent', () => {
+    const pack = makeProduct({ productType: 'Pack' })
+    pack.variants.nodes[0].requiresComponents = true
+    expect(buildGoogleFeedXml([pack], SITE).xml).toContain('<g:is_bundle>yes</g:is_bundle>')
+    expect(buildGoogleFeedXml([makeProduct()], SITE).xml).not.toContain('is_bundle')
+  })
+
   it('identifier_exists=no si ni gtin ni sku', () => {
     const p = makeProduct()
     p.variants.nodes[0].barcode = 'CODE-INTERNE'

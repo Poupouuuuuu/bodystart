@@ -22,6 +22,8 @@ export interface FeedVariant {
   compareAtPrice: string | null
   /** Achetable en ligne (API Storefront, emplacements des ventes en ligne seulement). */
   availableForSale: boolean
+  /** Lot à composants (pack, coffret) : g:is_bundle yes. */
+  requiresComponents?: boolean
   image: { url: string } | null
 }
 
@@ -198,6 +200,9 @@ export function buildGoogleFeedXml(
         // identifier_exists=no UNIQUEMENT si ni gtin ni (brand+mpn)
         ...(!gtin && !sku ? ['<g:identifier_exists>no</g:identifier_exists>'] : []),
         `<g:condition>new</g:condition>`,
+        // Lot composé par la boutique (19/10/2026, accord de Claude Gestion) :
+        // Google ne le compare pas aux fiches de ses composants.
+        ...(v.requiresComponents ? ['<g:is_bundle>yes</g:is_bundle>'] : []),
         ...(() => {
           const cat = googleCategoryFor(p.productType)
           return cat ? [`<g:google_product_category>${cat}</g:google_product_category>`] : []

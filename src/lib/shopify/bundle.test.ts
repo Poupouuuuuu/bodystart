@@ -7,6 +7,7 @@ import {
   buildBundleAxes,
   variantOptionValue,
   isBundleOptionAvailable,
+  isBundleOptionEpuisee,
   resolveBundleVariantOnChange,
   getCartLineComponentImages,
 } from './bundle'
@@ -178,6 +179,25 @@ describe('dépendance entre options (poids ⇒ saveur)', () => {
     const selection = { [SAVEUR]: 'vanille', [POIDS]: '810g', 'L-Carnitine Pro Zero - Liquide (Saveur)': 'Tropical' }
     expect(isBundleOptionAvailable(complete, axes, selection, POIDS, '810g')).toBe(true)
     expect(isBundleOptionAvailable(complete, axes, selection, POIDS, '2kg')).toBe(true)
+  })
+})
+
+describe('option épuisée (marquée « indisponible » mais choisissable)', () => {
+  // vanille/2kg existe mais n'est plus achetable en ligne (composant épuisé).
+  const avecRupture = VARIANTS.map((v) => (v.id === 'b-van-2kg' ? { ...v, availableForSale: false } : v))
+  const complete = getCompleteBundleVariants(avecRupture)
+  const axes = buildBundleAxes(complete)
+  const selection = { [SAVEUR]: 'vanille', [POIDS]: '810g', 'L-Carnitine Pro Zero - Liquide (Saveur)': 'Tropical' }
+
+  it('vanille : 2kg épuisé, 810g en vente', () => {
+    expect(isBundleOptionEpuisee(complete, axes, selection, POIDS, '2kg')).toBe(true)
+    expect(isBundleOptionEpuisee(complete, axes, selection, POIDS, '810g')).toBe(false)
+    // Toujours proposée (pas grisée) : la fiche affiche « Épuisé » et « Me prévenir ».
+    expect(isBundleOptionAvailable(complete, axes, selection, POIDS, '2kg')).toBe(true)
+  })
+
+  it('combinaison inexistante : pas « épuisée » (déjà grisée par ailleurs)', () => {
+    expect(isBundleOptionEpuisee(complete, axes, selection, SAVEUR, 'chocolate-muffin')).toBe(false)
   })
 })
 

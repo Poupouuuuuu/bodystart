@@ -292,6 +292,26 @@ export function isBundleOptionAvailable(
 }
 
 /**
+ * La valeur mène à une variante qui existe mais n'est pas achetable en ligne
+ * (un composant épuisé à Coignières). Elle reste choisissable, pour afficher
+ * « Épuisé » et « Me prévenir », mais la liste la marque (19/10/2026 : Pack
+ * Sèche parfaite Choco-cookie n'était signalé qu'après coup).
+ */
+export function isBundleOptionEpuisee(
+  completeVariants: ShopifyProductVariant[],
+  axes: BundleAxis[],
+  currentSelection: Record<string, string>,
+  name: string,
+  value: string
+): boolean {
+  const target = { ...currentSelection, [name]: value }
+  const exact = completeVariants.find((v) =>
+    axes.every((a) => variantOptionValue(v, a.name) === target[a.name])
+  )
+  return !!exact && !exact.availableForSale
+}
+
+/**
  * Résout la variante de bundle à sélectionner après changement d'une option.
  * Match exact d'abord ; sinon meilleure variante complète qui fixe l'option
  * modifiée et conserve un max d'autres sélections (en préférant en-vente).

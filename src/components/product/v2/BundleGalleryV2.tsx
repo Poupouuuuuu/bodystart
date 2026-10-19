@@ -23,6 +23,11 @@ interface BundleGalleryV2Props {
   photo?: ShopifyImage | null
   /** Titre de la bande des composants (« Dans ce pack » par défaut). */
   libelleComposants?: string
+  /**
+   * Handles des composants sans fiche sur le site (vendus seulement en
+   * caisse) : nommés sans lien, sinon le lien mène à une 404.
+   */
+  sansFiche?: string[]
 }
 
 /**
@@ -36,7 +41,8 @@ interface BundleGalleryV2Props {
  * - Hero : pots des composants en ligne, leger overlap, sur bg-vegetal-800.webp
  *   (coherent avec PackCardV2 mais en plus grand).
  * - Sous le hero : strip horizontale avec les noms des composants
- *   (et leur quantite si > 1), chaque carte cliquable vers la fiche.
+ *   (et leur quantite si > 1), chaque carte cliquable vers la fiche quand
+ *   le composant en a une sur le site (pas s'il est vendu seulement en caisse).
  *
  * Choix de design (libre arbitre Adam) : grille empilee plutot que
  * carousel. Le pack vit dans son ensemble, on veut tout voir d'un coup,
@@ -49,6 +55,7 @@ export default function BundleGalleryV2({
   discountPct,
   photo = null,
   libelleComposants = 'Dans ce pack',
+  sansFiche = [],
 }: BundleGalleryV2Props) {
   if (components.length === 0 && !photo) {
     // Securite : ce composant ne devrait etre rendu que si components > 0
@@ -137,18 +144,15 @@ export default function BundleGalleryV2({
       </div>
       )}
 
-      {/* ─── Strip composants : noms + lien vers chaque produit ─── */}
+      {/* ─── Strip composants : noms + lien vers chaque produit qui a une fiche ─── */}
       <div className="mt-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
           {libelleComposants}
         </p>
         <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-          {components.map((c, i) => (
-            <li key={`${c.productHandle}-${i}`}>
-              <Link
-                href={`/products/${c.productHandle}`}
-                className="group flex items-center gap-3 bg-white border border-spruce/10 rounded-xl p-2.5 hover:border-spruce/30 transition-colors"
-              >
+          {components.map((c, i) => {
+            const contenu = (
+              <>
                 <div className="relative w-10 h-10 flex-shrink-0 bg-sage/40 rounded-lg overflow-hidden">
                   {c.image?.url && (
                     <Image
@@ -168,9 +172,24 @@ export default function BundleGalleryV2({
                     <p className="text-[11px] text-ink-mute">×{c.quantity}</p>
                   )}
                 </div>
-              </Link>
-            </li>
-          ))}
+              </>
+            )
+            const carte = 'flex items-center gap-3 bg-white border border-spruce/10 rounded-xl p-2.5'
+            return (
+              <li key={`${c.productHandle}-${i}`}>
+                {sansFiche.includes(c.productHandle) ? (
+                  <div className={carte}>{contenu}</div>
+                ) : (
+                  <Link
+                    href={`/products/${c.productHandle}`}
+                    className={`group ${carte} hover:border-spruce/30 transition-colors`}
+                  >
+                    {contenu}
+                  </Link>
+                )}
+              </li>
+            )
+          })}
         </ul>
       </div>
     </div>
