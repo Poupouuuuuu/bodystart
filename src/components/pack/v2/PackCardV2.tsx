@@ -74,10 +74,9 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
   const savingsAmount = hasSavings ? compareAmount - priceAmount : 0
   const currency = variant?.price.currencyCode ?? 'EUR'
 
-  // Source de verite visuelle = images des composants du bundle.
-  // Adam : les bundles n'ont pas (et n'auront pas) d'image propre uploadee,
-  // on construit donc le visuel a partir des featuredImage des produits
-  // composants, accessibles via variants[0].components.productVariant.product.
+  // Visuel : l'image du pack (PNG détouré, proportions réelles, 19/10/2026),
+  // sur le fond végétal comme un produit ; la pile des composants ne sert
+  // plus que si le pack n'a pas d'image (cf. BundleComposite).
   const componentImages = getBundleComponentImages(product)
   const hasComponents = componentImages.length > 0
   // Coffrets de Noël : photo du coffret quand Shopify en a une (carrée, fond
@@ -102,8 +101,8 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
       )}
     >
       {/* ─── Visuel ─── */}
-      {/* Composite partagé : pots des composants empilés sur fond végétal
-       * (cf. BundleComposite, réutilisé par la vignette panier). */}
+      {/* Image du pack sur fond végétal (cf. BundleComposite, partagé avec les
+       * suggestions sous une fiche et la vignette panier). */}
       <div
         className={cn(
           'relative overflow-hidden',
@@ -137,7 +136,7 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
             images={componentImages}
             alt={product.title}
             variant="card"
-            fallbackImage={product.featuredImage}
+            imagePack={product.featuredImage}
             sizes={featured ? '(max-width: 768px) 100vw, 560px' : '(max-width: 768px) 50vw, 360px'}
             className={cn(soldOut && 'opacity-60')}
           />

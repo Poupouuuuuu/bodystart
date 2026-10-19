@@ -2,9 +2,10 @@
 // Mise en avant automatique (best-sellers, suggestions, panier)
 // ============================================================
 // Règles du 08/10/2026 :
-// - les blocs AUTOMATIQUES (best-seller de l'accueil, « Ce qui part vite »,
-//   suggestions sous une fiche, « Complète ta commande ») ne mettent jamais en
-//   avant les marques exclues ci-dessous. Elles restent au catalogue.
+// - les blocs AUTOMATIQUES (complément des vedettes de l'accueil, suggestions
+//   sous une fiche, « Complète ta commande ») ne mettent jamais en avant les
+//   marques exclues ci-dessous. Elles restent au catalogue. Les vedettes de
+//   l'accueil choisies dans le metafield (lib/vedettes) font exception.
 // - une suggestion n'est jamais un produit CONCURRENT du produit affiché (pas
 //   de whey sous une whey) : on propose ce qui va avec (créatine, shaker,
 //   crème de riz, collation…).
@@ -12,9 +13,6 @@
 
 /** Marques jamais mises en avant automatiquement. */
 export const EXCLUDED_AUTO_VENDORS = ['Eric Favre', 'French Nutrition'] as const
-
-/** Carte « Best-seller » de l'accueil, choisie à la main (08/10/2026). */
-export const HOME_FEATURED_HANDLE = 'whey-native-protimuscle'
 
 const norm = (s?: string | null) =>
   (s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
@@ -148,12 +146,3 @@ export function pickComplements<T extends Candidate>(current: Candidate, pool: T
   return out
 }
 
-/**
- * Best-sellers de l'accueil : marques exclues retirées, carte mise en avant
- * (HOME_FEATURED_HANDLE) en tête si elle est disponible.
- */
-export function homeBestSellers<T extends Candidate>(products: T[], featured?: T | null): T[] {
-  const list = products.filter((p) => isAutoPromotable(p) && p.handle !== HOME_FEATURED_HANDLE)
-  const pinned = featured ?? products.find((p) => p.handle === HOME_FEATURED_HANDLE)
-  return pinned && pinned.availableForSale !== false && isAutoPromotable(pinned) ? [pinned, ...list] : list
-}

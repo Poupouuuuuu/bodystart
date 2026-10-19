@@ -6,6 +6,7 @@ import { Truck } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'
 import { isBundle, getBundleComponentImages } from '@/lib/shopify/bundle'
+import { estCoffret } from '@/lib/coffrets'
 import { availableFirst } from '@/lib/product-order'
 import BundleComposite from '@/components/pack/v2/BundleComposite'
 import type { ShopifyProduct } from '@/lib/shopify/types'
@@ -94,12 +95,13 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                     </span>
                   )}
                   {hasComponents ? (
-                    // Bundle : meme composite que /packs et la vignette panier
+                    // Bundle : même visuel que /packs (image du pack ; pour un
+                    // coffret, photo carrée sur fond blanc : la pile des pots).
                     <BundleComposite
                       images={componentImages}
                       alt={product.title}
                       variant="card"
-                      fallbackImage={product.featuredImage}
+                      imagePack={estCoffret(product) ? null : product.featuredImage}
                       sizes="(min-width: 1024px) 25vw, 50vw"
                       className={cn(soldOut && 'opacity-60')}
                     />

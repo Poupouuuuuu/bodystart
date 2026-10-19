@@ -1,9 +1,9 @@
 // Sélection de saison de l'accueil (déco Halloween du 19/10/2026) : les packs
-// de la collection `packs` d'abord, puis des meilleures ventes qui ne sont pas
-// déjà dans le bloc « Meilleures ventes » juste en dessous. Produits en stock
-// seulement. Aucune promo inventée : les cartes affichent les prix Shopify.
+// de la collection `packs` d'abord, puis des vedettes de l'accueil
+// (lib/vedettes) qui ne sont pas déjà dans le bloc « Ce qui part vite ».
+// Produits en stock seulement. Aucune promo inventée : prix Shopify.
 
-/** Nombre de cartes du bloc « Meilleures ventes » de l'accueil (BestSellersV3). */
+/** Nombre de cartes du bloc « Ce qui part vite » de l'accueil (BestSellersV3). */
 export const MEILLEURES_VENTES_AFFICHEES = 5
 
 interface Candidat {
