@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import CookieSettingsButton from '@/components/ui/CookieSettingsButton'
+import { decorSaison } from '@/components/saison/decors'
+import type { ThemeSaison } from '@/lib/saison'
 import {
   MapPin,
   Phone,
@@ -91,9 +93,12 @@ const TRUST_BADGES = [
 
 const INSTAGRAM_URL = 'https://www.instagram.com/bodystart_nutrition/'
 
-export default function Footer() {
+/** theme : période du mode saison au rendu (frise décorative en tête, lib/saison). */
+export default function Footer({ theme = null }: { theme?: ThemeSaison | null }) {
+  const Frise = decorSaison(theme)?.Frise
   return (
     <footer className="bg-white border-t border-spruce/10">
+      {Frise && <Frise />}
 
       {/* ─── Trust Badges ─── */}
       <div className="border-b border-spruce/10">

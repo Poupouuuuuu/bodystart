@@ -130,7 +130,7 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
     // (ombre teintée verte) suffit à détacher la carte du fond crème, et la
     // grille respire beaucoup plus. Le rayon est volontairement plus généreux
     // (20px) que celui des éléments internes : hiérarchie de rayons.
-    <div className="group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift">
+    <div className="carte-produit group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift">
       {/* Zone image avec fond vegetal */}
       <Link
         href={href}

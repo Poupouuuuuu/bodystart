@@ -13,6 +13,8 @@ import NavigationTracker from '@/components/layout/NavigationTracker'
 import { getCollections } from '@/lib/shopify'
 import { getSaison } from '@/lib/shopify/saison'
 import { periodeActive } from '@/lib/saison'
+import { decorSaison } from '@/components/saison/decors'
+import AnimationsSaison from '@/components/saison/AnimationsSaison'
 import type { ShopifyCollection } from '@/lib/shopify/types'
 import { organizationJsonLd, storeJsonLd } from '@/lib/jsonld/local'
 
@@ -50,6 +52,9 @@ export default async function NutritionLayout({ children }: { children: React.Re
   // période active à l'heure pile côté navigateur (le HTML est en cache).
   const saison = await getSaison()
   const themeServeur = periodeActive(saison, new Date())?.theme ?? null
+  // Déco de saison complète (haut de l'accueil, séparateurs, frise du pied de
+  // page) : son CSS n'est émis que pendant la période (components/saison).
+  const decor = decorSaison(themeServeur)
 
   return (
     <>
@@ -80,6 +85,14 @@ export default async function NutritionLayout({ children }: { children: React.Re
       <VenometteBanner />
       {/* Compteur de navigations internes (bouton Retour des fiches produit) */}
       <NavigationTracker />
+      {/* Déco de saison : CSS du thème et pause des animations hors écran,
+          seulement pendant une période décorée (components/saison). */}
+      {decor && (
+        <>
+          <style>{decor.css}</style>
+          <AnimationsSaison />
+        </>
+      )}
       {/* Header et Footer HORS <Suspense> (08/10/2026) : une frontière Suspense
           autour d'un composant client fait partir son HTML dans un bloc caché,
           révélé par un script. Sans JS (ou si le script échoue), plus de menu
@@ -94,7 +107,7 @@ export default async function NutritionLayout({ children }: { children: React.Re
         <CartDrawerLazy />
       </Suspense>
       <main id="main" className="flex-1">{children}</main>
-      <Footer />
+      <Footer theme={themeServeur} />
       <BackToTop />
     </>
   )

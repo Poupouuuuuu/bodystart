@@ -97,7 +97,7 @@ export default function PackCardV2({ product, featured = false }: PackCardV2Prop
     <Link
       href={`/products/${product.handle}`}
       className={cn(
-        'group flex overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift',
+        'carte-produit group flex overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift',
         featured ? 'flex-col md:flex-row' : 'flex-col'
       )}
     >

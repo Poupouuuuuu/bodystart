@@ -17,6 +17,7 @@ import { GOOGLE_DIRECTIONS_URL } from '@/lib/store-info'
 import { FREE_SHIPPING_LABEL } from '@/lib/shipping'
 import { cssSaison, dateSaison, periodeActive, prochainChangement, type PeriodeSaison, type ThemeSaison } from '@/lib/saison'
 import DecorSaison from './DecorSaison'
+import LogoSaison from '@/components/saison/LogoSaison'
 
 type SearchResult = {
   id: string
@@ -274,7 +275,7 @@ export default function Header({ saison = [], themeServeur = null, previsualisat
 
             {/* Logo — ferme le burger même si on est DÉJÀ sur '/' (l'effet
                 [pathname] ne se déclenche pas quand le pathname ne change pas) */}
-            <Link href="/" className="flex-shrink-0 flex min-h-[44px] items-center" onClick={() => setMobileOpen(false)}>
+            <Link href="/" className="relative flex-shrink-0 flex min-h-[44px] items-center" onClick={() => setMobileOpen(false)}>
               {/* PAS de priority : le hero de la home doit rester le SEUL preload
                   prioritaire (2 preloads high se concurrençaient) ; le logo, 10 Ko,
                   arrive de toute façon très tôt. */}
@@ -285,6 +286,7 @@ export default function Header({ saison = [], themeServeur = null, previsualisat
                 height={50}
                 className="h-10 w-auto"
               />
+              <LogoSaison theme={theme} />
             </Link>
 
             {/* Nav desktop */}

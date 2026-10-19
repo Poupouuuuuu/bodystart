@@ -157,15 +157,41 @@ export function dateSaison(forcee: string | null | undefined, previsualisation: 
   return Number.isNaN(t) ? now : new Date(t)
 }
 
+// Toile d'araignée (coin haut droit des badges « Best-seller », Halloween),
+// en masque : elle prend la couleur du texte du badge, lisible sur l'accent.
+const TOILE =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='.6'%3E%3Cpath d='M16 0V16M16 0 3 13M16 0 0 7M16 0H0M16 5 12.5 3.5 11.4 2 11 0M16 10 8.9 7.1 6.8 4 6 0M16 14.5 5.7 10.3 2.7 5.8 1.5 0'/%3E%3C/svg%3E\")"
+
 /**
- * Règles CSS de la période : variables d'accent, badges « Best-seller » et
- * soulignés. Émises seulement pendant une période : hors saison, rien ne
- * change. Les couleurs sont validées par lireSaison (#RRGGBB).
+ * Règles propres à chaque thème, en plus de l'accent : décor léger des cartes
+ * produit et des badges (déco Halloween du 19/10/2026). Couleurs tirées des
+ * variables validées, jamais du metafield en clair.
+ */
+const CSS_THEME: Partial<Record<ThemeSaison, string>> = {
+  halloween:
+    `.carte-produit:hover{box-shadow:0 0 0 1px color-mix(in srgb,var(--saison-accent) 32%,transparent),0 18px 44px -14px color-mix(in srgb,var(--saison-accent) 60%,transparent)!important}` +
+    `.badge-saison:not(.absolute){position:relative}` +
+    `.badge-saison::after{content:"";position:absolute;top:0;right:0;width:15px;height:15px;pointer-events:none;opacity:.5;background-color:currentColor;-webkit-mask:${TOILE} no-repeat top right/contain;mask:${TOILE} no-repeat top right/contain}`,
+}
+
+/**
+ * Règles CSS de la période : variables d'accent, badges « Best-seller »,
+ * soulignés et décor des cartes du thème. Émises seulement pendant une
+ * période : hors saison, rien ne change. Les couleurs sont validées par
+ * lireSaison (#RRGGBB).
  */
 export function cssSaison(p: PeriodeSaison): string {
   return (
     `:root{--saison-accent:${p.accent};--saison-accent-texte:${p.texteSurAccent};--saison-accent-2:${p.accent2}}` +
     `.badge-saison{background-color:var(--saison-accent)!important;color:var(--saison-accent-texte)!important}` +
-    `.souligne-saison{text-decoration-color:var(--saison-accent-2)!important}`
+    `.souligne-saison{text-decoration-color:var(--saison-accent-2)!important}` +
+    (CSS_THEME[p.theme] ?? '')
+  )
+}
+
+/** Dernier jour de la période, heure de Paris (« 31/10 »). */
+export function finPeriode(p: PeriodeSaison): string {
+  return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit', timeZone: 'Europe/Paris' }).format(
+    new Date(p.au)
   )
 }
