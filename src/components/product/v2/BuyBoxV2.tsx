@@ -16,6 +16,7 @@ import { getBundleComponentDetailsFromVariant, getCompleteBundleVariants, pickIn
 import { initialImageIndex, pickDefaultVariant, variantFromSearch } from '@/lib/product-variant'
 import TrackViewItem from '@/components/analytics/TrackViewItem'
 import { discountPctOf } from '@/lib/product-price'
+import { mentionCadeauFiche, type CadeauFiche } from '@/lib/paliers'
 import type { ShopifyImage, ShopifyProductVariant, BodyStartStore } from '@/lib/shopify/types'
 
 interface BuyBoxV2Props {
@@ -69,6 +70,8 @@ interface BuyBoxV2Props {
   imagePack?: ShopifyImage | null
   /** Texte alternatif des images de la galerie (lib/alt-produit), sinon le titre. */
   altImages?: string
+  /** Black Week : palier qui offre une variante de cette fiche (mention sous le prix). */
+  cadeauFiche?: CadeauFiche | null
 }
 
 const LOW_STOCK_THRESHOLD = 5
@@ -111,6 +114,7 @@ export default function BuyBoxV2({
   photoCoffret = null,
   imagePack = null,
   altImages,
+  cadeauFiche = null,
 }: BuyBoxV2Props) {
   // Variante d'ouverture (rendu serveur, donc sans ?variant=) :
   // - bundle : une variante COMPLÈTE (composants tous présents), pour ne pas
@@ -418,7 +422,7 @@ export default function BuyBoxV2({
           )}
 
           {/* Prix */}
-          <div className="flex items-baseline gap-3 mb-7">
+          <div className={cn('flex items-baseline gap-3', cadeauFiche ? 'mb-3' : 'mb-7')}>
             <span className="font-display text-[32px] md:text-[36px] font-extrabold text-spruce leading-none">
               {formatPrice(selectedVariant.price)}
             </span>
@@ -428,6 +432,13 @@ export default function BuyBoxV2({
               </span>
             )}
           </div>
+          {/* Black Week : cadeau d'un palier (lib/paliers), sous le prix. */}
+          {cadeauFiche && (
+            <p className="mb-7 flex items-start gap-2.5 text-[14px] font-semibold leading-snug text-ink">
+              <span aria-hidden="true" className="mt-[5px] h-2.5 w-2.5 shrink-0 rotate-45 bg-[#F2C200] ring-1 ring-ink/25" />
+              {mentionCadeauFiche(cadeauFiche, selectedVariant.id)}
+            </p>
+          )}
 
           {/* Selecteurs : BundleSelectorsV2 si bundle, sinon saveur/format produit normal */}
           {isBundleMode ? (

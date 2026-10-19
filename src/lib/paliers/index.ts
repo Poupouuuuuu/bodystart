@@ -311,3 +311,39 @@ export function cadeauxPayants(lignes: LigneCadeau[], couverts: ReadonlySet<stri
 export function prochainPalier(etats: EtatPalier[]): EtatPalier | null {
   return etats.filter((e) => !e.atteint).sort((a, b) => a.palier.montant - b.palier.montant)[0] ?? null
 }
+
+// ─── Fiche produit ────────────────────────────────────────────
+
+export interface CadeauFiche {
+  /** Nom de la période du métachamp (« Black Week »). */
+  periode: string
+  palier: Palier
+}
+
+/**
+ * Palier cadeau de la période à `date` qui offre une variante de cette fiche
+ * (identifiants des variantes en stock), null sinon. Sert à dire sur la fiche
+ * du cadeau qu'on peut l'avoir offert (Black Week, demande du 19/10/2026).
+ */
+export function cadeauDeFiche(config: PaliersConfig | null, date: Date, variantesEnStock: string[]): CadeauFiche | null {
+  const periode = periodeActive(config, date)
+  if (!periode) return null
+  const ids = new Set(variantesEnStock)
+  const palier = periode.paliers.find((p) => p.type === 'cadeau' && p.variantes?.some((v) => ids.has(v.id)))
+  return palier ? { periode: periode.nom, palier } : null
+}
+
+const euros = (montant: number) =>
+  `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(montant)} €`
+
+/**
+ * Ligne sous le prix : « Black Week : offerte dès 100 € de compléments,
+ * ajoutée au panier automatiquement » quand la variante affichée est le
+ * cadeau ; sinon le libellé du palier nomme le cadeau (« Créatine Dedicated
+ * 500 g offerte dès 100 € … »).
+ */
+export function mentionCadeauFiche(c: CadeauFiche, varianteAffichee: string): string {
+  const offerte = c.palier.variantes?.some((v) => v.id === varianteAffichee)
+  const quoi = offerte ? 'offerte' : c.palier.libelle
+  return `${c.periode} : ${quoi} dès ${euros(c.palier.montant)} de compléments, ajoutée au panier automatiquement`
+}

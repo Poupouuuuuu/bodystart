@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { BLANC, NOIR, contraste, cssSaison, dateSaison, lireSaison, periodeActive, prochainChangement } from './saison'
+import { BLANC, NOIR, contraste, cssSaison, dateSaison, lireApercu, lireSaison, periodeActive, periodeServeur, prochainChangement } from './saison'
 
 // Metafield `bodystart.saison` tel que créé le 19/10/2026 (copie).
 const METAFIELD = JSON.stringify({
@@ -114,6 +114,21 @@ describe('prévisualisation', () => {
     expect(dateSaison('n importe quoi', true, now)).toBe(now)
     expect(dateSaison(null, true, now)).toBe(now)
   })
+  it('?saison= : un thème, « aucun », sinon rien (« auto » compris)', () => {
+    expect(lireApercu('black-week')).toBe('black-week')
+    expect(lireApercu('noel')).toBe('noel')
+    expect(lireApercu('aucun')).toBe('aucun')
+    expect(lireApercu('auto')).toBeNull()
+    expect(lireApercu('Black-Week')).toBeNull()
+    expect(lireApercu(undefined)).toBeNull()
+  })
+  it('thème forcé : sa période du metafield, avant ses dates', () => {
+    expect(periodeServeur(P, now, 'black-week')?.theme).toBe('black-week')
+    expect(periodeServeur(P, now, 'noel')?.texte).toBe(P.find((p) => p.theme === 'noel')?.texte)
+    expect(periodeServeur(P, now, 'aucun')).toBeNull()
+    expect(periodeServeur(P, now, null)).toEqual(periodeActive(P, now))
+    expect(periodeServeur([], now, 'black-week')).toBeNull()
+  })
 })
 
 describe('CSS de la période', () => {
@@ -123,6 +138,14 @@ describe('CSS de la période', () => {
     expect(css).toContain('--saison-accent-texte:#111111')
     expect(css).toContain('.badge-saison{')
     expect(css).toContain('.souligne-saison{')
+    expect(css).not.toMatch(/[<>]/)
+  })
+  it('Black Week : liseré et soulignés jaunes (accent_2), pas d’ombre noire', () => {
+    const bw = P.find((p) => p.theme === 'black-week')!
+    const css = cssSaison(bw)
+    expect(css).toContain('--saison-accent:#111111')
+    expect(css).toContain('--saison-accent-2:#F2C200')
+    expect(css).toContain('.saison-entete{box-shadow:inset 0 -3px 0 var(--saison-accent-2)}')
     expect(css).not.toMatch(/[<>]/)
   })
 })

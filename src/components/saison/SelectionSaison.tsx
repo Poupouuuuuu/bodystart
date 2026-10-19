@@ -1,12 +1,14 @@
 import Link from 'next/link'
+import type { CSSProperties } from 'react'
 import { ArrowRight } from 'lucide-react'
 import PackCardV2 from '@/components/pack/v2/PackCardV2'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 
 // Section « La sélection de saison » de l'accueil (déco Halloween du
-// 19/10/2026, réutilisable pour Noël) : une rangée de packs (mêmes cartes que
-// /packs) puis une rangée de meilleures ventes (cartes du catalogue). Prix
+// 19/10/2026, Black Week, réutilisable pour Noël ; couleurs dans decors) : une
+// rangée de packs (mêmes cartes que /packs) puis une rangée de meilleures
+// ventes (cartes du catalogue). Prix
 // Shopify tels quels, boutons d'achat inchangés (lib/selection-saison).
 // Sous lg, chaque rangée défile à l'horizontale (CSS seul) : la section reste
 // courte sur téléphone.
@@ -22,6 +24,8 @@ interface SelectionSaisonProps {
   intro: string
   /** Fond de la section (classe du thème). */
   fond: string
+  /** Couleurs du sur-titre et du mot du thème, et halo du mot (decors). */
+  couleurs: Record<'--sel-sur-titre' | '--sel-mot' | '--sel-halo', string>
 }
 
 const RANGEE =
@@ -35,6 +39,7 @@ export default function SelectionSaison({
   motTheme,
   intro,
   fond,
+  couleurs,
 }: SelectionSaisonProps) {
   if (packs.length + produits.length === 0) return null
   return (
@@ -42,18 +47,19 @@ export default function SelectionSaison({
     // en page qu'à l'approche (premier affichage de l'accueil plus rapide).
     <section
       className={`relative overflow-hidden py-16 [contain-intrinsic-size:auto_1500px] [content-visibility:auto] md:py-24 ${fond}`}
+      style={couleurs as CSSProperties}
       aria-labelledby="selection-saison"
     >
       <div className="container relative">
         <div className="mb-10 flex flex-col gap-6 md:mb-12 md:flex-row md:items-end md:justify-between">
           <div className="max-w-[640px]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#F6A456]">{surTitre}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--sel-sur-titre)]">{surTitre}</p>
             <h2
               id="selection-saison"
               className="saison-titre mt-3 font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] text-canvas md:text-[48px]"
             >
               {titre}{' '}
-              <span className="text-[color:var(--saison-accent,#E8711A)] [text-shadow:0_0_14px_rgba(232,113,26,0.35)]">
+              <span className="text-[color:var(--sel-mot)] [text-shadow:var(--sel-halo)]">
                 {motTheme}
               </span>
             </h2>

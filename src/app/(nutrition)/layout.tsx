@@ -11,8 +11,8 @@ import BirthdayBanner from '@/components/marketing/BirthdayBanner'
 import VenometteBanner from '@/components/marketing/VenometteBanner'
 import NavigationTracker from '@/components/layout/NavigationTracker'
 import { getCollections } from '@/lib/shopify'
-import { getSaison } from '@/lib/shopify/saison'
-import { periodeActive } from '@/lib/saison'
+import { apercuSaison, getSaison } from '@/lib/shopify/saison'
+import { periodeServeur } from '@/lib/saison'
 import { decorSaison } from '@/components/saison/decors'
 import AnimationsSaison from '@/components/saison/AnimationsSaison'
 import type { ShopifyCollection } from '@/lib/shopify/types'
@@ -51,7 +51,9 @@ export default async function NutritionLayout({ children }: { children: React.Re
   // Mode saison : toutes les périodes partent au header, qui recalcule la
   // période active à l'heure pile côté navigateur (le HTML est en cache).
   const saison = await getSaison()
-  const themeServeur = periodeActive(saison, new Date())?.theme ?? null
+  // Hors production, `?saison=black-week` (cookie) force un thème : null en production.
+  const apercu = await apercuSaison()
+  const themeServeur = periodeServeur(saison, new Date(), apercu)?.theme ?? null
   // Déco de saison complète (haut de l'accueil, séparateurs, frise du pied de
   // page) : son CSS n'est émis que pendant la période (components/saison).
   const decor = decorSaison(themeServeur)
@@ -101,6 +103,7 @@ export default async function NutritionLayout({ children }: { children: React.Re
         collections={collections}
         saison={saison}
         themeServeur={themeServeur}
+        apercu={apercu}
         previsualisation={process.env.VERCEL_ENV !== 'production'}
       />
       <Suspense fallback={null}>
