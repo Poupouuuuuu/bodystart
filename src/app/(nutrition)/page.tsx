@@ -123,19 +123,6 @@ export default async function HomePage({
           douceur a l'entree dans l'ecran. Sans JS ou en prefers-reduced-motion,
           <Reveal> n'applique aucun masquage (cf. globals.css .reveal). */}
 
-      {/* 1 bis. Sélection de saison (packs puis meilleures ventes), pendant
-             une période décorée seulement */}
-      {periode && decor && selection && (
-        <Reveal>
-          <SelectionSaison
-            packs={selection.packs}
-            produits={selection.produits}
-            surTitre={`Jusqu'au ${finPeriode(periode)}`}
-            {...decor.selection}
-          />
-        </Reveal>
-      )}
-
       {/* 2 bis. Coffrets de Noël, en saison seulement (rien sinon) */}
       {coffrets.length > 0 && (
         <Reveal>
@@ -147,6 +134,21 @@ export default async function HomePage({
       <Reveal>
         <BestSellersV3 products={meilleures} />
       </Reveal>
+
+      {/* 3 ter. Sélection de saison (packs puis meilleures ventes), pendant
+             une période décorée seulement. Après les meilleures ventes et pas
+             sous le haut de page : ses images partaient avec la photo (LCP
+             mobile +0,6 s mesuré le 19/10/2026). */}
+      {periode && decor && selection && (
+        <Reveal>
+          <SelectionSaison
+            packs={selection.packs}
+            produits={selection.produits}
+            surTitre={`Jusqu'au ${finPeriode(periode)}`}
+            {...decor.selection}
+          />
+        </Reveal>
+      )}
 
       {/* 3 bis. Vu sur Instagram — vidéos d'influenceurs tournées à la boutique.
           Masqué tant que src/lib/social-proof.ts est vide (Reveal interne). */}
