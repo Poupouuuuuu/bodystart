@@ -23,7 +23,7 @@ S'il reste des commits non poussés, s'arrêter et le dire : le déploiement n'a
 node .claude/skills/verif-prod/scripts/wait-deploy.mjs
 ```
 
-Le script interroge `/api/version` toutes les 15 s (10 min max). En cas de délai dépassé, regarder le déploiement sur Vercel (build en erreur ? preview au lieu de production ?) avant d'aller plus loin.
+Sans argument, il attend le HEAD local ; `--sha <sha>` accepte un SHA court (7 caractères au moins) ou complet. Le script interroge `/api/version` toutes les 15 s (10 min max). En cas de délai dépassé, regarder le déploiement sur Vercel (build en erreur ? preview au lieu de production ?) avant d'aller plus loin.
 
 ## 3. Sonde mobile
 

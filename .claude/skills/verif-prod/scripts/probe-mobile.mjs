@@ -137,10 +137,12 @@ async function auditPage(context, route) {
   return { route, status, info, consoleErrors: consoleErrors.slice(0, 5), problems, shot }
 }
 
-// Perf : médiane de N chargements, 4G lent + CPU ×4 (Chromium, CDP).
+// Perf : médiane de N chargements, 4G lent + CPU ×4 (Chromium, CDP). Chargement écarté et
+// refait si la navigation échoue ou si aucun LCP ne remonte (cf. probe-perf.mjs).
 async function perf(browser, route) {
   const samples = []
-  for (let i = 0; i < RUNS; i++) {
+  let ecartes = 0
+  for (let essai = 0; samples.length < RUNS && essai < RUNS * 2; essai++) {
     const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 3, isMobile: true, hasTouch: true, userAgent: UA })
     const page = await context.newPage()
     const cdp = await context.newCDPSession(page)
@@ -154,7 +156,10 @@ async function perf(browser, route) {
       }).observe({ type: 'largest-contentful-paint', buffered: true })
     })
     const t0 = Date.now()
-    await page.goto(`${BASE}${route}`, { waitUntil: 'load', timeout: 90_000 }).catch(() => {})
+    let echec = false
+    await page.goto(`${BASE}${route}`, { waitUntil: 'load', timeout: 90_000 }).catch(() => {
+      echec = true
+    })
     await page.waitForTimeout(2500)
     const m = await page
       .evaluate(() => {
@@ -163,14 +168,15 @@ async function perf(browser, route) {
       })
       .catch(() => ({ ttfb: 0, dcl: 0, load: 0, lcp: 0 }))
     m.wall = Date.now() - t0
-    samples.push(m)
+    if (echec || !(m.lcp > 0)) ecartes++
+    else samples.push(m)
     await context.close()
   }
   const med = (k) => {
     const v = samples.map((s) => s[k]).sort((a, b) => a - b)
     return v[Math.floor(v.length / 2)]
   }
-  return { runs: samples.length, ttfb: med('ttfb'), dcl: med('dcl'), load: med('load'), lcp: med('lcp') }
+  return { runs: samples.length, ecartes, ttfb: med('ttfb') ?? 0, dcl: med('dcl') ?? 0, load: med('load') ?? 0, lcp: med('lcp') ?? 0 }
 }
 
 async function isr(route) {
@@ -201,7 +207,7 @@ const lines = []
 lines.push(`# Sonde mobile ${BASE} (${stamp}, 390×844)`, '')
 lines.push('| Page | HTTP | Problèmes | Capture |', '| --- | --- | --- | --- |')
 for (const r of results) lines.push(`| ${r.route} | ${r.status} | ${r.problems.length ? r.problems.join(', ') : 'OK'} | ${path.basename(r.shot)} |`)
-lines.push('', `## Perf ${perfRoute} (médiane de ${p.runs} chargements, 4G lent + CPU ×4)`, '')
+lines.push('', `## Perf ${perfRoute} (médiane de ${p.runs} chargements${p.ecartes ? `, ${p.ecartes} écarté(s) : navigation en échec ou LCP absent` : ''}, 4G lent + CPU ×4)`, '')
 lines.push('| TTFB | DOMContentLoaded | load | LCP |', '| --- | --- | --- | --- |', `| ${ms(p.ttfb)} | ${ms(p.dcl)} | ${ms(p.load)} | ${ms(p.lcp)} |`)
 lines.push('', `## ISR ${perfRoute}`, '', `x-vercel-cache : ${cache.first} puis ${cache.second} (HTTP ${cache.status}) ; cache-control : ${cache.cacheControl}`)
 const details = results.filter((r) => r.info && (r.info.small.length || r.info.smallInText || r.info.smallInputs.length || r.consoleErrors.length))

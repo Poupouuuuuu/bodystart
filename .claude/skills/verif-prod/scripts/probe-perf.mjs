@@ -4,6 +4,9 @@
 // Sortie : tableau Markdown (FCP, LCP, blocage JS, Ko par type) + élément LCP de chaque page.
 // Comparer deux versions (prod / preview) dans la même session : le réseau de la machine pèse
 // sur le TTFB, jamais conclure sur un seul chargement.
+// Chargement écarté et refait (jusqu'à N essais de plus) si la navigation échoue (ex.
+// net::ERR_TIMED_OUT au bout de 30 s en session cloud, page pourtant peinte) ou si aucun LCP
+// n'est remonté : ces 0 tiraient la médiane vers le bas (constaté le 19/10/2026).
 // Navigateur : Chromium Playwright ; CHROMIUM_PATH pour un exécutable déjà installé
 // (session cloud Claude : /opt/pw-browsers/chromium).
 import { chromium } from 'playwright'
@@ -43,7 +46,10 @@ async function load(browser, route) {
     }).observe({ type: 'largest-contentful-paint', buffered: true })
     new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__lt.push([e.startTime, e.duration]) }).observe({ type: 'longtask', buffered: true })
   })
-  await page.goto(`${BASE}${route}`, { waitUntil: 'load', timeout: 120_000 }).catch(() => {})
+  let erreur = null
+  await page.goto(`${BASE}${route}`, { waitUntil: 'load', timeout: 120_000 }).catch((e) => {
+    erreur = String(e.message).split('\n')[0].replace(/ at https?:.*/, '')
+  })
   await page.waitForTimeout(4000)
   const m = await page
     .evaluate(() => {
@@ -55,24 +61,29 @@ async function load(browser, route) {
   const kb = {}
   for (const r of reqs.values()) if (r.bytes) kb[r.type] = (kb[r.type] || 0) + r.bytes / 1024
   await context.close()
-  return m && { ...m, kb }
+  if (!m) return { erreur: erreur ?? 'mesure impossible' }
+  return { ...m, kb, erreur: erreur ?? (m.lcp > 0 ? null : 'aucun LCP') }
 }
 
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {})
-const ms = (v) => `${Math.round(v)} ms`
+const ms = (v) => (v == null ? 'n/a' : `${Math.round(v)} ms`)
 const lines = [`# Perf mobile ${BASE} (médiane de ${RUNS}, 4G lent + CPU ×4)`, '', '| Page | TTFB | FCP | LCP | Blocage JS | Script / Image / Font (Ko) | Élément LCP |', '| --- | --- | --- | --- | --- | --- | --- |']
 for (const route of ROUTES) {
   const s = []
-  for (let i = 0; i < RUNS; i++) {
+  const ecartes = []
+  for (let essai = 0; s.length < RUNS && essai < RUNS * 2; essai++) {
     const r = await load(browser, route)
-    if (r) s.push(r)
+    if (r.erreur) ecartes.push(r.erreur)
+    else s.push(r)
   }
-  const med = (k) => s.map((x) => x[k]).sort((a, b) => a - b)[Math.floor(s.length / 2)] ?? 0
+  const med = (k) => s.map((x) => x[k]).sort((a, b) => a - b)[Math.floor(s.length / 2)]
   const last = s.at(-1)
   const k = (t) => Math.round(last?.kb[t] || 0)
   const el = last?.lcpEl ? `${last.lcpEl.el}${last.lcpEl.url ? ` ${last.lcpEl.url.replace(BASE, '').slice(0, 60)}` : ''}` : 'n/a'
-  lines.push(`| ${route} | ${ms(med('ttfb'))} | ${ms(med('fcp'))} | ${ms(med('lcp'))} | ${ms(med('tbt'))} | ${k('Script')} / ${k('Image')} / ${k('Font')} | ${el} |`)
-  console.error(`${route} : LCP ${s.map((x) => Math.round(x.lcp)).join(', ')}`)
+  const page = s.length < RUNS ? `${route} (${s.length}/${RUNS})` : route
+  lines.push(`| ${page} | ${ms(med('ttfb'))} | ${ms(med('fcp'))} | ${ms(med('lcp'))} | ${ms(med('tbt'))} | ${k('Script')} / ${k('Image')} / ${k('Font')} | ${el} |`)
+  const motifs = [...new Set(ecartes)].join(' ; ')
+  console.error(`${route} : LCP ${s.map((x) => Math.round(x.lcp)).join(', ')}${ecartes.length ? ` | ${ecartes.length} écarté(s) : ${motifs}` : ''}`)
 }
 await browser.close()
 console.log(lines.join('\n'))
