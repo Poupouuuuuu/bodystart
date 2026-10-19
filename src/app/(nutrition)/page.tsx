@@ -16,8 +16,8 @@ import { buildPageMetadata } from '@/lib/seo'
 import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 import CoffretsNoelV3 from '@/components/home/v3/CoffretsNoelV3'
 import { coffretsVisibles, dateCoffrets } from '@/lib/coffrets'
-import { finPeriode, periodeActive } from '@/lib/saison'
-import { getSaison } from '@/lib/shopify/saison'
+import { finPeriode, lireApercu, periodeServeur } from '@/lib/saison'
+import { apercuSaison, getSaison } from '@/lib/shopify/saison'
 import { composerSelection, MEILLEURES_VENTES_AFFICHEES } from '@/lib/selection-saison'
 import { decorSaison } from '@/components/saison/decors'
 import SelectionSaison from '@/components/saison/SelectionSaison'
@@ -77,6 +77,13 @@ async function varianteHero(searchParams: Promise<Record<string, string | string
   return typeof v === 'string' ? v : undefined
 }
 
+// Thème forcé (?saison=black-week, puis le cookie posé par le header) : hors
+// production seulement, comme ?hero= ; en production, null sans rien lire.
+async function apercuAccueil(searchParams: Promise<Record<string, string | string[] | undefined>>) {
+  if (process.env.VERCEL_ENV === 'production') return null
+  return lireApercu((await searchParams).saison) ?? (await apercuSaison())
+}
+
 export default async function HomePage({
   searchParams,
 }: {
@@ -87,7 +94,9 @@ export default async function HomePage({
   const [coffrets, vedettes, periode, collectionPacks, variante] = await Promise.all([
     coffretsDuMoment(searchParams),
     getVedettesAccueil(PLACES_VEDETTES),
-    getSaison().then((saison) => periodeActive(saison, new Date())),
+    Promise.all([getSaison(), apercuAccueil(searchParams)]).then(([saison, apercu]) =>
+      periodeServeur(saison, new Date(), apercu)
+    ),
     getCollectionByHandle('packs', 24).catch(() => null),
     varianteHero(searchParams),
   ])

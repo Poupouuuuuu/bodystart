@@ -6,8 +6,8 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import CartDrawerLazy from '@/components/cart/CartDrawerLazy'
 import { getCollections } from '@/lib/shopify'
-import { getSaison } from '@/lib/shopify/saison'
-import { periodeActive } from '@/lib/saison'
+import { apercuSaison, getSaison } from '@/lib/shopify/saison'
+import { periodeServeur } from '@/lib/saison'
 import { decorSaison } from '@/components/saison/decors'
 import type { ShopifyCollection } from '@/lib/shopify/types'
 
@@ -49,7 +49,8 @@ export default async function NotFound() {
     // Shopify indisponible — navigation sans sous-menus
   }
   const saison = await getSaison()
-  const theme = periodeActive(saison, new Date())?.theme ?? null
+  const apercu = await apercuSaison()
+  const theme = periodeServeur(saison, new Date(), apercu)?.theme ?? null
   const decor = decorSaison(theme)
 
   return (
@@ -60,6 +61,7 @@ export default async function NotFound() {
         collections={collections}
         saison={saison}
         themeServeur={theme}
+        apercu={apercu}
         previsualisation={process.env.VERCEL_ENV !== 'production'}
       />
       <Suspense fallback={null}>

@@ -15,7 +15,17 @@ import { cn, formatPrice } from '@/lib/utils'
 import { BODY_START_STORES, type ShopifyCollection } from '@/lib/shopify/types'
 import { GOOGLE_DIRECTIONS_URL } from '@/lib/store-info'
 import { FREE_SHIPPING_LABEL } from '@/lib/shipping'
-import { cssSaison, dateSaison, periodeActive, prochainChangement, type PeriodeSaison, type ThemeSaison } from '@/lib/saison'
+import {
+  COOKIE_APERCU_SAISON,
+  cssSaison,
+  dateSaison,
+  lireApercu,
+  periodeActive,
+  prochainChangement,
+  type ApercuSaison,
+  type PeriodeSaison,
+  type ThemeSaison,
+} from '@/lib/saison'
 import DecorSaison from './DecorSaison'
 import LogoSaison from '@/components/saison/LogoSaison'
 
@@ -70,7 +80,10 @@ interface HeaderProps {
   saison?: PeriodeSaison[]
   /** Période active au moment du rendu serveur (HTML en cache). */
   themeServeur?: ThemeSaison | null
-  /** Hors production : ?saison_date=AAAA-MM-JJ force la date (preview). */
+  /** Thème forcé sur la preview (cookie de `?saison=`), null en production. */
+  apercu?: ApercuSaison | null
+  /** Hors production : ?saison_date=AAAA-MM-JJ force la date, ?saison= le
+   * thème (black-week, noel, halloween, aucun ; auto pour revenir aux dates). */
   previsualisation?: boolean
 }
 
@@ -78,7 +91,7 @@ const STORE = BODY_START_STORES.find((s) => s.isActive) ?? BODY_START_STORES[0]
 // « 07 61 84 75 80 » → tel:+33761847580
 const STORE_TEL = `tel:+33${STORE.phone.replace(/\s/g, '').replace(/^0/, '')}`
 
-export default function Header({ saison = [], themeServeur = null, previsualisation = false }: HeaderProps) {
+export default function Header({ saison = [], themeServeur = null, apercu = null, previsualisation = false }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileCatsOpen, setMobileCatsOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -103,6 +116,12 @@ export default function Header({ saison = [], themeServeur = null, previsualisat
   const [theme, setTheme] = useState<ThemeSaison | null>(themeServeur)
   useEffect(() => {
     if (saison.length === 0) return
+    // Preview : thème forcé par ?saison= (puis par le cookie, rendu serveur).
+    const force = (previsualisation && lireApercu(new URLSearchParams(window.location.search).get('saison'))) || apercu
+    if (force) {
+      setTheme(force === 'aucun' ? null : force)
+      return
+    }
     const forcee = previsualisation ? new URLSearchParams(window.location.search).get('saison_date') : null
     if (forcee) {
       setTheme(periodeActive(saison, dateSaison(forcee, previsualisation))?.theme ?? null)
@@ -119,7 +138,23 @@ export default function Header({ saison = [], themeServeur = null, previsualisat
     }
     maj()
     return () => clearTimeout(minuterie)
-  }, [saison, previsualisation])
+  }, [saison, previsualisation, apercu])
+
+  // Preview : ?saison=black-week pose le cookie lu par le serveur (déco de
+  // l'accueil, CSS du thème, pied de page), puis recharge le rendu serveur.
+  // Il reste pour les pages suivantes ; ?saison=auto le retire.
+  useEffect(() => {
+    if (!previsualisation) return
+    const demande = new URLSearchParams(window.location.search).get('saison')
+    if (demande === null) return
+    const voulu = lireApercu(demande)
+    const actuel = lireApercu(document.cookie.match(new RegExp(`(?:^|; )${COOKIE_APERCU_SAISON}=([^;]*)`))?.[1])
+    if (voulu === actuel || (voulu === null && demande !== 'auto')) return
+    document.cookie = voulu
+      ? `${COOKIE_APERCU_SAISON}=${voulu}; path=/; max-age=86400; samesite=lax; secure`
+      : `${COOKIE_APERCU_SAISON}=; path=/; max-age=0; samesite=lax; secure`
+    router.refresh()
+  }, [previsualisation, router])
   const periode = saison.find((p) => p.theme === theme) ?? null
 
   // Mobile (bug du 17/10/2026) : le clavier restait ouvert et cachait les

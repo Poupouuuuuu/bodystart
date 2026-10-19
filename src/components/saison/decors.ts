@@ -1,5 +1,9 @@
 import type { ComponentType } from 'react'
 import type { ThemeSaison } from '@/lib/saison'
+import EtiquettePhoto from './black-week/EtiquettePhoto'
+import FriseBlackWeek from './black-week/FriseBlackWeek'
+import SeparateurBlackWeek from './black-week/SeparateurBlackWeek'
+import { CSS_BLACK_WEEK } from './black-week/styles'
 import ChauvesSourisPhoto from './halloween/ChauvesSourisPhoto'
 import FriseHalloween from './halloween/FriseHalloween'
 import SeparateurHalloween from './halloween/SeparateurHalloween'
@@ -13,8 +17,8 @@ import { CSS_HALLOWEEN } from './halloween/styles'
 export type PaletteHero = Record<`--h-${string}`, string>
 
 /**
- * Déco de saison complète, par thème (Halloween le 19/10/2026 ; Noël du 29/11
- * au 24/12 se branche ici avec les mêmes champs). Le thème vient du metafield
+ * Déco de saison complète, par thème (Halloween le 19/10/2026, Black Week le
+ * 19/10/2026 ; Noël du 29/11 au 24/12 se branche ici avec les mêmes champs). Le thème vient du metafield
  * bodystart.saison (lib/saison) : hors période, aucune déco ni CSS.
  *
  * Rendu serveur (pages en ISR, 15 min) : au changement de période, la déco
@@ -40,8 +44,15 @@ export interface DecorSaisonPremium {
   Separateur: ComponentType
   /** Frise en tête du pied de page. */
   Frise: ComponentType
-  /** Section de l'accueil sous le haut de page. */
-  selection: { titre: string; motTheme: string; intro: string; fond: string }
+  /** Section de l'accueil sous le haut de page. `couleurs` : sur-titre, mot
+   * du thème et son halo (variables lues par SelectionSaison, sur fond `fond`). */
+  selection: {
+    titre: string
+    motTheme: string
+    intro: string
+    fond: string
+    couleurs: Record<'--sel-sur-titre' | '--sel-mot' | '--sel-halo', string>
+  }
 }
 
 const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
@@ -100,6 +111,67 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
       intro:
         'Nos packs et des produits que nos clients reprennent le plus. Retrait gratuit en boutique à Coignières, livraison partout en France.',
       fond: 'hw-selection',
+      couleurs: { '--sel-sur-titre': '#F6A456', '--sel-mot': '#E8711A', '--sel-halo': '0 0 14px rgba(232,113,26,0.35)' },
+    },
+  },
+  // Black Week (23 au 28/11) : noir #111111 et jaune #F2C200, décor sobre
+  // (étiquettes, équerres, aucune animation). Jaune sur noir : 11,8:1.
+  'black-week': {
+    css: CSS_BLACK_WEEK,
+    hero: {
+      palettes: {
+        // A : fond noir, texte clair, accents jaunes.
+        a: {
+          '--h-fond': '#111111',
+          '--h-texte': '#FAF8F3',
+          '--h-texte-doux': 'rgba(255,255,255,0.8)',
+          '--h-sur-titre': 'rgba(255,255,255,0.85)',
+          '--h-accent': '#F2C200',
+          '--h-trait': '#F2C200',
+          '--h-ligne': 'rgba(255,255,255,0.14)',
+          '--h-ligne-forte': 'rgba(255,255,255,0.3)',
+          '--h-voile': 'rgba(255,255,255,0.06)',
+          '--h-voile-fort': 'rgba(255,255,255,0.14)',
+          '--h-bouton': '#F2C200',
+          '--h-bouton-texte': '#111111',
+          '--h-rond': '#111111',
+          '--h-rond-texte': '#F2C200',
+          '--h-lien': '#F2C200',
+          '--h-liseret': '#F2C200',
+        },
+        // B : fond jaune, texte noir (noir sur #F2C200 : 12:1 ; le grand
+        // titre garde son mot en noir souligné, le blanc ne passe pas).
+        b: {
+          '--h-fond': '#F2C200',
+          '--h-texte': '#111111',
+          '--h-texte-doux': 'rgba(17,17,17,0.86)',
+          '--h-sur-titre': '#111111',
+          '--h-accent': '#111111',
+          '--h-trait': '#111111',
+          '--h-ligne': 'rgba(17,17,17,0.24)',
+          '--h-ligne-forte': 'rgba(17,17,17,0.5)',
+          '--h-voile': 'rgba(17,17,17,0.06)',
+          '--h-voile-fort': 'rgba(17,17,17,0.12)',
+          '--h-bouton': '#111111',
+          '--h-bouton-texte': '#FAF8F3',
+          '--h-rond': '#F2C200',
+          '--h-rond-texte': '#111111',
+          '--h-lien': '#111111',
+          '--h-liseret': '#111111',
+        },
+      },
+      defaut: 'a',
+      DecorPhoto: EtiquettePhoto,
+    },
+    Separateur: SeparateurBlackWeek,
+    Frise: FriseBlackWeek,
+    selection: {
+      titre: 'La sélection',
+      motTheme: 'Black Week',
+      intro:
+        'Nos packs et des produits que nos clients reprennent le plus. Retrait gratuit en boutique à Coignières, livraison partout en France.',
+      fond: 'bw-selection',
+      couleurs: { '--sel-sur-titre': '#F2C200', '--sel-mot': '#F2C200', '--sel-halo': 'none' },
     },
   },
 }

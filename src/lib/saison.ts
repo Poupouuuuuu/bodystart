@@ -17,7 +17,8 @@ export type ThemeSaison = 'halloween' | 'black-week' | 'noel'
 export type DecorSaison = 'halloween' | 'noel' | null
 
 const THEMES: ThemeSaison[] = ['halloween', 'black-week', 'noel']
-/** Décor par thème : la Black Week n'a que ses couleurs. */
+/** Décor aux deux bouts du bandeau, par thème : aucun pour la Black Week
+ * (sa déco du site est dans components/saison/black-week). */
 const DECORS: Record<ThemeSaison, DecorSaison> = { halloween: 'halloween', 'black-week': null, noel: 'noel' }
 
 export interface PeriodeSaison {
@@ -147,6 +148,31 @@ export function prochainChangement(periodes: PeriodeSaison[], now: Date): Date |
   return bornes.length ? new Date(Math.min(...bornes)) : null
 }
 
+// ─── Aperçu d'un thème (hors production) ────────────────────
+
+/** Cookie de l'aperçu, posé par le header à partir de `?saison=` (preview). */
+export const COOKIE_APERCU_SAISON = 'bs-saison-apercu'
+
+/** Thème forcé sur la preview, ou « aucun » pour voir le site normal. */
+export type ApercuSaison = ThemeSaison | 'aucun'
+
+/** Valeur de `?saison=` ou du cookie : un thème, « aucun », sinon null (« auto » compris). */
+export function lireApercu(v: unknown): ApercuSaison | null {
+  if (v === 'aucun') return 'aucun'
+  return THEMES.includes(v as ThemeSaison) ? (v as ThemeSaison) : null
+}
+
+/**
+ * Période à rendre : celle du thème forcé (sa première période du metafield,
+ * pour en prendre textes et couleurs), aucune pour « aucun », sinon la période
+ * active à `now`. L'aperçu n'est lu qu'hors production (lib/shopify/saison).
+ */
+export function periodeServeur(periodes: PeriodeSaison[], now: Date, apercu: ApercuSaison | null): PeriodeSaison | null {
+  if (apercu === 'aucun') return null
+  if (apercu) return periodes.find((p) => p.theme === apercu) ?? null
+  return periodeActive(periodes, now)
+}
+
 /**
  * Date de référence : maintenant, ou celle de `?saison_date=` hors production
  * (vérifier les thèmes sur la preview avant leurs dates). Ignorée en production.
@@ -180,6 +206,13 @@ const CSS_THEME: Partial<Record<ThemeSaison, (p: PeriodeSaison) => string>> = {
     `.saison-entete{box-shadow:inset 0 -2px 0 var(--saison-accent)}` +
     `.saison-lien-nav{text-decoration-line:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:transparent;transition:text-decoration-color .3s}` +
     `.saison-lien-nav:hover,.saison-lien-nav[aria-current=page]{text-decoration-color:var(--saison-accent)}`,
+  // Black Week (accent noir, accent_2 jaune) : liseré et soulignés jaunes,
+  // contour jaune des cartes au survol (jamais d'ombre noire sur le crème).
+  'black-week': () =>
+    `.carte-produit:hover{box-shadow:0 0 0 2px color-mix(in srgb,var(--saison-accent-2) 80%,transparent),0 18px 44px -16px color-mix(in srgb,var(--saison-accent-2) 45%,transparent)!important}` +
+    `.saison-entete{box-shadow:inset 0 -3px 0 var(--saison-accent-2)}` +
+    `.saison-lien-nav{text-decoration-line:underline;text-decoration-thickness:3px;text-underline-offset:6px;text-decoration-color:transparent;transition:text-decoration-color .3s}` +
+    `.saison-lien-nav:hover,.saison-lien-nav[aria-current=page]{text-decoration-color:var(--saison-accent-2)}`,
 }
 
 /**
