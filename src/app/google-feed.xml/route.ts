@@ -40,6 +40,7 @@ const FEED_QUERY = `
             barcode
             price
             compareAtPrice
+            requiresComponents
             image { url }
           }
         }

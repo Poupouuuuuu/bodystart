@@ -51,6 +51,8 @@ interface BuyBoxV2Props {
    * interne (image variant-specific, format, etc.).
    */
   isBundle?: boolean
+  /** Handles des composants sans fiche sur le site : affichés sans lien. */
+  composantsSansFiche?: string[]
   /**
    * Note produit REELLE (metafields reviews.rating / rating_count ecrits par
    * l'app d'avis, ex. Judge.me). null tant qu'aucune app n'est installee :
@@ -100,6 +102,7 @@ export default function BuyBoxV2({
   format = null,
   vendor = null,
   isBundle = false,
+  composantsSansFiche = [],
   rating = null,
   googleRating = GOOGLE_RATING,
   surTitre = null,
@@ -359,6 +362,7 @@ export default function BuyBoxV2({
               title={title}
               discountPct={discountPctOf(selectedVariant)}
               photo={photoCoffret}
+              sansFiche={composantsSansFiche}
               libelleComposants={photoCoffret ? 'Dans ce coffret' : undefined}
             />
           ) : (

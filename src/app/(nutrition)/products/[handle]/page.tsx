@@ -22,6 +22,7 @@ import { COLISSIMO, MONDIAL_RELAY, HANDLING_DAYS } from '@/lib/shipping'
 import { ratingFromMetafields, buildAggregateRating } from '@/lib/reviews'
 import { getGoogleRating } from '@/lib/shopify/google-rating'
 import { getProductRedirect } from '@/lib/shopify/product-redirects'
+import { composantsSansFiche } from '@/lib/shopify/composants-sans-fiche'
 import { productSchema } from '@/lib/jsonld/product'
 import { guidesDeFiche, rayonDeFiche } from '@/lib/rayon-fiche'
 import { altProduit } from '@/lib/alt-produit'
@@ -167,6 +168,9 @@ export default async function ProductPage({ params }: Props) {
   // details des composants de la variante selectionnee en interne (galerie
   // dynamique + selecteurs par composant). La page passe juste le flag.
   const productIsBundle = isBundle(product)
+  // Composants vendus seulement en caisse : nommés dans « Dans ce pack », sans
+  // lien (leur fiche n'existe pas sur le site).
+  const sansFiche = productIsBundle ? await composantsSansFiche(product.variants.nodes) : []
   // Coffrets de Noël : sur-titre et retour vers leur page pendant la période
   // d'affichage (2/11 au 24/12, heure de Paris), vers le catalogue sinon.
   const coffret = estCoffret(product)
@@ -308,6 +312,7 @@ export default async function ProductPage({ params }: Props) {
             format={format}
             vendor={product.vendor}
             isBundle={productIsBundle}
+            composantsSansFiche={sansFiche}
             surTitre={surTitre}
             photoCoffret={coffret ? (images[0] ?? null) : null}
             altImages={altProduit({ title: product.title, vendor: product.vendor, format })}

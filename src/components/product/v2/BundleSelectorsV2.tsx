@@ -6,6 +6,7 @@ import {
   getCompleteBundleVariants,
   buildBundleAxes,
   isBundleOptionAvailable,
+  isBundleOptionEpuisee,
   resolveBundleVariantOnChange,
 } from '@/lib/shopify/bundle'
 import type { ShopifyProductVariant } from '@/lib/shopify/types'
@@ -129,10 +130,14 @@ export default function BundleSelectorsV2({
                       axis.name,
                       val
                     )
+                    // Combinaison inexistante : grisée. Épuisée : marquée mais
+                    // choisissable (la fiche propose alors « Me prévenir »).
+                    const epuisee =
+                      avail && isBundleOptionEpuisee(completeVariants, axes, currentSelection, axis.name, val)
                     return (
                       <option key={val} value={val} disabled={!avail}>
                         {val}
-                        {!avail ? ' (indisponible)' : ''}
+                        {!avail || epuisee ? ' (indisponible)' : ''}
                       </option>
                     )
                   })}
