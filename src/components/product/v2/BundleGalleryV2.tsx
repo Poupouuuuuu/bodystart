@@ -113,8 +113,9 @@ export default function BundleGalleryV2({
         </div>
       ) : imagePack ? (
         /* ─── Hero pack : son image sur fond végétal, image LCP de la fiche ───
-            Fond en <Image priority unoptimized> comme ProductGalleryV2 (préchargé
-            avec le HTML, même URL que le fond des cartes). */
+            Mise en page de ProductGalleryV2 : fond en <Image priority unoptimized>
+            (préchargé avec le HTML, même URL que le fond des cartes), image
+            centrée à 85 % (les PNG des packs sont carrés, pots centrés). */
         <div className="saison-toile saison-toile-droite relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-sage">
           <Image
             src="/bg-vegetal-800.webp"
@@ -123,14 +124,14 @@ export default function BundleGalleryV2({
             fill
             priority
             unoptimized
-            className="object-cover object-bottom"
+            className="object-cover"
           />
           {discountPct !== null && (
             <div className="saison-badge-citrouille saison-badge-citrouille-droite absolute top-4 left-4 z-30 bg-terracotta text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
               −{discountPct}%
             </div>
           )}
-          <div className="absolute inset-x-[7%] top-[10%] bottom-[7%]">
+          <div className="absolute inset-0 m-auto h-[85%] w-[85%]">
             <Image
               src={imagePack.url}
               alt={imagePack.altText ?? title}
@@ -138,7 +139,7 @@ export default function BundleGalleryV2({
               priority
               fetchPriority="high"
               sizes="(max-width: 1024px) calc(100vw - 32px), 580px"
-              className="object-contain object-bottom [filter:drop-shadow(0_22px_28px_rgba(45,90,45,0.30))]"
+              className="object-contain [filter:drop-shadow(0_22px_28px_rgba(45,90,45,0.30))]"
             />
           </div>
         </div>
