@@ -74,6 +74,16 @@ export function HiverHero() {
         <span className="absolute bottom-[30%] left-[58%] hidden lg:block">
           <Sapin hauteur={40} />
         </span>
+        {/* Ordinateur : sol plus large, trois éléments de plus. */}
+        <span className="absolute bottom-[28%] left-[36%] hidden lg:block">
+          <Sapin hauteur={58} />
+        </span>
+        <span className="absolute bottom-[24%] left-[44%] hidden lg:block">
+          <Cadeau largeur={24} teinte="rouge" />
+        </span>
+        <span className="absolute bottom-[30%] right-[33%] hidden lg:block">
+          <Sapin hauteur={36} />
+        </span>
       </Sol>
     </SceneHero>
   )

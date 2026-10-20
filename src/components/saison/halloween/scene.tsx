@@ -103,6 +103,16 @@ export function AutomneHero() {
         <span className="absolute bottom-[24%] left-[58%] hidden lg:block">
           <CitrouilleAllumee largeur={34} />
         </span>
+        {/* Ordinateur : sol plus large, trois éléments de plus. */}
+        <span className="absolute bottom-[20%] left-[36%] hidden lg:block">
+          <Citrouille largeur={54} />
+        </span>
+        <span className="absolute bottom-[26%] left-[45%] hidden lg:block">
+          <Tombe hauteur={24} />
+        </span>
+        <span className="absolute bottom-[24%] right-[33%] hidden lg:block">
+          <Bonbon largeur={22} teinte="blanc" />
+        </span>
       </Sol>
     </SceneHero>
   )
