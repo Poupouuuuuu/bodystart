@@ -16,8 +16,8 @@ const TERRE = '#0A0710'
 
 // Feuilles d'automne (orange, brun, rouille : styles.ts), fines et lentes.
 const FEUILLES_HERO = particules(18, {
-  taille: 8,
-  pas: 1.5,
+  taille: 10,
+  pas: 2,
   opacites: ['0.75', '0.85', '0.95'],
   duree: 13,
   derive: 14,
@@ -25,8 +25,8 @@ const FEUILLES_HERO = particules(18, {
   graine: 3,
 })
 const FEUILLES_FRISE = particules(10, {
-  taille: 7,
-  pas: 1,
+  taille: 9,
+  pas: 1.5,
   opacites: ['0.7', '0.8', '0.9'],
   duree: 12,
   derive: 10,
