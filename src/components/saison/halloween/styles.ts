@@ -73,7 +73,7 @@ const feuille = (couleur: string, nervure: string) =>
 const LUNE_CHAUVES_SOURIS = svg(
   "<defs><radialGradient id='l' cx='.38' cy='.34' r='.7'><stop offset='0' stop-color='#FFE4BE'/><stop offset='.45' stop-color='#F4A055'/><stop offset='1' stop-color='#C85A12'/></radialGradient>" +
     `<path id='a' d='${AILES}'/></defs>` +
-    "<circle cx='118' cy='30' r='27' fill='#E8711A' opacity='.14'/><circle cx='118' cy='30' r='17' fill='url(#l)'/>" +
+    "<circle cx='118' cy='30' r='23' fill='#E8711A' opacity='.1'/><circle cx='118' cy='30' r='17' fill='url(#l)'/>" +
     "<use href='#a' transform='translate(92 14) scale(1.1)' fill='#14101F'/>" +
     "<use href='#a' transform='translate(40 6) scale(.9)' fill='#F6A456' opacity='.85'/>" +
     "<use href='#a' transform='translate(4 30) scale(.6)' fill='#F6A456' opacity='.6'/>",
@@ -161,7 +161,7 @@ export const CSS_HALLOWEEN = `${CSS_SCENE}${GUIRLANDE.css}
 /* Toiles d'araignée dans les coins de trois sections (meilleures ventes :
    deux coins ; guides et boutique : un coin et une araignée qui descend). */
 section.saison-nuit,.saison-coin{position:relative}
-section.saison-nuit::before,section.saison-nuit::after,.saison-coin::before{content:"";position:absolute;top:0;right:0;width:clamp(80px,11vw,150px);aspect-ratio:1;pointer-events:none;background:var(--hw-toile) top right/contain no-repeat;opacity:.3}
+section.saison-nuit::before,section.saison-nuit::after,.saison-coin::before{content:"";position:absolute;top:0;right:0;width:clamp(64px,11vw,150px);aspect-ratio:1;pointer-events:none;background:var(--hw-toile) top right/contain no-repeat;opacity:.3}
 section.saison-nuit::before,.saison-coin-gauche::before{right:auto;left:0;transform:scaleX(-1)}
 .saison-coin::after{content:"";position:absolute;top:0;right:clamp(54px,7.5vw,104px);width:16px;height:45px;pointer-events:none;background:var(--hw-araignee-fil) center top/contain no-repeat;opacity:.85}
 .saison-coin-gauche::after{right:auto;left:clamp(54px,7.5vw,104px)}
@@ -169,12 +169,12 @@ section.saison-nuit::before,.saison-coin-gauche::before{right:auto;left:0;transf
    largeur, lune et chauves-souris dans un coin, guirlande allumée en bas. */
 .saison-bandeau{position:relative;background-color:#1E1633;background-image:${ETOILES};box-shadow:0 0 0 100vmax #1E1633;clip-path:inset(0 -100vmax);padding-bottom:2.75rem;margin-bottom:1.75rem}
 .saison-bandeau-haut{clip-path:inset(-100vmax -100vmax 0)}
-.saison-bandeau.saison-bandeau-haut::before{top:-14px}
+.saison-bandeau.saison-bandeau-haut::before{top:10px}
 .saison-bandeau h1,.saison-bandeau .text-spruce{color:#FAF8F3}
 .saison-bandeau p,.saison-bandeau nav{color:rgba(255,255,255,.82)}
 .saison-bandeau a{color:#FFB46B}
 .saison-bandeau a:hover{color:#FFD2A6}
-.saison-bandeau::before{content:"";position:absolute;top:12px;right:0;width:clamp(110px,15vw,190px);aspect-ratio:150/60;pointer-events:none;background:${LUNE_CHAUVES_SOURIS} center/contain no-repeat}
+.saison-bandeau::before{content:"";position:absolute;top:40px;right:3%;width:clamp(110px,15vw,190px);aspect-ratio:150/60;pointer-events:none;background:${LUNE_CHAUVES_SOURIS} center/contain no-repeat}
 .saison-bandeau::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:24px;pointer-events:none;background:${GUIRLANDE.motif} left top/120px 24px repeat-x}
 /* Filtres, onglets et page courante actifs (saison-actif, saison-actif-doux). */
 .saison-actif{background-color:#B4500E!important;color:#fff!important}
