@@ -1,5 +1,6 @@
 // Formes de la déco Noël (SVG en ligne, décoratives) : sapin enneigé et paquet
-// cadeau, pour le bas du haut de l'accueil et la frise du pied de page.
+// cadeau (bas du haut de l'accueil, frise du pied de page), boule suspendue
+// (photo du haut de l'accueil, sélection de Noël).
 
 export function Sapin({ hauteur, couleur = '#1E4D33' }: { hauteur: number; couleur?: string }) {
   return (
@@ -35,6 +36,28 @@ export function Cadeau({ largeur, teinte }: { largeur: number; teinte: keyof typ
         strokeLinecap="round"
         d="M16 7c-2.6-4.6-8-5.4-8-2 0 2.2 4.2 2.2 8 2zM16 7c2.6-4.6 8-5.4 8-2 0 2.2-4.2 2.2-8 2z"
       />
+    </svg>
+  )
+}
+
+const BOULES = { rouge: '#C62828', or: '#E2B44B', vert: '#2E7D32', argent: '#D9E2E8' } as const
+
+/** Boule de Noël au bout de son fil (scene/Suspendus) : attache dorée, ruban, reflet. */
+export function Boule({ objet, taille: t }: { objet: string; taille: number }) {
+  const couleur = BOULES[objet as keyof typeof BOULES] ?? BOULES.rouge
+  const haut = t * 0.16
+  return (
+    <svg viewBox={`0 0 ${t} ${haut + t}`} width={t} height={haut + t} aria-hidden="true" focusable="false">
+      <rect x={t / 2 - t * 0.14} y="0" width={t * 0.28} height={t * 0.18} rx={t * 0.04} fill="#C9A24A" />
+      <circle cx={t / 2} cy={haut + t / 2} r={t / 2} fill={couleur} />
+      <path
+        d={`M${t * 0.12} ${haut + t * 0.46}q${t * 0.38} ${t * 0.16} ${t * 0.76} 0`}
+        fill="none"
+        stroke="#F2D28A"
+        strokeWidth={Math.max(1, t * 0.06)}
+        opacity=".85"
+      />
+      <ellipse cx={t * 0.34} cy={haut + t * 0.32} rx={t * 0.1} ry={t * 0.14} fill="#fff" opacity=".55" />
     </svg>
   )
 }

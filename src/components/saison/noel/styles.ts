@@ -10,19 +10,17 @@
 // ampoules, jamais en grande surface (sauf la variante b du haut de l'accueil,
 // à valider par Claude Gestion).
 //
-// Animations (neige, scintillement, balancement) en transform et opacity
-// uniquement, coupées par prefers-reduced-motion et mises en pause hors écran
-// ([data-pause], posé par components/saison/AnimationsSaison). Sans
+// Neige, guirlande et boules suspendues : composants et règles communs de
+// scene/ (même mise en scène qu'Halloween), paramétrés ici. Animations
+// coupées par prefers-reduced-motion et mises en pause hors écran. Sans
 // animation : flocons posés, guirlandes allumées, boules immobiles.
 //
 // Mêmes classes repères que Halloween (saison-titre, saison-nuit,
 // saison-bandeau…) : un seul thème émis à la fois.
 
-// Icônes et motifs en SVG dans le CSS (aucun fichier image). Encodage minimal
-// (seuls < > # % " sont échappés). Images de fond, jamais de masque CSS
-// (Safari mobile, 19/10/2026).
-const svg = (contenu: string, viewBox: string, ratio?: string) =>
-  `url("data:image/svg+xml,${`<svg xmlns='http://www.w3.org/2000/svg' viewBox='${viewBox}'${ratio ? ` preserveAspectRatio='${ratio}'` : ''}>${contenu}</svg>`.replace(/[<>#%"]/g, encodeURIComponent)}")`
+import { CSS_SCENE } from '../scene/css'
+import { cssGuirlande } from '../scene/guirlande'
+import { svg } from '../scene/svg'
 
 /** Boule de Noël rouge, attache dorée. */
 const BOULE = svg(
@@ -46,36 +44,17 @@ const FLOCONS = svg(
   '0 0 124 52'
 )
 
-// ─── Guirlande lumineuse (motif de 120 × 24 répété en largeur) ─────────
-// Fil qui ondule (raccord sans couture : tangente horizontale aux deux bords),
-// 4 ampoules par motif : rouge, or, vert, blanc chaud. Deux calques de halos
-// (ampoules 1 et 3, puis 2 et 4) s'allument en alternance : scintillement doux.
-const AMPOULES: [number, number, string][] = [
-  [15, 5.6, '#E53935'],
-  [45, 11.6, '#F2C14E'],
-  [75, 11.6, '#43A047'],
-  [105, 5.6, '#FFF3C4'],
-]
-const GUIRLANDE = svg(
-  "<path d='M0 4C20 4 40 13.5 60 13.5S100 4 120 4' fill='none' stroke='#2B3A2F' stroke-width='1.2'/>" +
-    AMPOULES.map(
-      ([x, y, c]) =>
-        `<rect x='${x - 1.5}' y='${y - 1}' width='3' height='3' rx='.6' fill='#3A3A3A'/><ellipse cx='${x}' cy='${y + 6}' rx='3' ry='4.2' fill='${c}'/>`
-    ).join(''),
-  '0 0 120 24'
-)
-const halos = (indices: number[]) =>
-  svg(
-    indices
-      .map((i) => {
-        const [x, y, c] = AMPOULES[i]
-        return `<circle cx='${x}' cy='${y + 6}' r='8' fill='${c}' opacity='.28'/><ellipse cx='${x}' cy='${y + 6}' rx='3' ry='4.2' fill='${c}'/><ellipse cx='${x - 1}' cy='${y + 4.6}' rx='1' ry='1.6' fill='#fff' opacity='.8'/>`
-      })
-      .join(''),
-    '0 0 120 24'
-  )
-const HALOS_A = halos([0, 2])
-const HALOS_B = halos([1, 3])
+// Guirlande lumineuse : ampoules rouge, or, vert et blanc chaud.
+const GUIRLANDE = cssGuirlande({
+  fil: '#2B3A2F',
+  forme: 'ampoule',
+  lumieres: [
+    { x: 15, y: 5.6, couleur: '#E53935' },
+    { x: 45, y: 11.6, couleur: '#F2C14E' },
+    { x: 75, y: 11.6, couleur: '#43A047' },
+    { x: 105, y: 5.6, couleur: '#FFF3C4' },
+  ],
+})
 
 // ─── Neige posée ─────────────────────────────────────────────────────
 /** Congère (bord de neige) en haut d'une section : motif de 160 × 16. */
@@ -107,40 +86,13 @@ const ETOILES = [
   .map(([x, y], i) => `radial-gradient(${i % 3 ? 1 : 1.5}px ${i % 3 ? 1 : 1.5}px at ${x}% ${y}%,rgba(255,244,214,.9),transparent 70%)`)
   .join(',')
 
-export const CSS_NOEL = `
+export const CSS_NOEL = `${CSS_SCENE}${GUIRLANDE.css}
 .nl-selection{background:radial-gradient(60% 50% at 90% 0%,rgba(242,210,138,.18) 0%,rgba(242,210,138,0) 70%),linear-gradient(180deg,#FFFFFF 0%,#FAF8F3 100%)}
 .nl-frise{background:radial-gradient(60% 120% at 50% 118%,rgba(242,210,138,.2) 0%,rgba(242,210,138,0) 60%),linear-gradient(to bottom,#0E1830 0%,#13203A 65%,#1C2D50 100%)}
-/* Neige qui tombe : hauteur de chute (--chute) et lenteur (--lent) réglées
-   par zone pour une chute lente partout (~15 à 20 px/s). */
-.nl-neige-hero{--chute:110vh;--lent:4}
-.nl-frise{--chute:150px;--lent:.5}
-.nl-flocon{position:absolute;top:var(--y,20%);left:var(--x,50%);width:var(--t,4px);height:var(--t,4px);border-radius:9999px;background:#fff;opacity:var(--o,.85)}
-/* Guirlande : fil et ampoules, deux calques de halos en alternance. */
-.nl-guirlande{height:24px;background:${GUIRLANDE} left top/120px 24px repeat-x}
-.nl-guirlande:not(.absolute){position:relative}
-.nl-guirlande::before,.nl-guirlande::after,.saison-entete::before{content:"";position:absolute;inset:0;pointer-events:none;background:${HALOS_A} left top/120px 24px repeat-x}
-.nl-guirlande::after{background-image:${HALOS_B}}
-/* Boules suspendues : balancement autour de l'attache. */
-.nl-boule{transform-origin:50% 0}
-@media (min-width:1024px){.nl-boules-photo .nl-boule{scale:1.5}.nl-boules-section .nl-boule{scale:1.35}}
-@media (prefers-reduced-motion:no-preference){
-.nl-flocon{top:-8px;animation:nl-neige calc(var(--d,14s) * var(--lent,1)) linear infinite;animation-delay:calc(var(--r,0s) * var(--lent,1));will-change:transform}
-.nl-guirlande::before,.saison-entete::before{animation:nl-scintille 2.8s ease-in-out infinite alternate}
-.nl-guirlande::after{animation:nl-scintille 2.8s ease-in-out -1.4s infinite alternate}
-.nl-boule{animation:nl-balance var(--d,5.5s) ease-in-out infinite alternate;animation-delay:var(--r,0s)}
-}
-[data-pause],[data-pause] *,[data-pause]::before,[data-pause]::after{animation-play-state:paused!important}
-@keyframes nl-neige{from{transform:translate3d(0,0,0)}to{transform:translate3d(var(--dx,14px),var(--chute,110vh),0)}}
-@keyframes nl-scintille{from{opacity:.15}to{opacity:1}}
-@keyframes nl-balance{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+/* Neige (scene/Chute) : flocons ronds et blancs. Fils dorés des boules. */
+.sz-chute{border-radius:9999px;background:#fff}
+.sz-fil{background:#C9A24A}
 :root{--nl-boule:${BOULE};--nl-houx:${HOUX}}
-/* En-tête : guirlande pleine largeur juste sous la barre, en haut de page
-   seulement : elle s'efface dès que la page défile (header[data-defile]),
-   pour ne jamais couvrir le texte. */
-.saison-entete::before,.saison-entete::after{transition:opacity .3s}
-header[data-defile] .saison-entete::before,header[data-defile] .saison-entete::after{opacity:0!important;animation:none}
-.saison-entete::before{inset:auto 0 auto 0;top:100%;height:24px}
-.saison-entete::after{content:"";position:absolute;left:0;right:0;top:100%;height:24px;pointer-events:none;background:${GUIRLANDE} left top/120px 24px repeat-x}
 /* Badge « Best-seller » : neige posée dessus. */
 .badge-saison:not(.absolute){position:relative}
 .badge-saison::before{content:"";position:absolute;left:-3px;right:-3px;top:-6px;height:10px;pointer-events:none;background:${NEIGE_BADGE} center top/100% 100% no-repeat}
@@ -166,7 +118,7 @@ section.saison-nuit::after,.saison-coin::after{content:"";position:absolute;top:
 .saison-bandeau a{color:#F2D28A}
 .saison-bandeau a:hover{color:#FFE7B5}
 .saison-bandeau::before{content:"";position:absolute;top:16px;right:0;width:clamp(80px,12vw,150px);aspect-ratio:124/52;pointer-events:none;background:${FLOCONS} center/contain no-repeat;opacity:.6}
-.saison-bandeau::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:24px;pointer-events:none;background:${GUIRLANDE} left top/120px 24px repeat-x}
+.saison-bandeau::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:24px;pointer-events:none;background:${GUIRLANDE.motif} left top/120px 24px repeat-x}
 /* Filtres, onglets et page courante actifs (saison-actif, saison-actif-doux). */
 .saison-actif{background-color:#B3261E!important;color:#fff!important}
 .saison-actif *{color:#fff!important}

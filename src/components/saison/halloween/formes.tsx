@@ -1,11 +1,10 @@
-// Silhouettes SVG de la déco Halloween (19/10/2026), partagées par le haut de
-// l'accueil et la frise du pied de page. Décoratives : aria-hidden.
-// Couleurs fixes de la direction artistique « nuit » (pas du metafield).
+// Formes de la déco Halloween (SVG en ligne, décoratives) : sol de la scène
+// (haut de l'accueil, frise du pied de page) et chauve-souris en vol de la
+// frise. Ton élégant, rien d'effrayant : citrouilles souriantes, petites
+// pierres arrondies, bonbons, marmite. Couleurs fixes de la direction
+// artistique « nuit » (pas du metafield).
 
-/** Nuit la plus sombre : silhouettes. */
-export const NUIT_SILHOUETTE = '#0A0710'
-
-/** Chauve-souris ailes ouvertes (viewBox 32 × 16). */
+/** Chauve-souris ailes ouvertes (viewBox 32 × 16), couleur du texte courant. */
 export function ChauveSouris({ largeur, className }: { largeur: number; className?: string }) {
   return (
     <svg
@@ -24,55 +23,92 @@ export function ChauveSouris({ largeur, className }: { largeur: number; classNam
   )
 }
 
-/** Citrouille en silhouette, côtes à peine marquées ; visage lumineux en option. */
-export function Citrouille({ largeur, visage = false }: { largeur: number; visage?: boolean }) {
+const VISAGE = 'M15.5 19.6l3.8-1.3-1 3.8zM32.5 19.6l-3.8-1.3 1 3.8zM16.2 26.4c2.3 2 5 2.9 7.8 2.9s5.5-.9 7.8-2.9c-.9 2.7-4 4.5-7.8 4.5s-6.9-1.8-7.8-4.5z'
+
+/** Citrouille orange ; `allumee` : visage souriant qui s'éclaire doucement (styles.ts : hw-lueur). */
+export function Citrouille({ largeur, allumee = false }: { largeur: number; allumee?: boolean }) {
   return (
     <svg viewBox="0 0 48 40" width={largeur} height={(largeur * 40) / 48} aria-hidden="true" focusable="false">
-      <path fill={NUIT_SILHOUETTE} d="M24.6 9.4c-.5-3 .5-5.6 3-7.2l1 1.3c-1.9 1.3-2.5 3.2-2.1 5.7z" />
+      <path fill="#3B7A3F" d="M24.6 9.4c-.5-3 .5-5.6 3-7.2l1 1.3c-1.9 1.3-2.5 3.2-2.1 5.7z" />
       <path
-        fill={NUIT_SILHOUETTE}
+        fill="#E8711A"
         d="M24 10c-3.4-2-9.4-1.8-12.6 1.4C7.6 15.2 6.6 23 9.6 29c2.6 5.2 8.2 7.2 14.4 6 6.2 1.2 11.8-.8 14.4-6 3-6 2-13.8-1.8-17.6C33.4 8.2 27.4 8 24 10z"
       />
       <path
         fill="none"
-        stroke="#251A36"
-        strokeWidth="1"
+        stroke="#B4500E"
+        strokeWidth="1.3"
         d="M24 11v23.6M17.2 12c-2.6 6-2.6 16.6 0 22.6M30.8 12c2.6 6 2.6 16.6 0 22.6"
       />
-      {visage && (
-        <g fill="#F7A050" className="hw-visage">
-          <path d="M15 19.5l4.6-1.4-1.2 4.4zM33 19.5l-4.6-1.4 1.2 4.4zM22.6 23.6h2.8L24 26z" />
-          <path d="M13.8 27.2c3.2 2.6 7 3.6 10.2 3.6s7-1 10.2-3.6c-1 2.8-4.6 5-10.2 5s-9.2-2.2-10.2-5z" />
-        </g>
+      <path fill="none" stroke="#FFB46B" strokeWidth="1.4" strokeLinecap="round" opacity=".55" d="M12.6 16.4c-1.4 3.2-1.5 6.8-.4 9.8" />
+      {allumee && (
+        <>
+          <path fill="#5A2306" d={VISAGE} />
+          <path className="hw-lueur" fill="#FFD27A" d={VISAGE} />
+        </>
       )}
     </svg>
   )
 }
 
-/** Colline douce de l'horizon (viewBox 400 × 40, étirée en largeur). */
-export function Colline({ className }: { className?: string }) {
+/** Petite pierre tombale arrondie, sans inscription. */
+export function Tombe({ hauteur }: { hauteur: number }) {
   return (
-    <svg viewBox="0 0 400 40" preserveAspectRatio="none" className={className} aria-hidden="true" focusable="false">
-      <path fill={NUIT_SILHOUETTE} d="M0 40V24C48 15 96 12 150 17s98 13 150 9 70-11 100-8v18z" />
+    <svg viewBox="0 0 24 30" width={(hauteur * 24) / 30} height={hauteur} aria-hidden="true" focusable="false">
+      <path fill="#3A3350" d="M3 30V12a9 9 0 0 1 18 0v18z" />
+      <path fill="#4E4669" d="M3 12a9 9 0 0 1 18 0h-2.6a6.4 6.4 0 0 0-12.8 0z" />
+      <path fill="none" stroke="#2A2440" strokeWidth="1.2" strokeLinecap="round" d="M8.5 16h7M8.5 20h7M10 24h4" />
     </svg>
   )
 }
 
-/** Touffe d'herbes fines (viewBox 28 × 18), posée sur la colline. */
-export function Touffe({ largeur, className }: { largeur: number; className?: string }) {
+const BONBONS = {
+  orange: { papier: '#E8711A', rayure: '#FFD2A6' },
+  violet: { papier: '#6B3FA0', rayure: '#D2B6F0' },
+  blanc: { papier: '#F4EFE6', rayure: '#E8711A' },
+} as const
+
+/** Bonbon emballé, papier torsadé aux deux bouts. */
+export function Bonbon({ largeur, teinte }: { largeur: number; teinte: keyof typeof BONBONS }) {
+  const c = BONBONS[teinte]
   return (
-    <svg
-      viewBox="0 0 28 18"
-      width={largeur}
-      height={(largeur * 18) / 28}
-      className={className}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill={NUIT_SILHOUETTE}
-        d="M3 18c1-5 .6-9-1.6-12 3 2.4 4.4 6.6 4.2 12zM8 18c.4-6 2-11 5-14-2 4-3 9-2.6 14zM13 18c0-7 1.4-13 1.2-17 1.6 4.4 1.8 10.6 1.2 17zM18 18c-.2-5.6-2-10.4-5-13.6 4 2.4 6.6 7.4 7.6 13.6zM22 18c.6-4.4 2.4-8 5.4-10.6-2 3.4-2.8 6.8-2.8 10.6z"
-      />
+    <svg viewBox="0 0 36 16" width={largeur} height={(largeur * 16) / 36} aria-hidden="true" focusable="false">
+      <path fill={c.papier} d="M9 8 1.5 2.4v11.2zM27 8l7.5-5.6v11.2z" />
+      <ellipse cx="18" cy="8" rx="10" ry="6.4" fill={c.papier} />
+      <path fill="none" stroke={c.rayure} strokeWidth="1.6" strokeLinecap="round" d="M13.6 3.2l-2 9.4M18.6 1.9l-2.4 12.2M23.6 3.2l-2 9.4" />
+      <ellipse cx="14.5" cy="5.2" rx="2.6" ry="1.1" fill="#fff" opacity=".45" />
     </svg>
+  )
+}
+
+/** Marmite de sorcière : potion violette et bulles qui s'allument doucement. */
+export function Marmite({ largeur }: { largeur: number }) {
+  return (
+    <svg viewBox="0 0 40 32" width={largeur} height={(largeur * 32) / 40} aria-hidden="true" focusable="false">
+      <path fill="#120D1C" d="M10 27.5 7.6 32h4.6zM30 27.5l2.4 4.5h-4.6z" />
+      <path fill="#1A1226" d="M5 12.5h30c1.5 0 2.4 1.4 2 2.8C35 23.5 29 29.5 20 29.5S5 23.5 3 15.3c-.4-1.4.5-2.8 2-2.8z" />
+      <path fill="none" stroke="#4A4266" strokeWidth="1.4" strokeLinecap="round" d="M8.6 17.4c1.1 4 3.6 7 6.6 8.4" />
+      <rect x="2" y="9.4" width="36" height="5" rx="2.5" fill="#2E2540" />
+      <ellipse cx="20" cy="10.4" rx="15.6" ry="2.4" fill="#7B4BB8" />
+      <g className="hw-lueur" fill="#B48BE0">
+        <circle cx="13.5" cy="7.6" r="2.2" />
+        <circle cx="21.5" cy="5.6" r="1.6" />
+        <circle cx="27" cy="8" r="1.2" />
+      </g>
+    </svg>
+  )
+}
+
+/**
+ * Chauve-souris ou araignée au bout de son fil (scene/Suspendus) : image de
+ * fond SVG (styles.ts, hw-pendu-*), jamais de masque CSS (Safari mobile).
+ */
+export function Pendu({ objet, taille }: { objet: string; taille: number }) {
+  const araignee = objet === 'araignee'
+  return (
+    <span
+      className={`hw-pendu block ${araignee ? 'hw-pendu-araignee' : 'hw-pendu-chauve-souris'}`}
+      style={{ width: taille, height: Math.round((taille * (araignee ? 22 : 15)) / (araignee ? 24 : 28)) }}
+    />
   )
 }
