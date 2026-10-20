@@ -29,20 +29,26 @@ const CITROUILLE = svg(
 )
 const chauveSouris = (couleur: string) => svg(`<path fill='${couleur}' d='${AILES}'/>`, '2 2 28 13')
 
+// Liseré orange tracé dans l'image (sur la photo du haut) : même effet qu'une
+// lueur, sans filtre CSS à recalculer.
+const LISERE = " stroke='#E8711A' stroke-opacity='.8' stroke-width='.9' paint-order='stroke' stroke-linejoin='round'"
+
 /** Chauve-souris au bout de son fil (le fil rejoint la tête). */
-const CHAUVE_SOURIS_PENDUE = svg(
-  `<path d='M16 0V4.4' stroke='${SOIE}' stroke-width='.6'/><path fill='#1A1226' d='${AILES}'/>`,
-  '2 0 28 15'
-)
+const chauveSourisPendue = (lisere = '') =>
+  svg(`<path d='M16 0V4.4' stroke='${SOIE}' stroke-width='.6'/><path fill='#1A1226'${lisere} d='${AILES}'/>`, '2 0 28 15')
 
 // Araignée ronde, petits yeux clairs : plus mignonne qu'effrayante.
 const PATTES =
   'M10.2 11.2C6.6 9.6 4.8 6.8 3.6 3.4M9.6 12.6C5.6 12 3.4 11 1.4 9.2M9.6 14.2C5.4 15.2 3.6 17 2.4 20.2M10.6 15.8C8.4 18.2 7.4 20.4 7 23.2M13.8 11.2C17.4 9.6 19.2 6.8 20.4 3.4M14.4 12.6C18.4 12 20.6 11 22.6 9.2M14.4 14.2C18.6 15.2 20.4 17 21.6 20.2M13.4 15.8C15.6 18.2 16.6 20.4 17 23.2'
-const CORPS_ARAIGNEE =
-  `<path d='${PATTES}' fill='none' stroke='#1A1226' stroke-width='1.3' stroke-linecap='round'/>` +
-  "<circle cx='12' cy='14.6' r='4.6' fill='#1A1226'/><circle cx='12' cy='9' r='2.9' fill='#1A1226'/>" +
-  "<circle cx='10.9' cy='8.7' r='.85' fill='#fff'/><circle cx='13.1' cy='8.7' r='.85' fill='#fff'/>"
-const ARAIGNEE_PENDUE = svg(`<path d='M12 2V6.4' stroke='${SOIE}' stroke-width='.8'/>${CORPS_ARAIGNEE}`, '0 2 24 22')
+const araigneePendue = (lisere = '') =>
+  svg(
+    `<path d='M12 2V6.4' stroke='${SOIE}' stroke-width='.8'/>` +
+      (lisere ? `<path d='${PATTES}' fill='none' stroke='#E8711A' stroke-opacity='.7' stroke-width='2.4' stroke-linecap='round'/>` : '') +
+      `<path d='${PATTES}' fill='none' stroke='#1A1226' stroke-width='1.3' stroke-linecap='round'/>` +
+      `<circle cx='12' cy='14.6' r='4.6' fill='#1A1226'${lisere}/><circle cx='12' cy='9' r='2.9' fill='#1A1226'${lisere}/>` +
+      "<circle cx='10.9' cy='8.7' r='.85' fill='#fff'/><circle cx='13.1' cy='8.7' r='.85' fill='#fff'/>",
+    '0 2 24 22'
+  )
 
 // Toile d'araignée de coin (coin haut droit, retournée pour le coin gauche) :
 // 6 rayons et 4 anneaux qui pendent légèrement vers le centre.
@@ -54,15 +60,6 @@ const TOILE_TRACE =
     .map((r) => `M${point(r, ANGLES[0])}` + ANGLES.slice(1).map((a, i) => `Q${point(r * 0.86, (a + ANGLES[i]) / 2)} ${point(r, a)}`).join(''))
     .join('')
 const TOILE = svg(`<path d='${TOILE_TRACE}' fill='none' stroke='#14101F' stroke-width='.7' stroke-linecap='round'/>`, '0 0 40 40')
-
-// Feuilles d'automne (orange, brun, rouille), nervure plus sombre.
-const feuille = (couleur: string, nervure: string) =>
-  svg(
-    `<path fill='${couleur}' d='M12 2C7 6 5 11 6.6 16.4 8 20.6 11 22 12 22s4-1.4 5.4-5.6C19 11 17 6 12 2z'/>` +
-      `<path fill='none' stroke='${nervure}' stroke-linecap='round' stroke-width='1' d='M12 4.5V23.5'/>` +
-      `<path fill='none' stroke='${nervure}' stroke-linecap='round' stroke-width='.8' d='M12 10.5 9.2 8.6M12 14l-3.4-2.2M12 10.5l2.8-1.9M12 14l3.4-2.2'/>`,
-    '0 0 24 24'
-  )
 
 /** Bandeaux de page : lune orangée, une chauve-souris devant, deux plus loin. */
 const LUNE_CHAUVES_SOURIS = svg(
@@ -117,36 +114,36 @@ export const CSS_HALLOWEEN = `${CSS_SCENE}${GUIRLANDE.css}
 .hw-luciole{position:absolute;width:4px;height:4px;border-radius:9999px;background:#FFB46B;box-shadow:0 0 6px 2px rgba(232,113,26,.65),0 0 16px 5px rgba(232,113,26,.22);opacity:.75}
 .hw-frise{background:radial-gradient(60% 120% at 50% 118%,rgba(232,113,26,.26) 0%,rgba(232,113,26,0) 60%),linear-gradient(to bottom,#14101F 0%,#241A33 62%,#33223F 100%)}
 .hw-selection{background:radial-gradient(60% 50% at 90% 0%,rgba(232,113,26,.12) 0%,rgba(232,113,26,0) 70%),radial-gradient(50% 40% at 0% 100%,rgba(75,42,107,.07) 0%,rgba(75,42,107,0) 70%),linear-gradient(180deg,#FFFFFF 0%,#FAF8F3 100%)}
-/* Feuilles (scene/Chute) : trois teintes en alternance. */
-.sz-chute{background:var(--hw-feuille-1) center/contain no-repeat}
-.sz-chute:nth-child(3n+2){background-image:var(--hw-feuille-2)}
-.sz-chute:nth-child(3n){background-image:var(--hw-feuille-3)}
+/* Feuilles (scene/Chute) : forme CSS (deux coins arrondis) et nervure en
+   dégradé, trois teintes en alternance ; aucune image à dessiner. */
+.sz-chute{border-radius:0 100% 0 100%;background:linear-gradient(135deg,transparent 45%,rgba(70,28,6,.45) 46% 54%,transparent 55%),#E8711A}
+.sz-chute:nth-child(3n+2){background-color:#8A4B22}
+.sz-chute:nth-child(3n){background-color:#B5531C}
 /* Objets suspendus (scene/Suspendus) : fil de soie, chauves-souris et
-   araignées en image de fond, lueur orange sur la photo. */
+   araignées en image de fond, liseré orange sur la photo (dans l'image). */
 .sz-fil{background:${SOIE}}
 .hw-pendu{background:center top/100% 100% no-repeat}
-.hw-pendu-chauve-souris{background-image:var(--hw-pendu-chauve-souris);transform-origin:50% 25%}
+.hw-pendu-chauve-souris{background-image:var(--hw-pendu-chauve-souris)}
 .hw-pendu-araignee{background-image:var(--hw-pendu-araignee)}
-.sz-pendus-photo .hw-pendu{filter:drop-shadow(0 0 3px rgba(232,113,26,.75))}
+.sz-pendus-photo .hw-pendu-chauve-souris{background-image:var(--hw-pendu-chauve-souris-photo)}
+.sz-pendus-photo .hw-pendu-araignee{background-image:var(--hw-pendu-araignee-photo)}
 /* Lueur des citrouilles allumées : calque HTML (opacité animée sur le
    compositeur, sans filtre ni repeinte du SVG). */
 .hw-lueur{background:radial-gradient(circle at 50% 60%,rgba(255,214,120,.6) 0%,rgba(255,170,60,.28) 36%,rgba(255,170,60,0) 68%)}
 @media (prefers-reduced-motion:no-preference){
 .hw-vol{animation:hw-vol var(--d,50s) linear infinite;animation-delay:var(--r,0s);will-change:transform}
 .hw-vol>svg{animation:hw-aile var(--f,.8s) ease-in-out infinite alternate;transform-origin:50% 45%}
-.hw-pendu-chauve-souris{animation:hw-aile-douce 1.4s ease-in-out infinite alternate}
 .hw-halo{animation:hw-halo 7s ease-in-out infinite alternate}
 .hw-lueur{animation:hw-lueur 3.2s ease-in-out infinite alternate}
 .hw-luciole{animation:hw-luciole var(--d,5s) ease-in-out infinite;animation-delay:var(--r,0s)}
 }
 @keyframes hw-vol{from{transform:translate3d(-18vw,2vh,0)}to{transform:translate3d(118vw,-3vh,0)}}
 @keyframes hw-aile{from{transform:scaleY(1)}to{transform:scaleY(.6)}}
-@keyframes hw-aile-douce{from{transform:scaleY(1)}to{transform:scaleY(.8)}}
 @keyframes hw-halo{from{opacity:.72;transform:scale(.97)}to{opacity:1;transform:scale(1.03)}}
 @keyframes hw-lueur{from{opacity:.35}to{opacity:1}}
 @keyframes hw-luciole{0%,100%{opacity:.08;transform:translate3d(0,4px,0)}50%{opacity:1;transform:translate3d(0,-7px,0)}}
 /* Icônes partagées, déclarées une fois. */
-:root{--hw-citrouille:${CITROUILLE};--hw-chauve-souris:${chauveSouris('#14101F')};--hw-toile:${TOILE};--hw-pendu-chauve-souris:${CHAUVE_SOURIS_PENDUE};--hw-pendu-araignee:${ARAIGNEE_PENDUE};--hw-feuille-1:${feuille('#E8711A', '#B4500E')};--hw-feuille-2:${feuille('#8A4B22', '#5E3215')};--hw-feuille-3:${feuille('#B5531C', '#7E3610')}}
+:root{--hw-citrouille:${CITROUILLE};--hw-chauve-souris:${chauveSouris('#14101F')};--hw-toile:${TOILE};--hw-pendu-chauve-souris:${chauveSourisPendue()};--hw-pendu-araignee:${araigneePendue()};--hw-pendu-chauve-souris-photo:${chauveSourisPendue(LISERE)};--hw-pendu-araignee-photo:${araigneePendue(LISERE)}}
 /* Titres de section (saison-titre, saison-mot) : un mot en orange foncé
    #B4500E (4,6:1 sur crème), une citrouille ou une chauve-souris au bout,
    collée au dernier mot (espace insécable) : jamais seule sur une ligne. */
