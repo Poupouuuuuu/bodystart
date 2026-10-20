@@ -25,7 +25,7 @@ export function ChauveSouris({ largeur, className }: { largeur: number; classNam
 
 const VISAGE = 'M15.5 19.6l3.8-1.3-1 3.8zM32.5 19.6l-3.8-1.3 1 3.8zM16.2 26.4c2.3 2 5 2.9 7.8 2.9s5.5-.9 7.8-2.9c-.9 2.7-4 4.5-7.8 4.5s-6.9-1.8-7.8-4.5z'
 
-/** Citrouille orange ; `allumee` : visage souriant qui s'éclaire doucement (styles.ts : hw-lueur). */
+/** Citrouille orange ; `allumee` : visage souriant éclairé. */
 export function Citrouille({ largeur, allumee = false }: { largeur: number; allumee?: boolean }) {
   return (
     <svg viewBox="0 0 48 40" width={largeur} height={(largeur * 40) / 48} aria-hidden="true" focusable="false">
@@ -41,13 +41,18 @@ export function Citrouille({ largeur, allumee = false }: { largeur: number; allu
         d="M24 11v23.6M17.2 12c-2.6 6-2.6 16.6 0 22.6M30.8 12c2.6 6 2.6 16.6 0 22.6"
       />
       <path fill="none" stroke="#FFB46B" strokeWidth="1.4" strokeLinecap="round" opacity=".55" d="M12.6 16.4c-1.4 3.2-1.5 6.8-.4 9.8" />
-      {allumee && (
-        <>
-          <path fill="#5A2306" d={VISAGE} />
-          <path className="hw-lueur" fill="#FFD27A" d={VISAGE} />
-        </>
-      )}
+      {allumee && <path fill="#FFD27A" d={VISAGE} />}
     </svg>
+  )
+}
+
+/** Citrouille allumée dont la lueur monte et descend doucement (calque HTML hw-lueur, styles.ts). */
+export function CitrouilleAllumee({ largeur }: { largeur: number }) {
+  return (
+    <span className="relative block">
+      <Citrouille largeur={largeur} allumee />
+      <span className="hw-lueur absolute -inset-[30%] rounded-full" />
+    </span>
   )
 }
 
@@ -81,7 +86,7 @@ export function Bonbon({ largeur, teinte }: { largeur: number; teinte: keyof typ
   )
 }
 
-/** Marmite de sorcière : potion violette et bulles qui s'allument doucement. */
+/** Marmite de sorcière : potion violette et bulles. */
 export function Marmite({ largeur }: { largeur: number }) {
   return (
     <svg viewBox="0 0 40 32" width={largeur} height={(largeur * 32) / 40} aria-hidden="true" focusable="false">
@@ -90,7 +95,7 @@ export function Marmite({ largeur }: { largeur: number }) {
       <path fill="none" stroke="#4A4266" strokeWidth="1.4" strokeLinecap="round" d="M8.6 17.4c1.1 4 3.6 7 6.6 8.4" />
       <rect x="2" y="9.4" width="36" height="5" rx="2.5" fill="#2E2540" />
       <ellipse cx="20" cy="10.4" rx="15.6" ry="2.4" fill="#7B4BB8" />
-      <g className="hw-lueur" fill="#B48BE0">
+      <g fill="#B48BE0">
         <circle cx="13.5" cy="7.6" r="2.2" />
         <circle cx="21.5" cy="5.6" r="1.6" />
         <circle cx="27" cy="8" r="1.2" />

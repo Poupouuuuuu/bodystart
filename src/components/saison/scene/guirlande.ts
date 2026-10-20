@@ -39,11 +39,12 @@ const attache = (forme: OptionsGuirlande['forme'], { x, y }: Lumiere) =>
 /**
  * CSS de la guirlande d'un thème : composant Guirlande (sz-guirlande), barre
  * sous l'en-tête (saison-entete, effacée dès que la page défile :
- * header[data-defile]) et `motif` pour les bandeaux de page. Sans animation
+ * header[data-defile]) et `motif` pour les bandeaux de page (variable CSS :
+ * l'image n'est écrite qu'une fois dans la page). Sans animation
  * (prefers-reduced-motion) : toutes les lumières restent allumées.
  */
 export function cssGuirlande({ fil, lumieres, forme }: OptionsGuirlande): { motif: string; css: string } {
-  const motif = svg(
+  const image = svg(
     `<path d='M0 4C20 4 40 13.5 60 13.5S100 4 120 4' fill='none' stroke='${fil}' stroke-width='1.2'/>` +
       lumieres.map((l) => attache(forme, l) + corps(forme, l)).join(''),
     '0 0 120 24'
@@ -65,7 +66,9 @@ export function cssGuirlande({ fil, lumieres, forme }: OptionsGuirlande): { moti
       '0 0 120 24'
     )
   const pose = 'left top/120px 24px repeat-x'
+  const motif = 'var(--sz-guirlande)'
   const css = `
+:root{--sz-guirlande:${image}}
 .sz-guirlande{height:24px;background:${motif} ${pose}}
 .sz-guirlande:not(.absolute){position:relative}
 .sz-guirlande::before,.sz-guirlande::after,.saison-entete::before{content:"";position:absolute;inset:0;pointer-events:none;background:${halos([0, 2])} ${pose}}

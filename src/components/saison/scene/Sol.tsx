@@ -6,16 +6,19 @@ import type { ReactNode } from 'react'
 export default function Sol({
   chemin,
   couleur,
+  lisere,
   className,
   classeSol,
   children,
 }: {
-  /** Tracé du sol dans un repère de 100 × 20, étiré en largeur. */
+  /** Tracé du sol dans un repère de 100 × 20, étiré en largeur, fermé par « V20 H0z ». */
   chemin: string
   couleur: string
+  /** Couleur d'un liseré sur la crête du sol (trait fin, pas de filtre). */
+  lisere?: string
   /** Hauteur de la bande. */
   className: string
-  /** Hauteur du sol dans la bande, et liseré éventuel. */
+  /** Hauteur du sol dans la bande. */
   classeSol: string
   children: ReactNode
 }) {
@@ -28,6 +31,15 @@ export default function Sol({
         focusable="false"
       >
         <path d={chemin} fill={couleur} />
+        {lisere && (
+          <path
+            d={chemin.replace(/\s*V20 H0z$/, '')}
+            fill="none"
+            stroke={lisere}
+            strokeWidth="1.2"
+            vectorEffect="non-scaling-stroke"
+          />
+        )}
       </svg>
       {children}
     </div>

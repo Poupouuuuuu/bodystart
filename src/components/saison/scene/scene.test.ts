@@ -28,8 +28,9 @@ describe('scène de saison', () => {
         { x: 105, y: 5.6, couleur: '#FFF3C4' },
       ],
     })
-    expect(motif.startsWith('url("data:image/svg+xml,')).toBe(true)
-    expect(motif).not.toMatch(/[<>#]/)
+    // Image écrite une seule fois (variable CSS), reprise par l'en-tête et les bandeaux.
+    expect(motif).toBe('var(--sz-guirlande)')
+    expect(css.match(/--sz-guirlande:url\("data:image\/svg\+xml,/g)).toHaveLength(1)
     expect(css).toContain('.sz-guirlande{')
     expect(css).toContain('header[data-defile] .saison-entete::before')
     expect(css).toContain('%23A77BDB')

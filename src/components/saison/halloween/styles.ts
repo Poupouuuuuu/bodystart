@@ -43,11 +43,6 @@ const CORPS_ARAIGNEE =
   "<circle cx='12' cy='14.6' r='4.6' fill='#1A1226'/><circle cx='12' cy='9' r='2.9' fill='#1A1226'/>" +
   "<circle cx='10.9' cy='8.7' r='.85' fill='#fff'/><circle cx='13.1' cy='8.7' r='.85' fill='#fff'/>"
 const ARAIGNEE_PENDUE = svg(`<path d='M12 2V6.4' stroke='${SOIE}' stroke-width='.8'/>${CORPS_ARAIGNEE}`, '0 2 24 22')
-/** Araignée qui descend au bout d'un long fil (coin des sections). */
-const ARAIGNEE_FIL = svg(
-  `<path d='M12 0V50.4' stroke='${SOIE}' stroke-width='.8'/><g transform='translate(0 44)'>${CORPS_ARAIGNEE}</g>`,
-  '0 0 24 68'
-)
 
 // Toile d'araignée de coin (coin haut droit, retournée pour le coin gauche) :
 // 6 rayons et 4 anneaux qui pendent légèrement vers le centre.
@@ -120,7 +115,6 @@ export const CSS_HALLOWEEN = `${CSS_SCENE}${GUIRLANDE.css}
 .hw-halo{background:radial-gradient(circle,rgba(232,113,26,.4) 0%,rgba(232,113,26,.15) 34%,rgba(232,113,26,0) 66%)}
 .hw-vol{position:absolute;left:0;color:#0A0710;transform:translate3d(var(--x,30vw),0,0)}
 .hw-luciole{position:absolute;width:4px;height:4px;border-radius:9999px;background:#FFB46B;box-shadow:0 0 6px 2px rgba(232,113,26,.65),0 0 16px 5px rgba(232,113,26,.22);opacity:.75}
-.hw-lisere{filter:drop-shadow(0 -1px 0 rgba(240,140,70,.55))}
 .hw-frise{background:radial-gradient(60% 120% at 50% 118%,rgba(232,113,26,.26) 0%,rgba(232,113,26,0) 60%),linear-gradient(to bottom,#14101F 0%,#241A33 62%,#33223F 100%)}
 .hw-selection{background:radial-gradient(60% 50% at 90% 0%,rgba(232,113,26,.12) 0%,rgba(232,113,26,0) 70%),radial-gradient(50% 40% at 0% 100%,rgba(75,42,107,.07) 0%,rgba(75,42,107,0) 70%),linear-gradient(180deg,#FFFFFF 0%,#FAF8F3 100%)}
 /* Feuilles (scene/Chute) : trois teintes en alternance. */
@@ -134,8 +128,9 @@ export const CSS_HALLOWEEN = `${CSS_SCENE}${GUIRLANDE.css}
 .hw-pendu-chauve-souris{background-image:var(--hw-pendu-chauve-souris);transform-origin:50% 25%}
 .hw-pendu-araignee{background-image:var(--hw-pendu-araignee)}
 .sz-pendus-photo .hw-pendu{filter:drop-shadow(0 0 3px rgba(232,113,26,.75))}
-/* Visages des citrouilles et bulles de la marmite qui s'allument doucement. */
-.hw-lueur{filter:drop-shadow(0 0 2px rgba(255,190,90,.9))}
+/* Lueur des citrouilles allumées : calque HTML (opacité animée sur le
+   compositeur, sans filtre ni repeinte du SVG). */
+.hw-lueur{background:radial-gradient(circle at 50% 60%,rgba(255,214,120,.6) 0%,rgba(255,170,60,.28) 36%,rgba(255,170,60,0) 68%)}
 @media (prefers-reduced-motion:no-preference){
 .hw-vol{animation:hw-vol var(--d,50s) linear infinite;animation-delay:var(--r,0s);will-change:transform}
 .hw-vol>svg{animation:hw-aile var(--f,.8s) ease-in-out infinite alternate;transform-origin:50% 45%}
@@ -151,7 +146,7 @@ export const CSS_HALLOWEEN = `${CSS_SCENE}${GUIRLANDE.css}
 @keyframes hw-lueur{from{opacity:.35}to{opacity:1}}
 @keyframes hw-luciole{0%,100%{opacity:.08;transform:translate3d(0,4px,0)}50%{opacity:1;transform:translate3d(0,-7px,0)}}
 /* Icônes partagées, déclarées une fois. */
-:root{--hw-citrouille:${CITROUILLE};--hw-chauve-souris:${chauveSouris('#14101F')};--hw-toile:${TOILE};--hw-pendu-chauve-souris:${CHAUVE_SOURIS_PENDUE};--hw-pendu-araignee:${ARAIGNEE_PENDUE};--hw-araignee-fil:${ARAIGNEE_FIL};--hw-feuille-1:${feuille('#E8711A', '#B4500E')};--hw-feuille-2:${feuille('#8A4B22', '#5E3215')};--hw-feuille-3:${feuille('#B5531C', '#7E3610')}}
+:root{--hw-citrouille:${CITROUILLE};--hw-chauve-souris:${chauveSouris('#14101F')};--hw-toile:${TOILE};--hw-pendu-chauve-souris:${CHAUVE_SOURIS_PENDUE};--hw-pendu-araignee:${ARAIGNEE_PENDUE};--hw-feuille-1:${feuille('#E8711A', '#B4500E')};--hw-feuille-2:${feuille('#8A4B22', '#5E3215')};--hw-feuille-3:${feuille('#B5531C', '#7E3610')}}
 /* Titres de section (saison-titre, saison-mot) : un mot en orange foncé
    #B4500E (4,6:1 sur crème), une citrouille ou une chauve-souris au bout,
    collée au dernier mot (espace insécable) : jamais seule sur une ligne. */
@@ -163,7 +158,7 @@ export const CSS_HALLOWEEN = `${CSS_SCENE}${GUIRLANDE.css}
 section.saison-nuit,.saison-coin{position:relative}
 section.saison-nuit::before,section.saison-nuit::after,.saison-coin::before{content:"";position:absolute;top:0;right:0;width:clamp(64px,11vw,150px);aspect-ratio:1;pointer-events:none;background:var(--hw-toile) top right/contain no-repeat;opacity:.3}
 section.saison-nuit::before,.saison-coin-gauche::before{right:auto;left:0;transform:scaleX(-1)}
-.saison-coin::after{content:"";position:absolute;top:0;right:clamp(54px,7.5vw,104px);width:16px;height:45px;pointer-events:none;background:var(--hw-araignee-fil) center top/contain no-repeat;opacity:.85}
+.saison-coin::after{content:"";position:absolute;top:0;right:clamp(54px,7.5vw,104px);width:16px;height:45px;pointer-events:none;background:var(--hw-pendu-araignee) center bottom/16px auto no-repeat,linear-gradient(${SOIE},${SOIE}) center top/1px calc(100% - 10px) no-repeat;opacity:.85}
 .saison-coin-gauche::after{right:auto;left:clamp(54px,7.5vw,104px)}
 /* Bandeau de titre des pages (saison-bandeau) : nuit violette étoilée pleine
    largeur, lune et chauves-souris dans un coin, guirlande allumée en bas. */

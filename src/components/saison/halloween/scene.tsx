@@ -4,7 +4,7 @@ import Sol from '../scene/Sol'
 import Suspendus, { type Suspendu } from '../scene/Suspendus'
 import { particules } from '../scene/particules'
 import type { Var } from '../scene/types'
-import { Bonbon, ChauveSouris, Citrouille, Marmite, Pendu, Tombe } from './formes'
+import { Bonbon, ChauveSouris, Citrouille, CitrouilleAllumee, Marmite, Pendu, Tombe } from './formes'
 
 // Scène d'Halloween, même mise en scène que Noël (composants communs de
 // scene/, paramétrés ici) : chauves-souris et araignées au bout d'un fil,
@@ -13,6 +13,7 @@ import { Bonbon, ChauveSouris, Citrouille, Marmite, Pendu, Tombe } from './forme
 // page. Décorative.
 
 const TERRE = '#0A0710'
+const LISERE = 'rgba(240,140,70,.6)'
 
 // Feuilles d'automne (orange, brun, rouille : styles.ts), fines et lentes.
 const FEUILLES_HERO = particules(18, {
@@ -74,14 +75,15 @@ export function AutomneHero() {
       <Sol
         chemin="M0 9 Q 14 3 30 8 T 62 6 T 100 8 V20 H0z"
         couleur={TERRE}
+        lisere={LISERE}
         className="h-[72px] lg:h-[92px]"
-        classeSol="hw-lisere h-[46%]"
+        classeSol="h-[46%]"
       >
         <span className="absolute bottom-[26%] left-[3%]">
           <Tombe hauteur={34} />
         </span>
         <span className="absolute bottom-[22%] left-[10%]">
-          <Citrouille largeur={40} allumee />
+          <CitrouilleAllumee largeur={40} />
         </span>
         <span className="absolute bottom-[24%] left-[21%]">
           <Bonbon largeur={26} teinte="orange" />
@@ -99,7 +101,7 @@ export function AutomneHero() {
           <Citrouille largeur={30} />
         </span>
         <span className="absolute bottom-[24%] left-[58%] hidden lg:block">
-          <Citrouille largeur={34} allumee />
+          <CitrouilleAllumee largeur={34} />
         </span>
       </Sol>
     </SceneHero>
@@ -134,9 +136,9 @@ export function FriseHalloween() {
         </>
       }
     >
-      <Sol chemin="M0 8 Q 20 2 40 7 T 75 5 T 100 7 V20 H0z" couleur={TERRE} className="h-full" classeSol="hw-lisere h-[32%]">
+      <Sol chemin="M0 8 Q 20 2 40 7 T 75 5 T 100 7 V20 H0z" couleur={TERRE} lisere={LISERE} className="h-full" classeSol="h-[32%]">
         <span className="absolute bottom-[18%] left-[4%]">
-          <Citrouille largeur={34} allumee />
+          <CitrouilleAllumee largeur={34} />
         </span>
         <span className="absolute bottom-[20%] left-[13%]">
           <Tombe hauteur={26} />
