@@ -189,10 +189,6 @@ export function dateSaison(forcee: string | null | undefined, previsualisation: 
 const toile = (couleur: string) =>
   `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='${couleur.replace('#', '%23')}' stroke-width='.6'%3E%3Cpath d='M16 0V16M16 0 3 13M16 0 0 7M16 0H0M16 5 12.5 3.5 11.4 2 11 0M16 10 8.9 7.1 6.8 4 6 0M16 14.5 5.7 10.3 2.7 5.8 1.5 0'/%3E%3C/svg%3E")`
 
-// Flocon (coin des badges « Best-seller », Noël), de la couleur du texte du badge.
-const flocon = (couleur: string) =>
-  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='${couleur.replace('#', '%23')}' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7'/%3E%3C/svg%3E")`
-
 /**
  * Règles propres à chaque thème, en plus de l'accent : décor léger des cartes
  * produit, des badges et de l'en-tête (déco Halloween du 19/10/2026), qui
@@ -217,13 +213,11 @@ const CSS_THEME: Partial<Record<ThemeSaison, (p: PeriodeSaison) => string>> = {
     `.saison-entete{box-shadow:inset 0 -3px 0 var(--saison-accent-2)}` +
     `.saison-lien-nav{text-decoration-line:underline;text-decoration-thickness:3px;text-underline-offset:6px;text-decoration-color:transparent;transition:text-decoration-color .3s}` +
     `.saison-lien-nav:hover,.saison-lien-nav[aria-current=page]{text-decoration-color:var(--saison-accent-2)}`,
-  // Noël (accent rouge) : flocon sur les badges, liseré et soulignés rouges,
-  // halo rouge des cartes au survol.
-  noel: (p) =>
-    `.carte-produit:hover{box-shadow:0 0 0 1px color-mix(in srgb,var(--saison-accent) 30%,transparent),0 18px 44px -14px color-mix(in srgb,var(--saison-accent) 45%,transparent)!important}` +
-    `.badge-saison:not(.absolute){position:relative}` +
-    `.badge-saison::after{content:"";position:absolute;top:1px;right:1px;width:13px;height:13px;pointer-events:none;opacity:.55;background:${flocon(p.texteSurAccent)} center/contain no-repeat}` +
-    `.saison-entete{box-shadow:inset 0 -3px 0 var(--saison-accent)}` +
+  // Noël : soulignés rouges dans l'en-tête, halo doré des cartes au survol.
+  // Guirlande sous l'en-tête et neige sur les badges : CSS du décor
+  // (components/saison/noel/styles.ts).
+  noel: () =>
+    `.carte-produit:hover{box-shadow:0 0 0 1px rgba(201,162,74,.45),0 18px 44px -14px rgba(201,162,74,.5)!important}` +
     `.saison-lien-nav{text-decoration-line:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:transparent;transition:text-decoration-color .3s}` +
     `.saison-lien-nav:hover,.saison-lien-nav[aria-current=page]{text-decoration-color:var(--saison-accent)}`,
 }

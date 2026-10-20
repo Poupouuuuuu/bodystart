@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import type { CSSProperties } from 'react'
+import type { ComponentType, CSSProperties } from 'react'
 import { ArrowRight } from 'lucide-react'
 import PackCardV2 from '@/components/pack/v2/PackCardV2'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import type { ShopifyProduct } from '@/lib/shopify/types'
+import type { CouleursSelection } from './decors'
 
 // Section « La sélection de saison » de l'accueil (déco Halloween du
 // 19/10/2026, Black Week, réutilisable pour Noël ; couleurs dans decors) : une
@@ -24,8 +25,11 @@ interface SelectionSaisonProps {
   intro: string
   /** Fond de la section (classe du thème). */
   fond: string
-  /** Couleurs du sur-titre et du mot du thème, et halo du mot (decors). */
-  couleurs: Record<'--sel-sur-titre' | '--sel-mot' | '--sel-halo', string>
+  /** Couleurs du sur-titre, du mot du thème et de son halo ; titre, texte et
+   * lien pour un fond clair (decors, valeurs par défaut : fond sombre). */
+  couleurs: CouleursSelection
+  /** Décor posé dans la section (Noël : boules suspendues). */
+  Ornement?: ComponentType
 }
 
 const RANGEE =
@@ -40,6 +44,7 @@ export default function SelectionSaison({
   intro,
   fond,
   couleurs,
+  Ornement,
 }: SelectionSaisonProps) {
   if (packs.length + produits.length === 0) return null
   return (
@@ -50,24 +55,25 @@ export default function SelectionSaison({
       style={couleurs as CSSProperties}
       aria-labelledby="selection-saison"
     >
+      {Ornement && <Ornement />}
       <div className="container relative">
         <div className="mb-10 flex flex-col gap-6 md:mb-12 md:flex-row md:items-end md:justify-between">
           <div className="max-w-[640px]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--sel-sur-titre)]">{surTitre}</p>
             <h2
               id="selection-saison"
-              className="saison-titre mt-3 font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] text-canvas md:text-[48px]"
+              className="saison-titre mt-3 font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] text-[color:var(--sel-titre,#FAF8F3)] md:text-[48px]"
             >
               {titre}{' '}
               <span className="text-[color:var(--sel-mot)] [text-shadow:var(--sel-halo)]">
                 {motTheme}
               </span>
             </h2>
-            <p className="mt-4 max-w-[560px] text-[16px] leading-[1.6] text-white/75 md:text-[17px]">{intro}</p>
+            <p className="mt-4 max-w-[560px] text-[16px] leading-[1.6] text-[color:var(--sel-texte,rgba(255,255,255,0.75))] md:text-[17px]">{intro}</p>
           </div>
           <Link
             href="/packs"
-            className="press group inline-flex min-h-[44px] items-center gap-2 self-start rounded-full border border-white/25 bg-white/10 px-5 text-[14px] font-semibold text-white backdrop-blur-md transition-colors duration-500 ease-out-expo hover:bg-white/20 md:self-auto"
+            className="press group inline-flex min-h-[44px] items-center gap-2 self-start rounded-full border border-[color:var(--sel-lien-bord,rgba(255,255,255,0.25))] bg-[color:var(--sel-lien-fond,rgba(255,255,255,0.1))] px-5 text-[14px] font-semibold text-[color:var(--sel-lien,#FFFFFF)] backdrop-blur-md transition-colors duration-500 ease-out-expo hover:bg-[color:var(--sel-lien-survol,rgba(255,255,255,0.2))] md:self-auto"
           >
             Tous nos packs
             <ArrowRight

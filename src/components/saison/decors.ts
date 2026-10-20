@@ -5,8 +5,10 @@ import FriseBlackWeek from './black-week/FriseBlackWeek'
 import SeparateurBlackWeek from './black-week/SeparateurBlackWeek'
 import { CSS_BLACK_WEEK } from './black-week/styles'
 import ChauvesSourisPhoto from './halloween/ChauvesSourisPhoto'
+import { BoulesPhoto, BoulesSection } from './noel/BoulesSuspendues'
 import FriseNoel from './noel/FriseNoel'
-import NeigePhoto from './noel/NeigePhoto'
+import Guirlande from './noel/Guirlande'
+import HiverHero from './noel/HiverHero'
 import SeparateurNoel from './noel/SeparateurNoel'
 import { CSS_NOEL } from './noel/styles'
 import FriseHalloween from './halloween/FriseHalloween'
@@ -19,6 +21,11 @@ import { CSS_HALLOWEEN } from './halloween/styles'
  * --h-accent (« Le bon conseil. », 46 px et plus) : 3:1.
  */
 export type PaletteHero = Record<`--h-${string}`, string>
+
+/** Variables de couleur de la sélection de saison (SelectionSaison). Les
+ * facultatives valent, par défaut, le texte clair sur fond sombre. */
+export type CouleursSelection = Record<'--sel-sur-titre' | '--sel-mot' | '--sel-halo', string> &
+  Partial<Record<'--sel-titre' | '--sel-texte' | '--sel-lien' | '--sel-lien-bord' | '--sel-lien-fond' | '--sel-lien-survol', string>>
 
 /**
  * Déco de saison complète, par thème (Halloween, Black Week et Noël, PR du
@@ -43,19 +50,30 @@ export interface DecorSaisonPremium {
     defaut: string
     /** Décor posé sur la photo, jamais sur le texte. */
     DecorPhoto: ComponentType
+    /** Décor posé sur toute la section, texte compris (Noël : neige fine,
+     * sol enneigé en bas). Facultatif. */
+    DecorHero?: ComponentType
+    /** Classes ajoutées au bloc de texte pour laisser la place au décor du
+     * bas (ex. « pb-24 lg:pb-28 »). Facultatif. */
+    espaceBas?: string
   }
+  /** Bande posée juste sous le haut de l'accueil (Noël : guirlande). Facultatif. */
+  SousHero?: ComponentType
   /** Séparateur fin entre les grandes sections de l'accueil. */
   Separateur: ComponentType
   /** Frise en tête du pied de page. */
   Frise: ComponentType
   /** Section de l'accueil sous le haut de page. `couleurs` : sur-titre, mot
-   * du thème et son halo (variables lues par SelectionSaison, sur fond `fond`). */
+   * du thème et son halo, et pour un fond clair titre, texte et lien
+   * (variables lues par SelectionSaison, sur fond `fond`). `Ornement` : décor
+   * posé dans la section (Noël : boules suspendues). */
   selection: {
     titre: string
     motTheme: string
     intro: string
     fond: string
-    couleurs: Record<'--sel-sur-titre' | '--sel-mot' | '--sel-halo', string>
+    couleurs: CouleursSelection
+    Ornement?: ComponentType
   }
 }
 
@@ -178,15 +196,18 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
       couleurs: { '--sel-sur-titre': '#F2C200', '--sel-mot': '#F2C200', '--sel-halo': 'none' },
     },
   },
-  // Noël (29/11 au 24/12) : bordeaux #6E1423 et or #F2D28A (8:1), rouge
-  // #C62828 en accent, neige qui tombe. Jamais de vert en grande surface.
+  // Noël (29/11 au 24/12), refonte du 20/10/2026 : un décor plutôt qu'une
+  // palette. Haut de l'accueil en ciel de nuit (a) ou vert sapin très foncé
+  // (b), grandes sections en crème ou blanc neige, rouge et or en accents
+  // seulement. Neige, guirlandes, boules suspendues, sapins et cadeaux.
   noel: {
     css: CSS_NOEL,
     hero: {
       palettes: {
-        // A : fond bordeaux, texte crème, accents dorés.
+        // A : ciel de nuit, texte crème, mot doré (10,9:1), bouton rouge
+        // (blanc sur #C62828 : 5,6:1).
         a: {
-          '--h-fond': '#6E1423',
+          '--h-fond': '#13203A',
           '--h-texte': '#FAF8F3',
           '--h-texte-doux': 'rgba(255,255,255,0.82)',
           '--h-sur-titre': 'rgba(255,255,255,0.86)',
@@ -196,36 +217,40 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
           '--h-ligne-forte': 'rgba(255,255,255,0.32)',
           '--h-voile': 'rgba(255,255,255,0.07)',
           '--h-voile-fort': 'rgba(255,255,255,0.15)',
-          '--h-bouton': '#FAF8F3',
-          '--h-bouton-texte': '#6E1423',
+          '--h-bouton': '#C62828',
+          '--h-bouton-texte': '#FFFFFF',
           '--h-rond': '#F2D28A',
-          '--h-rond-texte': '#6E1423',
+          '--h-rond-texte': '#13203A',
           '--h-lien': '#F2D28A',
           '--h-liseret': '#F2D28A',
         },
-        // B : fond bleu nuit, texte crème, accents dorés (or sur nuit : 10,9:1).
+        // B : vert sapin très foncé. Écart à la règle « jamais de vert en
+        // grande surface » : à trancher par Claude Gestion.
         b: {
-          '--h-fond': '#172238',
+          '--h-fond': '#0F2A1E',
           '--h-texte': '#FAF8F3',
           '--h-texte-doux': 'rgba(255,255,255,0.82)',
           '--h-sur-titre': 'rgba(255,255,255,0.86)',
           '--h-accent': '#F2D28A',
-          '--h-trait': '#C62828',
+          '--h-trait': '#F2D28A',
           '--h-ligne': 'rgba(255,255,255,0.16)',
           '--h-ligne-forte': 'rgba(255,255,255,0.32)',
           '--h-voile': 'rgba(255,255,255,0.07)',
           '--h-voile-fort': 'rgba(255,255,255,0.15)',
-          '--h-bouton': '#FAF8F3',
-          '--h-bouton-texte': '#172238',
-          '--h-rond': '#C62828',
-          '--h-rond-texte': '#FFFFFF',
+          '--h-bouton': '#C62828',
+          '--h-bouton-texte': '#FFFFFF',
+          '--h-rond': '#F2D28A',
+          '--h-rond-texte': '#0F2A1E',
           '--h-lien': '#F2D28A',
           '--h-liseret': '#F2D28A',
         },
       },
       defaut: 'a',
-      DecorPhoto: NeigePhoto,
+      DecorPhoto: BoulesPhoto,
+      DecorHero: HiverHero,
+      espaceBas: 'pb-24 lg:pb-28',
     },
+    SousHero: Guirlande,
     Separateur: SeparateurNoel,
     Frise: FriseNoel,
     selection: {
@@ -234,7 +259,19 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
       intro:
         'Nos packs et des produits que nos clients reprennent le plus, à offrir ou à garder pour soi. Retrait gratuit en boutique à Coignières, livraison partout en France.',
       fond: 'nl-selection',
-      couleurs: { '--sel-sur-titre': '#F2D28A', '--sel-mot': '#F2D28A', '--sel-halo': '0 0 14px rgba(242,210,138,0.3)' },
+      // Fond crème : titre vert, mot rouge, texte gris (même code que le site).
+      couleurs: {
+        '--sel-sur-titre': '#B3261E',
+        '--sel-mot': '#B3261E',
+        '--sel-halo': 'none',
+        '--sel-titre': '#2D5A2D',
+        '--sel-texte': '#6B6B66',
+        '--sel-lien': '#2D5A2D',
+        '--sel-lien-bord': 'rgba(45,90,45,0.25)',
+        '--sel-lien-fond': '#FFFFFF',
+        '--sel-lien-survol': '#EEF4EC',
+      },
+      Ornement: BoulesSection,
     },
   },
 }
