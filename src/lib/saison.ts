@@ -200,10 +200,9 @@ const CSS_THEME: Partial<Record<ThemeSaison, (p: PeriodeSaison) => string>> = {
     `.carte-produit:hover{box-shadow:0 0 0 1px color-mix(in srgb,var(--saison-accent) 32%,transparent),0 18px 44px -14px color-mix(in srgb,var(--saison-accent) 60%,transparent)!important}` +
     `.badge-saison:not(.absolute){position:relative}` +
     `.badge-saison::after{content:"";position:absolute;top:0;right:0;width:15px;height:15px;pointer-events:none;opacity:.5;background:${toile(p.texteSurAccent)} top right/contain no-repeat}` +
-    // En-tête (Header : saison-entete, saison-lien-nav) : liseré orange sous
-    // la barre, soulignement orange du lien actif et au survol. Sans
-    // changement de hauteur (ombre intérieure, soulignement).
-    `.saison-entete{box-shadow:inset 0 -2px 0 var(--saison-accent)}` +
+    // En-tête (Header : saison-lien-nav) : soulignement orange du lien actif
+    // et au survol. Guirlande sous l'en-tête : CSS du décor
+    // (components/saison/halloween/styles.ts).
     `.saison-lien-nav{text-decoration-line:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:transparent;transition:text-decoration-color .3s}` +
     `.saison-lien-nav:hover,.saison-lien-nav[aria-current=page]{text-decoration-color:var(--saison-accent)}`,
   // Black Week (accent noir, accent_2 jaune) : liseré et soulignés jaunes,

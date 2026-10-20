@@ -4,16 +4,13 @@ import EtiquettePhoto from './black-week/EtiquettePhoto'
 import FriseBlackWeek from './black-week/FriseBlackWeek'
 import SeparateurBlackWeek from './black-week/SeparateurBlackWeek'
 import { CSS_BLACK_WEEK } from './black-week/styles'
-import ChauvesSourisPhoto from './halloween/ChauvesSourisPhoto'
-import { BoulesPhoto, BoulesSection } from './noel/BoulesSuspendues'
-import FriseNoel from './noel/FriseNoel'
-import Guirlande from './noel/Guirlande'
-import HiverHero from './noel/HiverHero'
-import SeparateurNoel from './noel/SeparateurNoel'
-import { CSS_NOEL } from './noel/styles'
-import FriseHalloween from './halloween/FriseHalloween'
+import { AutomneHero, FriseHalloween, PendusPhoto, PendusSection } from './halloween/scene'
 import SeparateurHalloween from './halloween/SeparateurHalloween'
 import { CSS_HALLOWEEN } from './halloween/styles'
+import { BoulesPhoto, BoulesSection, FriseNoel, HiverHero } from './noel/scene'
+import SeparateurNoel from './noel/SeparateurNoel'
+import { CSS_NOEL } from './noel/styles'
+import Guirlande from './scene/Guirlande'
 
 /**
  * Couleurs du haut de l'accueil en deux parties (variables CSS lues par
@@ -50,14 +47,14 @@ export interface DecorSaisonPremium {
     defaut: string
     /** Décor posé sur la photo, jamais sur le texte. */
     DecorPhoto: ComponentType
-    /** Décor posé sur toute la section, texte compris (Noël : neige fine,
-     * sol enneigé en bas). Facultatif. */
+    /** Décor posé sur toute la section, texte compris (Noël : neige fine et
+     * sol enneigé ; Halloween : feuilles et sol de nuit). Facultatif. */
     DecorHero?: ComponentType
     /** Classes ajoutées au bloc de texte pour laisser la place au décor du
      * bas (ex. « pb-24 lg:pb-28 »). Facultatif. */
     espaceBas?: string
   }
-  /** Bande posée juste sous le haut de l'accueil (Noël : guirlande). Facultatif. */
+  /** Bande posée juste sous le haut de l'accueil (guirlande). Facultatif. */
   SousHero?: ComponentType
   /** Séparateur fin entre les grandes sections de l'accueil. */
   Separateur: ComponentType
@@ -66,7 +63,7 @@ export interface DecorSaisonPremium {
   /** Section de l'accueil sous le haut de page. `couleurs` : sur-titre, mot
    * du thème et son halo, et pour un fond clair titre, texte et lien
    * (variables lues par SelectionSaison, sur fond `fond`). `Ornement` : décor
-   * posé dans la section (Noël : boules suspendues). */
+   * posé dans la section (objets suspendus). */
   selection: {
     titre: string
     motTheme: string
@@ -77,7 +74,26 @@ export interface DecorSaisonPremium {
   }
 }
 
+// Couleurs de la sélection sur fond crème (Noël, Halloween) : titre vert, mot
+// et sur-titre à l'accent du thème, texte gris, lien vert (code du site).
+const selectionClaire = (accent: string): CouleursSelection => ({
+  '--sel-sur-titre': accent,
+  '--sel-mot': accent,
+  '--sel-halo': 'none',
+  '--sel-titre': '#2D5A2D',
+  '--sel-texte': '#6B6B66',
+  '--sel-lien': '#2D5A2D',
+  '--sel-lien-bord': 'rgba(45,90,45,0.25)',
+  '--sel-lien-fond': '#FFFFFF',
+  '--sel-lien-survol': '#EEF4EC',
+})
+
 const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
+  // Halloween (19 au 31/10), mise en scène refaite le 20/10/2026 sur le
+  // modèle de Noël : haut de l'accueil en nuit, sections en crème, guirlande
+  // de lanternes citrouilles, chauves-souris et araignées suspendues,
+  // feuilles d'automne, sol de nuit avec citrouilles, tombes, bonbons et
+  // marmite. Orange foncé #B4500E sur crème (4,6:1).
   halloween: {
     css: CSS_HALLOWEEN,
     hero: {
@@ -123,8 +139,11 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
         },
       },
       defaut: 'a',
-      DecorPhoto: ChauvesSourisPhoto,
+      DecorPhoto: PendusPhoto,
+      DecorHero: AutomneHero,
+      espaceBas: 'pb-24 lg:pb-28',
     },
+    SousHero: Guirlande,
     Separateur: SeparateurHalloween,
     Frise: FriseHalloween,
     selection: {
@@ -133,7 +152,8 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
       intro:
         'Nos packs et des produits que nos clients reprennent le plus. Retrait gratuit en boutique à Coignières, livraison partout en France.',
       fond: 'hw-selection',
-      couleurs: { '--sel-sur-titre': '#F6A456', '--sel-mot': '#E8711A', '--sel-halo': '0 0 14px rgba(232,113,26,0.35)' },
+      couleurs: selectionClaire('#B4500E'),
+      Ornement: PendusSection,
     },
   },
   // Black Week (23 au 28/11) : noir #111111 et jaune #F2C200, décor sobre
@@ -259,18 +279,7 @@ const DECORS: Partial<Record<ThemeSaison, DecorSaisonPremium>> = {
       intro:
         'Nos packs et des produits que nos clients reprennent le plus, à offrir ou à garder pour soi. Retrait gratuit en boutique à Coignières, livraison partout en France.',
       fond: 'nl-selection',
-      // Fond crème : titre vert, mot rouge, texte gris (même code que le site).
-      couleurs: {
-        '--sel-sur-titre': '#B3261E',
-        '--sel-mot': '#B3261E',
-        '--sel-halo': 'none',
-        '--sel-titre': '#2D5A2D',
-        '--sel-texte': '#6B6B66',
-        '--sel-lien': '#2D5A2D',
-        '--sel-lien-bord': 'rgba(45,90,45,0.25)',
-        '--sel-lien-fond': '#FFFFFF',
-        '--sel-lien-survol': '#EEF4EC',
-      },
+      couleurs: selectionClaire('#B3261E'),
       Ornement: BoulesSection,
     },
   },

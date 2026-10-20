@@ -1,12 +1,11 @@
-import type { CSSProperties } from 'react'
+import { particules } from '../scene/particules'
+import type { Var } from '../scene/types'
 
-// Flocons de la neige qui tombe (photo du haut de l'accueil, frise du pied de
-// page). Positions fixes (pas de hasard au rendu : même HTML côté serveur et
-// navigateur). x, y : place sans animation ; t : taille ; o : opacité ; d :
-// durée de la chute ; r : départ décalé (déjà en chute au chargement) ; dx :
-// dérive latérale.
-
-export type Var = CSSProperties & Record<`--${string}`, string>
+// Flocons de la neige qui tombe (haut de l'accueil, frise du pied de page ;
+// scene/Chute). Positions fixes (pas de hasard au rendu : même HTML côté
+// serveur et navigateur). x, y : place sans animation ; t : taille ; o :
+// opacité ; d : durée de la chute ; r : départ décalé (déjà en chute au
+// chargement) ; dx : dérive latérale.
 
 const BASE: [number, number, number, number, number, number, number][] = [
   // x %, y %, taille px, opacité, durée s, retard s, dérive px
@@ -38,19 +37,12 @@ export const FLOCONS: Var[] = BASE.map(([x, y, t, o, d, r, dx]) => ({
 
 /**
  * Neige fine sur tout le haut de l'accueil, texte compris : 26 petits flocons
- * (2 à 3,5 px), assez transparents pour ne pas gêner la lecture. Positions
- * calculées une fois (suite fixe, pas de hasard au rendu).
+ * (2 à 3,5 px), assez transparents pour ne pas gêner la lecture.
  */
-export const FLOCONS_HERO: Var[] = Array.from({ length: 26 }, (_, i) => {
-  const x = (i * 37 + 11) % 100
-  const y = (i * 53 + 7) % 100
-  return {
-    '--x': `${x}%`,
-    '--y': `${y}%`,
-    '--t': `${2 + (i % 4) * 0.5}px`,
-    '--o': String(0.55 + (i % 3) * 0.12),
-    '--d': `${12 + (i % 5) * 1.5}s`,
-    '--r': `${-((i * 7) % 18)}s`,
-    '--dx': `${((i % 2 ? 1 : -1) * (8 + (i % 4) * 4))}px`,
-  }
+export const FLOCONS_HERO: Var[] = particules(26, {
+  taille: 2,
+  pas: 0.5,
+  opacites: ['0.55', '0.67', '0.79'],
+  duree: 12,
+  derive: 8,
 })

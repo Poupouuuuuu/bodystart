@@ -140,6 +140,12 @@ describe('CSS de la période', () => {
     expect(css).toContain('.souligne-saison{')
     expect(css).not.toMatch(/[<>]/)
   })
+  it('Halloween : toile sur les badges, soulignés orange (guirlande dans le CSS du décor)', () => {
+    const css = cssSaison(P[0])
+    expect(css).toContain('.badge-saison::after{')
+    expect(css).toContain('text-decoration-color:var(--saison-accent)')
+    expect(css).not.toContain('.saison-entete{')
+  })
   it('Noël : soulignés rouges, halo doré des cartes (guirlande dans le CSS du décor)', () => {
     const noel = P.find((p) => p.theme === 'noel')!
     const css = cssSaison(noel)
