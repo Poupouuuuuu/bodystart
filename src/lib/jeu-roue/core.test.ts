@@ -62,10 +62,10 @@ describe('generateCode', () => {
 
 describe('pickLot', () => {
   it('respecte les poids : chaque tranche du tirage tombe sur le bon lot', () => {
-    // Poids cumulés : canette 0-34, crunch 35-59, shaker 60-79, bon 80-94, créatine 95-98, whey 99
+    // Poids cumulés : canette 0-37, crunch 38-62, shaker 63-82, bon 83-97, créatine 98, whey 99
     const at = (n: number) => pickLot(LOTS, ALL, () => n).id
-    expect([at(0), at(34), at(35), at(59), at(60), at(79), at(80), at(94), at(95), at(98), at(99)]).toEqual([
-      'canette-abe', 'canette-abe', 'crunch-bar', 'crunch-bar', 'shaker', 'shaker', 'bon-5', 'bon-5', 'creatine', 'creatine', 'whey',
+    expect([at(0), at(37), at(38), at(62), at(63), at(82), at(83), at(97), at(98), at(99)]).toEqual([
+      'canette-abe', 'canette-abe', 'crunch-bar', 'crunch-bar', 'shaker', 'shaker', 'bon-5', 'bon-5', 'creatine', 'whey',
     ])
   })
 
@@ -77,10 +77,10 @@ describe('pickLot', () => {
     const sansCanette = new Set<LotId>([...ALL].filter((id) => id !== 'canette-abe'))
     let max = 0
     const seen = new Set<string>()
-    for (let n = 0; n < 65; n++) {
+    for (let n = 0; n < 62; n++) {
       seen.add(pickLot(LOTS, sansCanette, (m) => { max = m; return n }).id)
     }
-    expect(max).toBe(65)
+    expect(max).toBe(62)
     expect(seen.has('canette-abe')).toBe(false)
     expect(pickLot(LOTS, new Set<LotId>(['bon-5']), () => 0).id).toBe('bon-5')
   })

@@ -127,7 +127,7 @@ describe('buildRecap', () => {
       ),
       stock: new Map([['canette-abe', 14], ['crunch-bar', 15]]),
     }
-    // 40 tirages : 14 canettes attendues (35 %), 10 barres (25 %)
+    // 40 tirages : 15,2 canettes attendues (38 %, seuil 16), 10 barres (25 %)
     const s = buildRecap(busy, NOW).stock!
     expect(s.find((l) => l.lot.id === 'canette-abe')?.status).toBe('bas')
     expect(s.find((l) => l.lot.id === 'crunch-bar')?.status).toBe('ok')
@@ -150,7 +150,7 @@ describe('renderRecapEmail', () => {
       'Participations : 4',
       'Case « offres par e-mail et SMS » cochée : 2 sur 4 (50 %)',
       'Codes utilisés : 2 (1 en caisse, 1 en ligne)',
-      'Canette ABE : 1 (chance : 35 %)',
+      'Canette ABE : 1 (chance : 38 %)',
       'ROUE-AAA222 · Canette ABE · caisse · commande #1900',
       'Codes utilisés : 3 sur 6 (50 %) : 1 en caisse, 1 en ligne, 1 canal inconnu',
       'Codes encore valables : 2 · expirés sans usage : 1',

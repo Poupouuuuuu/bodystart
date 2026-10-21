@@ -1,7 +1,9 @@
 // ============================================================
 // Jeu de la roue en boutique : LOTS (fichier unique à modifier)
 // ============================================================
-// - weight : poids du tirage (35 + 25 + 20 + 15 + 4 + 1 = 100 → % de chance).
+// - weight : poids du tirage (38 + 25 + 20 + 15 + 1 + 1 = 100 → % de chance).
+//   Le 21/10/2026 : créatine 4 → 1 et canette 35 → 38 (4 créatines sur 71
+//   codes depuis le 08/10).
 // - type 'product' : un article offert. La remise vaut le prix d'une unité
 //   (lu en direct dans Shopify au moment du tirage, `amount` sert de repli),
 //   limitée aux produits / variantes ciblés, appliquée une seule fois.
@@ -58,7 +60,7 @@ export const LOTS: Lot[] = [
     id: 'canette-abe',
     label: 'Une canette ABE Energy',
     wheelLabel: 'Canette ABE',
-    weight: 35,
+    weight: 38,
     type: 'product',
     products: ['gid://shopify/Product/10927490892118'],
     amount: 3.1,
@@ -111,7 +113,7 @@ export const LOTS: Lot[] = [
     id: 'creatine',
     label: 'Une créatine Dedicated 500 g',
     wheelLabel: 'Créatine',
-    weight: 4,
+    weight: 1,
     type: 'product',
     variants: ['gid://shopify/ProductVariant/53981935206742'],
     amount: 36.9,
