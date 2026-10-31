@@ -225,24 +225,24 @@ export default function YvelinesLandingPage() {
           </div>
         </section>
 
-        {/* NAP + accès */}
-        <section className="bg-spruce text-white rounded-2xl p-8 md:p-10 mb-14">
-          <h2 className="font-display text-[22px] font-extrabold tracking-tight mb-6">
+        {/* NAP + accès : carte blanche (jamais de vert en grande surface) */}
+        <section className="bg-white rounded-[20px] shadow-card p-8 md:p-10 mb-14">
+          <h2 className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-6">
             Venir à la boutique depuis le 78
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ul className="space-y-3.5">
-              <li className="flex items-start gap-3 text-[15px]">
-                <MapPin className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
+              <li className="flex items-start gap-3 text-[15px] text-ink">
+                <MapPin className="w-4 h-4 flex-shrink-0 mt-1 text-fresh" />
                 <span>8 Rue du Pont des Landes, 78310 Coignières (RN10)</span>
               </li>
-              <li className="flex items-start gap-3 text-[15px]">
-                <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
+              <li className="flex items-start gap-3 text-[15px] text-ink">
+                <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-fresh" />
                 <span>Lun. au sam. · 11&nbsp;h à 19&nbsp;h</span>
               </li>
-              <li className="flex items-start gap-3 text-[15px]">
-                <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <a href="tel:+33761847580" className="-my-2.5 inline-flex min-h-[44px] items-center hover:text-white/80 transition-colors">07 61 84 75 80</a>
+              <li className="flex items-start gap-3 text-[15px] text-ink">
+                <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-fresh" />
+                <a href="tel:+33761847580" className="-my-2.5 inline-flex min-h-[44px] items-center hover:text-spruce transition-colors">07 61 84 75 80</a>
               </li>
             </ul>
             <div className="flex flex-col gap-3">
@@ -250,13 +250,13 @@ export default function YvelinesLandingPage() {
                 href={GOOGLE_DIRECTIONS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-white text-spruce font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-white/90 transition-colors"
+                className="btn-primary press"
               >
                 Itinéraire <ArrowRight className="w-4 h-4" />
               </a>
               <Link
                 href="/stores"
-                className="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-white/10 transition-colors"
+                className="btn-secondary press"
               >
                 <Store className="w-4 h-4" /> Tout sur la boutique
               </Link>

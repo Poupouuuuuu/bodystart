@@ -30,7 +30,7 @@ export interface CategoryPage {
   /** FAQ affichée sous la grille + JSON-LD FAQPage (texte brut, mot pour mot). */
   faq?: { q: string; a: string }[]
   /**
-   * Bloc « en stock à Coignières, retrait immédiat » sous l'intro, avec les
+   * Bloc « en rayon à Coignières, retrait immédiat » sous l'intro, avec les
    * temps de trajet depuis Saint-Quentin-en-Yvelines (lib/zone-locale) :
    * rayons les plus cherchés en local (31/10/2026).
    */
@@ -45,7 +45,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     label: 'Protéines',
     metaTitle: 'Protéines : whey, isolate, caséine et gainers',
     metaDescription:
-      'Whey, isolate, caséine, gainer : des protéines sélectionnées, en stock à Coignières (78) et livrées partout en France. Conseil gratuit en boutique.',
+      'Whey, isolate, caséine, gainer : des protéines sélectionnées, en rayon à Coignières (78) et livrées partout en France. Conseil gratuit en boutique.',
     h1: 'Protéines en poudre : whey, isolate, caséine et gainers',
     intro: [
       "Une protéine en poudre sert à une chose simple : atteindre ton quota de protéines du jour quand l'assiette ne suffit pas. Les protéines contribuent au maintien et au développement de la masse musculaire. C'est le complément le plus utile en musculation, et le premier qu'on conseille au comptoir.",
