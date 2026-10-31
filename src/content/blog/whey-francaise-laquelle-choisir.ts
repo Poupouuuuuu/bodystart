@@ -26,15 +26,14 @@ export const wheyFrancaiseLaquelleChoisir: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "Sur un pot, « française » ne veut pas toujours dire la même chose. Voici ce que chaque mention garantit, et ce qu'elle laisse de côté.",
+          text: "Sur un pot, « française » ne veut pas toujours dire la même chose. Voici ce que chaque mention garantit, et ce qu'elle laisse de côté :",
         },
         {
-          type: 'table',
-          headers: ['Mention', 'Ce qu’elle garantit', 'Ce qu’elle ne dit pas'],
-          rows: [
-            ['Marque française', 'La société qui conçoit et vend le produit est en France.', 'Où la poudre est fabriquée, ni d’où vient le lait.'],
-            ['Fabriqué en France', 'La dernière transformation importante (le mélange de la poudre) a lieu dans une usine en France.', 'L’origine du lait ou des protéines utilisées.'],
-            ['Lait français', 'Les protéines viennent de lait collecté en France.', 'Rien sur la marque ni sur l’usine qui conditionne.'],
+          type: 'list',
+          items: [
+            '**Marque française** : la société qui conçoit et vend le produit est en France. Ça ne dit ni où la poudre est fabriquée, ni d’où vient le lait.',
+            '**Fabriqué en France** : la dernière transformation importante (le mélange de la poudre) a lieu dans une usine en France. Ça ne dit rien de l’origine du lait ou des protéines utilisées.',
+            '**Lait français** : les protéines viennent de lait collecté en France. Ça ne dit rien de la marque ni de l’usine qui conditionne.',
           ],
         },
         {
@@ -63,14 +62,24 @@ export const wheyFrancaiseLaquelleChoisir: BlogArticle = {
           type: 'p',
           text: 'En boutique à Coignières, on a notamment en rayon les wheys de Nutrimuscle, marque française qui fabrique dans sa propre usine, labellisée Sport Protect. Voici ce que la marque indique sur ses fiches (relevé du 31 octobre 2026) :',
         },
+        { type: 'h3', text: 'Whey Native Protimuscle' },
         {
-          type: 'table',
-          headers: ['', 'Whey Native Protimuscle', 'Musclewhey'],
-          rows: [
-            ['Composition', 'Isolat de protéines de lait (MPI) et whey native concentrée (WPC)', 'Whey native concentrée (WPC) et isolat de whey native (WPI)'],
-            ['Protéines par dose de 30 g', '23,1 g en saveur Chocolat', '22,8 g en saveur Chocolat'],
-            ['Origine indiquée par la marque', 'Protéines « d’origine européenne »', 'Mention « France » sur ses ingrédients WPC et WPI, whey « d’origine européenne » dans la description'],
-            ['Usage proposé par la marque', 'Mélange whey et caséine : collation ou petit-déjeuner', '100 % lactosérum : après la séance'],
+          type: 'list',
+          items: [
+            '**Composition** : isolat de protéines de lait (MPI) et whey native concentrée (WPC).',
+            '**Protéines** : 23,1 g par dose de 30 g en saveur Chocolat.',
+            '**Origine indiquée** : protéines « d’origine européenne ».',
+            '**Usage proposé par la marque** : mélange whey et caséine, en collation ou au petit-déjeuner.',
+          ],
+        },
+        { type: 'h3', text: 'Musclewhey' },
+        {
+          type: 'list',
+          items: [
+            '**Composition** : whey native concentrée (WPC) et isolat de whey native (WPI).',
+            '**Protéines** : 22,8 g par dose de 30 g en saveur Chocolat.',
+            '**Origine indiquée** : mention « France » sur ses ingrédients WPC et WPI, whey « d’origine européenne » dans la description.',
+            '**Usage proposé par la marque** : 100 % lactosérum, après la séance.',
           ],
         },
         {

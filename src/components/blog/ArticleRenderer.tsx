@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import type { ArticleBlock, ArticleSection } from '@/lib/blog'
+import { frenchSpacing } from '@/lib/typo'
 
 /**
  * Rendu des blocs d'article. Inline supporté : **gras** et [libellé](/route).
@@ -10,7 +11,10 @@ import type { ArticleBlock, ArticleSection } from '@/lib/blog'
 const INLINE_TOKEN = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g
 
 export function renderInline(text: string): ReactNode[] {
-  return text.split(INLINE_TOKEN).map((part, i) => {
+  // Espaces insécables à l'affichage (avant « : », « ? », « % »…) : une ligne
+  // ne commence jamais par la ponctuation. Le texte source et le JSON-LD
+  // restent inchangés.
+  return frenchSpacing(text).split(INLINE_TOKEN).map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
         <strong key={i} className="font-semibold text-spruce">
@@ -108,7 +112,7 @@ export default function ArticleRenderer({ sections }: { sections: ArticleSection
       {sections.map((section) => (
         <section key={section.h2} className="mb-10">
           <h2 className="font-display text-[24px] md:text-[27px] font-extrabold text-spruce tracking-tight leading-tight mb-4">
-            {section.h2}
+            {frenchSpacing(section.h2)}
           </h2>
           {section.blocks.map((block, i) => (
             <Block key={i} block={block} />
