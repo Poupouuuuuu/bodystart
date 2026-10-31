@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowRight, BookOpen, Store } from 'lucide-react'
+import { ArrowRight, BookOpen, MapPin, Store } from 'lucide-react'
 import { getProducts } from '@/lib/shopify'
 import { availableFirst } from '@/lib/product-order'
 import type { ShopifyProduct } from '@/lib/shopify/types'
@@ -9,6 +9,11 @@ import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES, getCategoryPage } from '@/lib/categories'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import ReadMore from '@/components/ui/ReadMore'
+import { PICKUP_PROMISE } from '@/lib/shipping'
+import { frenchSpacing } from '@/lib/typo'
+import { VILLES_DESSERVIES } from '@/lib/zone-locale'
+
+const minutesDepuis = (nom: string) => VILLES_DESSERVIES.find((v) => v.nom === nom)?.minutes
 
 // Pages catégories SEO : 1 URL indexable par famille de produits (les filtres
 // `?cat=` de /products restent du confort client-side, non indexable).
@@ -131,6 +136,26 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             ))}
           </ReadMore>
         </div>
+
+        {/* Rayons cherchés en local : stock à Coignières et trajet réel depuis
+            Saint-Quentin-en-Yvelines (lib/zone-locale), lien vers la page zone. */}
+        {cat.blocLocal && (
+          <div className="flex items-start gap-3 bg-sage/60 rounded-2xl p-5 mb-10 max-w-[760px]">
+            <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5 text-spruce" aria-hidden="true" />
+            <p className="text-[14.5px] leading-[1.65] text-ink/90">
+              <strong className="font-semibold text-spruce">En stock à Coignières</strong>
+              {frenchSpacing(
+                `, dans l'agglomération de Saint-Quentin-en-Yvelines (environ ${minutesDepuis('Trappes')} min depuis Trappes, ${minutesDepuis('Montigny-le-Bretonneux')} min depuis Montigny-le-Bretonneux, hors heures de pointe). ${PICKUP_PROMISE.long}. `
+              )}
+              <Link
+                href="/complements-alimentaires-yvelines#villes"
+                className="py-3 font-semibold text-spruce underline underline-offset-4 hover:text-fresh-deep"
+              >
+                Trajet depuis ta ville
+              </Link>
+            </p>
+          </div>
+        )}
 
         {/* Nos choix (maillage produits phares) ; rien si la sélection est vide */}
         {cat.featured.length > 0 && (

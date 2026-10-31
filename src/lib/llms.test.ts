@@ -65,6 +65,14 @@ describe('llms.txt', () => {
     expect(txt).toContain('[Guide conseil](https://bodystart-nutrition.fr/conseil)')
   })
 
+  it('zone desservie : les 12 communes avec trajet, livraison locale vérifiée', () => {
+    expect(txt).toContain('## Zone desservie')
+    expect(txt).toContain("agglomération de Saint-Quentin-en-Yvelines")
+    expect(txt).toContain('- Maurepas (78310) : 4,4 km, environ 7 min, par la N10.')
+    expect(txt).toContain('- Magny-les-Hameaux (78114)')
+    expect(txt).toContain('dans une partie de Montigny-le-Bretonneux et Plaisir')
+  })
+
   it('sans produits (Shopify indisponible au build) : pas de section produits', () => {
     const vide = buildLlmsTxt([], 'https://bodystart-nutrition.fr')
     expect(vide).not.toContain('## Produits en stock')

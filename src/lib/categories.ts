@@ -29,12 +29,19 @@ export interface CategoryPage {
   guides: { slug: string; label: string }[]
   /** FAQ affichée sous la grille + JSON-LD FAQPage (texte brut, mot pour mot). */
   faq?: { q: string; a: string }[]
+  /**
+   * Bloc « en stock à Coignières, retrait immédiat » sous l'intro, avec les
+   * temps de trajet depuis Saint-Quentin-en-Yvelines (lib/zone-locale) :
+   * rayons les plus cherchés en local (31/10/2026).
+   */
+  blocLocal?: boolean
 }
 
 export const CATEGORY_PAGES: CategoryPage[] = [
   {
     slug: 'proteines',
     productType: 'Protéines',
+    blocLocal: true,
     label: 'Protéines',
     metaTitle: 'Protéines : whey, isolate, caséine et gainers',
     metaDescription:
@@ -67,6 +74,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
   {
     slug: 'creatine',
     productType: 'Créatine',
+    blocLocal: true,
     label: 'Créatine',
     // Réécrits le 25/09/2026 pour le taux de clic (position 7, 0 clic dans Search Console).
     metaTitle: 'Créatine monohydrate : pure ou aromatisée, bien la choisir',

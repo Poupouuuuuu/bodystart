@@ -20,6 +20,7 @@ import {
   MONDIAL_RELAY,
 } from '@/lib/shipping'
 import { STORE } from '@/lib/store-info'
+import { VILLES_DESSERVIES, formatKm, listeFr, villesLivraisonLocale } from '@/lib/zone-locale'
 
 export interface LlmsProduct {
   title: string
@@ -102,13 +103,25 @@ export function buildLlmsTxt(allProducts: LlmsProduct[], siteUrl: string): strin
     `- [Guide conseil](${site}/conseil): en une minute, ton objectif, ton budget et ta fréquence d'entraînement, et le guide propose une sélection de produits en stock à la boutique.`,
     `- [La boutique de ${STORE.locality}](${site}/stores): adresse, horaires, itinéraire, Click & Collect.`,
     `- [Compléments alimentaires à ${STORE.locality}](${site}/complements-alimentaires-coignieres): whey, créatine et vitamines près de Coignières, Maurepas, Élancourt et Plaisir.`,
-    `- [Compléments alimentaires dans les Yvelines](${site}/complements-alimentaires-yvelines): Click & Collect et livraison dans tout le 78.`,
+    `- [Compléments alimentaires dans les Yvelines](${site}/complements-alimentaires-yvelines): trajet et livraison depuis 12 villes du 78 (Saint-Quentin-en-Yvelines, Rambouillet, Plaisir…), Click & Collect.`,
     `- [Parrainage](${site}/parrainage): ton filleul a 10 € dès 60 € sur sa première commande, tu gagnes 5 % de ses achats en cagnotte, à vie.`,
     `- [Livraison](${site}/livraison): ${MONDIAL_RELAY.label} ${centsLabel(MONDIAL_RELAY.priceCents)}, ${COLISSIMO.label} ${centsLabel(COLISSIMO.priceCents)}, livraison locale ${centsLabel(LIVRAISON_LOCALE.priceCents)}, ${CLICK_AND_COLLECT.label} gratuit, offerte dès ${centsLabel(FREE_SHIPPING_THRESHOLD_CENTS)}.`,
     `- [FAQ](${site}/faq): commande, retrait en boutique, paiement, produits.`,
     `- [À propos](${site}/about): qui est BodyStart, reprise de BodyFit Coignières.`,
     ''
   )
+
+  out.push('## Zone desservie', '')
+  out.push(
+    `La boutique est à ${STORE.locality}, commune de l'agglomération de Saint-Quentin-en-Yvelines, au bord de la N10. ` +
+      `Livraison locale (${centsLabel(LIVRAISON_LOCALE.priceCents)}, le soir même pour une commande passée avant 17 h) à ${listeFr(villesLivraisonLocale('oui'))}, et dans une partie de ${listeFr(villesLivraisonLocale('partielle'))}. ` +
+      `Retrait gratuit en boutique partout. Temps de trajet en voiture depuis la mairie, hors heures de pointe :`,
+    ''
+  )
+  for (const v of VILLES_DESSERVIES) {
+    out.push(`- ${v.nom} (${v.codePostal}) : ${formatKm(v.km)}, environ ${v.minutes} min, par ${listeFr(v.axes)}.`)
+  }
+  out.push('')
 
   out.push('## Catégories', '')
   for (const c of categories) out.push(`- [${c.label}](${site}/categories/${c.slug}): ${c.metaDescription}`)
