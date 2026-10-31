@@ -69,6 +69,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       { slug: 'gainer-prise-de-masse-comment-choisir', label: 'Gainer : pour qui et comment le choisir ?' },
       { slug: 'combien-de-proteines-par-jour', label: 'Combien de protéines par jour pour prendre du muscle ?' },
       { slug: 'quelle-whey-choisir-debutant', label: 'Quelle whey choisir quand on débute ?' },
+      { slug: 'whey-francaise-laquelle-choisir', label: 'Whey française : laquelle choisir ?' },
     ],
   },
   {
