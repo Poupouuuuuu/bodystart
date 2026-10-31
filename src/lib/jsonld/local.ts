@@ -5,6 +5,7 @@
 // d'un commerce publiés sur son propre site.
 
 import { CONTACT_EMAIL, GOOGLE_MAPS_URL, SAME_AS, STORE } from '@/lib/store-info'
+import { VILLES_DESSERVIES } from '@/lib/zone-locale'
 
 export const organizationId = (site: string) => `${site}/#organization`
 export const storeId = (site: string) => `${site}/#boutique-coignieres`
@@ -58,6 +59,9 @@ export function storeJsonLd(site: string) {
     address: address(),
     geo: { '@type': 'GeoCoordinates', latitude: STORE.geo.latitude, longitude: STORE.geo.longitude },
     hasMap: GOOGLE_MAPS_URL,
+    // Communes desservies (trajet et livraison détaillés sur
+    // /complements-alimentaires-yvelines, source lib/zone-locale).
+    areaServed: [STORE.locality, ...VILLES_DESSERVIES.map((v) => v.nom)].map((name) => ({ '@type': 'City', name })),
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',

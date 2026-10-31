@@ -7,6 +7,7 @@ import { BLOG_ARTICLES } from '@/content/blog'
 import { BLOG_AUTHOR, formatArticleDate } from '@/lib/blog'
 import ArticleRenderer from '@/components/blog/ArticleRenderer'
 import { withLivePrices } from '@/lib/blog-prices'
+import { frenchSpacing } from '@/lib/typo'
 
 export const revalidate = 3600
 
@@ -117,7 +118,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
         </nav>
 
         <h1 className="font-display text-[30px] md:text-[40px] font-extrabold text-spruce leading-[1.08] tracking-tight mb-5">
-          {article.title}
+          {frenchSpacing(article.title)}
         </h1>
 
         {/* Auteur + fraîcheur datée (E-E-A-T + GEO) */}
@@ -132,7 +133,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
 
         {/* Answer-first : la réponse avant tout */}
         <p className="bg-sage/70 border-l-4 border-fresh rounded-r-xl px-5 py-4 text-[17px] leading-[1.65] font-medium text-spruce mb-10">
-          {article.excerpt}
+          {frenchSpacing(article.excerpt)}
         </p>
 
         <ArticleRenderer sections={article.sections} />
@@ -145,8 +146,8 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
           <div className="space-y-4">
             {article.faq.map(({ q, a }) => (
               <div key={q} className="bg-white rounded-xl border border-spruce/10 p-5">
-                <h3 className="font-display font-bold text-[15px] text-spruce mb-2">{q}</h3>
-                <p className="text-[14px] leading-[1.7] text-ink/90">{a}</p>
+                <h3 className="font-display font-bold text-[15px] text-spruce mb-2">{frenchSpacing(q)}</h3>
+                <p className="text-[14px] leading-[1.7] text-ink/90">{frenchSpacing(a)}</p>
               </div>
             ))}
           </div>

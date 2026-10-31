@@ -29,16 +29,23 @@ export interface CategoryPage {
   guides: { slug: string; label: string }[]
   /** FAQ affichée sous la grille + JSON-LD FAQPage (texte brut, mot pour mot). */
   faq?: { q: string; a: string }[]
+  /**
+   * Bloc « en rayon à Coignières, retrait immédiat » sous l'intro, avec les
+   * temps de trajet depuis Saint-Quentin-en-Yvelines (lib/zone-locale) :
+   * rayons les plus cherchés en local (31/10/2026).
+   */
+  blocLocal?: boolean
 }
 
 export const CATEGORY_PAGES: CategoryPage[] = [
   {
     slug: 'proteines',
     productType: 'Protéines',
+    blocLocal: true,
     label: 'Protéines',
     metaTitle: 'Protéines : whey, isolate, caséine et gainers',
     metaDescription:
-      'Whey, isolate, caséine, gainer : des protéines sélectionnées, en stock à Coignières (78) et livrées partout en France. Conseil gratuit en boutique.',
+      'Whey, isolate, caséine, gainer : des protéines sélectionnées, en rayon à Coignières (78) et livrées partout en France. Conseil gratuit en boutique.',
     h1: 'Protéines en poudre : whey, isolate, caséine et gainers',
     intro: [
       "Une protéine en poudre sert à une chose simple : atteindre ton quota de protéines du jour quand l'assiette ne suffit pas. Les protéines contribuent au maintien et au développement de la masse musculaire. C'est le complément le plus utile en musculation, et le premier qu'on conseille au comptoir.",
@@ -62,11 +69,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       { slug: 'gainer-prise-de-masse-comment-choisir', label: 'Gainer : pour qui et comment le choisir ?' },
       { slug: 'combien-de-proteines-par-jour', label: 'Combien de protéines par jour pour prendre du muscle ?' },
       { slug: 'quelle-whey-choisir-debutant', label: 'Quelle whey choisir quand on débute ?' },
+      { slug: 'whey-francaise-laquelle-choisir', label: 'Whey française : laquelle choisir ?' },
     ],
   },
   {
     slug: 'creatine',
     productType: 'Créatine',
+    blocLocal: true,
     label: 'Créatine',
     // Réécrits le 25/09/2026 pour le taux de clic (position 7, 0 clic dans Search Console).
     metaTitle: 'Créatine monohydrate : pure ou aromatisée, bien la choisir',

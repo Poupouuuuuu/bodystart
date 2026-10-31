@@ -6,14 +6,16 @@ import type { BlogArticle } from '@/lib/blog'
 // Shopify 2026-07-17.
 export const quandPrendreSaWhey: BlogArticle = {
   slug: 'quand-prendre-sa-whey',
-  title: 'Quand prendre sa whey : matin, soir, avant ou après ?',
-  metaTitle: 'Quand prendre sa whey : matin, soir, avant ou après ?',
+  // Title, h1 et première phrase revus le 31/10/2026 pour « moment prise de
+  // whey » (position 42) : la réponse est dans la première phrase.
+  title: 'Quand prendre sa whey : le meilleur moment de prise',
+  metaTitle: 'Quand prendre sa whey : le meilleur moment de prise',
   metaDescription:
-    'Le meilleur moment pour prendre sa whey ? Celui qui t\'aide à atteindre ton total de protéines. Le timing autour de la séance compte, mais moins qu\'on croit.',
+    'Le meilleur moment pour prendre sa whey : après ta séance ou entre deux repas, là où il te manque des protéines. Matin, soir, avant, après : le point.',
   excerpt:
-    "Le meilleur moment pour prendre sa whey, c'est celui qui t'aide à atteindre ton total de protéines du jour. Le timing autour de la séance a un effet réel mais mineur : la régularité et la quantité comptent bien plus que l'heure exacte.",
+    "Le meilleur moment pour prendre sa whey, c'est après ta séance ou entre deux repas, là où il te manque des protéines dans la journée. L'heure exacte compte peu : ton total de protéines du jour et ta régularité font bien plus la différence.",
   datePublished: '2026-07-17',
-  dateModified: '2026-10-15',
+  dateModified: '2026-10-31',
   sections: [
     {
       h2: 'Le meilleur moment ? Celui qui te fait atteindre ton quota',

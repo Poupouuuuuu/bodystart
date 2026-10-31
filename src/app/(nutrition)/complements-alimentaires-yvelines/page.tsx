@@ -1,15 +1,33 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Store, Clock, MapPin, Phone, ShoppingBag, MessageCircle, Truck } from 'lucide-react'
+import { ArrowRight, Store, Clock, MapPin, Phone, ShoppingBag, MessageCircle, Truck, Car, Route } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES } from '@/lib/categories'
-import { GOOGLE_DIRECTIONS_URL } from '@/lib/store-info'
+import { GOOGLE_DIRECTIONS_URL, STORE } from '@/lib/store-info'
+import {
+  COLISSIMO,
+  FREE_SHIPPING_LABEL,
+  LIVRAISON_LOCALE,
+  MONDIAL_RELAY,
+  PICKUP_PROMISE,
+  formatShippingPrice,
+} from '@/lib/shipping'
+import {
+  VILLES_DESSERVIES,
+  formatKm,
+  itineraireDepuis,
+  listeFr,
+  villesLivraisonLocale,
+  type LivraisonLocale,
+} from '@/lib/zone-locale'
+import { frenchSpacing } from '@/lib/typo'
 
 // Landing SEO locale à l'échelle du DÉPARTEMENT (intention « compléments
-// alimentaires Yvelines / 78 / près de moi ») — COMPLÉMENTAIRE de la page
-// Coignières (échelle ville) et de /stores (fiche pratique). Angle distinct :
-// zone de chalandise, Click & Collect pour tout le 78, villes desservies avec
-// accès réels. Pas de pages-villes vides (anti-doorway) : une seule page zone.
+// alimentaires Yvelines / 78 / Saint-Quentin / près de moi »), COMPLÉMENTAIRE
+// de la page Coignières (échelle ville) et de /stores (fiche pratique).
+// Un bloc par commune avec des données réelles (trajet, axes, livraison
+// locale vérifiée dans Shopify : lib/zone-locale), sur UNE seule page : pas de
+// pages-villes satellites (anti-doorway).
 export const revalidate = 3600
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bodystart.vercel.app').replace(/\/$/, '')
@@ -18,53 +36,51 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/complements-alimentaires-yvelines',
   title: 'Compléments alimentaires dans les Yvelines (78)',
   description:
-    'Une vraie boutique de compléments alimentaires dans les Yvelines : whey, créatine, vitamines. Conseil gratuit, Click & Collect et livraison dans tout le 78.',
+    'Boutique de compléments alimentaires à Coignières (Saint-Quentin-en-Yvelines) : trajets depuis 12 villes du 78, retrait gratuit, livraison locale.',
 })
 
-// Zone de chalandise réelle autour de Coignières (RN10 + A12), regroupée par
-// secteur. Mentions naturelles, pas de page dédiée par ville.
-const ZONES = [
-  {
-    secteur: 'Autour de Coignières',
-    villes: 'Maurepas, Élancourt, Les Essarts-le-Roi, Le Mesnil-Saint-Denis',
-    acces: 'À 5 à 10 minutes : tu es quasiment sur place.',
-  },
-  {
-    secteur: 'Saint-Quentin-en-Yvelines',
-    villes: 'Montigny-le-Bretonneux, Trappes, Guyancourt, Voisins-le-Bretonneux, La Verrière',
-    acces: '10 à 15 minutes par la RN10 ou la D912.',
-  },
-  {
-    secteur: 'Nord du 78 (vers Plaisir)',
-    villes: 'Plaisir, Les Clayes-sous-Bois, Villepreux, Bois-d’Arcy',
-    acces: 'Accès direct par la RN10 puis l’A12.',
-  },
-  {
-    secteur: 'Sud du 78 (vers Rambouillet)',
-    villes: 'Le Perray-en-Yvelines, Rambouillet, Les Bréviaires',
-    acces: 'Ligne droite par la RN10 vers le sud.',
-  },
-]
+const heure = (hhmm: string) => `${Number(hhmm.slice(0, 2))} h`
+const HORAIRES = `du lundi au samedi, de ${heure(STORE.opens)} à ${heure(STORE.closes)}`
+const PRIX_LOCALE = formatShippingPrice(LIVRAISON_LOCALE.priceCents)
+const PRIX_RELAIS = formatShippingPrice(MONDIAL_RELAY.priceCents)
+const PRIX_COLISSIMO = formatShippingPrice(COLISSIMO.priceCents)
+const DELAI_LOCALE = LIVRAISON_LOCALE.delayLabel.toLowerCase()
 
-// FAQ locale VISIBLE ci-dessous — reprise mot pour mot dans le schema FAQPage.
+const ville = (nom: string) => VILLES_DESSERVIES.find((v) => v.nom === nom)!
+const trajet = (nom: string) => {
+  const v = ville(nom)
+  return `${formatKm(v.km)}, environ ${v.minutes} minutes`
+}
+
+const LIVRAISON: Record<LivraisonLocale, string> = {
+  oui: `Livraison locale à ${PRIX_LOCALE}, du lundi au samedi : ${DELAI_LOCALE}.`,
+  partielle: `Livraison locale à ${PRIX_LOCALE} pour les adresses à moins de 10 km de la boutique : elle t’est proposée au paiement si ton adresse est dans la zone. Sinon, ${MONDIAL_RELAY.label} ou Colissimo.`,
+  non: `Hors zone de livraison locale : point relais ${MONDIAL_RELAY.label} à ${PRIX_RELAIS} ou Colissimo à ${PRIX_COLISSIMO}, offerts ${FREE_SHIPPING_LABEL}.`,
+}
+
+// FAQ locale VISIBLE ci-dessous, reprise mot pour mot dans le schema FAQPage.
 const LOCAL_FAQ = [
   {
     q: 'Où trouver une boutique de compléments alimentaires dans les Yvelines ?',
-    a: 'BodyStart Nutrition est une boutique physique spécialisée en nutrition sportive au 8 Rue du Pont des Landes, 78310 Coignières, sur la RN10. Sa position centrale dans l’ouest des Yvelines la rend facile d’accès depuis Maurepas, Élancourt, Saint-Quentin-en-Yvelines, Plaisir ou Rambouillet. Ouverte du lundi au samedi de 11h à 19h.',
+    a: `BodyStart Nutrition est une boutique physique de nutrition sportive au ${STORE.streetAddress}, ${STORE.postalCode} ${STORE.locality}, au bord de la N10. Elle est ouverte ${HORAIRES}, et on y trouve whey, créatine, vitamines et pré-workout, avec du conseil gratuit au comptoir.`,
   },
   {
-    q: 'BodyStart livre-t-il partout dans les Yvelines ?',
-    a: 'Oui. Où que tu sois dans le 78, tu peux commander sur bodystart-nutrition.fr et être livré en point relais Mondial Relay (4,90 €) ou à domicile via Colissimo (6,90 €), livraison offerte dès 85 €. Et si tu passes près de Coignières, le Click & Collect gratuit t’évite les frais.',
+    q: 'Y a-t-il un magasin de compléments alimentaires à Saint-Quentin-en-Yvelines ?',
+    a: `Oui : Coignières fait partie des 12 communes de l’agglomération de Saint-Quentin-en-Yvelines, et BodyStart Nutrition y a sa boutique. Compte ${trajet('Trappes')} depuis la mairie de Trappes et ${trajet('Montigny-le-Bretonneux')} depuis celle de Montigny-le-Bretonneux, hors heures de pointe.`,
   },
   {
-    q: 'Peut-on faire du Click & Collect depuis une autre ville du 78 ?',
-    a: 'Bien sûr. Tu commandes en ligne depuis Montigny, Plaisir, Rambouillet ou ailleurs dans les Yvelines, tu choisis le retrait en boutique au paiement, et tu récupères ta commande au comptoir à Coignières, immédiatement pour les produits en stock, sans montant minimum.',
+    q: 'Quelle boutique de nutrition sportive près de Rambouillet, Plaisir ou Chevreuse ?',
+    a: `La boutique BodyStart Nutrition de Coignières est à moins de 15 km de chacune : ${trajet('Rambouillet')} depuis Rambouillet par la N10, ${trajet('Plaisir')} depuis Plaisir et ${trajet('Chevreuse')} depuis Chevreuse par la D13, hors heures de pointe.`,
   },
   {
-    q: 'Vendez-vous les mêmes marques qu’en ligne ?',
-    a: 'Oui, on retrouve les mêmes marques (Eric Favre, Nutrimuscle, Applied Nutrition, Dedicated, DY Nutrition et d’autres), et le site affiche le stock de la boutique en temps réel. L’avantage de la boutique, c’est le conseil gratuit : on t’aide à choisir le bon produit pour ton objectif, pas le plus cher.',
+    q: 'Livrez-vous à domicile autour de Coignières ?',
+    a: `Oui. La livraison locale coûte ${PRIX_LOCALE} et arrive du lundi au samedi, ${DELAI_LOCALE}. Elle couvre ${listeFr(villesLivraisonLocale('oui'))}, ainsi qu’une partie de ${villesLivraisonLocale('partielle').join(' et de ')}. Ailleurs dans le 78 : point relais ${MONDIAL_RELAY.label} à ${PRIX_RELAIS} ou Colissimo à ${PRIX_COLISSIMO}, offerts ${FREE_SHIPPING_LABEL}.`,
   },
-]
+  {
+    q: 'Peut-on commander en ligne et retirer sa commande le jour même ?',
+    a: `Oui, le Click & Collect est gratuit : ${PICKUP_PROMISE.long.charAt(0).toLowerCase()}${PICKUP_PROMISE.long.slice(1)}, ${HORAIRES}. ${PICKUP_PROMISE.horsHoraires} Le site affiche le stock de la boutique en temps réel.`,
+  },
+].map(({ q, a }) => ({ q: frenchSpacing(q), a: frenchSpacing(a) }))
 
 const faqJsonLd = {
   '@context': 'https://schema.org',
@@ -101,21 +117,20 @@ export default function YvelinesLandingPage() {
           Compléments alimentaires dans les Yvelines (78)
         </h1>
 
-        {/* Answer-first — angle département/zone */}
+        {/* Answer-first : où, pour qui, comment */}
         <div className="max-w-[720px] mb-12">
           <p className="text-ink/90 text-[17px] leading-[1.7] mb-4">
-            Dans les Yvelines, la plupart des gens achètent leurs compléments en ligne,
-            sans conseil. BodyStart Nutrition fait le pari inverse : une{' '}
-            <strong className="font-semibold">vraie boutique physique</strong> en nutrition
-            sportive, au <strong className="font-semibold">8 Rue du Pont des Landes à Coignières</strong>,
-            sur la RN10, un point central facile d&apos;accès depuis tout l&apos;ouest du 78.
+            BodyStart Nutrition est une{' '}
+            <strong className="font-semibold">vraie boutique de compléments alimentaires</strong> au{' '}
+            <strong className="font-semibold">8 Rue du Pont des Landes à Coignières</strong>, au bord de la
+            N10, dans l&apos;agglomération de Saint-Quentin-en-Yvelines. On y vient en 5 à 20&nbsp;minutes
+            depuis la plupart des villes du secteur, hors heures de pointe.
           </p>
           <p className="text-ink/90 text-[16px] leading-[1.7]">
-            Whey, créatine, vitamines, pré-workout : tu repars avec le bon produit pour
-            ton objectif, pas le plus cher. Et si tu es à l&apos;autre bout du département,
-            tout le catalogue est <strong className="font-semibold">livrable dans tout le 78</strong>,
-            ou en <strong className="font-semibold">Click &amp; Collect gratuit</strong> si tu
-            passes près de Coignières.
+            Whey, créatine, vitamines, pré-workout : tu repars avec le bon produit pour ton objectif, pas le
+            plus cher. Commande en ligne et retire en boutique gratuitement, ou fais-toi livrer : la{' '}
+            <strong className="font-semibold">livraison locale</strong> couvre les communes à moins de 10&nbsp;km,
+            et tout le 78 est livré en point relais ou à domicile.
           </p>
         </div>
 
@@ -123,8 +138,12 @@ export default function YvelinesLandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-14">
           {[
             { Icon: MessageCircle, title: 'Une vraie boutique dans le 78', desc: 'Du conseil humain au comptoir, pas un simple entrepôt en ligne.' },
-            { Icon: ShoppingBag, title: 'Click & Collect gratuit', desc: 'Commande en ligne d’où que tu sois, retire à Coignières sans frais.' },
-            { Icon: Truck, title: 'Livraison dans tout le 78', desc: 'Mondial Relay 4,90 €, Colissimo 6,90 €, offert dès 85 €.' },
+            { Icon: ShoppingBag, title: 'Click & Collect gratuit', desc: frenchSpacing(`${PICKUP_PROMISE.court}, ${HORAIRES}.`) },
+            {
+              Icon: Truck,
+              title: 'Livraison dans tout le 78',
+              desc: frenchSpacing(`Livraison locale ${PRIX_LOCALE} à moins de 10 km. ${MONDIAL_RELAY.label} ${PRIX_RELAIS}, Colissimo ${PRIX_COLISSIMO}, offerts ${FREE_SHIPPING_LABEL}.`),
+            },
           ].map(({ Icon, title, desc }) => (
             <div key={title} className="bg-white rounded-2xl border border-spruce/10 p-6">
               <Icon className="w-5 h-5 text-fresh mb-3" />
@@ -134,22 +153,46 @@ export default function YvelinesLandingPage() {
           ))}
         </div>
 
-        {/* Zone de chalandise — villes desservies avec accès réel */}
-        <section className="mb-14">
-          <h2 className="font-display text-[24px] font-extrabold text-spruce tracking-tight mb-3">
-            On dessert tout l&apos;ouest des Yvelines
+        {/* Un bloc par ville : trajet réel, axes, livraison vérifiée dans Shopify */}
+        <section className="mb-14" aria-labelledby="villes">
+          <h2 id="villes" className="font-display text-[24px] font-extrabold text-spruce tracking-tight mb-3">
+            Venir de ta ville : trajet et livraison
           </h2>
           <p className="text-ink-mute text-[15px] leading-[1.65] mb-6 max-w-[680px]">
-            Coignières est idéalement placée sur la RN10, au carrefour de plusieurs communes
-            du 78. Voici les secteurs d&apos;où l&apos;on nous rejoint le plus facilement :
+            {frenchSpacing(
+              `Trajets en voiture depuis la mairie de chaque commune, hors heures de pointe. Partout, le retrait en boutique est gratuit, et immédiat pour les produits en stock, ${HORAIRES}.`
+            )}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {ZONES.map(({ secteur, villes, acces }) => (
-              <div key={secteur} className="bg-white rounded-2xl border border-spruce/10 p-6">
-                <h3 className="font-display font-extrabold text-[15px] text-spruce tracking-tight mb-1.5">{secteur}</h3>
-                <p className="text-[14px] text-ink/90 leading-[1.6] mb-2">{villes}</p>
-                <p className="text-[13px] text-ink-mute leading-[1.55]">{acces}</p>
-              </div>
+            {VILLES_DESSERVIES.map((v) => (
+              <article key={v.nom} className="bg-white rounded-2xl border border-spruce/10 p-6 flex flex-col">
+                <h3 className="font-display font-extrabold text-[17px] text-spruce tracking-tight mb-3">
+                  Depuis {v.nom} <span className="font-sans font-normal text-[13px] text-ink-mute">({v.codePostal})</span>
+                </h3>
+                <ul className="space-y-1.5 mb-3 text-[14px] text-ink/90">
+                  <li className="flex items-start gap-2.5">
+                    <Car className="w-4 h-4 flex-shrink-0 mt-0.5 text-fresh" aria-hidden="true" />
+                    <span>
+                      {formatKm(v.km)}, environ {v.minutes}&nbsp;min hors heures de pointe
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Route className="w-4 h-4 flex-shrink-0 mt-0.5 text-fresh" aria-hidden="true" />
+                    <span>Par {listeFr(v.axes)}</span>
+                  </li>
+                </ul>
+                <p className="text-[14px] text-ink/90 leading-[1.65] mb-3">{frenchSpacing(v.acces)}</p>
+                <p className="text-[13.5px] text-ink-mute leading-[1.6] mb-4">{frenchSpacing(LIVRAISON[v.livraisonLocale])}</p>
+                <a
+                  href={itineraireDepuis(v)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-auto inline-flex min-h-[44px] items-center gap-1.5 self-start text-[14px] font-semibold text-spruce underline underline-offset-4 hover:text-fresh-deep"
+                >
+                  Itinéraire depuis {v.nom}
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                </a>
+              </article>
             ))}
           </div>
           <p className="text-ink-mute text-[14px] leading-[1.65] mt-5 max-w-[680px]">
@@ -166,8 +209,8 @@ export default function YvelinesLandingPage() {
             Tous les rayons, en boutique et en ligne
           </h2>
           <p className="text-ink-mute text-[15px] leading-[1.65] mb-6 max-w-[680px]">
-            Des marques établies (Eric Favre, Nutrimuscle, Applied Nutrition, Dedicated,
-            DY Nutrition…), et le site affiche le stock de la boutique en temps réel :
+            Des marques établies (Nutrimuscle, Applied Nutrition, Dedicated, DY Nutrition…), avec le stock de la
+            boutique affiché en temps réel sur le site :
           </p>
           <div className="flex flex-wrap gap-2.5">
             {CATEGORY_PAGES.map((c) => (
@@ -182,24 +225,24 @@ export default function YvelinesLandingPage() {
           </div>
         </section>
 
-        {/* NAP + accès */}
-        <section className="bg-spruce text-white rounded-2xl p-8 md:p-10 mb-14">
-          <h2 className="font-display text-[22px] font-extrabold tracking-tight mb-6">
+        {/* NAP + accès : carte blanche (jamais de vert en grande surface) */}
+        <section className="bg-white rounded-[20px] shadow-card p-8 md:p-10 mb-14">
+          <h2 className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-6">
             Venir à la boutique depuis le 78
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ul className="space-y-3.5">
-              <li className="flex items-start gap-3 text-[15px]">
-                <MapPin className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
+              <li className="flex items-start gap-3 text-[15px] text-ink">
+                <MapPin className="w-4 h-4 flex-shrink-0 mt-1 text-fresh" />
                 <span>8 Rue du Pont des Landes, 78310 Coignières (RN10)</span>
               </li>
-              <li className="flex items-start gap-3 text-[15px]">
-                <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <span>Lun. au sam. · 11h à 19h</span>
+              <li className="flex items-start gap-3 text-[15px] text-ink">
+                <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-fresh" />
+                <span>Lun. au sam. · 11&nbsp;h à 19&nbsp;h</span>
               </li>
-              <li className="flex items-start gap-3 text-[15px]">
-                <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <a href="tel:+33761847580" className="-my-2.5 inline-flex min-h-[44px] items-center hover:text-white/80 transition-colors">07 61 84 75 80</a>
+              <li className="flex items-start gap-3 text-[15px] text-ink">
+                <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-fresh" />
+                <a href="tel:+33761847580" className="-my-2.5 inline-flex min-h-[44px] items-center hover:text-spruce transition-colors">07 61 84 75 80</a>
               </li>
             </ul>
             <div className="flex flex-col gap-3">
@@ -207,13 +250,13 @@ export default function YvelinesLandingPage() {
                 href={GOOGLE_DIRECTIONS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-white text-spruce font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-white/90 transition-colors"
+                className="btn-primary press"
               >
                 Itinéraire <ArrowRight className="w-4 h-4" />
               </a>
               <Link
                 href="/stores"
-                className="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-white/10 transition-colors"
+                className="btn-secondary press"
               >
                 <Store className="w-4 h-4" /> Tout sur la boutique
               </Link>
