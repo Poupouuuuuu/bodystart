@@ -70,7 +70,7 @@ describe('llms.txt', () => {
     expect(txt).toContain("agglomération de Saint-Quentin-en-Yvelines")
     expect(txt).toContain('- Maurepas (78310) : 4,4 km, environ 7 min, par la N10.')
     expect(txt).toContain('- Magny-les-Hameaux (78114)')
-    expect(txt).toContain('dans une partie de Montigny-le-Bretonneux et Plaisir')
+    expect(txt).toContain('dans une partie de Montigny-le-Bretonneux et de Plaisir')
   })
 
   it('sans produits (Shopify indisponible au build) : pas de section produits', () => {

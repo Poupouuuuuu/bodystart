@@ -36,7 +36,7 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/complements-alimentaires-yvelines',
   title: 'Compléments alimentaires dans les Yvelines (78)',
   description:
-    'Boutique de compléments alimentaires à Coignières, dans l’agglomération de Saint-Quentin-en-Yvelines : trajets depuis 12 villes du 78, retrait immédiat, livraison locale.',
+    'Boutique de compléments alimentaires à Coignières (Saint-Quentin-en-Yvelines) : trajets depuis 12 villes du 78, retrait gratuit, livraison locale.',
 })
 
 const heure = (hhmm: string) => `${Number(hhmm.slice(0, 2))} h`
@@ -53,7 +53,7 @@ const trajet = (nom: string) => {
 }
 
 const LIVRAISON: Record<LivraisonLocale, string> = {
-  oui: `Livraison locale à ${PRIX_LOCALE} : ${DELAI_LOCALE}.`,
+  oui: `Livraison locale à ${PRIX_LOCALE}, du lundi au samedi : ${DELAI_LOCALE}.`,
   partielle: `Livraison locale à ${PRIX_LOCALE} pour les adresses à moins de 10 km de la boutique : elle t’est proposée au paiement si ton adresse est dans la zone. Sinon, ${MONDIAL_RELAY.label} ou Colissimo.`,
   non: `Hors zone de livraison locale : point relais ${MONDIAL_RELAY.label} à ${PRIX_RELAIS} ou Colissimo à ${PRIX_COLISSIMO}, offerts ${FREE_SHIPPING_LABEL}.`,
 }
@@ -70,11 +70,11 @@ const LOCAL_FAQ = [
   },
   {
     q: 'Quelle boutique de nutrition sportive près de Rambouillet, Plaisir ou Chevreuse ?',
-    a: `La boutique BodyStart Nutrition de Coignières est la plus simple d’accès : ${trajet('Rambouillet')} depuis Rambouillet par la N10, ${trajet('Plaisir')} depuis Plaisir et ${trajet('Chevreuse')} depuis Chevreuse par la D13, hors heures de pointe.`,
+    a: `La boutique BodyStart Nutrition de Coignières est à moins de 15 km de chacune : ${trajet('Rambouillet')} depuis Rambouillet par la N10, ${trajet('Plaisir')} depuis Plaisir et ${trajet('Chevreuse')} depuis Chevreuse par la D13, hors heures de pointe.`,
   },
   {
     q: 'Livrez-vous à domicile autour de Coignières ?',
-    a: `Oui. La livraison locale coûte ${PRIX_LOCALE} et arrive ${DELAI_LOCALE}. Elle couvre ${listeFr(villesLivraisonLocale('oui'))}, ainsi qu’une partie de ${listeFr(villesLivraisonLocale('partielle'))}. Ailleurs dans le 78 : point relais ${MONDIAL_RELAY.label} à ${PRIX_RELAIS} ou Colissimo à ${PRIX_COLISSIMO}, offerts ${FREE_SHIPPING_LABEL}.`,
+    a: `Oui. La livraison locale coûte ${PRIX_LOCALE} et arrive du lundi au samedi, ${DELAI_LOCALE}. Elle couvre ${listeFr(villesLivraisonLocale('oui'))}, ainsi qu’une partie de ${villesLivraisonLocale('partielle').join(' et de ')}. Ailleurs dans le 78 : point relais ${MONDIAL_RELAY.label} à ${PRIX_RELAIS} ou Colissimo à ${PRIX_COLISSIMO}, offerts ${FREE_SHIPPING_LABEL}.`,
   },
   {
     q: 'Peut-on commander en ligne et retirer sa commande le jour même ?',
@@ -124,7 +124,7 @@ export default function YvelinesLandingPage() {
             <strong className="font-semibold">vraie boutique de compléments alimentaires</strong> au{' '}
             <strong className="font-semibold">8 Rue du Pont des Landes à Coignières</strong>, au bord de la
             N10, dans l&apos;agglomération de Saint-Quentin-en-Yvelines. On y vient en 5 à 20&nbsp;minutes
-            depuis la plupart des villes de l&apos;ouest du 78.
+            depuis la plupart des villes du secteur, hors heures de pointe.
           </p>
           <p className="text-ink/90 text-[16px] leading-[1.7]">
             Whey, créatine, vitamines, pré-workout : tu repars avec le bon produit pour ton objectif, pas le
@@ -160,7 +160,7 @@ export default function YvelinesLandingPage() {
           </h2>
           <p className="text-ink-mute text-[15px] leading-[1.65] mb-6 max-w-[680px]">
             {frenchSpacing(
-              `Trajets en voiture depuis la mairie de chaque commune, hors heures de pointe. Partout, le retrait en boutique est gratuit : ${PICKUP_PROMISE.long.charAt(0).toLowerCase()}${PICKUP_PROMISE.long.slice(1)}, ${HORAIRES}.`
+              `Trajets en voiture depuis la mairie de chaque commune, hors heures de pointe. Partout, le retrait en boutique est gratuit, et immédiat pour les produits en stock, ${HORAIRES}.`
             )}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -209,8 +209,8 @@ export default function YvelinesLandingPage() {
             Tous les rayons, en boutique et en ligne
           </h2>
           <p className="text-ink-mute text-[15px] leading-[1.65] mb-6 max-w-[680px]">
-            Des marques établies (Nutrimuscle, Eric Favre, Applied Nutrition, Dedicated, DY Nutrition…), et le
-            site affiche le stock de la boutique en temps réel :
+            Des marques établies (Nutrimuscle, Applied Nutrition, Dedicated, DY Nutrition…), avec le stock de la
+            boutique affiché en temps réel sur le site :
           </p>
           <div className="flex flex-wrap gap-2.5">
             {CATEGORY_PAGES.map((c) => (
@@ -238,7 +238,7 @@ export default function YvelinesLandingPage() {
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <span>Lun. au sam. · 11h à 19h</span>
+                <span>Lun. au sam. · 11&nbsp;h à 19&nbsp;h</span>
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />

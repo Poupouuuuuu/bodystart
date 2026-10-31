@@ -114,7 +114,7 @@ export function buildLlmsTxt(allProducts: LlmsProduct[], siteUrl: string): strin
   out.push('## Zone desservie', '')
   out.push(
     `La boutique est à ${STORE.locality}, commune de l'agglomération de Saint-Quentin-en-Yvelines, au bord de la N10. ` +
-      `Livraison locale (${centsLabel(LIVRAISON_LOCALE.priceCents)}, le soir même pour une commande passée avant 17 h) à ${listeFr(villesLivraisonLocale('oui'))}, et dans une partie de ${listeFr(villesLivraisonLocale('partielle'))}. ` +
+      `Livraison locale (${centsLabel(LIVRAISON_LOCALE.priceCents)}, le soir même pour une commande passée avant 17 h) à ${listeFr(villesLivraisonLocale('oui'))}, et dans une partie de ${villesLivraisonLocale('partielle').join(' et de ')}. ` +
       `Retrait gratuit en boutique partout. Temps de trajet en voiture depuis la mairie, hors heures de pointe :`,
     ''
   )

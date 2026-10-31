@@ -93,7 +93,7 @@ export const VILLES_DESSERVIES: VilleDesservie[] = [
     axes: ['la N10'],
     livraisonLocale: 'oui',
     acces:
-      'La N10 fait presque tout le trajet (7 km sur 9) : depuis la place de la République, tu la prends direction Rambouillet et tu sors à Coignières.',
+      "Depuis la place de la République, tu rejoins la N10 : elle fait presque tout le trajet (7 km sur 9) jusqu'à Coignières.",
   },
   {
     nom: 'Rambouillet',
@@ -153,7 +153,7 @@ export const VILLES_DESSERVIES: VilleDesservie[] = [
     axes: ['la D195', 'la D91', 'la D13', 'la N10'],
     livraisonLocale: 'non',
     acces:
-      "La commune la plus éloignée de la liste : environ 27 minutes par la D195, la D91 puis la D13. Si le déplacement est trop long, le point relais ou la livraison à domicile t'évitent le trajet.",
+      "La commune la plus éloignée de la liste : environ 27 minutes hors heures de pointe, par la D195, la D91 puis la D13. Si le déplacement est trop long, le point relais ou la livraison à domicile t'évitent le trajet.",
   },
 ]
 

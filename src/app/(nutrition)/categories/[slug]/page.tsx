@@ -143,7 +143,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <div className="flex items-start gap-3 bg-sage/60 rounded-2xl p-5 mb-10 max-w-[760px]">
             <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5 text-spruce" aria-hidden="true" />
             <p className="text-[14.5px] leading-[1.65] text-ink/90">
-              <strong className="font-semibold text-spruce">En stock à Coignières</strong>
+              <strong className="font-semibold text-spruce">En rayon à Coignières</strong>
               {frenchSpacing(
                 `, dans l'agglomération de Saint-Quentin-en-Yvelines (environ ${minutesDepuis('Trappes')} min depuis Trappes, ${minutesDepuis('Montigny-le-Bretonneux')} min depuis Montigny-le-Bretonneux, hors heures de pointe). ${PICKUP_PROMISE.long}. `
               )}
