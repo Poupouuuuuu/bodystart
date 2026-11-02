@@ -68,7 +68,8 @@ describe('llms.txt', () => {
   it('zone desservie : les 12 communes avec trajet, livraison locale vérifiée', () => {
     expect(txt).toContain('## Zone desservie')
     expect(txt).toContain("agglomération de Saint-Quentin-en-Yvelines")
-    expect(txt).toContain('- Maurepas (78310) : 4,4 km, environ 7 min, par la N10.')
+    expect(txt).toContain('- Maurepas (78310) : 4,4 km, environ 7 min, par la N10. Le magasin FitnessBoutique de Maurepas')
+    expect(txt).toContain('Guide : [Nutrition sportive à Maurepas : où acheter](https://bodystart-nutrition.fr/blog/nutrition-sportive-maurepas-ou-acheter).')
     expect(txt).toContain('- Magny-les-Hameaux (78114)')
     expect(txt).toContain('dans une partie de Montigny-le-Bretonneux et de Plaisir')
   })

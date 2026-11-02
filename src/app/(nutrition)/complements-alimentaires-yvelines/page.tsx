@@ -182,6 +182,14 @@ export default function YvelinesLandingPage() {
                   </li>
                 </ul>
                 <p className="text-[14px] text-ink/90 leading-[1.65] mb-3">{frenchSpacing(v.acces)}</p>
+                {v.guide && (
+                  <p className="text-[14px] text-ink/90 leading-[1.65] mb-3">
+                    {frenchSpacing(v.guide.fait)}{' '}
+                    <Link href={`/blog/${v.guide.slug}`} className="py-3 font-semibold text-spruce underline underline-offset-4 hover:text-fresh-deep">
+                      {frenchSpacing(v.guide.titre)}
+                    </Link>
+                  </p>
+                )}
                 <p className="text-[13.5px] text-ink-mute leading-[1.6] mb-4">{frenchSpacing(LIVRAISON[v.livraisonLocale])}</p>
                 <a
                   href={itineraireDepuis(v)}
