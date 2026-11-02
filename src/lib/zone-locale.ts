@@ -31,6 +31,8 @@ export interface VilleDesservie {
   livraisonLocale: LivraisonLocale
   /** Texte propre à la ville : accès réel, sans formule recopiée d'un bloc à l'autre. */
   acces: string
+  /** Fait local daté et guide qui le détaille (page Yvelines, llms.txt). */
+  guide?: { fait: string; slug: string; titre: string }
 }
 
 /** Communes du secteur, de la plus proche à la plus éloignée en temps de trajet. */
@@ -54,6 +56,12 @@ export const VILLES_DESSERVIES: VilleDesservie[] = [
     livraisonLocale: 'oui',
     acces:
       "La N10 relie directement les deux communes : depuis la place d'Auxois, tu la prends direction Rambouillet et tu la quittes à Coignières, environ 3 km plus loin.",
+    // Registre des entreprises, relevé du 02/11/2026 : SIRET 452 454 440 00622.
+    guide: {
+      fait: 'Le magasin FitnessBoutique de Maurepas (zone de Pariwest) est fermé depuis décembre 2023 : la boutique de nutrition sportive la plus proche est la nôtre, à Coignières.',
+      slug: 'nutrition-sportive-maurepas-ou-acheter',
+      titre: 'Nutrition sportive à Maurepas : où acheter',
+    },
   },
   {
     nom: 'Élancourt',

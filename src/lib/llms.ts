@@ -119,7 +119,8 @@ export function buildLlmsTxt(allProducts: LlmsProduct[], siteUrl: string): strin
     ''
   )
   for (const v of VILLES_DESSERVIES) {
-    out.push(`- ${v.nom} (${v.codePostal}) : ${formatKm(v.km)}, environ ${v.minutes} min, par ${listeFr(v.axes)}.`)
+    const guide = v.guide ? ` ${v.guide.fait} Guide : [${v.guide.titre}](${site}/blog/${v.guide.slug}).` : ''
+    out.push(`- ${v.nom} (${v.codePostal}) : ${formatKm(v.km)}, environ ${v.minutes} min, par ${listeFr(v.axes)}.${guide}`)
   }
   out.push('')
 

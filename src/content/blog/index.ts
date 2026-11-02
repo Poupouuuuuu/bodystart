@@ -20,9 +20,11 @@ import { magnesiumBienfaitsQuelleFormeChoisir } from './magnesium-bienfaits-quel
 import { multivitaminesUtileCommentChoisir } from './multivitamines-utile-comment-choisir'
 import { commentFaireUneSeche } from './comment-faire-une-seche'
 import { wheyFrancaiseLaquelleChoisir } from './whey-francaise-laquelle-choisir'
+import { nutritionSportiveMaurepasOuAcheter } from './nutrition-sportive-maurepas-ou-acheter'
 
 /** Tous les articles publiés (l'ordre d'affichage est géré par date). */
 export const BLOG_ARTICLES: BlogArticle[] = [
+  nutritionSportiveMaurepasOuAcheter,
   wheyFrancaiseLaquelleChoisir,
   commentFaireUneSeche,
   magnesiumBienfaitsQuelleFormeChoisir,
