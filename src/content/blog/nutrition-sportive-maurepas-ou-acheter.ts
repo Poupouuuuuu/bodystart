@@ -17,10 +17,10 @@ import type { BlogArticle } from '@/lib/blog'
 // Maps de l'Agent Digital du 31/10/2026, registre, OSM).
 export const nutritionSportiveMaurepasOuAcheter: BlogArticle = {
   slug: 'nutrition-sportive-maurepas-ou-acheter',
-  title: 'Nutrition sportive à Maurepas : où acheter depuis la fermeture du magasin',
+  title: 'Nutrition sportive à Maurepas : où acheter depuis la fermeture du magasin de Pariwest',
   metaTitle: 'Nutrition sportive à Maurepas : où acheter aujourd’hui',
   metaDescription:
-    'Le magasin FitnessBoutique de Maurepas est fermé depuis décembre 2023. La boutique spécialisée la plus proche : BodyStart Nutrition à Coignières, 4,4 km.',
+    'Le magasin FitnessBoutique de Maurepas est fermé depuis décembre 2023. La boutique de nutrition sportive la plus proche : BodyStart à Coignières, 4,4 km.',
   excerpt:
     "La boutique de nutrition sportive la plus proche de Maurepas est BodyStart Nutrition, à Coignières : 4,4 km par la N10 depuis la mairie, environ 7 minutes hors heures de pointe. Le magasin FitnessBoutique de Maurepas, dans la zone de Pariwest, est fermé depuis décembre 2023.",
   datePublished: '2026-11-02',
@@ -31,7 +31,7 @@ export const nutritionSportiveMaurepasOuAcheter: BlogArticle = {
       blocks: [
         {
           type: 'p',
-          text: "L'établissement FitnessBoutique de la zone de Pariwest (rond-point Laurent Schwartz, à Maurepas) est enregistré comme **fermé au registre des entreprises depuis le 21 décembre 2023** (SIRET 452 454 440 00622). Si tu y achetais tes compléments, voici les options qui existent vraiment autour de Maurepas.",
+          text: "L'établissement FitnessBoutique de la zone de Pariwest (rond-point Laurent Schwartz, à Maurepas) est enregistré comme **fermé au registre des entreprises depuis le 21 décembre 2023** (SIRET 452 454 440 00622). Si tu y achetais tes compléments, voici les options autour de Maurepas.",
         },
         {
           type: 'p',
@@ -46,7 +46,7 @@ export const nutritionSportiveMaurepasOuAcheter: BlogArticle = {
         {
           type: 'list',
           items: [
-            '**BodyStart Nutrition, Coignières** (8 Rue du Pont des Landes) : 4,4 km, environ 7 minutes par la N10. Boutique spécialisée en nutrition sportive, avec du conseil au comptoir.',
+            '**BodyStart Nutrition, Coignières** (8 Rue du Pont des Landes) : 4,4 km, environ 7 minutes par la N10. Boutique spécialisée en nutrition sportive.',
             '**BioTech USA, Montigny-le-Bretonneux** (5 rue Colbert) : 10,4 km, environ 13 minutes. Boutique de la marque BioTech USA.',
             '**FitnessBoutique, Chambourcy** (centre commercial Les Vergers de la Plaine) : 23,1 km, environ 27 minutes. Le magasin de l’enseigne ouvert le plus proche de Maurepas.',
           ],
@@ -61,7 +61,7 @@ export const nutritionSportiveMaurepasOuAcheter: BlogArticle = {
         },
         {
           type: 'p',
-          text: "Dans un magasin de sport généraliste, le rayon nutrition varie d'un magasin à l'autre : vérifie avant de te déplacer si tu cherches un produit précis.",
+          text: "Si tu cherches un produit précis, vérifie qu'il est en stock avant de te déplacer, quel que soit le magasin.",
         },
       ],
     },
