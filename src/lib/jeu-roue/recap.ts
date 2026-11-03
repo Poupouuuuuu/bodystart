@@ -9,7 +9,7 @@
 // - le stock des lots à Coignières (même lecture que le tirage).
 
 import { shopifyAdminFetch } from '@/lib/shopify/client'
-import { LOTS, lotById, lotLabelRemise, type Lot, type LotId } from './lots'
+import { LOTS, LOTS_RETIRES, estRetire, lotById, lotLabelRemise, type Lot, type LotId } from './lots'
 import { OPTIN_TAG, PARTICIPANT_TAG, lotsAvailability, readResult } from './shopify'
 
 const API = { apiVersion: '2026-04' }
@@ -55,12 +55,14 @@ export interface RecapData {
 /**
  * « Jeu roue : <libellé du lot> : ROUE-XXXXXX » → lot (titre posé par
  * discountInput). Libellé actuel, avec ou sans parfums, ou ancien libellé du
- * lot (codes créés avant un changement, ex. Crunch Bar le 09/10/2026).
+ * lot (codes créés avant un changement, ex. Crunch Bar le 09/10/2026). Lots
+ * retirés compris : leurs codes restent valables jusqu'à leur date.
  */
 export function lotFromTitle(title: string): LotId | null {
   const label = title.split(' : ')[1]
+  const tous: Lot[] = [...LOTS, ...LOTS_RETIRES]
   return (
-    LOTS.find((l) => l.label === label || lotLabelRemise(l) === label || l.anciensLibelles?.includes(label))?.id ??
+    tous.find((l) => l.label === label || lotLabelRemise(l) === label || l.anciensLibelles?.includes(label))?.id ??
     null
   )
 }
@@ -260,7 +262,11 @@ export function buildRecap(data: RecapData, now: Date): Recap {
   const byCode = new Map(codes.map((c) => [c.code, c]))
 
   const weekCodes = codes.filter((c) => inWindow(c.createdAt, from, to))
-  const byLot = LOTS.map((lot) => ({ lot, count: weekCodes.filter((c) => c.lotId === lot.id).length }))
+  // Lots du jeu, puis lots retirés qui ont encore eu des codes dans la fenêtre
+  // (semaine du retrait).
+  const byLot = [...LOTS, ...LOTS_RETIRES]
+    .map((lot: Lot) => ({ lot, count: weekCodes.filter((c) => c.lotId === lot.id).length }))
+    .filter((l) => !estRetire(l.lot) || l.count > 0)
 
   const weekPlayers = data.participants.filter((p) => inWindow(p.playedAt, from, to))
 
@@ -370,7 +376,9 @@ function sections(r: Recap): Array<{ title: string; lines: Array<{ text: string;
       title: 'Lots tirés cette semaine',
       lines: w.byLot
         .filter((l) => l.count > 0)
-        .map((l) => ({ text: `${l.lot.wheelLabel} : ${l.count} (chance : ${l.lot.weight} %)` })),
+        .map((l) => ({
+          text: `${l.lot.wheelLabel} : ${l.count} (${estRetire(l.lot) ? 'lot retiré du jeu' : `chance : ${l.lot.weight} %`})`,
+        })),
     })
   }
 

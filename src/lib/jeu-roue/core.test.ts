@@ -8,7 +8,7 @@ import {
   CODE_ALPHABET,
   noteLine,
 } from './core'
-import { LOTS, type LotId } from './lots'
+import { LOTS, lotById, type LotId } from './lots'
 
 const ALL = new Set<LotId>(LOTS.map((l) => l.id))
 
@@ -62,10 +62,10 @@ describe('generateCode', () => {
 
 describe('pickLot', () => {
   it('respecte les poids : chaque tranche du tirage tombe sur le bon lot', () => {
-    // Poids cumulés : canette 0-37, crunch 38-62, shaker 63-82, bon 83-97, créatine 98, whey 99
+    // Poids cumulés (03/11/2026) : canette 0-39, barre 40-64, shaker 65-84, bon 85-99
     const at = (n: number) => pickLot(LOTS, ALL, () => n).id
-    expect([at(0), at(37), at(38), at(62), at(63), at(82), at(83), at(97), at(98), at(99)]).toEqual([
-      'canette-abe', 'canette-abe', 'crunch-bar', 'crunch-bar', 'shaker', 'shaker', 'bon-5', 'bon-5', 'creatine', 'whey',
+    expect([at(0), at(39), at(40), at(64), at(65), at(84), at(85), at(99)]).toEqual([
+      'canette-abe', 'canette-abe', 'crunch-bar', 'crunch-bar', 'shaker', 'shaker', 'bon-5', 'bon-5',
     ])
   })
 
@@ -77,10 +77,10 @@ describe('pickLot', () => {
     const sansCanette = new Set<LotId>([...ALL].filter((id) => id !== 'canette-abe'))
     let max = 0
     const seen = new Set<string>()
-    for (let n = 0; n < 62; n++) {
+    for (let n = 0; n < 60; n++) {
       seen.add(pickLot(LOTS, sansCanette, (m) => { max = m; return n }).id)
     }
-    expect(max).toBe(62)
+    expect(max).toBe(60)
     expect(seen.has('canette-abe')).toBe(false)
     expect(pickLot(LOTS, new Set<LotId>(['bon-5']), () => 0).id).toBe('bon-5')
   })
@@ -97,8 +97,8 @@ describe('noteLine', () => {
       'Jeu roue 07/10/2026 : Un shaker, code ROUE-ABC234'
     )
   })
-  it('lot à parfums : la note rappelle les parfums couverts (lue en caisse)', () => {
-    const lot = LOTS.find((l) => l.id === 'whey')!
+  it('lot à parfums (whey, retirée du jeu le 03/11/2026) : la note rappelle les parfums couverts (lue en caisse)', () => {
+    const lot = lotById('whey')!
     expect(noteLine({ lotId: 'whey', code: 'ROUE-ABC234', endsAt: '', playedAt: '2026-10-09T10:00:00Z' }, lot)).toBe(
       'Jeu roue 09/10/2026 : Une whey Protimuscle 1 kg au choix : Chocolat, Vanille, Choco-cookie ou Fraise, code ROUE-ABC234'
     )

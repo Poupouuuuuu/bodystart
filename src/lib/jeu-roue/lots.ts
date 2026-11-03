@@ -1,9 +1,10 @@
 // ============================================================
 // Jeu de la roue en boutique : LOTS (fichier unique à modifier)
 // ============================================================
-// - weight : poids du tirage (38 + 25 + 20 + 15 + 1 + 1 = 100 → % de chance).
+// - weight : poids du tirage (40 + 25 + 20 + 15 = 100 → % de chance).
 //   Le 21/10/2026 : créatine 4 → 1 et canette 35 → 38 (4 créatines sur 71
-//   codes depuis le 08/10).
+//   codes depuis le 08/10). Le 03/11/2026 : créatine et whey retirées du jeu
+//   (LOTS_RETIRES), canette 38 → 40.
 // - type 'product' : un article offert. La remise vaut le prix d'une unité
 //   (lu en direct dans Shopify au moment du tirage, `amount` sert de repli),
 //   limitée aux produits / variantes ciblés, appliquée une seule fois.
@@ -11,9 +12,15 @@
 // - type 'order' : remise sur la commande (`amount` €, dès `minSubtotal` €).
 // - id : sert aussi d'étiquette client Shopify (`jeu-roue-<id>`) : ne pas
 //   renommer un lot déjà joué, en ajouter un nouveau plutôt.
+// - Retirer un lot : le déplacer de LOTS vers LOTS_RETIRES (jamais le
+//   supprimer tant que ses codes peuvent servir, voir plus bas).
 // IDs vérifiés dans Shopify le 07/10/2026.
 
-export type LotId = 'canette-abe' | 'crunch-bar' | 'shaker' | 'bon-5' | 'creatine' | 'whey'
+/** Lots du tirage, sur la roue. */
+export type LotIdActif = 'canette-abe' | 'crunch-bar' | 'shaker' | 'bon-5'
+/** Lots retirés du jeu : connus seulement pour les codes déjà émis. */
+export type LotIdRetire = 'creatine' | 'whey'
+export type LotId = LotIdActif | LotIdRetire
 
 /** Parfum couvert par un lot (une variante ciblée). */
 export interface Parfum {
@@ -24,8 +31,8 @@ export interface Parfum {
   court: string
 }
 
-export interface Lot {
-  id: LotId
+export interface Lot<Id extends LotId = LotId> {
+  id: Id
   /** Libellé complet : écran résultat, note client, titre de la remise. */
   label: string
   /** Libellé court affiché sur la roue (2 lignes max). */
@@ -55,12 +62,13 @@ export interface Lot {
   minSubtotal?: number
 }
 
-export const LOTS: Lot[] = [
+/** Lots du tirage, dans l'ordre de la roue et du bloc des chances de /jeu. */
+export const LOTS: Lot<LotIdActif>[] = [
   {
     id: 'canette-abe',
     label: 'Une canette ABE Energy',
     wheelLabel: 'Canette ABE',
-    weight: 38,
+    weight: 40,
     type: 'product',
     products: ['gid://shopify/Product/10927490892118'],
     amount: 3.1,
@@ -101,6 +109,10 @@ export const LOTS: Lot[] = [
     amount: 6.9,
   },
   {
+    // Janvier 2027 (programme de fidélité) : ce lot pourra devenir « 5 € dans
+    // la cagnotte ». Marche à suivre : passer ce lot dans LOTS_RETIRES (ses
+    // codes restent valables), ajouter ici un nouveau lot (nouvel id, nouveau
+    // type traité dans shopify.ts à la place du code promo), même poids.
     id: 'bon-5',
     label: '5 € dès 30 € d’achat',
     wheelLabel: '5 € offerts',
@@ -109,11 +121,21 @@ export const LOTS: Lot[] = [
     amount: 5,
     minSubtotal: 30,
   },
+]
+
+/**
+ * Lots retirés du jeu le 03/11/2026 (décision de la direction, transmise par
+ * l'Agent Digital) : ni tirés, ni sur la roue, ni dans le bloc des chances.
+ * Gardés pour les codes ROUE déjà émis, valables jusqu'à leur date : écran
+ * du gagnant qui revient sur /jeu (résultat lu dans son métachamp), note
+ * client, récap hebdo (titre de la remise → lot). Poids 0.
+ */
+export const LOTS_RETIRES: Lot<LotIdRetire>[] = [
   {
     id: 'creatine',
     label: 'Une créatine Dedicated 500 g',
     wheelLabel: 'Créatine',
-    weight: 1,
+    weight: 0,
     type: 'product',
     variants: ['gid://shopify/ProductVariant/53981935206742'],
     amount: 36.9,
@@ -122,7 +144,7 @@ export const LOTS: Lot[] = [
     id: 'whey',
     label: 'Une whey Protimuscle 1 kg',
     wheelLabel: 'Whey',
-    weight: 1,
+    weight: 0,
     type: 'product',
     variants: [
       'gid://shopify/ProductVariant/54095546483030',
@@ -152,8 +174,27 @@ export const CODE_VALIDITY_DAYS = 30
 export const GOOGLE_REVIEW_URL =
   'https://search.google.com/local/writereview?placeid=ChIJR-Jgxiyd5kcRRb2BKNRdFNM'
 
+/** Lot du jeu ou lot retiré (codes déjà émis). */
 export function lotById(id: string): Lot | undefined {
-  return LOTS.find((l) => l.id === id)
+  return LOTS.find((l) => l.id === id) ?? LOTS_RETIRES.find((l) => l.id === id)
+}
+
+export function estRetire(lot: Lot): boolean {
+  return (LOTS_RETIRES as Lot[]).includes(lot)
+}
+
+/** Nombre minimal de parts sur la roue : en dessous, les lots y figurent plusieurs fois. */
+const PARTS_MIN = 8
+
+/**
+ * Parts de la roue, sens horaire depuis le pointeur : la suite des lots,
+ * répétée jusqu'à PARTS_MIN parts au moins (4 lots → 8 parts). Chaque part
+ * est un lot du tirage : aucune ne montre un lot impossible à gagner.
+ */
+export function partsDeRoue<L extends Lot>(lots: readonly L[]): L[] {
+  if (lots.length === 0) return []
+  const tours = Math.ceil(PARTS_MIN / lots.length)
+  return Array.from({ length: tours }, () => lots).flat()
 }
 
 /** « A », « A ou B », « A, B ou C ». */

@@ -61,6 +61,9 @@ describe('readResult', () => {
     const ok = { jeuRoue: { value: JSON.stringify({ lotId: 'shaker', code: 'ROUE-ABC234', endsAt: 'e', playedAt: 'p' }) } }
     expect(readResult(ok)).toEqual({ lotId: 'shaker', code: 'ROUE-ABC234', endsAt: 'e', playedAt: 'p' })
     expect(readResult({ jeuRoue: { value: '{"lotId":"inconnu","code":"ROUE-ABC234"}' } })).toBeNull()
+    // Lot retiré du jeu (03/11/2026) : le gagnant qui revient voit toujours son code
+    const retire = { jeuRoue: { value: JSON.stringify({ lotId: 'creatine', code: 'ROUE-CRE234', endsAt: 'e', playedAt: 'p' }) } }
+    expect(readResult(retire)?.lotId).toBe('creatine')
     expect(readResult({ jeuRoue: { value: 'pas du json' } })).toBeNull()
     expect(readResult({ jeuRoue: null })).toBeNull()
   })
@@ -78,20 +81,18 @@ describe('lotsAvailability', () => {
         ] } },
         { __typename: 'Product', id: 'gid://shopify/Product/10832196010326', variants: { nodes: [
           { id: 'd', price: '2.90', inventoryItem: level(4) },
-          { id: 'e', price: '2.90', inventoryItem: level(3) },
+          { id: 'e', price: '3.20', inventoryItem: level(3) },
         ] } },
         { __typename: 'Product', id: 'gid://shopify/Product/11139051290966', variants: { nodes: [{ id: 'c', price: '6.90', inventoryItem: level(53) }] } },
-        { __typename: 'ProductVariant', id: 'gid://shopify/ProductVariant/53981935206742', price: '36.90', inventoryItem: { inventoryLevel: null } },
-        { __typename: 'ProductVariant', id: 'gid://shopify/ProductVariant/54095546483030', price: '44.90', inventoryItem: level(6) },
-        { __typename: 'ProductVariant', id: 'gid://shopify/ProductVariant/54095546515798', price: '46.90', inventoryItem: level(0) },
       ],
     })
     const { available, prices, stock } = await lotsAvailability()
-    expect([...available].sort()).toEqual(['bon-5', 'crunch-bar', 'shaker', 'whey'])
-    // Unités en boutique par lot article (récap hebdo) : pas d'entrée pour le bon
-    expect(Object.fromEntries(stock)).toEqual({ 'canette-abe': 0, 'crunch-bar': 7, shaker: 53, creatine: 0, whey: 6 })
-    expect(prices.get('whey')).toBe(46.9)
-    expect(prices.get('crunch-bar')).toBe(2.9)
+    expect([...available].sort()).toEqual(['bon-5', 'crunch-bar', 'shaker'])
+    // Unités en boutique par lot article (récap hebdo) : pas d'entrée pour le
+    // bon ni pour les lots retirés (créatine, whey : plus lus depuis le 03/11/2026)
+    expect(Object.fromEntries(stock)).toEqual({ 'canette-abe': 0, 'crunch-bar': 7, shaker: 53 })
+    expect(prices.get('crunch-bar')).toBe(3.2)
+    expect(prices.has('whey')).toBe(false)
     expect(adminFetch.mock.calls[0][1].loc).toBe('gid://shopify/Location/119350657366')
     expect(adminFetch.mock.calls[0][2]).toEqual({ apiVersion: '2026-04' })
   })
