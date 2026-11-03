@@ -79,7 +79,7 @@ const FAQ = [
   },
   {
     q: 'Où se trouve la boutique ?',
-    a: 'BodyStart Nutrition, 8 Rue du Pont des Landes, 78310 Coignières, à 2 minutes de la N10, parking gratuit. Ouvert du lundi au samedi, de 11h à 19h (fermé le dimanche).',
+    a: 'BodyStart Nutrition, 8 Rue du Pont des Landes, 78310 Coignières, à 2 minutes de la N10, parking gratuit. Ouvert du lundi au samedi, de 11\u00a0h à 19\u00a0h, jours fériés compris (fermé le dimanche).',
   },
 ] as const
 

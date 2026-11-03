@@ -92,7 +92,7 @@ export function buildLlmsTxt(allProducts: LlmsProduct[], siteUrl: string): strin
     `BodyStart Nutrition est une boutique physique située ${STORE.streetAddress}, ${STORE.postalCode} ${STORE.locality} (Yvelines), anciennement BodyFit Coignières, doublée du site ${site.replace(/^https?:\/\//, '')}. ` +
       `On y trouve des compléments alimentaires de plusieurs marques${marques.length ? ` (${marques.join(', ')}…)` : ''} : protéines (whey, isolat, gainer), créatine, glucides, acides aminés, barres protéinées et produits santé (vitamines, magnésium, oméga 3, collagène). ` +
       `Retrait gratuit en boutique (Click & Collect), livraison en France (${MONDIAL_RELAY.label} ${centsLabel(MONDIAL_RELAY.priceCents)}, ${COLISSIMO.label} ${centsLabel(COLISSIMO.priceCents)}, offerte dès ${centsLabel(FREE_SHIPPING_THRESHOLD_CENTS)}). ` +
-      `Ouvert du lundi au samedi, de 11 h à 19 h, fermé le dimanche.`,
+      `Ouvert du lundi au samedi, de 11 h à 19 h, jours fériés compris ; fermé le dimanche.`,
     ''
   )
 
@@ -167,7 +167,7 @@ export function buildLlmsTxt(allProducts: LlmsProduct[], siteUrl: string): strin
   out.push('## Infos pratiques', '')
   out.push(
     `- Boutique : ${STORE.name}, ${STORE.streetAddress}, ${STORE.postalCode} ${STORE.locality}, ${STORE.phoneDisplay}.`,
-    '- Horaires : du lundi au samedi, de 11 h à 19 h, fermé le dimanche. Conseil gratuit en boutique.',
+    '- Horaires : du lundi au samedi, de 11 h à 19 h, jours fériés compris ; fermé le dimanche, même quand un jour férié tombe un dimanche. Conseil gratuit en boutique.',
     `- Click & Collect gratuit, livraison en France, offerte dès ${centsLabel(FREE_SHIPPING_THRESHOLD_CENTS)}.`
   )
   return out.join('\n') + '\n'

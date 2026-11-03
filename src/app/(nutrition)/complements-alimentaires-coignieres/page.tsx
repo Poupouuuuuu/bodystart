@@ -23,7 +23,7 @@ export const metadata: Metadata = buildPageMetadata({
 const LOCAL_FAQ = [
   {
     q: 'Où acheter des compléments alimentaires près de Coignières ?',
-    a: 'BodyStart Nutrition est une boutique spécialisée au 8 Rue du Pont des Landes, 78310 Coignières, dans la zone commerciale. On y trouve protéines, créatine, pré-workout, vitamines et brûleurs, avec du conseil gratuit, du lundi au samedi de 11h à 19h (fermé le dimanche).',
+    a: 'BodyStart Nutrition est une boutique spécialisée au 8 Rue du Pont des Landes, 78310 Coignières, dans la zone commerciale. On y trouve protéines, créatine, pré-workout, vitamines et brûleurs, avec du conseil gratuit, du lundi au samedi de 11\u00a0h à 19\u00a0h, jours fériés compris (fermé le dimanche).',
   },
   {
     q: 'Le Click & Collect est-il gratuit ?',
@@ -149,7 +149,7 @@ export default function CoignieresLandingPage() {
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />
-                <span>Lun. au sam. · 11h à 19h</span>
+                <span>Lun. au sam. · 11&nbsp;h à 19&nbsp;h, jours fériés compris</span>
               </li>
               <li className="flex items-start gap-3 text-[15px]">
                 <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-white/70" />

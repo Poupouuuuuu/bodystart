@@ -659,7 +659,7 @@ export default function Header({ saison = [], themeServeur = null, apercu = null
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
                 {STORE.address}, Coignières
               </p>
-              <p className="mt-1 pl-6 text-[14px] text-ink-mute">Du lundi au samedi, 11 h à 19 h</p>
+              <p className="mt-1 pl-6 text-[14px] text-ink-mute">Du lundi au samedi, 11&nbsp;h à 19&nbsp;h, jours fériés compris</p>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <a
                   href={STORE_TEL}
