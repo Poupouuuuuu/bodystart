@@ -36,6 +36,8 @@ export default function BoutiqueConseil() {
         {resumeHoraires(boutique.hours).map((ligne) => (
           <li key={ligne}>{ligne}</li>
         ))}
+        {/* Décision du 02/11/2026 : ouvert les jours fériés aux horaires habituels. */}
+        <li>Ouvert les jours fériés</li>
       </ul>
       <div className="mt-5 grid grid-cols-2 gap-3">
         <a

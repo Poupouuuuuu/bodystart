@@ -62,7 +62,7 @@ const LIVRAISON: Record<LivraisonLocale, string> = {
 const LOCAL_FAQ = [
   {
     q: 'Où trouver une boutique de compléments alimentaires dans les Yvelines ?',
-    a: `BodyStart Nutrition est une boutique physique de nutrition sportive au ${STORE.streetAddress}, ${STORE.postalCode} ${STORE.locality}, au bord de la N10. Elle est ouverte ${HORAIRES}, et on y trouve whey, créatine, vitamines et pré-workout, avec du conseil gratuit au comptoir.`,
+    a: `BodyStart Nutrition est une boutique physique de nutrition sportive au ${STORE.streetAddress}, ${STORE.postalCode} ${STORE.locality}, au bord de la N10. Elle est ouverte ${HORAIRES}, jours fériés compris, et on y trouve whey, créatine, vitamines et pré-workout, avec du conseil gratuit au comptoir.`,
   },
   {
     q: 'Y a-t-il un magasin de compléments alimentaires à Saint-Quentin-en-Yvelines ?',
@@ -246,7 +246,7 @@ export default function YvelinesLandingPage() {
               </li>
               <li className="flex items-start gap-3 text-[15px] text-ink">
                 <Clock className="w-4 h-4 flex-shrink-0 mt-1 text-fresh" />
-                <span>Lun. au sam. · 11&nbsp;h à 19&nbsp;h</span>
+                <span>Lun. au sam. · 11&nbsp;h à 19&nbsp;h, jours fériés compris</span>
               </li>
               <li className="flex items-start gap-3 text-[15px] text-ink">
                 <Phone className="w-4 h-4 flex-shrink-0 mt-1 text-fresh" />

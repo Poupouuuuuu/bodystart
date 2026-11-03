@@ -65,6 +65,10 @@ describe('llms.txt', () => {
     expect(txt).toContain('[Guide conseil](https://bodystart-nutrition.fr/conseil)')
   })
 
+  it('horaires : ouvert les jours fériés, fermé le dimanche (décision du 02/11/2026)', () => {
+    expect(txt).toContain('du lundi au samedi, de 11 h à 19 h, jours fériés compris ; fermé le dimanche, même quand un jour férié tombe un dimanche.')
+  })
+
   it('zone desservie : les 12 communes avec trajet, livraison locale vérifiée', () => {
     expect(txt).toContain('## Zone desservie')
     expect(txt).toContain("agglomération de Saint-Quentin-en-Yvelines")

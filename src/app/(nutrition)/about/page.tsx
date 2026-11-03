@@ -149,7 +149,7 @@ export default function AboutPage() {
             </li>
             <li className="flex items-start gap-3 text-[15px] text-ink">
               <Clock className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />
-              <span>Ouvert du lundi au samedi · 11h à 19h</span>
+              <span>Ouvert du lundi au samedi · 11&nbsp;h à 19&nbsp;h, jours fériés compris</span>
             </li>
             <li className="flex items-start gap-3 text-[15px] text-ink">
               <Phone className="w-4 h-4 text-spruce flex-shrink-0 mt-1" />

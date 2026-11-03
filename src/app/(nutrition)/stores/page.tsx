@@ -35,7 +35,9 @@ const ADDRESS_LINE = '8 Rue du Pont des Landes, 78310 Coignières'
 const PHONE_DISPLAY = '07 61 84 75 80'
 const PHONE_TEL = '+33761847580'
 const EMAIL = CONTACT_EMAIL
-const HOURS_DISPLAY = 'Du lundi au samedi · 11h à 19h (fermé le dimanche)'
+// Ouvert aussi les jours fériés, 11 h à 19 h ; seul le dimanche est fermé,
+// même quand un férié tombe un dimanche (décision du 02/11/2026).
+const HOURS_DISPLAY = 'Du lundi au samedi · 11\u00a0h à 19\u00a0h, jours fériés compris (fermé le dimanche)'
 const MAPS_DIRECTIONS = GOOGLE_DIRECTIONS_URL
 const MAPS_EMBED =
   'https://maps.google.com/maps?q=48.736836,1.909592&z=17&ie=UTF8&iwloc=&output=embed'

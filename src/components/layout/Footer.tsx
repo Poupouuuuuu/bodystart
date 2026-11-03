@@ -222,7 +222,7 @@ export default function Footer({ theme = null }: { theme?: ThemeSaison | null })
                 </li>
                 <li className="flex items-center gap-3 text-sm text-ink-mute">
                   <Clock className="w-4 h-4 text-spruce flex-shrink-0" />
-                  <span>Du lundi au samedi, 11h à 19h</span>
+                  <span>Du lundi au samedi, 11&nbsp;h à 19&nbsp;h, jours fériés compris</span>
                 </li>
               </ul>
             </div>
