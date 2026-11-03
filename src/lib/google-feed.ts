@@ -7,8 +7,9 @@
  * l'Admin additionne les dépôts). Règles anti-suspension :
  *   - aucun item sans prix, sans image ou sans lien ;
  *   - prix = prix Shopify (le même que la fiche produit → concordance) ;
- *   - exclusion des produits taggés `exclu-google` et des non-publiés
- *     online store (onlineStoreUrl null).
+ *   - exclusion des produits taggés `exclu-google`, des non-publiés
+ *     online store (onlineStoreUrl null) et des fiches retirées du site
+ *     (absentes de l'API Storefront : leur lien redirige, 03/11/2026).
  */
 
 // ─── Types (sous-ensemble Admin API utilisé) ───
@@ -36,6 +37,12 @@ export interface FeedProduct {
   productType: string | null
   tags: string[]
   onlineStoreUrl: string | null
+  /**
+   * Publié sur le canal du site (au moins une variante lue par l'API
+   * Storefront). false = fiche retirée du site : son URL redirige (métachamp
+   * bodystart.redirections_produits) ou répond 404, Merchant la refuserait.
+   */
+  publieSurLeSite?: boolean
   featuredImage: { url: string } | null
   images: { nodes: { url: string }[] }
   variants: { nodes: FeedVariant[] }
@@ -133,7 +140,7 @@ export interface FeedItemCounters {
   items: number
   skippedNoImage: number
   skippedNoPrice: number
-  skippedProducts: number // exclu-google / non publié / sans handle
+  skippedProducts: number // exclu-google / non publié (online store ou site) / sans handle
 }
 
 export function buildGoogleFeedXml(
@@ -146,7 +153,7 @@ export function buildGoogleFeedXml(
 
   for (const p of products) {
     // Exclusions produit (le filtre query-side existe aussi ; ceinture+bretelles)
-    if (!p.handle || !p.onlineStoreUrl || p.tags.includes(EXCLUDE_TAG)) {
+    if (!p.handle || !p.onlineStoreUrl || p.publieSurLeSite === false || p.tags.includes(EXCLUDE_TAG)) {
       counters.skippedProducts++
       continue
     }

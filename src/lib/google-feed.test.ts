@@ -135,12 +135,16 @@ describe('buildGoogleFeedXml', () => {
     expect(xml).toContain('<g:identifier_exists>no</g:identifier_exists>')
   })
 
-  it('exclusions produit : tag exclu-google, non publié', () => {
+  it('exclusions produit : tag exclu-google, non publié online store, retiré du site', () => {
     const tagged = makeProduct({ tags: ['exclu-google'] })
     const unpublished = makeProduct({ onlineStoreUrl: null })
-    const { counters } = buildGoogleFeedXml([tagged, unpublished], SITE)
+    // Retiré de BodyStart Site mais encore sur Online Store (French Pump, 03/11/2026) :
+    // son URL redirige, il ne doit plus partir chez Google.
+    const horsSite = makeProduct({ publieSurLeSite: false })
+    const { counters } = buildGoogleFeedXml([tagged, unpublished, horsSite], SITE)
     expect(counters.items).toBe(0)
-    expect(counters.skippedProducts).toBe(2)
+    expect(counters.skippedProducts).toBe(3)
+    expect(buildGoogleFeedXml([makeProduct({ publieSurLeSite: true })], SITE).counters.items).toBe(1)
   })
 
   it('skip variante sans image / sans prix', () => {
