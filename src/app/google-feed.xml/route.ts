@@ -2,7 +2,9 @@
  * GET /google-feed.xml — flux produit Google Merchant.
  *
  * - Source : Admin API (status ACTIVE, publié online store, hors tag
- *   `exclu-google`), paginée par curseur → tout le catalogue.
+ *   `exclu-google`), paginée par curseur → tout le catalogue. Une fiche
+ *   retirée du site (canal BodyStart Site) mais encore sur Online Store est
+ *   écartée : absente de l'API Storefront, son URL redirige (03/11/2026).
  * - Disponibilité : API Storefront (emplacements des ventes en ligne). Le
  *   stock Admin additionne les dépôts : un produit présent seulement au
  *   dépôt était annoncé « in_stock » à Google.
@@ -12,7 +14,7 @@
  */
 import { shopifyAdminFetch } from '@/lib/shopify/client'
 import { buildGoogleFeedXml, EXCLUDE_TAG, type FeedProduct, type FeedVariant } from '@/lib/google-feed'
-import { disponibiliteEnLigne } from '@/lib/shopify/disponibilite'
+import { etatEnLigne } from '@/lib/shopify/disponibilite'
 
 export const revalidate = 3600
 export const runtime = 'nodejs'
@@ -68,10 +70,11 @@ async function fetchAllProducts(): Promise<FeedProduct[]> {
     if (!data.products.pageInfo.hasNextPage) break
     cursor = data.products.pageInfo.endCursor
   }
-  const dispo = await disponibiliteEnLigne(all.flatMap((p) => p.variants.nodes.map((v) => v.id)))
+  const etat = await etatEnLigne(all.flatMap((p) => p.variants.nodes.map((v) => v.id)))
   return all.map((p) => ({
     ...p,
-    variants: { nodes: p.variants.nodes.map((v) => ({ ...v, availableForSale: dispo[v.id] === true })) },
+    publieSurLeSite: p.variants.nodes.some((v) => etat[v.id]?.publiee === true),
+    variants: { nodes: p.variants.nodes.map((v) => ({ ...v, availableForSale: etat[v.id]?.disponible === true })) },
   }))
 }
 
