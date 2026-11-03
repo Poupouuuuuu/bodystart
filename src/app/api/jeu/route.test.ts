@@ -115,6 +115,7 @@ describe('POST /api/jeu', () => {
     expect(shop.markParticipant).not.toHaveBeenCalled()
   })
 
+  // Whey retirée du jeu le 03/11/2026 : un résultat déjà enregistré reste réaffiché.
   it('spin : réservation déjà finalisée par une requête parallèle → même lot réaffiché', async () => {
     shop.getCustomerByEmail.mockResolvedValue(customer())
     shop.claimSpin.mockResolvedValue({ status: 'played', result: { lotId: 'whey', code: 'ROUE-WWW222', endsAt: 'e', playedAt: 'p' } })

@@ -43,8 +43,6 @@ const DATA: RecapData = {
     ['canette-abe', 2],
     ['crunch-bar', 10],
     ['shaker', 0],
-    ['creatine', 1],
-    ['whey', 8],
   ]),
 }
 
@@ -82,8 +80,9 @@ describe('buildRecap', () => {
 
   it('semaine : participations, lots, case offres, codes utilisés, valeur', () => {
     expect(r.week.plays).toBe(4)
+    // Lot retiré (créatine, 03/11/2026) listé seulement s'il a eu un code dans la semaine
     expect(Object.fromEntries(r.week.byLot.map((l) => [l.lot.id, l.count]))).toEqual({
-      'canette-abe': 1, 'crunch-bar': 0, shaker: 1, 'bon-5': 1, creatine: 1, whey: 0,
+      'canette-abe': 1, 'crunch-bar': 0, shaker: 1, 'bon-5': 1, creatine: 1,
     })
     expect([r.week.optIns, r.week.dated]).toEqual([2, 4])
     // Triés par date d'utilisation, lot rattaché
@@ -114,8 +113,6 @@ describe('buildRecap', () => {
       ['canette-abe', 2, 'bas'],
       ['crunch-bar', 10, 'ok'],
       ['shaker', 0, 'epuise'],
-      ['creatine', 1, 'bas'],
-      ['whey', 8, 'ok'],
     ])
   })
 
@@ -127,7 +124,7 @@ describe('buildRecap', () => {
       ),
       stock: new Map([['canette-abe', 14], ['crunch-bar', 15]]),
     }
-    // 40 tirages : 15,2 canettes attendues (38 %, seuil 16), 10 barres (25 %)
+    // 40 tirages : 16 canettes attendues (40 %, seuil 16), 10 barres (25 %)
     const s = buildRecap(busy, NOW).stock!
     expect(s.find((l) => l.lot.id === 'canette-abe')?.status).toBe('bas')
     expect(s.find((l) => l.lot.id === 'crunch-bar')?.status).toBe('ok')
@@ -150,12 +147,12 @@ describe('renderRecapEmail', () => {
       'Participations : 4',
       'Case « offres par e-mail et SMS » cochée : 2 sur 4 (50 %)',
       'Codes utilisés : 2 (1 en caisse, 1 en ligne)',
-      'Canette ABE : 1 (chance : 38 %)',
+      'Canette ABE : 1 (chance : 40 %)',
+      'Créatine : 1 (lot retiré du jeu)',
       'ROUE-AAA222 · Canette ABE · caisse · commande #1900',
       'Codes utilisés : 3 sur 6 (50 %) : 1 en caisse, 1 en ligne, 1 canal inconnu',
       'Codes encore valables : 2 · expirés sans usage : 1',
       'Shaker : 0 · épuisé : retiré du tirage',
-      'Créatine : 1 · à réassortir',
     ]) {
       expect(mail.text).toContain(s)
       expect(mail.html).toContain(nbsp(s.replace(/&/g, '&amp;')))

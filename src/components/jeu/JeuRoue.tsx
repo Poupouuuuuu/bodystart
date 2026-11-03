@@ -13,7 +13,7 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode, type RefObject } from 'react'
 import { AlertCircle, CheckCircle2, ChevronDown, Loader2, Lock } from 'lucide-react'
 import Wheel, { type WheelSegment } from './Wheel'
-import { LOTS, GOOGLE_REVIEW_URL, type LotId } from '@/lib/jeu-roue/lots'
+import { LOTS, GOOGLE_REVIEW_URL, partsDeRoue, type LotIdActif } from '@/lib/jeu-roue/lots'
 import { validateEntry, formatDateFr, type EntryField } from '@/lib/jeu-roue/core'
 import { MESSAGE_RESEAU, MESSAGE_SERVEUR, lireReponse, relancerInscription, type EchecPage } from '@/lib/jeu-roue/reponse'
 import { frenchSpacing } from '@/lib/typo'
@@ -46,16 +46,17 @@ const STEP_TTL_MS = 24 * 3600 * 1000
 const MIN_SPIN_MS = 1200 // suspense minimal avant la décélération
 const GENERIC_ERROR = MESSAGE_RESEAU
 
-const COLORS: Record<LotId, { fill: string; text: string }> = {
+const COLORS: Record<LotIdActif, { fill: string; text: string }> = {
   'canette-abe': { fill: '#3B7A3F', text: '#FFFFFF' },
   'crunch-bar': { fill: '#EEF4EC', text: '#2D5A2D' },
   shaker: { fill: '#2D5A2D', text: '#FFFFFF' },
   'bon-5': { fill: '#F6EBC8', text: '#5C4A14' },
-  creatine: { fill: '#A44F33', text: '#FFFFFF' },
-  whey: { fill: '#C9A227', text: '#3D3110' },
 }
 
-const SEGMENTS: WheelSegment[] = LOTS.map((l) => ({ label: l.wheelLabel, ...COLORS[l.id] }))
+// 4 lots → 8 parts (chaque lot deux fois, en face l'une de l'autre) : la roue
+// garde l'air d'une vraie roue, et chaque part est un lot du tirage.
+const PARTS = partsDeRoue(LOTS)
+const SEGMENTS: WheelSegment[] = PARTS.map((l) => ({ label: l.wheelLabel, ...COLORS[l.id] }))
 const TOTAL_WEIGHT = LOTS.reduce((s, l) => s + l.weight, 0)
 
 interface JeuResponse {
@@ -290,7 +291,9 @@ export default function JeuRoue() {
     const r = await postJeu({ action: 'spin', ...form, customerId })
 
     if (r.status === 'won' && r.result) {
-      const index = LOTS.findIndex((l) => l.id === r.result!.lotId)
+      // Le lot est tiré par le serveur ; la roue s'arrête sur l'une de ses parts.
+      const parts = PARTS.flatMap((l, i) => (l.id === r.result!.lotId ? [i] : []))
+      const index = parts.length ? parts[Math.floor(Math.random() * parts.length)] : -1
       setResult(r.result)
       setVariant('won')
       saveResult(r.result, 'won')

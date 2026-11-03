@@ -1,6 +1,6 @@
 'use client'
 
-// Roue des cadeaux : SVG 6 segments, rotation pilotée en requestAnimationFrame.
+// Roue des cadeaux : SVG, une part par segment, rotation pilotée en requestAnimationFrame.
 // Phase 1 (spinning, lot encore inconnu) : vitesse constante.
 // Phase 2 (targetIndex connu, tiré côté serveur) : décélération jusqu'au
 // segment tiré, sans à-coup de vitesse. Mouvement réduit : arrêt quasi direct.
@@ -95,7 +95,7 @@ export default function Wheel({ segments, spinning, targetIndex, onDone }: Props
         <path d="M20 42 L4 6 Q20 -2 36 6 Z" fill="#2D5A2D" stroke="#FFFFFF" strokeWidth="3" strokeLinejoin="round" />
       </svg>
 
-      <svg viewBox="-160 -160 320 320" className="h-full w-full drop-shadow-[0_18px_30px_rgba(45,90,45,0.18)]" role="img" aria-label={`Roue des cadeaux : ${segments.map((s) => s.label).join(', ')}`}>
+      <svg viewBox="-160 -160 320 320" className="h-full w-full drop-shadow-[0_18px_30px_rgba(45,90,45,0.18)]" role="img" aria-label={`Roue des cadeaux : ${[...new Set(segments.map((s) => s.label))].join(', ')}`}>
         <circle r="158" fill="#FFFFFF" />
         <g ref={wheelRef} style={{ transformOrigin: '0 0', willChange: 'transform' }}>
           {segments.map((s, i) => (
