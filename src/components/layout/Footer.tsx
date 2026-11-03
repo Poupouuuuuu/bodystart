@@ -220,8 +220,8 @@ export default function Footer({ theme = null }: { theme?: ThemeSaison | null })
                     Compléments alimentaires dans les Yvelines
                   </Link>
                 </li>
-                <li className="flex items-center gap-3 text-sm text-ink-mute">
-                  <Clock className="w-4 h-4 text-spruce flex-shrink-0" />
+                <li className="flex items-start gap-3 text-sm text-ink-mute">
+                  <Clock className="w-4 h-4 text-spruce mt-0.5 flex-shrink-0" />
                   <span>Du lundi au samedi, 11&nbsp;h à 19&nbsp;h, jours fériés compris</span>
                 </li>
               </ul>
