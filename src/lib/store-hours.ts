@@ -1,6 +1,9 @@
 // Horaires de la boutique : statut « ouvert maintenant » en heure de Paris et
 // résumé lisible, calculés depuis BODY_START_STORES[].hours (source unique).
-// Fonctions pures (l'instant est passé en paramètre), testées.
+// Fonctions pures (l'instant est passé en paramètre), testées. Les fermetures
+// exceptionnelles (lib/fermetures) comptent comme des jours fermés.
+
+import { dateDeParis, decalerDate, estJourFerme } from './fermetures'
 
 export interface PlageHoraire {
   /** Nom FR du jour (« Lundi »…), comme dans BODY_START_STORES. */
@@ -46,7 +49,9 @@ function plage(hours: PlageHoraire[], jour: number): PlageHoraire | undefined {
 /** « Ouvert maintenant » ou « Fermé, ouvre … » (heure de Paris). */
 export function statutOuverture(hours: PlageHoraire[], now: Date): { ouvert: boolean; libelle: string } {
   const { jour, minutes: cur } = heureDeParis(now)
-  const aujourdhui = plage(hours, jour)
+  const date = dateDeParis(now)
+  const ouvre = (d: number) => (estJourFerme(decalerDate(date, d)) ? undefined : plage(hours, (jour + d) % 7))
+  const aujourdhui = ouvre(0)
   if (aujourdhui) {
     if (cur >= minutes(aujourdhui.open) && cur < minutes(aujourdhui.close)) {
       return { ouvert: true, libelle: 'Ouvert maintenant' }
@@ -57,7 +62,7 @@ export function statutOuverture(hours: PlageHoraire[], now: Date): { ouvert: boo
   }
   for (let d = 1; d <= 7; d++) {
     const idx = (jour + d) % 7
-    const p = plage(hours, idx)
+    const p = ouvre(d)
     if (p) {
       const quand = d === 1 ? 'demain' : JOURS[idx].toLowerCase()
       return { ouvert: false, libelle: `Fermé, ouvre ${quand} à ${formatHeure(p.open)}` }

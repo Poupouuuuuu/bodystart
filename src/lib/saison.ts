@@ -13,13 +13,17 @@
 //
 // Pur, sans réseau. Testé dans saison.test.ts.
 
-export type ThemeSaison = 'halloween' | 'black-week' | 'noel'
+// - Thème « annonce » (10/11/2026) : bandeau seul (fermeture exceptionnelle,
+//   info pratique), sans décor ni CSS de thème, badges inchangés. Prioritaire
+//   sur toute autre période qui le chevauche. Fermetures : lib/fermetures.
+
+export type ThemeSaison = 'halloween' | 'black-week' | 'noel' | 'annonce'
 export type DecorSaison = 'halloween' | 'noel' | null
 
-const THEMES: ThemeSaison[] = ['halloween', 'black-week', 'noel']
+const THEMES: ThemeSaison[] = ['halloween', 'black-week', 'noel', 'annonce']
 /** Décor aux deux bouts du bandeau, par thème : aucun pour la Black Week
- * (sa déco du site est dans components/saison/black-week). */
-const DECORS: Record<ThemeSaison, DecorSaison> = { halloween: 'halloween', 'black-week': null, noel: 'noel' }
+ * (sa déco du site est dans components/saison/black-week) ni pour une annonce. */
+const DECORS: Record<ThemeSaison, DecorSaison> = { halloween: 'halloween', 'black-week': null, noel: 'noel', annonce: null }
 
 export interface PeriodeSaison {
   theme: ThemeSaison
@@ -133,10 +137,11 @@ export function lireSaison(brut: unknown): PeriodeSaison[] {
 
 // ─── Période active ─────────────────────────────────────────
 
-/** La période en cours (la première si deux se chevauchent), null sinon. */
+/** La période en cours (une annonce d'abord, sinon la première si deux se chevauchent), null sinon. */
 export function periodeActive(periodes: PeriodeSaison[], now: Date): PeriodeSaison | null {
   const t = now.toISOString()
-  return periodes.find((p) => p.du <= t && t <= p.au) ?? null
+  const actives = periodes.filter((p) => p.du <= t && t <= p.au)
+  return actives.find((p) => p.theme === 'annonce') ?? actives[0] ?? null
 }
 
 /** Prochain début ou fin de période après `now` (pour changer de thème à l'heure pile). */
@@ -228,6 +233,8 @@ const CSS_THEME: Partial<Record<ThemeSaison, (p: PeriodeSaison) => string>> = {
  * lireSaison (#RRGGBB).
  */
 export function cssSaison(p: PeriodeSaison): string {
+  // Annonce : le bandeau a ses couleurs en ligne, rien d'autre ne change.
+  if (p.theme === 'annonce') return ''
   return (
     `:root{--saison-accent:${p.accent};--saison-accent-texte:${p.texteSurAccent};--saison-accent-2:${p.accent2}}` +
     `.badge-saison{background-color:var(--saison-accent)!important;color:var(--saison-accent-texte)!important}` +

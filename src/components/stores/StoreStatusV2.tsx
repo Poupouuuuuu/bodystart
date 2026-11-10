@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { dateDeParis, decalerDate, estJourFerme } from '@/lib/fermetures'
 
 interface StoreStatusV2Props {
   hours: { day: string; open: string; close: string }[]
@@ -27,12 +28,16 @@ function computeStatus(hours: StoreStatusV2Props['hours']): { open: boolean; reo
   const paris = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Paris' }))
   const cur = paris.getHours() * 60 + paris.getMinutes()
   const todayIdx = paris.getDay()
+  const todayDate = dateDeParis(new Date())
 
-  // Créneau OUVERT (≠ 'Fermé') pour un index de jour donné.
-  const slotFor = (dayIdx: number) =>
-    hours.find((h) => h.day === DAY_NAMES[dayIdx] && h.open !== 'Fermé')
+  // Créneau OUVERT (≠ 'Fermé') dans `d` jours ; aucun un jour de fermeture
+  // exceptionnelle (lib/fermetures).
+  const slotIn = (d: number) =>
+    estJourFerme(decalerDate(todayDate, d))
+      ? undefined
+      : hours.find((h) => h.day === DAY_NAMES[(todayIdx + d) % 7] && h.open !== 'Fermé')
 
-  const today = slotFor(todayIdx)
+  const today = slotIn(0)
   if (today) {
     const [oh, om] = today.open.split(':').map(Number)
     const [ch, cm] = today.close.split(':').map(Number)
@@ -46,7 +51,7 @@ function computeStatus(hours: StoreStatusV2Props['hours']): { open: boolean; reo
   // Fermé maintenant → prochain jour ouvert (aujourd'hui déjà passé).
   for (let d = 1; d <= 7; d++) {
     const idx = (todayIdx + d) % 7
-    const next = slotFor(idx)
+    const next = slotIn(d)
     if (next) {
       const when = d === 1 ? 'demain' : DAY_NAMES[idx].toLowerCase()
       return { open: false, reopen: `Ouvre ${when} à ${formatHour(next.open)}` }

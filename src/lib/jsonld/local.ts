@@ -6,6 +6,7 @@
 
 import { CONTACT_EMAIL, GOOGLE_MAPS_URL, SAME_AS, STORE } from '@/lib/store-info'
 import { VILLES_DESSERVIES } from '@/lib/zone-locale'
+import { horairesSpeciauxJsonLd } from '@/lib/fermetures'
 
 export const organizationId = (site: string) => `${site}/#organization`
 export const storeId = (site: string) => `${site}/#boutique-coignieres`
@@ -42,7 +43,8 @@ export function organizationJsonLd(site: string) {
   }
 }
 
-export function storeJsonLd(site: string) {
+/** `now` : les fermetures exceptionnelles passées ne sont plus déclarées. */
+export function storeJsonLd(site: string, now: Date = new Date()) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Store',
@@ -70,6 +72,11 @@ export function storeJsonLd(site: string) {
         closes: STORE.closes,
       },
     ],
+    // Fermetures exceptionnelles à venir (lib/fermetures), absent sinon.
+    ...(() => {
+      const speciaux = horairesSpeciauxJsonLd(now)
+      return speciaux.length ? { specialOpeningHoursSpecification: speciaux } : {}
+    })(),
     parentOrganization: { '@id': organizationId(site) },
     sameAs: SAME_AS,
   }

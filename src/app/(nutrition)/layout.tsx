@@ -39,7 +39,6 @@ const webSiteJsonLd = {
 
 // Organization + Store (même @id partout) : src/lib/jsonld/local.ts
 const organizationLd = organizationJsonLd(SITE_URL)
-const storeLd = storeJsonLd(SITE_URL)
 
 export default async function NutritionLayout({ children }: { children: React.ReactNode }) {
   let collections: ShopifyCollection[] = []
@@ -54,6 +53,8 @@ export default async function NutritionLayout({ children }: { children: React.Re
   // Hors production, `?saison=black-week` (cookie) force un thème : null en production.
   const apercu = await apercuSaison()
   const themeServeur = periodeServeur(saison, new Date(), apercu)?.theme ?? null
+  // Calculé au rendu (ISR 15 min) : les fermetures exceptionnelles passées sortent du JSON-LD.
+  const storeLd = storeJsonLd(SITE_URL, new Date())
   // Déco de saison complète (haut de l'accueil, séparateurs, frise du pied de
   // page) : son CSS n'est émis que pendant la période (components/saison).
   const decor = decorSaison(themeServeur)
