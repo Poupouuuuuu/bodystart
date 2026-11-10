@@ -5,6 +5,7 @@
 
 import { unstable_cache } from 'next/cache'
 import { cookies } from 'next/headers'
+import { periodesAnnonce } from '@/lib/fermetures'
 import { COOKIE_APERCU_SAISON, lireApercu, lireSaison, type ApercuSaison, type PeriodeSaison } from '@/lib/saison'
 import { shopifyFetch } from './client'
 
@@ -20,12 +21,17 @@ const saisonEnCache = unstable_cache(
   { revalidate: 900 }
 )
 
-/** Périodes du mode saison ; aucune si Shopify ne répond pas (site normal). */
+/**
+ * Périodes du mode saison (metafield) et bandeaux des fermetures
+ * exceptionnelles (lib/fermetures, prioritaires). Sans Shopify : les
+ * fermetures seules.
+ */
 export async function getSaison(): Promise<PeriodeSaison[]> {
+  const annonces = periodesAnnonce()
   try {
-    return await saisonEnCache()
+    return [...annonces, ...(await saisonEnCache())].sort((a, b) => a.du.localeCompare(b.du))
   } catch {
-    return []
+    return annonces
   }
 }
 

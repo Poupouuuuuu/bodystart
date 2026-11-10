@@ -14,6 +14,7 @@ import StoreStatusV2 from '@/components/stores/StoreStatusV2'
 import { buildPageMetadata } from '@/lib/seo'
 import { CONTACT_EMAIL, GOOGLE_DIRECTIONS_URL, GOOGLE_LISTING_URL } from '@/lib/store-info'
 import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
+import { fermeturesAVenir } from '@/lib/fermetures'
 
 // ─── SEO ──────────────────────────────────────────────────────────
 export const metadata: Metadata = {
@@ -83,6 +84,9 @@ const EYEBROW = 'text-[11px] font-semibold uppercase tracking-[0.2em] text-musta
 
 export default async function StoresPage() {
   const store = BODY_START_STORES[0]
+  // Fermetures exceptionnelles du jour ou à venir (lib/fermetures) : la page
+  // est régénérée toutes les 15 min, la ligne disparaît le lendemain.
+  const fermetures = fermeturesAVenir(new Date())
   const rating = await getGoogleRating()
 
   return (
@@ -129,7 +133,14 @@ export default async function StoresPage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Clock className="w-5 h-5 text-spruce flex-shrink-0 mt-0.5" />
-                  <span className="text-[15px] text-ink">{HOURS_DISPLAY}</span>
+                  <span className="text-[15px] text-ink">
+                    {HOURS_DISPLAY}
+                    {fermetures.map((f) => (
+                      <span key={f.date} className="mt-1 block font-semibold text-spruce">
+                        Fermeture exceptionnelle le {f.libelle}
+                      </span>
+                    ))}
+                  </span>
                 </li>
                 {/* Téléphone et email : cibles de 44 px de haut. -my-2 garde le rythme de la
                     liste (zones qui se touchent sans se chevaucher avec space-y-4) ; mt-1 recentre l'icône. */}
