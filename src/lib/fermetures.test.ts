@@ -8,7 +8,7 @@ import {
   horairesSpeciauxJsonLd,
   periodesAnnonce,
 } from './fermetures'
-import { periodeActive, prochainChangement, cssSaison, type PeriodeSaison } from './saison'
+import { contraste, periodeActive, prochainChangement, cssSaison, type PeriodeSaison } from './saison'
 import { statutOuverture } from './store-hours'
 import { BODY_START_STORES } from './shopify/types'
 
@@ -48,7 +48,8 @@ describe('fermetures exceptionnelles', () => {
     // Le header rebascule seul à la fin du bandeau
     expect(prochainChangement(periodesAnnonce(), new Date('2026-11-11T12:00:00Z'))?.toISOString()).toBe('2026-11-11T23:00:00.000Z')
     const annonce = periodesAnnonce()[0]
-    expect([annonce.accent, annonce.texteSurAccent, annonce.decor]).toEqual(['#2D5A2D', '#FFFFFF', null])
+    expect([annonce.accent, annonce.texteSurAccent, annonce.decor]).toEqual(['#EEF4EC', '#2D5A2D', null])
+    expect(contraste(annonce.accent, annonce.texteSurAccent)).toBeGreaterThan(7)
     // Ni badges ni soulignés recolorés
     expect(cssSaison(annonce)).toBe('')
   })

@@ -41,8 +41,11 @@ export const FERMETURES_EXCEPTIONNELLES: FermetureExceptionnelle[] = [
   },
 ]
 
-/** Couleurs sobres du bandeau d'annonce : fond spruce, liseré sage, texte blanc. */
-const ANNONCE = { accent: '#2D5A2D', accent2: '#EEF4EC', texteSurAccent: '#FFFFFF' }
+/**
+ * Couleurs sobres du bandeau d'annonce : fond sage, texte et liseré spruce
+ * (design system : jamais de bandeau vert plein). Contraste 7,2:1.
+ */
+const ANNONCE = { accent: '#EEF4EC', accent2: '#2D5A2D', texteSurAccent: '#2D5A2D' }
 
 /** Date du jour à Paris (AAAA-MM-JJ). */
 export function dateDeParis(now: Date): string {
