@@ -15,6 +15,7 @@
 import { shopifyAdminFetch } from '@/lib/shopify/client'
 import { buildGoogleFeedXml, EXCLUDE_TAG, type FeedProduct, type FeedVariant } from '@/lib/google-feed'
 import { etatEnLigne } from '@/lib/shopify/disponibilite'
+import { CHAMP_MASQUE } from '@/lib/variantes-masquees'
 
 export const revalidate = 3600
 export const runtime = 'nodejs'
@@ -43,6 +44,7 @@ const FEED_QUERY = `
             price
             compareAtPrice
             requiresComponents
+            ${CHAMP_MASQUE}
             image { url }
           }
         }
@@ -84,7 +86,7 @@ export async function GET() {
   const { xml, counters } = buildGoogleFeedXml(products, siteUrl)
 
   console.log(
-    `[google-feed] ${counters.items} items | produits exclus: ${counters.skippedProducts} | sans image: ${counters.skippedNoImage} | sans prix: ${counters.skippedNoPrice}`
+    `[google-feed] ${counters.items} items | produits exclus: ${counters.skippedProducts} | variantes masquées: ${counters.skippedHidden} | sans image: ${counters.skippedNoImage} | sans prix: ${counters.skippedNoPrice}`
   )
 
   return new Response(xml, {

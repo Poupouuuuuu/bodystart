@@ -16,6 +16,8 @@ export interface Money {
 
 export interface PrixVariante {
   availableForSale: boolean
+  /** Metafield bodystart.masquer_site (lib/variantes-masquees). */
+  masque?: { value: string } | null
   price: Money
   compareAtPrice: Money | null
 }

@@ -177,6 +177,26 @@ describe('buildGoogleFeedXml', () => {
     expect(xml).toContain('<g:availability>out_of_stock</g:availability>')
   })
 
+  it('variante masquée (masquer_site et non achetable) : hors du flux, les autres items inchangés', () => {
+    const p = makeProduct()
+    const base = p.variants.nodes[0]
+    p.variants.nodes = [
+      { ...base, id: 'gid://shopify/ProductVariant/1', title: 'Chocolat / 1 kg' },
+      // 500 g arrêté, épuisé, masqué : sort du flux
+      { ...base, id: 'gid://shopify/ProductVariant/2', title: 'Fraise / 500 g', availableForSale: false, masque: { value: 'true' } },
+      // 500 g arrêté mais encore en stock : reste
+      { ...base, id: 'gid://shopify/ProductVariant/3', title: 'Matcha Latte / 500 g', availableForSale: true, masque: { value: 'true' } },
+    ]
+    const { xml, counters } = buildGoogleFeedXml([p], SITE)
+    expect(counters.items).toBe(2)
+    expect(counters.skippedHidden).toBe(1)
+    expect(xml).not.toContain('<g:id>2</g:id>')
+    expect(xml).toContain('<g:id>3</g:id>')
+    // Mêmes item_group_id et titres suffixés qu'avant le masquage
+    expect(xml).toContain('<g:item_group_id>111</g:item_group_id>')
+    expect(xml).toContain('<title><![CDATA[Whey Test - Chocolat / 1 kg]]></title>')
+  })
+
   it('disponibilité = API Storefront : non achetable en ligne → out_of_stock, même avec du stock au dépôt', () => {
     // Protein Water ON Tropical le 13/10/2026 : 0 à Coignières, 11 au dépôt GymCoach.
     const p = makeProduct()

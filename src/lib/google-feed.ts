@@ -12,6 +12,8 @@
  *     (absentes de l'API Storefront : leur lien redirige, 03/11/2026).
  */
 
+import { variantesVisibles } from './variantes-masquees'
+
 // ─── Types (sous-ensemble Admin API utilisé) ───
 
 export interface FeedVariant {
@@ -25,6 +27,8 @@ export interface FeedVariant {
   availableForSale: boolean
   /** Lot à composants (pack, coffret) : g:is_bundle yes. */
   requiresComponents?: boolean
+  /** Metafield bodystart.masquer_site : masquée si true et non achetable (lib/variantes-masquees). */
+  masque?: { value: string } | null
   image: { url: string } | null
 }
 
@@ -139,6 +143,7 @@ export function numericId(gid: string): string {
 export interface FeedItemCounters {
   items: number
   skippedNoImage: number
+  skippedHidden: number // variantes masquées sur le site (lib/variantes-masquees)
   skippedNoPrice: number
   skippedProducts: number // exclu-google / non publié (online store ou site) / sans handle
 }
@@ -148,7 +153,7 @@ export function buildGoogleFeedXml(
   siteUrl: string
 ): { xml: string; counters: FeedItemCounters } {
   const base = siteUrl.replace(/\/+$/, '')
-  const counters: FeedItemCounters = { items: 0, skippedNoImage: 0, skippedNoPrice: 0, skippedProducts: 0 }
+  const counters: FeedItemCounters = { items: 0, skippedNoImage: 0, skippedHidden: 0, skippedNoPrice: 0, skippedProducts: 0 }
   const items: string[] = []
 
   for (const p of products) {
@@ -166,9 +171,13 @@ export function buildGoogleFeedXml(
       ...(p.featuredImage ? [p.featuredImage.url] : []),
       ...p.images.nodes.map((i) => i.url),
     ].filter((u, i, arr) => u.startsWith('https://') && arr.indexOf(u) === i)
+    // Calculé sur toutes les variantes : masquer un format ne change rien aux
+    // items qui restent (même item_group_id, même titre).
     const multiVariant = p.variants.nodes.length > 1
+    const visibles = variantesVisibles(p.variants.nodes)
+    counters.skippedHidden += p.variants.nodes.length - visibles.length
 
-    for (const v of p.variants.nodes) {
+    for (const v of visibles) {
       const mainImage = (v.image?.url?.startsWith('https://') && v.image.url) || productImages[0]
       if (!mainImage) {
         counters.skippedNoImage++

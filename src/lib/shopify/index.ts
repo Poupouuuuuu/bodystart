@@ -34,16 +34,27 @@ import {
 } from './queries/inventory'
 import type { ShopifyProduct, ShopifyCollection, ShopifyCart, ShopifyBlog, ShopifyArticle } from './types'
 import { computeCardPrice } from '@/lib/product-price'
+import { variantesVisibles } from '@/lib/variantes-masquees'
 
 // ─── PRODUITS ────────────────────────────────────────────────
 
 /**
- * Prix de carte calculé sur TOUTES les variantes (prixVariantes), puis la
- * liste brute est retirée : les composants client ne reçoivent que le résultat.
+ * Prix de carte calculé sur toutes les variantes visibles (prixVariantes,
+ * variantes masquées écartées : lib/variantes-masquees), puis la liste brute
+ * est retirée : les composants client ne reçoivent que le résultat.
  */
 export function withCardPrice<T extends ShopifyProduct>(p: T): T {
   const { prixVariantes, ...rest } = p
-  return { ...rest, cardPrice: computeCardPrice(prixVariantes?.nodes ?? p.variants?.nodes) } as T
+  return { ...rest, cardPrice: computeCardPrice(variantesVisibles(prixVariantes?.nodes ?? p.variants?.nodes ?? [])) } as T
+}
+
+/**
+ * Fiche produit : variantes masquées retirées (sélecteur de saveurs et
+ * formats, lien ?variant=, JSON-LD). La liste n'est jamais vide.
+ */
+export function sansVariantesMasquees<T extends ShopifyProduct>(p: T): T {
+  if (!p.variants?.nodes) return p
+  return { ...p, variants: { ...p.variants, nodes: variantesVisibles(p.variants.nodes) } }
 }
 
 export async function getProducts(options?: {
@@ -102,7 +113,7 @@ export const getProductByHandle = cache(async (handle: string) => {
     GET_PRODUCT_BY_HANDLE,
     { handle }
   )
-  return data.product ? withCardPrice(data.product) : null
+  return data.product ? withCardPrice(sansVariantesMasquees(data.product)) : null
 })
 
 /**

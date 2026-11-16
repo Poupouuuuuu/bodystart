@@ -1,3 +1,5 @@
+import { CHAMP_MASQUE } from '@/lib/variantes-masquees'
+
 export const PRODUCT_CARD_FRAGMENT = `
   fragment ProductCard on Product {
     id
@@ -37,6 +39,7 @@ export const PRODUCT_CARD_FRAGMENT = `
     prixVariantes: variants(first: 100) {
       nodes {
         availableForSale
+        ${CHAMP_MASQUE}
         price {
           amount
           currencyCode
@@ -105,6 +108,7 @@ export const INDEX_RECHERCHE = `
             id
             title
             availableForSale
+            ${CHAMP_MASQUE}
             price {
               amount
               currencyCode
@@ -156,6 +160,7 @@ export const GET_PRODUCT_BY_HANDLE = `
           title
           availableForSale
           quantityAvailable
+          ${CHAMP_MASQUE}
           sku
           barcode
           image {
@@ -288,6 +293,7 @@ const CHAMPS_CARTE_ACCUEIL = `
         prixVariantes: variants(first: 100) {
           nodes {
             availableForSale
+            ${CHAMP_MASQUE}
             price {
               amount
               currencyCode

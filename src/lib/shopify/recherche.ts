@@ -7,6 +7,7 @@ import { rechercherDetail, type VarianteRecherchable } from '@/lib/recherche'
 import { computeCardPrice, type PrixVariante } from '@/lib/product-price'
 import { shopifyFetch } from './client'
 import { withCardPrice } from './index'
+import { variantesVisibles } from '@/lib/variantes-masquees'
 import { INDEX_RECHERCHE } from './queries/products'
 import type { ShopifyProduct } from './types'
 
@@ -25,7 +26,7 @@ async function chargerIndex(): Promise<FicheIndex[]> {
   for (let page = 0; page < 4; page++) {
     const data: Page = await shopifyFetch(INDEX_RECHERCHE, { first: 250, after })
     for (const p of data.products.nodes) {
-      out.push({ ...withCardPrice(p), variantes: p.variantes?.nodes ?? [] })
+      out.push({ ...withCardPrice(p), variantes: variantesVisibles(p.variantes?.nodes ?? []) })
     }
     if (!data.products.pageInfo.hasNextPage) break
     after = data.products.pageInfo.endCursor
