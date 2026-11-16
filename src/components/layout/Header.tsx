@@ -21,6 +21,7 @@ import {
   dateSaison,
   lireApercu,
   periodeActive,
+  periodeDuTheme,
   prochainChangement,
   type ApercuSaison,
   type PeriodeSaison,
@@ -112,25 +113,29 @@ export default function Header({ saison = [], themeServeur = null, apercu = null
 
   // Mode saison : le serveur rend la période active à l'heure du rendu (HTML
   // en cache jusqu'à 15 min) ; le navigateur la recalcule à l'heure pile et
-  // rebascule tout seul à la prochaine borne, sans recharger.
-  const [theme, setTheme] = useState<ThemeSaison | null>(themeServeur)
+  // rebascule tout seul à la prochaine borne, sans recharger. On garde la
+  // période elle-même, pas seulement son thème : deux périodes peuvent avoir
+  // le même thème (bug du 16/11/2026, l'annonce des coffrets aurait affiché
+  // le texte de la fermeture du 11/11).
+  const [periode, setPeriode] = useState<PeriodeSaison | null>(() => periodeDuTheme(saison, themeServeur, new Date()))
+  const theme = periode?.theme ?? null
   useEffect(() => {
     if (saison.length === 0) return
     // Preview : thème forcé par ?saison= (puis par le cookie, rendu serveur).
     const force = (previsualisation && lireApercu(new URLSearchParams(window.location.search).get('saison'))) || apercu
     if (force) {
-      setTheme(force === 'aucun' ? null : force)
+      setPeriode(force === 'aucun' ? null : periodeDuTheme(saison, force, new Date()))
       return
     }
     const forcee = previsualisation ? new URLSearchParams(window.location.search).get('saison_date') : null
     if (forcee) {
-      setTheme(periodeActive(saison, dateSaison(forcee, previsualisation))?.theme ?? null)
+      setPeriode(periodeActive(saison, dateSaison(forcee, previsualisation)))
       return
     }
     let minuterie: ReturnType<typeof setTimeout> | undefined
     const maj = () => {
       const now = new Date()
-      setTheme(periodeActive(saison, now)?.theme ?? null)
+      setPeriode(periodeActive(saison, now))
       const prochain = prochainChangement(saison, now)
       const delai = prochain ? prochain.getTime() - now.getTime() : null
       // setTimeout plafonne à ~24 j ; au-delà, la page aura été rechargée.
@@ -155,7 +160,6 @@ export default function Header({ saison = [], themeServeur = null, apercu = null
       : `${COOKIE_APERCU_SAISON}=; path=/; max-age=0; samesite=lax; secure`
     router.refresh()
   }, [previsualisation, router])
-  const periode = saison.find((p) => p.theme === theme) ?? null
 
   // Mobile (bug du 17/10/2026) : le clavier restait ouvert et cachait les
   // résultats. Il se ferme sur Entrée/« Rechercher » et dès qu'on fait défiler

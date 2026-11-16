@@ -8,7 +8,7 @@ import {
   horairesSpeciauxJsonLd,
   periodesAnnonce,
 } from './fermetures'
-import { contraste, periodeActive, prochainChangement, cssSaison, type PeriodeSaison } from './saison'
+import { contraste, lireSaison, periodeActive, periodeDuTheme, periodeServeur, prochainChangement, cssSaison, type PeriodeSaison } from './saison'
 import { statutOuverture } from './store-hours'
 import { BODY_START_STORES } from './shopify/types'
 
@@ -64,6 +64,33 @@ describe('fermetures exceptionnelles', () => {
     expect(statutOuverture(HOURS, new Date('2026-11-12T13:00:00Z')).ouvert).toBe(true)
     // Mercredi suivant (18/11) : ouvert comme d'habitude
     expect(statutOuverture(HOURS, new Date('2026-11-18T13:00:00Z')).ouvert).toBe(true)
+  })
+
+  it('16/11/2026 : annonce des coffrets (metafield) et fermeture passée (code), même thème, chacune à sa date', () => {
+    // Valeur du metafield bodystart.saison posée par l'Agent Digital le 16/11/2026
+    const coffrets = lireSaison({
+      periodes: [
+        {
+          theme: 'annonce',
+          du: '2026-11-16T23:00:00Z',
+          au: '2026-11-22T22:59:59Z',
+          bandeau: { texte: '🎁 Coffrets de Noël prêts à offrir · Retrait immédiat en boutique', lien: '/coffrets-noel' },
+          couleurs: { accent: '#C62828', accent_2: '#1B5E20' },
+          decor: null,
+        },
+      ],
+    })
+    expect(coffrets).toHaveLength(1)
+    expect([coffrets[0].texteSurAccent, coffrets[0].decor]).toEqual(['#FFFFFF', null])
+    const periodes = [...periodesAnnonce(), ...coffrets].sort((a, b) => a.du.localeCompare(b.du))
+    const le17 = new Date('2026-11-17T08:00:00Z')
+    expect(periodeActive(periodes, le17)?.lien).toBe('/coffrets-noel')
+    // Le bandeau prend la période du thème en cours, pas la première « annonce » de la liste
+    expect(periodeDuTheme(periodes, 'annonce', le17)?.lien).toBe('/coffrets-noel')
+    expect(periodeDuTheme(periodes, 'annonce', new Date('2026-11-11T08:00:00Z'))?.lien).toBe('/livraison')
+    // Aperçu ?saison=annonce le 16/11 : l'annonce à venir, pas la fermeture passée
+    expect(periodeServeur(periodes, new Date('2026-11-16T08:00:00Z'), 'annonce')?.lien).toBe('/coffrets-noel')
+    expect(periodeDuTheme(periodes, null, le17)).toBeNull()
   })
 
   it('JSON-LD et /stores : seulement les fermetures du jour ou à venir', () => {

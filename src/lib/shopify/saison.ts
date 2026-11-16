@@ -27,7 +27,8 @@ const saisonEnCache = unstable_cache(
  * fermetures seules.
  */
 export async function getSaison(): Promise<PeriodeSaison[]> {
-  const annonces = periodesAnnonce()
+  // Fermetures déjà passées écartées : plus rien à afficher.
+  const annonces = periodesAnnonce().filter((p) => Date.parse(p.au) >= Date.now())
   try {
     return [...annonces, ...(await saisonEnCache())].sort((a, b) => a.du.localeCompare(b.du))
   } catch {
