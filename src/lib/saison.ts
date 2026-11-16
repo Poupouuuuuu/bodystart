@@ -144,6 +144,19 @@ export function periodeActive(periodes: PeriodeSaison[], now: Date): PeriodeSais
   return actives.find((p) => p.theme === 'annonce') ?? actives[0] ?? null
 }
 
+/**
+ * Période d'un thème donné : celle en cours à `now`, sinon la prochaine, sinon
+ * la première. Deux périodes peuvent avoir le même thème (une fermeture
+ * « annonce » passée et l'annonce des coffrets, 16/11/2026) : le bandeau doit
+ * prendre la bonne, jamais la première venue.
+ */
+export function periodeDuTheme(periodes: PeriodeSaison[], theme: ThemeSaison | null, now: Date): PeriodeSaison | null {
+  if (!theme) return null
+  const t = now.toISOString()
+  const duTheme = periodes.filter((p) => p.theme === theme)
+  return duTheme.find((p) => p.du <= t && t <= p.au) ?? duTheme.find((p) => p.du > t) ?? duTheme[0] ?? null
+}
+
 /** Prochain début ou fin de période après `now` (pour changer de thème à l'heure pile). */
 export function prochainChangement(periodes: PeriodeSaison[], now: Date): Date | null {
   const t = now.getTime()
@@ -174,7 +187,7 @@ export function lireApercu(v: unknown): ApercuSaison | null {
  */
 export function periodeServeur(periodes: PeriodeSaison[], now: Date, apercu: ApercuSaison | null): PeriodeSaison | null {
   if (apercu === 'aucun') return null
-  if (apercu) return periodes.find((p) => p.theme === apercu) ?? null
+  if (apercu) return periodeDuTheme(periodes, apercu, now)
   return periodeActive(periodes, now)
 }
 
