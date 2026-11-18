@@ -56,6 +56,11 @@ const SYNONYMES: Record<string, string[]> = {
   iso: ['isolate'],
   isolate: ['iso'],
   isolat: ['isolate', 'iso'],
+  // Sous-catégories Protéines (18/11/2026) : « végétale » trouve les protéines
+  // végétales (étiquette vegan), « mélange » les mix.
+  vegetale: ['vegan'],
+  vegetal: ['vegan'],
+  melange: ['mix'],
   protein: ['proteine'],
   proteine: ['protein'],
   vitamin: ['vitamine'],

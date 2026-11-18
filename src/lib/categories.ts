@@ -43,10 +43,10 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     productType: 'Protéines',
     blocLocal: true,
     label: 'Protéines',
-    metaTitle: 'Protéines : whey, isolate, caséine et gainers',
+    metaTitle: 'Protéines : whey, isolate, mix et gainers',
     metaDescription:
-      'Whey, isolate, caséine, gainer : des protéines sélectionnées, en rayon à Coignières (78) et livrées partout en France. Conseil gratuit en boutique.',
-    h1: 'Protéines en poudre : whey, isolate, caséine et gainers',
+      "Whey, isolate, mix, clear whey, gainer, protéines végétales et d'œuf : en rayon à Coignières (78), livrées partout en France. Conseil gratuit en boutique.",
+    h1: 'Protéines en poudre : whey, isolate, mix et gainers',
     intro: [
       "Une protéine en poudre sert à une chose simple : atteindre ton quota de protéines du jour quand l'assiette ne suffit pas. Les protéines contribuent au maintien et au développement de la masse musculaire. C'est le complément le plus utile en musculation, et le premier qu'on conseille au comptoir.",
       "Comment choisir ? Si tu débutes ou que tu cherches le meilleur rapport qualité-prix, une whey concentrée (~70-80 % de protéines) fait parfaitement le travail. Si tu digères mal le lactose ou que tu veux le produit le plus pur en sèche, passe sur une isolate (≥ 90 % de protéines, quasi sans lactose). Et si ton problème est de manger assez en prise de masse, un gainer ajoute des calories pratiques à ta journée.",

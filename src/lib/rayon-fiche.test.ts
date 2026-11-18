@@ -31,6 +31,14 @@ describe('guidesDeFiche', () => {
       'combien-de-proteines-par-jour',
     ])
     expect(guidesDeFiche({ productType: 'Protéines', tags: ['isolate', 'whey'] })[0]).toBe('whey-ou-isolate-quelle-difference')
+    // Sous-catégories du 18/11/2026
+    expect(guidesDeFiche({ productType: 'Protéines', tags: ['isolate'] })[0]).toBe('whey-ou-isolate-quelle-difference')
+    expect(guidesDeFiche({ productType: 'Protéines', tags: ['clear-whey'] })[0]).toBe('whey-ou-isolate-quelle-difference')
+    expect(guidesDeFiche({ productType: 'Protéines', tags: ['caseine', 'isolate', 'mix', 'whey'] })).toEqual([
+      'quelle-whey-choisir-debutant',
+      'combien-de-proteines-par-jour',
+    ])
+    expect(guidesDeFiche({ productType: 'Protéines', tags: ['oeuf'] })).toEqual(['combien-de-proteines-par-jour'])
     expect(guidesDeFiche({ productType: 'Acides aminés', tags: ['eaa'] })).toEqual(['eaa-ou-bcaa-lequel-prendre'])
     expect(guidesDeFiche({ productType: 'Santé', tags: ['magnesium'] })[0]).toBe('magnesium-bienfaits-quelle-forme-choisir')
   })

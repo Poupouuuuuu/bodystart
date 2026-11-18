@@ -26,8 +26,17 @@ describe('productSubtitle', () => {
     // « vegan » hors protéines (BCAA) : pas de « Protéine végétale »
     expect(productSubtitle(['BCAA', 'Vegan', 'relance-55'], { category: 'Acides aminés', productType: 'Acides aminés' })).toBe('BCAA')
   })
-  it('isolat sans étiquette whey : dans le doute, rien', () => {
-    expect(productSubtitle(['isolate', 'relance-25'], { category: 'Protéines', productType: 'Protéines' })).toBeNull()
+  it('sous-catégories du 18/11/2026 : une seule étiquette, isolat et claire sans étiquette whey', () => {
+    expect(productSubtitle(['isolate', 'relance-25'], { category: 'Protéines', productType: 'Protéines', title: 'Native Iso Blend' })).toBe('Whey isolat')
+    expect(productSubtitle(['clear-whey', 'collagene', 'proteine'], { category: 'Protéines', title: 'Clear Fusion - Protéine' })).toBe('Whey claire')
+    // Mix : jamais « Whey isolat », même s'il porte encore isolate (Iso Fusion avant nettoyage)
+    expect(productSubtitle(['caseine', 'isolate', 'mix', 'whey'], { category: 'Protéines', title: 'Iso Fusion Protein' })).toBe('Mix de protéines')
+    expect(productSubtitle(['mix'], { category: 'Protéines', title: 'Whey Native Protimuscle' })).toBe('Mix de protéines')
+    // Concentrée : exige toujours l'étiquette whey
+    expect(productSubtitle(['concentre'], { category: 'Protéines' })).toBeNull()
+    // L-Arginine rangée sous Citrulline : son badge reste « Arginine » (ou rien, le nom le dit)
+    expect(productSubtitle(['arginine', 'citrulline', 'vegan'], { category: 'Acides aminés', productType: 'Acides aminés' })).toBe('Arginine')
+    expect(productSubtitle(['arginine', 'citrulline'], { category: 'Acides aminés', title: 'L-Arginine 1500 - Gélules' })).toBeNull()
   })
   it('jamais la catégorie ni ce que le nom dit déjà', () => {
     expect(productSubtitle(['accessoire', 'shaker'], { category: 'Shaker' })).toBeNull()
@@ -47,9 +56,14 @@ describe('wheyLabel (pastille de la fiche)', () => {
     expect(wheyLabel(['whey', 'clear-whey'], 'Clear Whey Isolate')).toBe('Whey claire')
     expect(wheyLabel(['whey', 'concentre'], 'Musclewhey')).toBe('Whey concentrée')
   })
-  it('jamais sur une protéine végétale ni sans étiquette whey', () => {
+  it('jamais sur une protéine végétale ni sur un mix', () => {
     expect(wheyLabel(['whey', 'vegan', 'isolate'], 'Iso Vegan')).toBeNull()
-    expect(wheyLabel(['isolate'], 'Iso')).toBeNull()
+    expect(wheyLabel(['caseine', 'isolate', 'mix', 'whey'], 'Iso Fusion Protein')).toBeNull()
+  })
+  it('isolat et claire sur leur seule étiquette (18/11/2026), concentrée avec whey', () => {
+    expect(wheyLabel(['isolate'], 'Native Iso Blend')).toBe('Whey isolat')
+    expect(wheyLabel(['clear-whey'], 'Clear Fusion - Protéine')).toBe('Whey claire')
+    expect(wheyLabel(['concentre'], 'Musclewhey')).toBeNull()
   })
   it('pas si le nom le dit déjà', () => {
     expect(wheyLabel(['whey', 'isolate'], 'Whey Isolat Native')).toBeNull()

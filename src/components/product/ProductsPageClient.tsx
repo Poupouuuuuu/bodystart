@@ -46,11 +46,16 @@ type SubCategory = { key: string; label: string; tags: string[] }
 type Category = { key: string; label: string; productTypes: string[]; subcategories: SubCategory[] }
 
 const CATEGORIES: Category[] = [
+  // Sous-catégories Protéines (décision du 18/11/2026, Gestion et Boutique) :
+  // une seule étiquette de sous-catégorie par produit. Caséine retirée (plus
+  // en rayon depuis le 25/10/2026).
   { key: 'proteines', label: 'Protéines', productTypes: ['Protéines'], subcategories: [
     { key: 'whey', label: 'Whey', tags: ['whey'] },
     { key: 'isolate', label: 'Isolate', tags: ['isolate'] },
+    { key: 'mix', label: 'Mix', tags: ['mix'] },
+    { key: 'clear-whey', label: 'Clear whey', tags: ['clear-whey'] },
     { key: 'gainer', label: 'Gainer', tags: ['gainer'] },
-    { key: 'caseine', label: 'Caséine', tags: ['caseine'] },
+    { key: 'vegetale', label: 'Végétale et œuf', tags: ['vegan', 'oeuf'] },
   ]},
   { key: 'glucides', label: 'Glucides', productTypes: ['Glucides'], subcategories: [
     { key: 'riz', label: 'Riz', tags: ['riz'] },
