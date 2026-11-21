@@ -133,6 +133,16 @@ describe('Black Week 2026 : créatine offerte dès 100 €', () => {
     expect(ajouts(r)).not.toContain(CREATINE)
     expect(r.etats.find((e) => e.palier.montant === 100)?.parAchat).toBe(1)
     expect(r.offertsParAchat).toBe(0) // pas de message « Ta Crunch Bar est offerte »
+    // 89,90 € + créatine achetée : Shopify ne la compte pas dans le minimum → pas offerte, pas de 2e,
+    // et la barre dit « Plus que 10,10 € »
+    const court = calculerCadeaux(
+      panier([{ id: 'a', prix: 89.9 }, { id: 'c', variant: CREATINE, product: '200', prix: 36.9 }]),
+      donnees,
+      opts
+    )
+    expect(ajouts(court)).not.toContain(CREATINE)
+    const creatine = court.etats.find((e) => e.palier.montant === 100)!
+    expect([creatine.atteint, creatine.reste, creatine.parAchat]).toEqual([false, 10.1, 0])
   })
 
   it('f. Crunch Bar refacturée quand la créatine est offerte (remises non cumulables) : retirée et plus proposée', () => {
