@@ -147,10 +147,11 @@ export function calculerCadeaux(
     const achats = lignes.filter((l) => l.cadeau === null && l.quantity > 0 && ids.has(l.merchandiseId))
     if (achats.length === 0) return e
     const prixMin = Math.min(...achats.map((l) => l.subtotal / l.quantity))
-    const superieur = etatsShopify.some(
-      (q) => q.palier.type === 'cadeau' && q.palier.montant > e.palier.montant && q.atteint && q.base - prixMin + 0.005 >= q.palier.montant
-    )
-    return superieur ? { ...e, parAchat: achats.reduce((n, l) => n + l.quantity, 0) } : e
+    const auDessus = etatsShopify.filter((q) => q.palier.type === 'cadeau' && q.palier.montant > e.palier.montant)
+    const superieur = auDessus.some((q) => q.atteint && q.base - prixMin + 0.005 >= q.palier.montant)
+    // Palier le plus haut (créatine de la Black Week, 21/11/2026) : l'article acheté tient lieu de
+    // cadeau, jamais un 2e offert en plus ; Shopify le passe à 0 € si le reste du panier atteint le palier.
+    return superieur || auDessus.length === 0 ? { ...e, parAchat: achats.reduce((n, l) => n + l.quantity, 0) } : e
   })
 
   const titres = new Set(donnees.titres ?? [])
@@ -177,7 +178,12 @@ export function calculerCadeaux(
     .filter((l) => (l.remises ?? []).some((r) => titres.has(r.titre) && r.montant > 0))
     .map((l) => l.id)
   // Articles achetés réellement offerts à la place d'une ligne cadeau (pour le message du tiroir).
-  const variantesParAchat = new Set(etats.filter((e) => e.parAchat > 0).flatMap((e) => (e.palier.variantes ?? []).map((v) => v.id)))
+  // Message « Ta Crunch Bar est offerte » : seulement les paliers qui ont un palier cadeau au-dessus.
+  const variantesParAchat = new Set(
+    etats
+      .filter((e) => e.parAchat > 0 && etats.some((q) => q.palier.type === 'cadeau' && q.palier.montant > e.palier.montant))
+      .flatMap((e) => (e.palier.variantes ?? []).map((v) => v.id))
+  )
   const offertsParAchat = lignes
     .filter((l) => l.cadeau === null && l.quantity > 0 && variantesParAchat.has(l.merchandiseId))
     .reduce((n, l) => {
