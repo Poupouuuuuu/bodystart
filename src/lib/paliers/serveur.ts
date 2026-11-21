@@ -11,7 +11,7 @@
 
 import { unstable_cache } from 'next/cache'
 import { shopifyAdminFetch, shopifyFetch } from '@/lib/shopify/client'
-import { idNumerique, parsePaliers, type Palier, type PaliersConfig, type Periode } from './index'
+import { idNumerique, parsePaliers, sansRemisesInactives, type Palier, type PaliersConfig, type Periode } from './index'
 
 const GET_PALIERS = /* GraphQL */ `
   query PaliersCadeaux {
@@ -39,6 +39,21 @@ const GET_REMISES = /* GraphQL */ `
               }
             }
           }
+        }
+      }
+    }
+  }
+`
+
+const GET_STATUTS = /* GraphQL */ `
+  query StatutsRemises($ids: [ID!]!) {
+    nodes(ids: $ids) {
+      ... on DiscountAutomaticNode {
+        id
+        automaticDiscount {
+          __typename
+          ... on DiscountAutomaticBasic { status }
+          ... on DiscountAutomaticBxgy { status }
         }
       }
     }
@@ -122,6 +137,29 @@ async function lireRemises(remises: string[]): Promise<Remises> {
 
 // Collection : relue au plus toutes les 15 min. Stock : au plus toutes les 5 min.
 const remisesEnCache = unstable_cache(lireRemises, ['paliers-remises'], { revalidate: 900 })
+
+/**
+ * Statut de chaque remise (ACTIVE, EXPIRED, SCHEDULED), relu au plus toutes les
+ * 2 min : une remise coupée par la boutique (créatine de la Black Week à
+ * 40 pots, 21/11/2026) retire son palier sans déploiement. Remise introuvable :
+ * statut « absente » (palier retiré).
+ */
+const statutsEnCache = unstable_cache(
+  async (ids: string[]): Promise<Record<string, string | null>> => {
+    if (ids.length === 0) return {}
+    const data = await shopifyAdminFetch<{ nodes: ({ id?: string; automaticDiscount?: { status?: string } | null } | null)[] }>(
+      GET_STATUTS,
+      { ids }
+    )
+    return Object.fromEntries(ids.map((id, i) => {
+      const n = data.nodes[i]
+      if (!n?.id) return [id, 'ABSENTE']
+      return [id, n.automaticDiscount?.status ?? null]
+    }))
+  },
+  ['paliers-statuts'],
+  { revalidate: 120 }
+)
 const stockEnCache = unstable_cache(
   async (ids: string[]): Promise<Record<string, boolean>> => {
     if (ids.length === 0) return {}
@@ -150,8 +188,13 @@ export interface PaliersPublics {
 
 export async function chargerPaliers(): Promise<PaliersPublics | null> {
   const data = await shopifyFetch<{ shop: { metafield: { value: string } | null } }>(GET_PALIERS)
-  const config = parsePaliers(data.shop.metafield?.value)
-  if (!config) return null
+  const brut = parsePaliers(data.shop.metafield?.value)
+  if (!brut) return null
+
+  const toutes = [
+    ...new Set(brut.periodes.flatMap((p) => p.paliers).map((p) => p.remise_shopify).filter((x): x is string => !!x)),
+  ].sort()
+  const config = sansRemisesInactives(brut, await statutsEnCache(toutes))
 
   const cadeaux = config.periodes.flatMap((p) => p.paliers).filter((p) => p.type === 'cadeau')
   const remises = [...new Set(cadeaux.map((p) => p.remise_shopify).filter((x): x is string => !!x))].sort()

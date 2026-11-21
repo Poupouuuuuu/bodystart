@@ -231,10 +231,17 @@ export default function CartDrawer() {
   // via le cross-sell disparaît aussitôt de la liste.
   const cartHandles = new Set(items.map((i) => i.merchandise.product.handle))
   const takenFamilies = new Set<Family>(items.map((i) => familyOf(i.merchandise.product)))
+  // Jamais à plein prix un cadeau d'un palier atteint (créatine de la Black Week, 21/11/2026).
+  const cadeauxAtteints = new Set(
+    cadeaux.etat.etats
+      .filter((e) => e.palier.type === 'cadeau' && e.atteint)
+      .flatMap((e) => (e.palier.variantes ?? []).map((v) => v.id))
+  )
   const crossSellItems: CrossSellItem[] = []
   for (const c of crossSell ?? []) {
     if (crossSellItems.length >= 3) break
     if (cartHandles.has(c.handle) || (c.family && takenFamilies.has(c.family))) continue
+    if (c.variantId && cadeauxAtteints.has(c.variantId)) continue
     if (c.family) takenFamilies.add(c.family)
     crossSellItems.push(c)
   }
