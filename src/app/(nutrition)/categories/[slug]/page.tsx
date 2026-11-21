@@ -9,6 +9,7 @@ import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES, getCategoryPage } from '@/lib/categories'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import ReadMore from '@/components/ui/ReadMore'
+import BoutiqueConseil from '@/components/conseil/BoutiqueConseil'
 import { PICKUP_PROMISE } from '@/lib/shipping'
 import { frenchSpacing } from '@/lib/typo'
 import { VILLES_DESSERVIES } from '@/lib/zone-locale'
@@ -137,6 +138,19 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </ReadMore>
         </div>
 
+        {/* Rayon vendu au comptoir (pré-workouts, décision de Gestion du
+            18/11/2026) : texte de la page puis carte boutique (adresse,
+            horaires, statut en direct, itinéraire, appel). */}
+        {cat.enBoutique && (
+          <section aria-labelledby="en-boutique" className="mb-10 max-w-[760px]">
+            <h2 id="en-boutique" className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-3">
+              {cat.enBoutique.titre}
+            </h2>
+            <p className="text-[15px] leading-[1.7] text-ink/90 mb-5">{frenchSpacing(cat.enBoutique.texte)}</p>
+            <BoutiqueConseil />
+          </section>
+        )}
+
         {/* Rayons cherchés en local : stock à Coignières et trajet réel depuis
             Saint-Quentin-en-Yvelines (lib/zone-locale), lien vers la page zone. */}
         {cat.blocLocal && (
@@ -161,7 +175,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         {cat.featured.length > 0 && (
           <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-7 mb-12 max-w-[760px]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
-              Nos choix dans ce rayon
+              {cat.enBoutique ? 'Pour composer le tien, en ligne' : 'Nos choix dans ce rayon'}
             </p>
             <ul className="space-y-2.5">
               {cat.featured.map((f) => (
@@ -179,10 +193,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
         )}
 
-        {/* Grille produits */}
-        <h2 className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-6">
-          Tous nos produits {cat.label.toLowerCase()} ({products.length})
-        </h2>
+        {/* Grille produits. Rayon vendu au comptoir et rien en ligne : ni
+            grille vide ni « (0) », l'encadré boutique plus haut suffit. */}
+        {(products.length > 0 || !cat.enBoutique) && (
+          <h2 className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-6">
+            Tous nos produits {cat.label.toLowerCase()} ({products.length})
+          </h2>
+        )}
         {products.length > 0 ? (
           // 2 colonnes dès le mobile — cohérent avec /products (même carte)
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-14">
@@ -190,7 +207,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <ProductCardShop key={p.id} product={p} />
             ))}
           </div>
-        ) : (
+        ) : cat.enBoutique ? null : (
           <p className="text-ink-mute mb-14">
             Le rayon se remplit. Passe nous voir en boutique ou{' '}
             <Link href="/products" className="font-semibold text-spruce hover:underline underline-offset-4">

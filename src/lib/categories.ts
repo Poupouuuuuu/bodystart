@@ -35,6 +35,14 @@ export interface CategoryPage {
    * rayons les plus cherchés en local (31/10/2026).
    */
   blocLocal?: boolean
+  /**
+   * Rayon vendu au comptoir (décision de Gestion du 18/11/2026 pour les
+   * pré-workouts) : encadré « en boutique » sous l'intro, toujours affiché,
+   * avec l'adresse, les horaires et le téléphone de BODY_START_STORES. Quand
+   * aucun produit n'est en ligne, la grille vide et « Le rayon se remplit »
+   * disparaissent : l'encadré suffit, la page reste au menu et au sitemap.
+   */
+  enBoutique?: { titre: string; texte: string }
 }
 
 export const CATEGORY_PAGES: CategoryPage[] = [
@@ -177,19 +185,54 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     label: 'Pré-workout',
     metaTitle: 'Pré-workout avec ou sans caféine : comment choisir',
     metaDescription:
-      'Pré-workout sans stimulant pour les séances du soir, citrulline à l’unité et conseil en boutique à Coignières. Livraison France.',
+      'Pré-workout avec ou sans caféine : on le choisit avec toi au comptoir à Coignières (78). En ligne : citrulline, bêta-alanine et shots.',
     h1: 'Pré-workout : avec ou sans caféine ?',
+    // Version « en boutique, conseil au comptoir » (décision de Gestion du
+    // 18/11/2026) : les pré-workouts se choisissent en boutique, la page
+    // reste au menu et au sitemap même sans produit en ligne.
     intro: [
-      "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine (teneur indiquée sur l'étiquette), et les formules « pump » sans stimulant, à base de citrulline ou de bêta-alanine, adaptées si tu t'entraînes le soir.",
-      "Comment choisir ? Si tu t'entraînes le matin ou en journée et que tu tolères bien la caféine, une formule avec caféine est une option : vérifie la teneur par dose et compte ton café de la journée. Séance après 18 h, sensibilité à la caféine ou envie de préserver ton sommeil : pars sur une formule sans caféine, ou compose-la avec la citrulline du rayon acides aminés. Si tu hésites, pose-nous la question en boutique.",
+      "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine, dont la teneur par dose est indiquée sur l'étiquette, et les formules dites « pump », sans stimulant, construites autour de la citrulline et de la bêta-alanine.",
+      "Les pré-workouts se choisissent au comptoir de notre boutique de Coignières. On regarde avec toi l'heure de ta séance, ta tolérance à la caféine et ce que tu en prends déjà dans la journée (café, boissons énergisantes), puis on compare les étiquettes ensemble.",
+      "En ligne, tu peux composer le tien avec les ingrédients qu'on retrouve dans la plupart des formules : citrulline et bêta-alanine, en poudre ou en gélules, ou un shot pré-workout liquide prêt à boire.",
     ],
+    enBoutique: {
+      titre: 'Nos pré-workouts sont en boutique',
+      texte:
+        "Avec ou sans caféine, on les choisit avec toi au comptoir. Passe nous voir, ou appelle-nous pour savoir ce qu'on a en rayon avant de venir.",
+    },
     featured: [
+      { handle: 'citrulline-malate-2-1-applied-nutrition-poudre-300-g', label: 'Citrulline malate 2:1 en poudre' },
+      { handle: 'l-citrulline-1500-gelules', label: 'L-Citrulline en gélules' },
+      { handle: 'dedicated-nutrition-beta-alanine', label: 'Bêta-alanine en poudre' },
+      { handle: 'rage-energy-shot-pre-workout-liquide', label: 'Shot pré-workout liquide, avec caféine' },
     ],
     related: [
-      { slug: 'creatine', label: 'Créatine' },
       { slug: 'acides-amines', label: 'Acides aminés' },
+      { slug: 'creatine', label: 'Créatine' },
     ],
     guides: [{ slug: 'pre-workout-avec-ou-sans-cafeine', label: 'Pré-workout : avec ou sans caféine ?' }],
+    faq: [
+      {
+        q: 'Pré-workout avec ou sans caféine : lequel choisir ?',
+        a:
+          "Avec caféine si tu t'entraînes le matin ou en début d'après-midi et que tu la tolères bien. Sans caféine pour les séances du soir ou si la caféine te gêne : elle met plusieurs heures à s'éliminer et peut retarder l'endormissement. Si tu as de la tension ou un traitement, demande d'abord l'avis de ton médecin.",
+      },
+      {
+        q: 'Combien de caféine par jour ?',
+        a:
+          "Additionne la caféine de ton pré-workout, de tes cafés et de tes boissons énergisantes. Pour un adulte en bonne santé, l'Autorité européenne de sécurité des aliments (EFSA) considère comme sans risque jusqu'à 200 mg en une prise et 400 mg sur la journée. Les produits riches en caféine sont déconseillés aux enfants et aux femmes enceintes ou allaitantes. Ne dépasse jamais la dose indiquée sur l'étiquette.",
+      },
+      {
+        q: 'Peut-on composer son propre pré-workout ?',
+        a:
+          "Oui. Les formules sans caféine reposent surtout sur la citrulline (souvent en malate de citrulline) et la bêta-alanine, qu'on vend aussi à l'unité. Suis la dose journalière de chaque étiquette et fais le total si tu prends aussi un pré-workout qui en contient déjà. La bêta-alanine peut donner des picotements passagers sur la peau, un effet connu de cet acide aminé.",
+      },
+      {
+        q: 'Où acheter un pré-workout près de Saint-Quentin-en-Yvelines ?',
+        a:
+          "Dans notre boutique de Coignières, 8 rue du Pont des Landes, du lundi au samedi de 11 h à 19 h. On te montre les formules avec et sans caféine et on compare les étiquettes avec toi. Conseil gratuit, sans rendez-vous.",
+      },
+    ],
   },
   {
     slug: 'acides-amines',
