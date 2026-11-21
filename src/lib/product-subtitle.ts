@@ -8,9 +8,9 @@
 
 // Conditions :
 // - 'vegetale' : seulement sur une Protéine ;
-// - 'type-whey' : type de whey porté par sa propre étiquette (isolate,
-//   clear-whey : une seule étiquette de sous-catégorie par produit depuis le
-//   18/11/2026, la whey n'y est plus), jamais sur une protéine végétale ;
+// - 'type-whey' : type de whey lu sur sa propre étiquette (isolate,
+//   clear-whey), avec ou sans l'étiquette whey, jamais sur une protéine
+//   végétale (les étiquettes restent descriptives : lib/sous-categories) ;
 // - 'whey' : type de whey qui exige aussi l'étiquette whey (concentre).
 type Regle = [tag: string, label: string, condition?: 'whey' | 'type-whey' | 'vegetale']
 
@@ -18,7 +18,7 @@ const LABELS: Regle[] = [
   // Protéines végétales d'abord : « isolate » sur une protéine vegan n'est pas une whey.
   ['vegan', 'Protéine végétale', 'vegetale'],
   // Mix avant isolate : un mélange de protéines n'est pas une whey isolat,
-  // même s'il porte encore l'étiquette isolate.
+  // même s'il porte aussi les étiquettes isolate et whey.
   ['mix', 'Mix de protéines'],
   ['clear-whey', 'Whey claire', 'type-whey'],
   ['clear whey', 'Whey claire', 'type-whey'],
@@ -92,8 +92,8 @@ export function productSubtitle(tags: string[] | null | undefined, ctx: Contexte
  * Type de whey d'après les étiquettes (claire, isolat, concentrée), pour la
  * pastille de la fiche. null si le produit est végétal ou un mix, si le type
  * n'est pas précisé, ou si le nom le dit déjà. Isolat et claire se lisent sur
- * leur seule étiquette (plus d'étiquette whey sur eux depuis le 18/11/2026) ;
- * concentrée exige l'étiquette whey.
+ * leur propre étiquette, avec ou sans l'étiquette whey ; concentrée exige
+ * l'étiquette whey.
  * Avant le 08/10/2026, toute whey recevait « Whey isolat » (Whey Native
  * Protimuscle comprise).
  */

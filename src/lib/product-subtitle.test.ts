@@ -26,10 +26,10 @@ describe('productSubtitle', () => {
     // « vegan » hors protéines (BCAA) : pas de « Protéine végétale »
     expect(productSubtitle(['BCAA', 'Vegan', 'relance-55'], { category: 'Acides aminés', productType: 'Acides aminés' })).toBe('BCAA')
   })
-  it('sous-catégories du 18/11/2026 : une seule étiquette, isolat et claire sans étiquette whey', () => {
+  it('sous-catégories du 18/11/2026 : isolat et claire avec ou sans étiquette whey, mix avant isolat', () => {
     expect(productSubtitle(['isolate', 'relance-25'], { category: 'Protéines', productType: 'Protéines', title: 'Native Iso Blend' })).toBe('Whey isolat')
     expect(productSubtitle(['clear-whey', 'collagene', 'proteine'], { category: 'Protéines', title: 'Clear Fusion - Protéine' })).toBe('Whey claire')
-    // Mix : jamais « Whey isolat », même s'il porte encore isolate (Iso Fusion avant nettoyage)
+    // Mix : jamais « Whey isolat », même s'il porte aussi isolate et whey (Iso Fusion)
     expect(productSubtitle(['caseine', 'isolate', 'mix', 'whey'], { category: 'Protéines', title: 'Iso Fusion Protein' })).toBe('Mix de protéines')
     expect(productSubtitle(['mix'], { category: 'Protéines', title: 'Whey Native Protimuscle' })).toBe('Mix de protéines')
     // Concentrée : exige toujours l'étiquette whey
@@ -60,7 +60,7 @@ describe('wheyLabel (pastille de la fiche)', () => {
     expect(wheyLabel(['whey', 'vegan', 'isolate'], 'Iso Vegan')).toBeNull()
     expect(wheyLabel(['caseine', 'isolate', 'mix', 'whey'], 'Iso Fusion Protein')).toBeNull()
   })
-  it('isolat et claire sur leur seule étiquette (18/11/2026), concentrée avec whey', () => {
+  it('isolat et claire sur leur propre étiquette, concentrée avec whey', () => {
     expect(wheyLabel(['isolate'], 'Native Iso Blend')).toBe('Whey isolat')
     expect(wheyLabel(['clear-whey'], 'Clear Fusion - Protéine')).toBe('Whey claire')
     expect(wheyLabel(['concentre'], 'Musclewhey')).toBeNull()
