@@ -26,14 +26,11 @@ describe('Pré-workout en boutique (décision de Gestion du 18/11/2026)', () => 
     expect(cat?.enBoutique?.titre).toBe('Nos pré-workouts sont en boutique')
   })
 
-  it('liens « pour composer le tien » : citrulline, bêta-alanine et shot en ligne', () => {
-    const handles = cat?.featured.map((f) => f.handle) ?? []
-    expect(handles).toEqual([
-      'citrulline-malate-2-1-applied-nutrition-poudre-300-g',
-      'l-citrulline-1500-gelules',
-      'dedicated-nutrition-beta-alanine',
-      'rage-energy-shot-pre-workout-liquide',
-    ])
+  it('liens « pour composer le tien » calculés sur le stock, aucun lien en dur', () => {
+    expect(cat?.featured).toEqual([])
+    expect(cat?.composer?.titre).toBe('Pour composer le tien, en ligne')
+    // Décision du 17/10/2026 : plus de citrulline malate mise en avant.
+    expect(JSON.stringify(cat)).not.toMatch(/malate 2:1/i)
   })
 
   it('FAQ : mention caféine pour enfants et femmes enceintes ou allaitantes', () => {

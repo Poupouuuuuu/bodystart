@@ -10,6 +10,8 @@ import { CATEGORY_PAGES, getCategoryPage } from '@/lib/categories'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import ReadMore from '@/components/ui/ReadMore'
 import BoutiqueConseil from '@/components/conseil/BoutiqueConseil'
+import { catalogueDuSite } from '@/lib/shopify/recherche'
+import { liensComposerPreWorkout, type LigneComposer } from '@/lib/composer-pre-workout'
 import { PICKUP_PROMISE } from '@/lib/shipping'
 import { frenchSpacing } from '@/lib/typo'
 import { VILLES_DESSERVIES } from '@/lib/zone-locale'
@@ -54,6 +56,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   if (!cat) notFound()
 
   const products = await getCategoryProducts(cat.productType)
+  // Liens « Pour composer le tien » : calculés sur le stock, aucun si le catalogue est illisible.
+  let composer: LigneComposer[] = []
+  if (cat.composer) {
+    try {
+      composer = liensComposerPreWorkout(await catalogueDuSite())
+    } catch {
+      composer = []
+    }
+  }
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -175,7 +186,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         {cat.featured.length > 0 && (
           <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-7 mb-12 max-w-[760px]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
-              {cat.enBoutique ? 'Pour composer le tien, en ligne' : 'Nos choix dans ce rayon'}
+              Nos choix dans ce rayon
             </p>
             <ul className="space-y-2.5">
               {cat.featured.map((f) => (
@@ -186,6 +197,33 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                   >
                     <ArrowRight className="w-4 h-4 flex-shrink-0" />
                     {f.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Pour composer le tien (rayon vendu au comptoir) : une ligne par
+            ingrédient en stock, bloc absent si tout est épuisé. */}
+        {cat.composer && composer.length > 0 && (
+          <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-7 mb-12 max-w-[760px]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2">
+              {cat.composer.titre}
+            </p>
+            <p className="text-[14px] leading-[1.6] text-ink/90 mb-3">{frenchSpacing(cat.composer.texte)}</p>
+            <ul className="space-y-1">
+              {composer.map((l) => (
+                <li key={l.cle}>
+                  <Link
+                    href={`/products/${l.handle}`}
+                    className="inline-flex min-h-[44px] items-center gap-2 text-[15px] text-spruce hover:text-fresh transition-colors"
+                  >
+                    <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                    <span>
+                      <span className="font-semibold">{l.libelle}</span>
+                      <span className="text-ink-mute">{frenchSpacing(` : ${l.titre}`)}</span>
+                    </span>
                   </Link>
                 </li>
               ))}

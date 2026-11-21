@@ -43,6 +43,12 @@ export interface CategoryPage {
    * disparaissent : l'encadré suffit, la page reste au menu et au sitemap.
    */
   enBoutique?: { titre: string; texte: string }
+  /**
+   * Bloc « Pour composer le tien, en ligne » calculé sur le stock
+   * (lib/composer-pre-workout) à la place de `featured` : une ligne par
+   * ingrédient en stock, rien si tout est épuisé.
+   */
+  composer?: { titre: string; texte: string }
 }
 
 export const CATEGORY_PAGES: CategoryPage[] = [
@@ -185,7 +191,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     label: 'Pré-workout',
     metaTitle: 'Pré-workout avec ou sans caféine : comment choisir',
     metaDescription:
-      'Pré-workout avec ou sans caféine : on le choisit avec toi au comptoir à Coignières (78). En ligne : citrulline, bêta-alanine et un shot avec caféine.',
+      'Pré-workout avec ou sans caféine : on le choisit avec toi au comptoir de notre boutique de Coignières (78). Conseil gratuit, sans rendez-vous.',
     h1: 'Pré-workout : avec ou sans caféine ?',
     // Version « en boutique, conseil au comptoir » (décision de Gestion du
     // 18/11/2026) : les pré-workouts se choisissent en boutique, la page
@@ -193,19 +199,19 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     intro: [
       "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine, dont la teneur par dose est indiquée sur l'étiquette, et les formules dites « pump », sans stimulant, construites autour de la citrulline et de la bêta-alanine.",
       "Les pré-workouts se choisissent au comptoir de notre boutique de Coignières. On regarde avec toi l'heure de ta séance, ta tolérance à la caféine et ce que tu en prends déjà dans la journée (café, boissons énergisantes), puis on compare les étiquettes ensemble.",
-      "En ligne, tu peux composer le tien avec les ingrédients qu'on retrouve dans la plupart des formules : citrulline en poudre ou en gélules, bêta-alanine en poudre, ou un shot pré-workout liquide avec caféine, prêt à boire.",
     ],
     enBoutique: {
       titre: 'Nos pré-workouts sont en boutique',
       texte:
         "Avec ou sans caféine, on les choisit avec toi au comptoir. Passe nous voir, ou appelle-nous pour savoir ce qu'on a en rayon avant de venir.",
     },
-    featured: [
-      { handle: 'citrulline-malate-2-1-applied-nutrition-poudre-300-g', label: 'Citrulline malate 2:1 en poudre' },
-      { handle: 'l-citrulline-1500-gelules', label: 'L-Citrulline en gélules' },
-      { handle: 'dedicated-nutrition-beta-alanine', label: 'Bêta-alanine en poudre' },
-      { handle: 'rage-energy-shot-pre-workout-liquide', label: 'Shot pré-workout liquide, avec caféine' },
-    ],
+    // Liens calculés sur le stock (demande de l'Agent Digital du 21/11/2026) :
+    // L-citrulline pure, bêta-alanine, shot avec caféine (lib/composer-pre-workout).
+    featured: [],
+    composer: {
+      titre: 'Pour composer le tien, en ligne',
+      texte: "Les ingrédients qu'on retrouve dans la plupart des formules, à l'unité :",
+    },
     related: [
       { slug: 'acides-amines', label: 'Acides aminés' },
       { slug: 'creatine', label: 'Créatine' },
