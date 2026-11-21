@@ -51,6 +51,10 @@ export function rayonDeFiche(p: ProduitRayon, { coffretsOuverts }: { coffretsOuv
 export const GUIDES_PAR_ETIQUETTE: { types: string[]; etiquettes: string[]; titre?: RegExp; guides: string[] }[] = [
   { types: ['proteines'], etiquettes: ['gainer'], guides: ['gainer-prise-de-masse-comment-choisir', 'combien-de-proteines-par-jour'] },
   { types: ['proteines'], etiquettes: ['vegan'], guides: ['proteines-vegetales-musculation', 'combien-de-proteines-par-jour'] },
+  // Protéine d'œuf : le guide des protéines végétales n'en parle pas, seulement le guide des quantités.
+  { types: ['proteines'], etiquettes: ['oeuf'], guides: ['combien-de-proteines-par-jour'] },
+  // Mix avant isolate : un mélange qui porte encore l'étiquette isolate n'a pas le guide whey ou isolate.
+  { types: ['proteines'], etiquettes: ['mix'], guides: ['quelle-whey-choisir-debutant', 'combien-de-proteines-par-jour'] },
   { types: ['proteines'], etiquettes: ['isolate', 'clear whey', 'clear-whey'], guides: ['whey-ou-isolate-quelle-difference', 'quand-prendre-sa-whey'] },
   { types: ['proteines'], etiquettes: ['whey'], guides: ['quelle-whey-choisir-debutant', 'quand-prendre-sa-whey'] },
   { types: ['acides amines'], etiquettes: ['eaa', 'bcaa'], guides: ['eaa-ou-bcaa-lequel-prendre'] },

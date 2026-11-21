@@ -17,6 +17,7 @@ import { ProductCardShop } from '@/components/product/ProductCardShop'
 import PaginationCatalogue from '@/components/product/PaginationCatalogue'
 import { nombreDePages } from '@/lib/catalogue'
 import { cardPriceOf } from '@/lib/product-price'
+import { dansSousCategorie, PRIORITE_PROTEINES, type SousCategorie } from '@/lib/sous-categories'
 import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 
 // ─── Objectifs (bandeau haut) ───
@@ -42,15 +43,27 @@ const SORT_OPTIONS = [
 // Sous-filtres = `tags` réels (lowercase, sans accent au catalogue).
 // Le matching normalise des deux côtés (casse + diacritiques), donc les
 // libellés d'affichage peuvent garder accents/pluriels sans casser le match.
-type SubCategory = { key: string; label: string; tags: string[] }
-type Category = { key: string; label: string; productTypes: string[]; subcategories: SubCategory[] }
+type Category = {
+  key: string
+  label: string
+  productTypes: string[]
+  subcategories: SousCategorie[]
+  /** Pastilles exclusives : le produit n'apparaît que sous la 1re de cet ordre qu'il porte (lib/sous-categories). */
+  priorite?: readonly string[]
+}
 
 const CATEGORIES: Category[] = [
-  { key: 'proteines', label: 'Protéines', productTypes: ['Protéines'], subcategories: [
+  // Sous-catégories Protéines (18/11/2026, Gestion et Boutique) : une seule
+  // pastille par produit, par ordre de priorité (21/11/2026) ; les étiquettes
+  // Shopify restent descriptives (lib/sous-categories). Caséine retirée (plus
+  // en rayon depuis le 25/10/2026).
+  { key: 'proteines', label: 'Protéines', productTypes: ['Protéines'], priorite: PRIORITE_PROTEINES, subcategories: [
     { key: 'whey', label: 'Whey', tags: ['whey'] },
     { key: 'isolate', label: 'Isolate', tags: ['isolate'] },
+    { key: 'mix', label: 'Mix', tags: ['mix'] },
+    { key: 'clear-whey', label: 'Clear whey', tags: ['clear-whey'] },
     { key: 'gainer', label: 'Gainer', tags: ['gainer'] },
-    { key: 'caseine', label: 'Caséine', tags: ['caseine'] },
+    { key: 'vegetale', label: 'Végétale et œuf', tags: ['vegan', 'oeuf'] },
   ]},
   { key: 'glucides', label: 'Glucides', productTypes: ['Glucides'], subcategories: [
     { key: 'riz', label: 'Riz', tags: ['riz'] },
@@ -116,9 +129,8 @@ function productMatchesCategory(p: ShopifyProduct, cat: Category): boolean {
   return cat.productTypes.some((t) => normalize(t) === pt)
 }
 
-function productMatchesTags(p: ShopifyProduct, tags: string[]): boolean {
-  const productTags = (p.tags ?? []).map(normalize)
-  return tags.some((tag) => productTags.includes(normalize(tag)))
+function productInSub(p: ShopifyProduct, cat: Category, subKey: string): boolean {
+  return dansSousCategorie(p.tags, subKey, cat.subcategories, cat.priorite)
 }
 
 interface Props {
@@ -356,7 +368,7 @@ export function ProductsCatalog({
       result = result.filter((p) => productMatchesCategory(p, currentCategory))
       if (activeTag) {
         const sub = currentCategory.subcategories.find((s) => s.key === activeTag)
-        if (sub) result = result.filter((p) => productMatchesTags(p, sub.tags))
+        if (sub) result = result.filter((p) => productInSub(p, currentCategory, sub.key))
       }
     }
 
@@ -418,7 +430,7 @@ export function ProductsCatalog({
     for (const cat of CATEGORIES) {
       for (const sub of cat.subcategories) {
         counts[`${cat.key}:${sub.key}`] = products.filter(
-          (p) => productMatchesCategory(p, cat) && productMatchesTags(p, sub.tags)
+          (p) => productMatchesCategory(p, cat) && productInSub(p, cat, sub.key)
         ).length
       }
     }
