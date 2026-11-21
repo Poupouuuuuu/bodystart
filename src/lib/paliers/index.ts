@@ -93,53 +93,13 @@ export function parsePaliers(value: string | null | undefined): PaliersConfig | 
   return periodes.length ? { periodes } : null
 }
 
-/**
- * Période en cours à `now` (bornes incluses ; `au` absent = sans fin).
- * Plusieurs périodes en même temps (échelle et Black Week les 21 et 22/11/2026) :
- * leurs paliers sont réunis ; à type et montant égaux, celui de la période
- * commencée le plus tard l'emporte (la créatine de la Black Week à 100 €
- * remplace le shaker de l'échelle). Nom : celui de cette période la plus récente.
- */
+/** Période en cours à `now` (bornes incluses ; `au` absent = sans fin). */
 export function periodeActive(config: PaliersConfig | null, now: Date): Periode | null {
   if (!config) return null
   const t = now.getTime()
-  const actives = config.periodes
-    .filter((p) => Date.parse(p.du) <= t && (p.au === null || t <= Date.parse(p.au)))
-    .sort((a, b) => Date.parse(b.du) - Date.parse(a.du))
-  if (actives.length <= 1) return actives[0] ?? null
-  const paliers = new Map<string, Palier>()
-  for (const p of actives) {
-    for (const palier of p.paliers) {
-      const cle = `${palier.type}-${palier.montant}`
-      if (!paliers.has(cle)) paliers.set(cle, palier)
-    }
-  }
-  const [recente] = actives
-  return {
-    nom: recente.nom,
-    du: recente.du,
-    au: recente.au,
-    paliers: [...paliers.values()].sort((a, b) => a.montant - b.montant),
-  }
-}
-
-/**
- * Paliers cadeaux dont la remise Shopify n'est plus active (coupée par la
- * boutique, épuisée, terminée) retirés : la remise fait foi. Statut inconnu
- * (remise illisible) : palier gardé, la règle « jamais de cadeau facturé »
- * (cadeauxPayants) protège le client.
- */
-export function sansRemisesInactives(config: PaliersConfig, statuts: Readonly<Record<string, string | null>>): PaliersConfig {
-  return {
-    periodes: config.periodes.map((p) => ({
-      ...p,
-      paliers: p.paliers.filter((palier) => {
-        if (palier.type !== 'cadeau' || !palier.remise_shopify) return true
-        const statut = statuts[palier.remise_shopify]
-        return statut == null || statut === 'ACTIVE'
-      }),
-    })),
-  }
+  return (
+    config.periodes.find((p) => Date.parse(p.du) <= t && (p.au === null || t <= Date.parse(p.au))) ?? null
+  )
 }
 
 /**

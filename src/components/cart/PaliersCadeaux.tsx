@@ -25,10 +25,7 @@ function phraseReste(e: EtatPalier) {
  * viennent du métachamp (via useCadeaux) ; ce composant ne fait qu'afficher.
  */
 export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux; onAjouter: (montant: number) => void }) {
-  const { horsBase, baseCadeaux, offertsParAchat } = etat
-  // Cadeau que Shopify n'accorde pas avec ce panier (remises non cumulables : Crunch Bar et
-  // créatine de la Black Week les 21 et 22/11/2026) : retiré du panier, et plus affiché ici.
-  const etats = etat.etats.filter((e) => !(e.palier.type === 'cadeau' && e.nonAccorde && e.lignes.length === 0))
+  const { etats, horsBase, baseCadeaux, offertsParAchat } = etat
   const max = Math.max(...etats.map((e) => e.palier.montant))
   const aCadeaux = etats.some((e) => e.palier.type === 'cadeau')
   const remplissage = aCadeaux ? baseCadeaux : (etats[0]?.base ?? 0)

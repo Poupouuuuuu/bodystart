@@ -95,8 +95,6 @@ function contexteDe(montant: number, etats: EtatPalier[], lignes: LigneCadeau[],
   return `${atteints.join(',')}|${codes}|${autres.join(',')}|${achats.join(',')}`
 }
 
-const arrondi = (n: number) => Math.round(n * 100) / 100
-
 export function calculerCadeaux(
   cart: ShopifyCart | null,
   donnees: DonneesPaliers | null,
@@ -149,16 +147,10 @@ export function calculerCadeaux(
     const achats = lignes.filter((l) => l.cadeau === null && l.quantity > 0 && ids.has(l.merchandiseId))
     if (achats.length === 0) return e
     const prixMin = Math.min(...achats.map((l) => l.subtotal / l.quantity))
-    const auDessus = etatsShopify.filter((q) => q.palier.type === 'cadeau' && q.palier.montant > e.palier.montant)
-    const superieur = auDessus.some((q) => q.atteint && q.base - prixMin + 0.005 >= q.palier.montant)
-    if (superieur) return { ...e, parAchat: achats.reduce((n, l) => n + l.quantity, 0) }
-    if (auDessus.length > 0) return e
-    // Palier le plus haut (créatine de la Black Week, 21/11/2026) : jamais un 2e offert en plus de
-    // l'article acheté. Shopify offre l'article acheté sans le compter dans le minimum : palier
-    // atteint seulement si le reste du panier y arrive, sinon « Plus que X € ».
-    const sansLui = arrondi(e.base - prixMin)
-    if (sansLui + 0.005 >= e.palier.montant) return { ...e, parAchat: achats.reduce((n, l) => n + l.quantity, 0) }
-    return { ...e, base: sansLui, atteint: false, reste: arrondi(e.palier.montant - sansLui) }
+    const superieur = etatsShopify.some(
+      (q) => q.palier.type === 'cadeau' && q.palier.montant > e.palier.montant && q.atteint && q.base - prixMin + 0.005 >= q.palier.montant
+    )
+    return superieur ? { ...e, parAchat: achats.reduce((n, l) => n + l.quantity, 0) } : e
   })
 
   const titres = new Set(donnees.titres ?? [])
@@ -185,12 +177,7 @@ export function calculerCadeaux(
     .filter((l) => (l.remises ?? []).some((r) => titres.has(r.titre) && r.montant > 0))
     .map((l) => l.id)
   // Articles achetés réellement offerts à la place d'une ligne cadeau (pour le message du tiroir).
-  // Message « Ta Crunch Bar est offerte » : seulement les paliers qui ont un palier cadeau au-dessus.
-  const variantesParAchat = new Set(
-    etats
-      .filter((e) => e.parAchat > 0 && etats.some((q) => q.palier.type === 'cadeau' && q.palier.montant > e.palier.montant))
-      .flatMap((e) => (e.palier.variantes ?? []).map((v) => v.id))
-  )
+  const variantesParAchat = new Set(etats.filter((e) => e.parAchat > 0).flatMap((e) => (e.palier.variantes ?? []).map((v) => v.id)))
   const offertsParAchat = lignes
     .filter((l) => l.cadeau === null && l.quantity > 0 && variantesParAchat.has(l.merchandiseId))
     .reduce((n, l) => {
