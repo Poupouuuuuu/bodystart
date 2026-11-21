@@ -90,8 +90,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         '@type': 'FAQPage',
         mainEntity: cat.faq.map(({ q, a }) => ({
           '@type': 'Question',
-          name: q,
-          acceptedAnswer: { '@type': 'Answer', text: a },
+          name: frenchSpacing(q),
+          acceptedAnswer: { '@type': 'Answer', text: frenchSpacing(a) },
         })),
       }
     : null
@@ -118,7 +118,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </ol>
           </nav>
           <h1 className="max-w-[760px] font-display text-[32px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
-            {cat.h1}
+            {frenchSpacing(cat.h1)}
           </h1>
         </div>
       </section>
@@ -132,7 +132,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <ReadMore>
             {cat.intro.map((paragraph) => (
               <p key={paragraph.slice(0, 24)} className="text-ink-mute text-[16px] leading-[1.7] mb-4">
-                {paragraph}
+                {frenchSpacing(paragraph)}
               </p>
             ))}
           </ReadMore>
@@ -226,8 +226,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             <div className="space-y-4">
               {cat.faq.map(({ q, a }) => (
                 <div key={q} className="bg-white rounded-xl border border-spruce/10 p-5">
-                  <h3 className="font-display font-bold text-[15px] text-spruce mb-2">{q}</h3>
-                  <p className="text-[14px] leading-[1.7] text-ink/90">{a}</p>
+                  <h3 className="font-display font-bold text-[15px] text-spruce mb-2">{frenchSpacing(q)}</h3>
+                  <p className="text-[14px] leading-[1.7] text-ink/90">{frenchSpacing(a)}</p>
                 </div>
               ))}
             </div>
@@ -271,14 +271,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           ))}
         </div>
         {/* Texte courant, pas flex : en flex, la phrase se découpait en colonnes sur mobile.
-            py-3.5 porte la zone tactile du lien à 44 px sans changer la hauteur de ligne. */}
-        <p className="text-[14px] leading-relaxed text-ink-mute">
-          <Store className="mr-2 inline-block h-4 w-4 -translate-y-px align-middle text-spruce" aria-hidden="true" />
-          Tout le rayon est aussi en boutique à Coignières (78), avec du conseil gratuit :{' '}
-          <Link href="/stores" className="py-3.5 font-semibold text-spruce hover:underline underline-offset-4">
-            infos et horaires
-          </Link>
-        </p>
+            py-3.5 porte la zone tactile du lien à 44 px sans changer la hauteur de ligne.
+            Absente d'un rayon vendu au comptoir : l'encadré boutique le dit déjà. */}
+        {!cat.enBoutique && (
+          <p className="text-[14px] leading-relaxed text-ink-mute">
+            <Store className="mr-2 inline-block h-4 w-4 -translate-y-px align-middle text-spruce" aria-hidden="true" />
+            Tout le rayon est aussi en boutique à Coignières (78), avec du conseil gratuit :{' '}
+            <Link href="/stores" className="py-3.5 font-semibold text-spruce hover:underline underline-offset-4">
+              infos et horaires
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   )

@@ -185,7 +185,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     label: 'Pré-workout',
     metaTitle: 'Pré-workout avec ou sans caféine : comment choisir',
     metaDescription:
-      'Pré-workout avec ou sans caféine : on le choisit avec toi au comptoir à Coignières (78). En ligne : citrulline, bêta-alanine et shots.',
+      'Pré-workout avec ou sans caféine : on le choisit avec toi au comptoir à Coignières (78). En ligne : citrulline, bêta-alanine et un shot avec caféine.',
     h1: 'Pré-workout : avec ou sans caféine ?',
     // Version « en boutique, conseil au comptoir » (décision de Gestion du
     // 18/11/2026) : les pré-workouts se choisissent en boutique, la page
@@ -193,7 +193,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     intro: [
       "Un pré-workout se prend 20 à 30 minutes avant la séance. Deux familles : les formules avec caféine, dont la teneur par dose est indiquée sur l'étiquette, et les formules dites « pump », sans stimulant, construites autour de la citrulline et de la bêta-alanine.",
       "Les pré-workouts se choisissent au comptoir de notre boutique de Coignières. On regarde avec toi l'heure de ta séance, ta tolérance à la caféine et ce que tu en prends déjà dans la journée (café, boissons énergisantes), puis on compare les étiquettes ensemble.",
-      "En ligne, tu peux composer le tien avec les ingrédients qu'on retrouve dans la plupart des formules : citrulline et bêta-alanine, en poudre ou en gélules, ou un shot pré-workout liquide prêt à boire.",
+      "En ligne, tu peux composer le tien avec les ingrédients qu'on retrouve dans la plupart des formules : citrulline en poudre ou en gélules, bêta-alanine en poudre, ou un shot pré-workout liquide avec caféine, prêt à boire.",
     ],
     enBoutique: {
       titre: 'Nos pré-workouts sont en boutique',
@@ -215,12 +215,12 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       {
         q: 'Pré-workout avec ou sans caféine : lequel choisir ?',
         a:
-          "Avec caféine si tu t'entraînes le matin ou en début d'après-midi et que tu la tolères bien. Sans caféine pour les séances du soir ou si la caféine te gêne : elle met plusieurs heures à s'éliminer et peut retarder l'endormissement. Si tu as de la tension ou un traitement, demande d'abord l'avis de ton médecin.",
+          "Avec caféine si tu t'entraînes le matin ou en début d'après-midi et que tu la tolères bien. Sans caféine pour les séances du soir ou si la caféine te gêne : elle met plusieurs heures à s'éliminer et peut retarder l'endormissement. Si tu es hypertendu ou sous traitement, demande d'abord l'avis de ton médecin.",
       },
       {
         q: 'Combien de caféine par jour ?',
         a:
-          "Additionne la caféine de ton pré-workout, de tes cafés et de tes boissons énergisantes. Pour un adulte en bonne santé, l'Autorité européenne de sécurité des aliments (EFSA) considère comme sans risque jusqu'à 200 mg en une prise et 400 mg sur la journée. Les produits riches en caféine sont déconseillés aux enfants et aux femmes enceintes ou allaitantes. Ne dépasse jamais la dose indiquée sur l'étiquette.",
+          "Additionne la caféine de ton pré-workout, de tes cafés et de tes boissons énergisantes. Pour un adulte en bonne santé, l'Autorité européenne de sécurité des aliments (EFSA) considère que jusqu'à 200 mg en une prise et 400 mg sur la journée, toutes sources confondues, ne posent pas de problème de sécurité. Les produits riches en caféine sont déconseillés aux enfants et aux femmes enceintes ou allaitantes. Ne dépasse jamais la dose indiquée sur l'étiquette.",
       },
       {
         q: 'Peut-on composer son propre pré-workout ?',
@@ -230,7 +230,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
       {
         q: 'Où acheter un pré-workout près de Saint-Quentin-en-Yvelines ?',
         a:
-          "Dans notre boutique de Coignières, 8 rue du Pont des Landes, du lundi au samedi de 11 h à 19 h. On te montre les formules avec et sans caféine et on compare les étiquettes avec toi. Conseil gratuit, sans rendez-vous.",
+          "Dans notre boutique, 8 Rue du Pont des Landes, 78310 Coignières (07 61 84 75 80), du lundi au samedi de 11 h à 19 h. On te montre les formules avec et sans caféine et on compare les étiquettes avec toi. Conseil gratuit, sans rendez-vous.",
       },
     ],
   },
