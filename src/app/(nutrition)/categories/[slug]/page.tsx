@@ -9,6 +9,9 @@ import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES, getCategoryPage } from '@/lib/categories'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import ReadMore from '@/components/ui/ReadMore'
+import BoutiqueConseil from '@/components/conseil/BoutiqueConseil'
+import { catalogueDuSite } from '@/lib/shopify/recherche'
+import { liensComposerPreWorkout, type LigneComposer } from '@/lib/composer-pre-workout'
 import { PICKUP_PROMISE } from '@/lib/shipping'
 import { frenchSpacing } from '@/lib/typo'
 import { VILLES_DESSERVIES } from '@/lib/zone-locale'
@@ -53,6 +56,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   if (!cat) notFound()
 
   const products = await getCategoryProducts(cat.productType)
+  // Liens « Pour composer le tien » : calculés sur le stock, aucun si le catalogue est illisible.
+  let composer: LigneComposer[] = []
+  if (cat.composer) {
+    try {
+      composer = liensComposerPreWorkout(await catalogueDuSite())
+    } catch {
+      composer = []
+    }
+  }
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -89,8 +101,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         '@type': 'FAQPage',
         mainEntity: cat.faq.map(({ q, a }) => ({
           '@type': 'Question',
-          name: q,
-          acceptedAnswer: { '@type': 'Answer', text: a },
+          name: frenchSpacing(q),
+          acceptedAnswer: { '@type': 'Answer', text: frenchSpacing(a) },
         })),
       }
     : null
@@ -117,7 +129,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </ol>
           </nav>
           <h1 className="max-w-[760px] font-display text-[32px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
-            {cat.h1}
+            {frenchSpacing(cat.h1)}
           </h1>
         </div>
       </section>
@@ -131,11 +143,24 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <ReadMore>
             {cat.intro.map((paragraph) => (
               <p key={paragraph.slice(0, 24)} className="text-ink-mute text-[16px] leading-[1.7] mb-4">
-                {paragraph}
+                {frenchSpacing(paragraph)}
               </p>
             ))}
           </ReadMore>
         </div>
+
+        {/* Rayon vendu au comptoir (pré-workouts, décision de Gestion du
+            18/11/2026) : texte de la page puis carte boutique (adresse,
+            horaires, statut en direct, itinéraire, appel). */}
+        {cat.enBoutique && (
+          <section aria-labelledby="en-boutique" className="mb-10 max-w-[760px]">
+            <h2 id="en-boutique" className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-3">
+              {cat.enBoutique.titre}
+            </h2>
+            <p className="text-[15px] leading-[1.7] text-ink/90 mb-5">{frenchSpacing(cat.enBoutique.texte)}</p>
+            <BoutiqueConseil />
+          </section>
+        )}
 
         {/* Rayons cherchés en local : stock à Coignières et trajet réel depuis
             Saint-Quentin-en-Yvelines (lib/zone-locale), lien vers la page zone. */}
@@ -179,10 +204,40 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
         )}
 
-        {/* Grille produits */}
-        <h2 className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-6">
-          Tous nos produits {cat.label.toLowerCase()} ({products.length})
-        </h2>
+        {/* Pour composer le tien (rayon vendu au comptoir) : une ligne par
+            ingrédient en stock, bloc absent si tout est épuisé. */}
+        {cat.composer && composer.length > 0 && (
+          <div className="bg-white rounded-2xl border border-spruce/10 p-6 md:p-7 mb-12 max-w-[760px]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2">
+              {cat.composer.titre}
+            </p>
+            <p className="text-[14px] leading-[1.6] text-ink/90 mb-3">{frenchSpacing(cat.composer.texte)}</p>
+            <ul className="space-y-1">
+              {composer.map((l) => (
+                <li key={l.cle}>
+                  <Link
+                    href={`/products/${l.handle}`}
+                    className="inline-flex min-h-[44px] items-center gap-2 text-[15px] text-spruce hover:text-fresh transition-colors"
+                  >
+                    <ArrowRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                    <span>
+                      <span className="font-semibold">{l.libelle}</span>
+                      <span className="text-ink-mute">{frenchSpacing(` : ${l.titre}`)}</span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Grille produits. Rayon vendu au comptoir et rien en ligne : ni
+            grille vide ni « (0) », l'encadré boutique plus haut suffit. */}
+        {(products.length > 0 || !cat.enBoutique) && (
+          <h2 className="font-display text-[22px] font-extrabold text-spruce tracking-tight mb-6">
+            Tous nos produits {cat.label.toLowerCase()} ({products.length})
+          </h2>
+        )}
         {products.length > 0 ? (
           // 2 colonnes dès le mobile — cohérent avec /products (même carte)
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-14">
@@ -190,7 +245,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <ProductCardShop key={p.id} product={p} />
             ))}
           </div>
-        ) : (
+        ) : cat.enBoutique ? null : (
           <p className="text-ink-mute mb-14">
             Le rayon se remplit. Passe nous voir en boutique ou{' '}
             <Link href="/products" className="font-semibold text-spruce hover:underline underline-offset-4">
@@ -209,8 +264,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             <div className="space-y-4">
               {cat.faq.map(({ q, a }) => (
                 <div key={q} className="bg-white rounded-xl border border-spruce/10 p-5">
-                  <h3 className="font-display font-bold text-[15px] text-spruce mb-2">{q}</h3>
-                  <p className="text-[14px] leading-[1.7] text-ink/90">{a}</p>
+                  <h3 className="font-display font-bold text-[15px] text-spruce mb-2">{frenchSpacing(q)}</h3>
+                  <p className="text-[14px] leading-[1.7] text-ink/90">{frenchSpacing(a)}</p>
                 </div>
               ))}
             </div>
@@ -254,14 +309,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           ))}
         </div>
         {/* Texte courant, pas flex : en flex, la phrase se découpait en colonnes sur mobile.
-            py-3.5 porte la zone tactile du lien à 44 px sans changer la hauteur de ligne. */}
-        <p className="text-[14px] leading-relaxed text-ink-mute">
-          <Store className="mr-2 inline-block h-4 w-4 -translate-y-px align-middle text-spruce" aria-hidden="true" />
-          Tout le rayon est aussi en boutique à Coignières (78), avec du conseil gratuit :{' '}
-          <Link href="/stores" className="py-3.5 font-semibold text-spruce hover:underline underline-offset-4">
-            infos et horaires
-          </Link>
-        </p>
+            py-3.5 porte la zone tactile du lien à 44 px sans changer la hauteur de ligne.
+            Absente d'un rayon vendu au comptoir : l'encadré boutique le dit déjà. */}
+        {!cat.enBoutique && (
+          <p className="text-[14px] leading-relaxed text-ink-mute">
+            <Store className="mr-2 inline-block h-4 w-4 -translate-y-px align-middle text-spruce" aria-hidden="true" />
+            Tout le rayon est aussi en boutique à Coignières (78), avec du conseil gratuit :{' '}
+            <Link href="/stores" className="py-3.5 font-semibold text-spruce hover:underline underline-offset-4">
+              infos et horaires
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   )
