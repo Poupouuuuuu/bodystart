@@ -10,6 +10,7 @@ import {
   isBundleOptionEpuisee,
   resolveBundleVariantOnChange,
   getCartLineComponentImages,
+  getComponentProductTitles,
 } from './bundle'
 import type { ShopifyProductVariant } from './types'
 
@@ -138,6 +139,75 @@ describe('completeness des variantes de bundle', () => {
     const init = pickInitialBundleVariant(VARIANTS)
     expect(init.id).not.toBe('b-cm-810')
     expect(init.availableForSale).toBe(true)
+  })
+})
+
+// Pack Gamer (25/11/2026) : une option « Formule » choisie par Boutique, des
+// variantes de composition différente. « Jour » (39,90 €) : D3, magnésium,
+// oméga 3 ; « Jour + Nuit » (49,90 €) : les mêmes et le Keep Sleep. « Jour »
+// était masquée (Keep Sleep absent de l'union exigée) et ne se choisissait pas.
+function composant(id: string, titre: string) {
+  return {
+    quantity: 1,
+    productVariant: {
+      id: `v-${id}`,
+      title: 'Default Title',
+      image: null,
+      product: { id: `gid://shopify/Product/${id}`, handle: id, title: titre, featuredImage: null, metafields: [] },
+    },
+  }
+}
+const JOUR_COMPOSANTS = [
+  composant('D3', 'Vitamine D3 2000 UI OstroVit - 60 gélules'),
+  composant('MAG', 'Magnésium Bisglycinate OstroVit - 90 gélules'),
+  composant('OMEGA', 'Oméga 3 Ultra OstroVit - 90 capsules'),
+]
+function formule(id: string, nom: string, prix: string, composants: ReturnType<typeof composant>[]): ShopifyProductVariant {
+  return {
+    id,
+    title: nom,
+    availableForSale: true,
+    quantityAvailable: 8,
+    price: { amount: prix, currencyCode: 'EUR' },
+    compareAtPrice: null,
+    selectedOptions: [{ name: 'Formule', value: nom }],
+    requiresComponents: true,
+    components: { nodes: composants },
+  }
+}
+const PACK_GAMER: ShopifyProductVariant[] = [
+  formule('g-jour', 'Jour', '39.90', JOUR_COMPOSANTS),
+  formule('g-jour-nuit', 'Jour + Nuit', '49.90', [...JOUR_COMPOSANTS, composant('SLEEP', 'Keep Sleep OstroVit - Mélatonine 180 comprimés')]),
+]
+
+describe('formules de composition différente (Pack Gamer, 25/11/2026)', () => {
+  it('les deux formules sont proposables, « Jour » comprise', () => {
+    expect(getCompleteBundleVariants(PACK_GAMER).map((v) => v.id)).toEqual(['g-jour', 'g-jour-nuit'])
+  })
+
+  it('un sélecteur « Formule » à deux valeurs, pas « Inclus dans le pack »', () => {
+    expect(buildBundleAxes(getCompleteBundleVariants(PACK_GAMER))).toEqual([{ name: 'Formule', values: ['Jour', 'Jour + Nuit'] }])
+  })
+
+  it('choisir « Jour » donne la variante à 39,90 €', () => {
+    const complete = getCompleteBundleVariants(PACK_GAMER)
+    const axes = buildBundleAxes(complete)
+    const next = resolveBundleVariantOnChange(complete, axes, { Formule: 'Jour + Nuit' }, 'Formule', 'Jour')
+    expect(next?.id).toBe('g-jour')
+    expect(next?.price.amount).toBe('39.90')
+  })
+
+  it('sans les titres, la règle stricte reste disponible (union exigée)', () => {
+    const expected = getExpectedComponentProductIds(PACK_GAMER)
+    expect(isVariantComplete(PACK_GAMER[0], expected)).toBe(false)
+    expect(isVariantComplete(PACK_GAMER[0], expected, getComponentProductTitles(PACK_GAMER))).toBe(true)
+  })
+
+  it('Pack Sèche inchangé : la saveur Sub Zero sans Sub Zero reste exclue avec les titres', () => {
+    const titres = getComponentProductTitles(VARIANTS)
+    const expected = getExpectedComponentProductIds(VARIANTS)
+    expect(isVariantComplete(VARIANTS.find((v) => v.id === 'b-cm-810')!, expected, titres)).toBe(false)
+    expect(isVariantComplete(VARIANTS.find((v) => v.id === 'b-van-810')!, expected, titres)).toBe(true)
   })
 })
 
