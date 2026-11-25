@@ -4,7 +4,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from '@/components/ui/Image'
 import { ArrowRight, Dumbbell, Brain, TrendingUp, Clock, Star, Zap, Shield, Users, ChevronRight } from 'lucide-react'
 import { COACHING_PRODUCTS } from '@/lib/stripe/types'
 

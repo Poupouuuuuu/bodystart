@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from '@/components/ui/Image'
 import {
   User, Package, MapPin, LogOut, ChevronRight, ShoppingBag, Star,
   Gift, Plus, Pencil, Trash2, X, Loader2, Save, Wallet, BadgeCheck, ShieldCheck
