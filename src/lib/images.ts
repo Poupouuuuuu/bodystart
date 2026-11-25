@@ -7,7 +7,8 @@
 // était cassée (fiche et carte /packs du Pack Gamer). Décision de Gestion :
 // les images de cdn.shopify.com sont redimensionnées par le CDN Shopify
 // (paramètre width, WebP servi aux navigateurs qui l'acceptent), sans quota.
-// Les images locales du site (public/) gardent l'optimiseur de Next.
+// Les images locales du site (public/) sont servies telles quelles
+// (components/ui/Image, extension décidée par Gestion le même soir).
 //
 // Pur, sans réseau. Testé dans images.test.ts.
 
