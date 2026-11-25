@@ -1,6 +1,6 @@
 'use client'
 
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { BundleComponentDetail } from '@/lib/shopify/bundle'
 import type { ShopifyImage } from '@/lib/shopify/types'

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import CookieSettingsButton from '@/components/ui/CookieSettingsButton'
 import { decorSaison } from '@/components/saison/decors'
 import type { ThemeSaison } from '@/lib/saison'

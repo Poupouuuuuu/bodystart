@@ -7,7 +7,7 @@
 // accent, sentence case. Aucune logique panier/checkout touchee.
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import { X, Minus, Plus, ArrowRight, Package, Store, Truck, CheckCircle2, ShieldCheck, RotateCcw, Gift } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { useCadeaux } from '@/hooks/useCadeaux'

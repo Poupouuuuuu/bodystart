@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { ProductCardShop } from '@/components/product/ProductCardShop'

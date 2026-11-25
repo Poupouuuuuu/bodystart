@@ -1,6 +1,6 @@
 'use client'
 
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useId } from 'react'
 import { Package } from 'lucide-react'

@@ -5,7 +5,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import { ArrowRight, CheckCircle2, Shirt, Zap, Shield, Repeat, Footprints, Watch, Dumbbell, Backpack } from 'lucide-react'
 import { toast } from '@/lib/toast'
 

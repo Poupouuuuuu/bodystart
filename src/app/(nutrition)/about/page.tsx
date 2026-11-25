@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import { ArrowRight, Store, Truck, MessageCircle, ShieldCheck, MapPin, Clock, Phone } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 

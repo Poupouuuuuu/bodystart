@@ -5,7 +5,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { ShoppingBag, Menu, X, ChevronDown, Search, User, Loader2, Phone, Navigation, MapPin } from 'lucide-react'

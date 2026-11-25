@@ -17,7 +17,7 @@
  */
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'

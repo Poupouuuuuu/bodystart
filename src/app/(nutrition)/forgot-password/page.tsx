@@ -9,7 +9,7 @@ import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { recoverCustomerPassword } from '@/lib/shopify/customer'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 
 function ForgotPasswordContent() {
   const [email, setEmail] = useState('')

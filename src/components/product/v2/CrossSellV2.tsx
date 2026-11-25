@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import { Truck } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatPrice, cn } from '@/lib/utils'

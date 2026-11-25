@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 
 function LoginContent() {
   const router = useRouter()

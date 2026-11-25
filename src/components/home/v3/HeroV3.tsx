@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import type { CSSProperties } from 'react'
 import { ArrowRight, ArrowUpRight, MapPin, Star } from 'lucide-react'
 import { GOOGLE_LISTING_URL } from '@/lib/store-info'

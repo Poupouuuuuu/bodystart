@@ -1,4 +1,4 @@
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'

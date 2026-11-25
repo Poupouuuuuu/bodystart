@@ -209,35 +209,10 @@ export function getExpectedComponentProductIds(variants: ShopifyProductVariant[]
   return Array.from(ids)
 }
 
-/** Titre de chaque produit composant (union sur toutes variantes), par product id. */
-export function getComponentProductTitles(variants: ShopifyProductVariant[]): Map<string, string> {
-  const titres = new Map<string, string>()
-  for (const v of variants) {
-    for (const c of v.components?.nodes ?? []) {
-      const p = c.productVariant?.product
-      if (p?.id && p.title && !titres.has(p.id)) titres.set(p.id, p.title.trim())
-    }
-  }
-  return titres
-}
-
-/**
- * Une variante est "complète" si elle contient les produits composants
- * attendus.
- *
- * Avec `titres` (cas réel, via getCompleteBundleVariants) : un composant
- * absent ne rend la variante incomplète que si l'une de SES options nomme
- * ce produit (« {Produit} ({Type}) »). C'est le piège du Pack Sèche : la
- * variante choisit une saveur de Sub Zero mais n'a pas de Sub Zero. Une
- * formule qui a simplement moins de produits reste proposable : Pack Gamer
- * (25/11/2026), « Jour » sans le Keep Sleep de « Jour + Nuit », option
- * « Formule ». Avant, « Jour » était masquée et ne se choisissait pas.
- * Sans `titres` : tous les composants de l'union sont exigés.
- */
+/** Une variante est "complète" si elle contient TOUS les produits composants attendus. */
 export function isVariantComplete(
   variant: ShopifyProductVariant,
-  expectedIds: string[],
-  titres?: Map<string, string>
+  expectedIds: string[]
 ): boolean {
   if (expectedIds.length === 0) return true
   const present = new Set(
@@ -245,27 +220,20 @@ export function isVariantComplete(
       .map((c) => c.productVariant?.product?.id)
       .filter((x): x is string => !!x)
   )
-  const options = (variant.selectedOptions ?? []).map((o) => o.name.trim())
-  const exige = (id: string) => {
-    if (!titres) return true
-    const titre = titres.get(id)
-    return !!titre && options.some((nom) => nom.startsWith(`${titre} (`))
-  }
-  return expectedIds.every((id) => present.has(id) || !exige(id))
+  return expectedIds.every((id) => present.has(id))
 }
 
 /**
- * Variantes de bundle réellement proposables : composants complets (au sens
- * de isVariantComplete avec les titres). Si le bundle n'a pas de composants
- * (cas dégénéré), on renvoie tout pour ne jamais aboutir à un sélecteur vide.
+ * Variantes de bundle réellement proposables : composants complets.
+ * Si le bundle n'a pas de composants (cas dégénéré), on renvoie tout
+ * pour ne jamais aboutir à un sélecteur vide.
  */
 export function getCompleteBundleVariants(
   variants: ShopifyProductVariant[]
 ): ShopifyProductVariant[] {
   const expected = getExpectedComponentProductIds(variants)
   if (expected.length === 0) return variants
-  const titres = getComponentProductTitles(variants)
-  const complete = variants.filter((v) => isVariantComplete(v, expected, titres))
+  const complete = variants.filter((v) => isVariantComplete(v, expected))
   return complete.length > 0 ? complete : variants
 }
 

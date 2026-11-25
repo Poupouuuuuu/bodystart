@@ -1,4 +1,4 @@
-import Image from '@/components/ui/Image'
+import Image from 'next/image'
 import { Package } from 'lucide-react'
 import type { ReactNode } from 'react'
 
