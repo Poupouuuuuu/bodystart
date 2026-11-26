@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '@/components/ui/Image'
 import { Clapperboard, Play } from 'lucide-react'
 import Reveal from '@/components/ui/Reveal'
 import { INSTAGRAM_FEATURES } from '@/lib/social-proof'

@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, UserPlus, Check } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
-import Image from 'next/image'
+import Image from '@/components/ui/Image'
 import { cn } from '@/lib/utils'
 
 function RegisterContent() {
