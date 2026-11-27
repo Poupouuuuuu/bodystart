@@ -7,7 +7,7 @@ import Footer from '@/components/layout/Footer'
 import CartDrawerLazy from '@/components/cart/CartDrawerLazy'
 import { getCollections } from '@/lib/shopify'
 import { apercuSaison, getSaison } from '@/lib/shopify/saison'
-import { periodeServeur } from '@/lib/saison'
+import { indexPeriode, periodeServeur } from '@/lib/saison'
 import { decorSaison } from '@/components/saison/decors'
 import type { ShopifyCollection } from '@/lib/shopify/types'
 
@@ -50,7 +50,8 @@ export default async function NotFound() {
   }
   const saison = await getSaison()
   const apercu = await apercuSaison()
-  const theme = periodeServeur(saison, new Date(), apercu)?.theme ?? null
+  const periodeRendue = periodeServeur(saison, new Date(), apercu)
+  const theme = periodeRendue?.theme ?? null
   const decor = decorSaison(theme)
 
   return (
@@ -60,7 +61,7 @@ export default async function NotFound() {
       <Header
         collections={collections}
         saison={saison}
-        themeServeur={theme}
+        rangServeur={indexPeriode(saison, periodeRendue)}
         apercu={apercu}
         previsualisation={process.env.VERCEL_ENV !== 'production'}
       />
