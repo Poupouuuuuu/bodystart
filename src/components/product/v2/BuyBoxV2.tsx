@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
-import { ShoppingCart, Check, Minus, Plus, Truck, Store, ShieldCheck, RotateCcw, Award, Star } from 'lucide-react'
+import { ShoppingCart, Check, Minus, Plus, Truck, Store, MapPin, ShieldCheck, RotateCcw, Award, Star } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
 import { formatPoids } from '@/lib/typo'
 import { GOOGLE_LISTING_URL, GOOGLE_RATING, type GoogleRating } from '@/lib/store-info'
-import { PICKUP_PROMISE } from '@/lib/shipping'
+import { COLISSIMO, FREE_SHIPPING_LABEL, MONDIAL_RELAY, formatShippingPrice } from '@/lib/shipping'
 import { useCart } from '@/hooks/useCart'
 import ProductGalleryV2 from './ProductGalleryV2'
 import BundleGalleryV2 from './BundleGalleryV2'
@@ -38,6 +38,11 @@ interface BuyBoxV2Props {
    */
   productId?: string
   benefits?: string[]
+  /**
+   * Jusqu'à 3 points forts sous le prix, tirés de la description Shopify par
+   * la page (lib/points-forts). Vide : bloc absent.
+   */
+  pointsForts?: string[]
   /** Format / grammage du produit (ex: "1,5 kg"). Source : metafield Shopify. */
   format?: string | null
   /** Fournisseur Shopify (vendor) du produit, affiche en eyebrow. */
@@ -76,6 +81,13 @@ interface BuyBoxV2Props {
 
 const LOW_STOCK_THRESHOLD = 5
 
+// Pastilles saveur / format : une seule rangée qui défile au doigt sous sm
+// (7 saveurs sur 3 rangées repoussaient le bouton d'achat hors du premier
+// écran), retour à la ligne à partir de sm. -mx-4 px-4 : la rangée va
+// jusqu'au bord de l'écran, comme la bande des vignettes.
+const PILLS_ROW =
+  '-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0'
+
 // Décomposition du titre de variante Shopify « Saveur / Format ».
 // Matching EXACT sur chaque segment — l'ancien `title.includes(flavor)`
 // était fragile (« vanille » matchait « vanille-1 », etc.).
@@ -104,6 +116,7 @@ export default function BuyBoxV2({
   activeStore,
   productId,
   benefits = [],
+  pointsForts = [],
   format = null,
   vendor = null,
   isBundle = false,
@@ -277,11 +290,32 @@ export default function BuyBoxV2({
       window.addEventListener('scroll', handleScroll, { passive: true })
       return () => window.removeEventListener('scroll', handleScroll)
     }
-    const io = new IntersectionObserver(([entry]) => setIsStickyVisible(!entry.isIntersecting), {
-      rootMargin: '0px 0px -8px 0px',
-    })
-    io.observe(el)
-    return () => io.disconnect()
+    // Premier écran du téléphone (28/11/2026) : le bouton principal y est
+    // souvent tout en bas. La barre reste affichée tant qu'il n'est pas visible
+    // à 90 % (avant : un liseré de 1 px suffisait à la masquer), et la partie
+    // cachée par le bandeau cookies (hauteur publiée dans --bandeau-cookies par
+    // CookieBanner) ne compte pas : l'observateur est refait quand elle change.
+    const html = document.documentElement
+    let io: IntersectionObserver | undefined
+    let bandeau = -1
+    const observer = () => {
+      const h = Math.ceil(parseFloat(getComputedStyle(html).getPropertyValue('--bandeau-cookies')) || 0)
+      if (h === bandeau) return
+      bandeau = h
+      io?.disconnect()
+      io = new IntersectionObserver(([entry]) => setIsStickyVisible(entry.intersectionRatio < 0.9), {
+        rootMargin: `0px 0px ${-8 - h}px 0px`,
+        threshold: [0, 0.9],
+      })
+      io.observe(el)
+    }
+    observer()
+    const mo = typeof MutationObserver === 'undefined' ? null : new MutationObserver(observer)
+    mo?.observe(html, { attributes: true, attributeFilter: ['style'] })
+    return () => {
+      io?.disconnect()
+      mo?.disconnect()
+    }
   }, [])
 
   // A11y : la sticky bar cachée n'est que translate-y-full (hors écran mais
@@ -360,11 +394,18 @@ export default function BuyBoxV2({
           category={productType ?? undefined}
         />
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-14 items-start">
+      {/* Premier écran du téléphone (28/11/2026) : photo réduite, nom, prix,
+          points forts, choix et bouton d'achat visibles sans défiler sur
+          390×844. Écarts resserrés sous sm ; à partir de lg, mise en page
+          d'ordinateur inchangée (galerie collante à gauche). */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-4 sm:gap-10 lg:gap-14 items-start">
         {/* ─── Galerie ─── */}
         {/* Pastille -X % : remise de la variante AFFICHÉE (compareAtPrice > price
             sur cette variante), pas celle de la variante d'ouverture. */}
-        <div className="lg:sticky lg:top-24">
+        {/* Pack : sous lg, la colonne galerie se fond dans la grille
+            (max-lg:contents) pour que la liste « Dans ce pack » passe après
+            la zone d'achat (order) au lieu de repousser le bouton. */}
+        <div className={cn(isBundleMode && 'max-lg:contents', 'lg:sticky lg:top-24')}>
           {isBundleMode ? (
             <BundleGalleryV2
               components={bundleDetails}
@@ -389,29 +430,31 @@ export default function BuyBoxV2({
         </div>
 
         {/* ─── Panneau achat ─── */}
-        <div>
+        <div className="max-lg:order-1">
           {/* Fournisseur (vendor) — "Packs" pour un bundle */}
           <Link
             href={eyebrowHref}
-            className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute -mt-3.5 inline-flex min-h-[44px] items-center hover:text-spruce transition-colors"
+            // Zone tactile de 44 px qui déborde sur les marges (-mt, -mb sous sm) :
+            // le libellé ne fait que 11 px de haut.
+            className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute -mt-3.5 max-sm:-mb-1.5 inline-flex min-h-[44px] items-center hover:text-spruce transition-colors"
           >
             {eyebrowLabel}
           </Link>
 
           {/* Titre */}
-          <h1 className="font-display text-[28px] md:text-[36px] lg:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-2">
+          <h1 className="font-display text-[28px] md:text-[36px] lg:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-1 sm:mb-2">
             {title}
           </h1>
 
           {/* Format / grammage (metafield Shopify) */}
           {format && (
-            <p className="text-[14px] text-ink-mute font-medium mb-5">{formatPoids(format)}</p>
+            <p className="text-[14px] text-ink-mute font-medium mb-2 sm:mb-5">{formatPoids(format)}</p>
           )}
-          {!format && <div className="mb-5" />}
+          {!format && <div className="mb-2 sm:mb-5" />}
 
           {/* Pastilles benefices (sage + spruce) */}
           {benefits.length > 0 && (
-            <ul className="flex flex-wrap gap-2 mb-6">
+            <ul className="flex flex-wrap gap-2 mb-4 sm:mb-6">
               {benefits.map((b) => (
                 <li
                   key={b}
@@ -424,7 +467,7 @@ export default function BuyBoxV2({
           )}
 
           {/* Prix */}
-          <div className={cn('flex items-baseline gap-3', cadeauFiche ? 'mb-3' : 'mb-7')}>
+          <div className={cn('flex items-baseline gap-3', cadeauFiche || pointsForts.length > 0 ? 'mb-3' : 'mb-3 sm:mb-7')}>
             <span className="font-display text-[32px] md:text-[36px] font-extrabold text-spruce leading-none">
               {formatPrice(selectedVariant.price)}
             </span>
@@ -436,10 +479,23 @@ export default function BuyBoxV2({
           </div>
           {/* Black Week : cadeau d'un palier (lib/paliers), sous le prix. */}
           {cadeauFiche && (
-            <p className="mb-7 flex items-start gap-2.5 text-[14px] font-semibold leading-snug text-ink">
+            <p className={cn('flex items-start gap-2.5 text-[14px] font-semibold leading-snug text-ink', pointsForts.length > 0 ? 'mb-3' : 'mb-4 sm:mb-7')}>
               <span aria-hidden="true" className="mt-[5px] h-2.5 w-2.5 shrink-0 rotate-45 bg-[#F2C200] ring-1 ring-ink/25" />
               {mentionCadeauFiche(cadeauFiche, selectedVariant.id)}
             </p>
+          )}
+
+          {/* Points forts : les 3 premiers éléments de liste de la description
+              Shopify (lib/points-forts), une ligne chacun. Aucun texte écrit ici. */}
+          {pointsForts.length > 0 && (
+            <ul data-points-forts="" className="mb-4 space-y-1.5 sm:mb-7">
+              {pointsForts.map((point) => (
+                <li key={point} className="flex items-center gap-2 text-[14px] leading-snug text-ink">
+                  <Check className="h-4 w-4 shrink-0 text-fresh" aria-hidden="true" />
+                  <span className="min-w-0 truncate">{point}</span>
+                </li>
+              ))}
+            </ul>
           )}
 
           {/* Selecteurs : BundleSelectorsV2 si bundle, sinon saveur/format produit normal */}
@@ -457,11 +513,13 @@ export default function BuyBoxV2({
             <>
               {/* Selecteur saveur (produit non-bundle) */}
               {variants.length > 1 && flavors.length > 1 && (
-                <div className="mb-5">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2.5">
+                <div className="mb-3 sm:mb-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-1.5 sm:mb-2.5">
                     Saveur
+                    {/* Sous sm, les pastilles défilent : la saveur choisie peut être hors champ. */}
+                    <span className="sm:hidden normal-case tracking-normal font-medium text-ink"> · {formatPoids(selectedFlavor)}</span>
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className={PILLS_ROW}>
                     {flavors.map((flavor) => {
                       const isAvailable = variants.some(
                         (v) => variantFlavor(v) === flavor && v.availableForSale
@@ -473,7 +531,7 @@ export default function BuyBoxV2({
                           disabled={!isAvailable}
                           aria-pressed={selectedFlavor === flavor}
                           className={cn(
-                            'inline-flex min-h-[44px] md:min-h-0 items-center px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
+                            'inline-flex shrink-0 whitespace-nowrap min-h-[44px] md:min-h-0 items-center px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
                             selectedFlavor === flavor
                               ? 'border-spruce bg-spruce text-white'
                               : 'border-spruce/20 text-spruce hover:border-spruce/40',
@@ -490,11 +548,11 @@ export default function BuyBoxV2({
 
               {/* Selecteur format (produit non-bundle) */}
               {variants.length > 1 && defaultSizes.length > 1 && (
-                <div className="mb-5">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-2.5">
+                <div className="mb-3 sm:mb-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-1.5 sm:mb-2.5">
                     Format
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className={PILLS_ROW}>
                     {defaultSizes.map((size) => {
                       // Grisé si la combinaison n'EXISTE pas pour la saveur
                       // courante ou n'est pas achetable (matching exact).
@@ -511,7 +569,7 @@ export default function BuyBoxV2({
                           disabled={!isAvailable}
                           aria-pressed={selectedSize === size}
                           className={cn(
-                            'inline-flex min-h-[44px] md:min-h-0 items-center px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
+                            'inline-flex shrink-0 whitespace-nowrap min-h-[44px] md:min-h-0 items-center px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors',
                             selectedSize === size
                               ? 'border-spruce bg-spruce text-white'
                               : 'border-spruce/20 text-spruce hover:border-spruce/40',
@@ -530,7 +588,7 @@ export default function BuyBoxV2({
 
           {/* Bandeau épuisé (au-dessus du bouton d'achat) + alerte retour en stock */}
           {selectedUnavailable && (
-            <div className="mt-7 rounded-2xl border border-spruce/15 bg-sage/50 px-5 py-4">
+            <div className="mt-4 sm:mt-7 rounded-2xl border border-spruce/15 bg-sage/50 px-5 py-4">
               <p className="text-[14px] font-semibold text-spruce">
                 Ce produit est momentanément épuisé, il revient bientôt.
               </p>
@@ -544,7 +602,7 @@ export default function BuyBoxV2({
           )}
 
           {/* Quantite + Ajouter au panier */}
-          <div className={cn('flex items-stretch gap-3', selectedUnavailable ? 'mt-4' : 'mt-7')}>
+          <div className={cn('flex items-stretch gap-3', selectedUnavailable ? 'mt-4' : 'mt-1 sm:mt-7')}>
             <div className="inline-flex items-center border border-spruce/20 rounded-full overflow-hidden h-[56px] bg-white">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -609,33 +667,74 @@ export default function BuyBoxV2({
             </button>
           </div>
 
-          {/* Reassurance sous le bouton (DA §B.Fiche produit.1) */}
-          <ul className="saison-reassurance mt-6 space-y-2.5 text-[13px] text-ink">
-            <li className="flex items-center gap-2.5">
-              <Truck className="w-4 h-4 text-spruce flex-shrink-0" />
+          {/* Retrait et livraison (28/11/2026), juste sous le bouton : tarifs et
+              seuil de lib/shipping, rien en dur. « Immédiat » seulement si la
+              variante est en stock à Coignières (stock lu en direct), sinon la
+              promesse serait fausse. */}
+          <ul className="saison-reassurance mt-5 space-y-2 text-[13px] text-ink sm:mt-6 sm:space-y-2.5">
+            <li className="flex items-start gap-2.5">
+              <Store className="mt-px h-4 w-4 flex-shrink-0 text-spruce" />
               <span>
-                Livraison offerte dès <span className="font-semibold">85 €</span>
+                <span className="font-semibold">Retrait gratuit à Coignières</span>
+                {storeStock !== undefined && storeStock > 0 ? ', immédiat aux heures d\u2019ouverture' : ''}
               </span>
             </li>
-            <li className="flex items-center gap-2.5">
-              <Store className="w-4 h-4 text-spruce flex-shrink-0" />
-              {/* « Immédiat » seulement si la variante est en stock en boutique
-                  (stock lu en direct) : sinon la promesse serait fausse. */}
+            <li className="flex items-start gap-2.5">
+              <MapPin className="mt-px h-4 w-4 flex-shrink-0 text-spruce" />
               <span>
-                {storeStock !== undefined && storeStock > 0
-                  ? `Click & Collect gratuit. ${PICKUP_PROMISE.enStock}`
-                  : 'Click & Collect gratuit à Coignières'}
+                Point relais {formatShippingPrice(MONDIAL_RELAY.priceCents)} · Colissimo{' '}
+                {formatShippingPrice(COLISSIMO.priceCents)}
               </span>
             </li>
-            <li className="flex items-center gap-2.5">
-              <RotateCcw className="w-4 h-4 text-spruce flex-shrink-0" />
+            <li className="flex items-start gap-2.5">
+              <Truck className="mt-px h-4 w-4 flex-shrink-0 text-spruce" />
+              <span>
+                Livraison offerte <span className="font-semibold">{FREE_SHIPPING_LABEL}</span>
+              </span>
+            </li>
+            <li className="flex items-start gap-2.5">
+              <RotateCcw className="mt-px h-4 w-4 flex-shrink-0 text-spruce" />
               <span>Retour sous 14 jours</span>
             </li>
-            <li className="flex items-center gap-2.5">
-              <ShieldCheck className="w-4 h-4 text-spruce flex-shrink-0" />
+            <li className="flex items-start gap-2.5">
+              <ShieldCheck className="mt-px h-4 w-4 flex-shrink-0 text-spruce" />
               <span>Paiement sécurisé (CB, Apple Pay, Google Pay, PayPal, Klarna)</span>
             </li>
           </ul>
+
+          {/* Stock (DA §B.Fiche produit.1 : decision Adam) */}
+          {/* Produits composés (packs, coffrets) : stock du composant le moins
+              disponible pour la variante choisie, calculé par Shopify
+              (cf. getProductInventoryByLocation). Avant le 15/10/2026, bloc
+              masqué : le parent n'a pas de quantité propre à l'emplacement. */}
+          {/* L'ESPACE est réservé dès le 1er rendu (min-h + placeholder) : le
+              stock arrive par fetch client ~1s après — avant, le bloc
+              s'insérait d'un coup et décalait toute la page sous le doigt (CLS). */}
+          {productId && activeStore?.shopifyLocationId && (
+            <div className="mt-5 pt-4 sm:mt-6 sm:pt-5 border-t border-spruce/10 min-h-[42px]">
+              {variantStock === null ? (
+                <div className="inline-flex items-center gap-2 text-[13px] font-medium text-ink-mute/50">
+                  <span className="w-2 h-2 bg-spruce/15 rounded-full" />
+                  Disponibilité en boutique…
+                </div>
+              ) : storeStock === undefined ? null : storeStock === 0 ? (
+                <div className="inline-flex items-center gap-2 text-[13px] font-semibold text-terracotta">
+                  <span className="w-2 h-2 bg-terracotta rounded-full" />
+                  Indisponible en boutique
+                </div>
+              ) : showExactStock ? (
+                <div className="inline-flex items-center gap-2 text-[13px] font-semibold text-terracotta">
+                  <span className="w-2 h-2 bg-terracotta rounded-full" />
+                  Plus que {storeStock} en stock à Coignières
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-2 text-[13px] font-semibold text-spruce">
+                  <span className="w-2 h-2 bg-fresh rounded-full" />
+                  En stock à Coignières
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Réassurance confiance : le vrai différenciant BodyStart (boutique
               physique depuis 13 ans, « on consomme ce qu'on vend », conseil)
@@ -671,40 +770,6 @@ export default function BuyBoxV2({
               )}
             </div>
           </div>
-
-          {/* Stock (DA §B.Fiche produit.1 : decision Adam) */}
-          {/* Produits composés (packs, coffrets) : stock du composant le moins
-              disponible pour la variante choisie, calculé par Shopify
-              (cf. getProductInventoryByLocation). Avant le 15/10/2026, bloc
-              masqué : le parent n'a pas de quantité propre à l'emplacement. */}
-          {/* L'ESPACE est réservé dès le 1er rendu (min-h + placeholder) : le
-              stock arrive par fetch client ~1s après — avant, le bloc
-              s'insérait d'un coup et décalait toute la page sous le doigt (CLS). */}
-          {productId && activeStore?.shopifyLocationId && (
-            <div className="mt-6 pt-5 border-t border-spruce/10 min-h-[42px]">
-              {variantStock === null ? (
-                <div className="inline-flex items-center gap-2 text-[13px] font-medium text-ink-mute/50">
-                  <span className="w-2 h-2 bg-spruce/15 rounded-full" />
-                  Disponibilité en boutique…
-                </div>
-              ) : storeStock === undefined ? null : storeStock === 0 ? (
-                <div className="inline-flex items-center gap-2 text-[13px] font-semibold text-terracotta">
-                  <span className="w-2 h-2 bg-terracotta rounded-full" />
-                  Indisponible en boutique
-                </div>
-              ) : showExactStock ? (
-                <div className="inline-flex items-center gap-2 text-[13px] font-semibold text-terracotta">
-                  <span className="w-2 h-2 bg-terracotta rounded-full" />
-                  Plus que {storeStock} en stock à Coignières
-                </div>
-              ) : (
-                <div className="inline-flex items-center gap-2 text-[13px] font-semibold text-spruce">
-                  <span className="w-2 h-2 bg-fresh rounded-full" />
-                  En stock à Coignières
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
 
