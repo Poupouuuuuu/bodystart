@@ -70,7 +70,7 @@ async function complement(): Promise<ShopifyProduct[]> {
     const ids = await ventesEnCache()
     if (ids.length === 0) throw new Error('aucune vente')
     const data = await shopifyFetch<{ nodes: (ShopifyProduct | null)[] }>(GET_PRODUITS_PAR_IDS, { ids })
-    return data.nodes.filter((p): p is ShopifyProduct => !!p?.handle).map(withCardPrice)
+    return data.nodes.filter((p): p is ShopifyProduct => !!p?.handle).map((p) => withCardPrice(p))
   } catch (e) {
     console.warn('[vedettes] complément par chiffre d’affaires indisponible, meilleures ventes Shopify à la place :', e)
     return getFeaturedProducts()

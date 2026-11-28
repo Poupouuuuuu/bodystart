@@ -8,8 +8,20 @@ export const PRODUCT_CARD_FRAGMENT = `
     productType
     availableForSale
     # createdAt : sert au tri client « Nouveautés » de /products (le fetch
-    # serveur est en BEST_SELLING, l'ordre de création n'y est plus implicite).
+    # serveur est en BEST_SELLING, l'ordre de création n'y est plus implicite)
+    # et à la pastille « Nouveau » des cartes (lib/carte-produit).
     createdAt
+    # Format et nombre de parfums des cartes : réduits côté serveur à une
+    # ligne courte (withCardPrice), jamais envoyés tels quels au navigateur.
+    optionsCarte: options(first: 3) {
+      name
+      optionValues {
+        name
+      }
+    }
+    formatMeta: metafield(namespace: "custom", key: "format") {
+      value
+    }
     featuredImage {
       url
       altText
@@ -36,7 +48,11 @@ export const PRODUCT_CARD_FRAGMENT = `
     # serveur (lib/product-price, via lib/shopify) puis retiré du produit.
     prixVariantes: variants(first: 100) {
       nodes {
+        # id et currentlyNotInStock : pastille « Offerte dès … » et produit
+        # tout à 0 (lib/carte-produit), calculés côté serveur puis retirés.
+        id
         availableForSale
+        currentlyNotInStock
         price {
           amount
           currencyCode
@@ -262,6 +278,17 @@ const CHAMPS_CARTE_ACCUEIL = `
         vendor
         productType
         availableForSale
+        # Pastille « Nouveau », format et parfums des cartes (cf. PRODUCT_CARD_FRAGMENT).
+        createdAt
+        optionsCarte: options(first: 3) {
+          name
+          optionValues {
+            name
+          }
+        }
+        formatMeta: metafield(namespace: "custom", key: "format") {
+          value
+        }
         featuredImage {
           url
           altText
@@ -287,7 +314,9 @@ const CHAMPS_CARTE_ACCUEIL = `
         # Toutes les variantes, champs minimaux : prix de carte (cf. PRODUCT_CARD_FRAGMENT).
         prixVariantes: variants(first: 100) {
           nodes {
+            id
             availableForSale
+            currentlyNotInStock
             price {
               amount
               currencyCode

@@ -1,9 +1,11 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { Gift, Truck, Check } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
 import { prochainPalier, type EtatPalier } from '@/lib/paliers'
 import type { EtatCadeaux } from '@/lib/paliers/panier'
+import { MentionCodePromo, TarifsLivraison } from './TarifsLivraison'
 
 const euros = (n: number) => formatPrice({ amount: n.toFixed(2), currencyCode: 'EUR' })
 
@@ -24,7 +26,16 @@ function phraseReste(e: EtatPalier) {
  * Barre des paliers cadeaux du tiroir panier. Montants, libellés et périodes
  * viennent du métachamp (via useCadeaux) ; ce composant ne fait qu'afficher.
  */
-export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux; onAjouter: (montant: number) => void }) {
+export default function PaliersCadeaux({
+  etat,
+  onAjouter,
+  children,
+}: {
+  etat: EtatCadeaux
+  onAjouter: (montant: number) => void
+  /** Suggestion d'un petit article pour le prochain palier (SuggestionPalier), sous la liste. */
+  children?: ReactNode
+}) {
   const { horsBase, baseCadeaux, offertsParAchat } = etat
   // Cadeau que Shopify n'accorde pas avec ce panier (remises non cumulables : Crunch Bar et
   // créatine de la Black Week les 21 et 22/11/2026) : retiré du panier, et plus affiché ici.
@@ -36,6 +47,8 @@ export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux;
   const prochain = prochainPalier(etats)
   // Palier cadeau atteint sans son cadeau au panier : Shopify a offert les articles achetés à sa place.
   const cadeauSuperieurPerdu = etats.some((e) => e.palier.type === 'cadeau' && e.atteint && e.parAchat === 0 && e.lignes.length === 0)
+  // Palier livraison : absent en mode Retrait (lib/paliers), donc tarifs et mention aussi.
+  const livraison = etats.find((e) => e.palier.type === 'livraison')
 
   return (
     <div className="px-8 pb-5">
@@ -95,30 +108,35 @@ export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux;
             const Icone = e.palier.type === 'livraison' ? Truck : Gift
             const dansPanier = e.lignes.length > 0
             return (
-              <li key={`${e.palier.type}-${e.palier.montant}`} className="flex min-h-[32px] items-center justify-between gap-3 text-[12px]">
-                <span className={cn('flex items-center gap-2', e.atteint ? 'text-ink' : 'text-ink-mute')}>
-                  <Icone className={cn('h-3.5 w-3.5 flex-shrink-0', e.atteint ? 'text-fresh' : 'text-spruce/40')} aria-hidden="true" />
-                  {e.palier.libelle}
-                </span>
-                {e.palier.type === 'livraison' ? (
-                  e.atteint && <span className="font-semibold text-fresh-deep">Atteint</span>
-                ) : e.atteint ? (
-                  dansPanier || e.parAchat > 0 ? (
-                    <span className="font-semibold text-fresh-deep">Dans ton panier</span>
-                  ) : e.nonAccorde ? null : e.refuse ? (
-                    <button
-                      type="button"
-                      onClick={() => onAjouter(e.palier.montant)}
-                      className="press -my-1.5 inline-flex min-h-[44px] items-center rounded-full px-1 font-semibold text-spruce underline underline-offset-2 hover:text-fresh-deep"
-                    >
-                      Ajouter mon cadeau
-                    </button>
-                  ) : null
-                ) : null}
+              <li key={`${e.palier.type}-${e.palier.montant}`} className="text-[12px]">
+                <div className="flex min-h-[32px] items-center justify-between gap-3">
+                  <span className={cn('flex items-center gap-2', e.atteint ? 'text-ink' : 'text-ink-mute')}>
+                    <Icone className={cn('h-3.5 w-3.5 flex-shrink-0', e.atteint ? 'text-fresh' : 'text-spruce/40')} aria-hidden="true" />
+                    {e.palier.libelle}
+                  </span>
+                  {e.palier.type === 'livraison' ? (
+                    e.atteint && <span className="font-semibold text-fresh-deep">Atteint</span>
+                  ) : e.atteint ? (
+                    dansPanier || e.parAchat > 0 ? (
+                      <span className="font-semibold text-fresh-deep">Dans ton panier</span>
+                    ) : e.nonAccorde ? null : e.refuse ? (
+                      <button
+                        type="button"
+                        onClick={() => onAjouter(e.palier.montant)}
+                        className="press -my-1.5 inline-flex min-h-[44px] items-center rounded-full px-1 font-semibold text-spruce underline underline-offset-2 hover:text-fresh-deep"
+                      >
+                        Ajouter mon cadeau
+                      </button>
+                    ) : null
+                  ) : null}
+                </div>
+                {e.palier.type === 'livraison' && e.atteint && <MentionCodePromo montant={e.palier.montant} className="-mt-1 pb-1 pl-[22px]" />}
               </li>
             )
           })}
         </ul>
+
+        {children}
 
         {/* Textes validés par Claude Gestion le 13/10/2026 pour l'échelle Crunch Bar / shaker (lib/paliers/panier). */}
         {(offertsParAchat === 1 || (offertsParAchat > 1 && cadeauSuperieurPerdu)) && (
@@ -126,6 +144,8 @@ export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux;
             {offertsParAchat === 1 ? 'Ta Crunch Bar est offerte.' : 'Tes Crunch Bar sont offertes à la place du shaker.'}
           </p>
         )}
+
+        {livraison && !livraison.atteint && <TarifsLivraison className="mt-2.5 border-t border-spruce/10 pt-2.5" />}
 
         {horsBase && aCadeaux && prochain?.palier.type === 'cadeau' && (
           <p className="mt-2 text-[11px] leading-snug text-ink-mute">

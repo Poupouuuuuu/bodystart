@@ -4,28 +4,40 @@
  * Carte produit V2 — LA carte unique du site (DA claire).
  *
  * Extraite de ProductsPageClient (sprint 2 « cohérence DA », 2026-07-04) pour
- * remplacer les 3 designs qui coexistaient : ProductCard V1 (/categories,
- * /search — overlay noir, palette brand/cream), carte inline BestSellersV2
- * (home — faux bouton « + » décoratif) et celle-ci. Un produit = une seule tête,
- * quelle que soit la page.
+ * remplacer les 3 designs qui coexistaient. Un produit = une seule tête,
+ * quelle que soit la page (catalogue, pages /products/page/N, catégories,
+ * collections, recherche, accueil).
  *
- * Comportements :
- *   - fond végétal + badges DA (Épuisé / -X% / Best-seller / Santé / stock bas)
- *   - quick-add « + » : mono-variante dispo → ajout direct ; multi-variantes →
- *     navigation vers la fiche (choix de saveur) ; épuisé → grisé
- *   - cible tactile 44px, aria-labels explicites
+ * Refonte « site qui vend » (nuit du 28/11/2026) :
+ *   - image plus grande ; nom, format et nombre de parfums (lib/carte-produit,
+ *     calculés côté serveur), prix (lib/product-price) ;
+ *   - pastilles vraies seulement, 2 au plus : remise réelle (prix barré
+ *     Shopify supérieur au prix), « Plus que X » (une seule variante, stock
+ *     réel déjà lu), « Nouveau », Best-seller, Santé ;
+ *   - ajout rapide, bouton à part (aucun lien imbriqué) : une variante →
+ *     ajout direct (le tiroir panier s'ouvre) ; plusieurs → feuille de choix
+ *     chargée au premier appui (next/dynamic) ; pack ou coffret à plusieurs
+ *     variantes → la fiche, seule à savoir composer un pack ; épuisé → la
+ *     fiche (alerte de retour).
  */
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import Image from '@/components/ui/Image'
-import { useRouter } from 'next/navigation'
-import { Plus } from 'lucide-react'
+import { Check, Plus } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { productSubtitle } from '@/lib/product-subtitle'
 import { cardPriceOf } from '@/lib/product-price'
 import { altImage, altProduit } from '@/lib/alt-produit'
+import { ligneDetailsCarte, stockBasCarte } from '@/lib/carte-produit'
+import { chargerProduitAjout } from '@/components/product/ajout-rapide/donnees'
+
+// Chargée au premier appui sur « Choisir » : rien dans le JS initial.
+const FeuilleAjoutRapide = dynamic(() => import('@/components/product/ajout-rapide/FeuilleAjoutRapide'), {
+  ssr: false,
+})
 
 // ─── Badges (tags Shopify → pastilles) ───
 
@@ -42,28 +54,62 @@ export function isBestSeller(p: ShopifyProduct): boolean {
   })
 }
 
+/** Pack ou coffret (variante à composants) : composé sur sa fiche, jamais dans la feuille. */
+function estCompose(p: ShopifyProduct): boolean {
+  if ((p.productType ?? '').trim().toLowerCase() === 'pack') return true
+  if ((p.tags ?? []).some((t) => ['pack', 'coffret-noel'].includes(t.toLowerCase()))) return true
+  return p.variants.nodes.some((v) => v.requiresComponents)
+}
+
 export interface ProductCardShopProps {
   product: ShopifyProduct
-  /** Stock boutique (badge « Plus que X en stock ») — /products uniquement. */
+  /** Stock boutique (badge « Plus que X ») : /products et /products/page/N. */
   stockAtStore?: number
   /** Recherche « whey vanille » : la fiche s'ouvre sur cette variante (?variant=). */
   varianteId?: string | null
   /** Parfum ou format trouvé, affiché à la place du sous-titre. */
   parfum?: string | null
+  /**
+   * Première rangée d'une grille en haut de page (/products, recherche) :
+   * l'image du produit est l'élément LCP sur mobile depuis qu'elle est plus
+   * grande, elle part donc en priorité (priority + fetchPriority high).
+   */
+  prioritaire?: boolean
+  /**
+   * Pastille d'offre passée par la page (« Offerte dès 100 € », accueil),
+   * prioritaire sur les autres. Sans elle, celle calculée côté serveur pour
+   * /products et les catégories (product.carte.offre, lib/offres-cartes).
+   */
+  pastilleOffre?: string
 }
 
-export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: ProductCardShopProps) {
-  const href = `/products/${product.handle}${varianteId ? `?variant=${varianteId}` : ''}`
-  const variant = product.variants.nodes[0]
-  const soldOut = product.availableForSale === false
-  const { addItem } = useCart()
-  const [adding, setAdding] = useState(false)
-  const router = useRouter()
-  // Multi-variantes (saveurs/formats) : le quick-add « + » ajoutait silencieusement
-  // la 1re variante → mauvaise saveur commandée. On navigue vers la fiche à la place.
-  const hasMultipleVariants = product.variants.nodes.length > 1
+type EtatAjout = 'repos' | 'ajout' | 'ajoute'
 
-  // Vrai libelle categorie (collection title preferee, sinon productType, sinon null)
+export function ProductCardShop({
+  product,
+  stockAtStore,
+  varianteId,
+  parfum,
+  prioritaire = false,
+  pastilleOffre,
+}: ProductCardShopProps) {
+  const href = `/products/${product.handle}${varianteId ? `?variant=${varianteId}` : ''}`
+  const variantes = product.variants.nodes
+  const variant = variantes[0]
+  // Épuisé : aucune variante vendable, ou toutes à 0 en précommande
+  // (carte.epuise) : jamais d'ajout rapide, la fiche (alerte de retour).
+  const soldOut = product.availableForSale === false || !!product.carte?.epuise
+  const { addItem } = useCart()
+  const [etat, setEtat] = useState<EtatAjout>('repos')
+  const [feuille, setFeuille] = useState(false)
+  const bouton = useRef<HTMLButtonElement>(null)
+  // variants(first: 2) : deux nœuds = plusieurs parfums ou formats.
+  const plusieurs = variantes.length > 1
+  // Pack à plusieurs variantes : la fiche (formules, composants) ; un pack à
+  // une seule variante s'ajoute comme sur sa fiche.
+  const versLaFiche = soldOut || (plusieurs && estCompose(product)) || (!plusieurs && !variant?.availableForSale)
+
+  // Vrai libellé de catégorie (collection, sinon productType, sinon rien).
   const categoryLabel = product.collections?.nodes?.[0]?.title ?? product.productType ?? null
 
   // Sous-titre : libellé propre tiré d'une liste blanche d'étiquettes, jamais
@@ -73,83 +119,128 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
     title: product.title,
     productType: product.productType,
   })
+  const details = parfum || ligneDetailsCarte(product.carte)
 
   // Badge « Santé » seulement si la catégorie affichée ne le dit pas déjà.
   const isSante =
     isSanteProduct(product) &&
-    (categoryLabel ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() !== 'sante'
+    (categoryLabel ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase() !== 'sante'
   const isBest = isBestSeller(product)
-  const showLowStock = stockAtStore !== undefined && stockAtStore > 0 && stockAtStore <= 5
+  const stockBas = stockBasCarte(variantes, stockAtStore)
 
   // Prix de la variante en stock la moins chère, « dès » si les prix varient,
   // remise seulement sur CETTE variante (lib/product-price).
   const prix = cardPriceOf(product)
   const discountPct = prix?.discountPct ?? null
 
-  // Le bouton est actif si : multi-variantes AVEC au moins une dispo (→ fiche),
-  // ou mono-variante disponible (→ ajout direct). Produit épuisé → grisé,
-  // cohérent avec les cartes mono-variante (la carte reste cliquable ailleurs).
-  const canQuickAct = hasMultipleVariants ? !soldOut : !!variant?.availableForSale
+  // Offre calculée côté serveur : retirée à la fin de la période, même si la
+  // page (ISR) a été rendue avant (effet, jamais au rendu : pas d'écart
+  // d'hydratation).
+  const offreFin = pastilleOffre ? undefined : product.carte?.offreFin
+  const [offreFinie, setOffreFinie] = useState(false)
+  useEffect(() => {
+    if (!offreFin) return
+    const reste = Date.parse(offreFin) - Date.now()
+    if (Number.isNaN(reste)) return
+    if (reste <= 0) {
+      setOffreFinie(true)
+      return
+    }
+    if (reste > 24 * 60 * 60 * 1000) return
+    const t = setTimeout(() => setOffreFinie(true), reste)
+    return () => clearTimeout(t)
+  }, [offreFin])
+  const offre = pastilleOffre?.trim() || (offreFinie ? null : product.carte?.offre ?? null)
 
-  // Badges par ordre d'utilité commerciale décroissante, PLAFONNÉS À 2 (cf. le
-  // bloc de rendu). La promo passe toujours en premier quand elle existe.
-  // `!!discountPct` : la remise peut valoir 0 (arrondi d'un écart < 0,5 %) et
-  // 0 est falsy — on ne veut ni « -0% », ni un littéral 0 rendu dans le JSX.
+  // Par ordre d'utilité commerciale, PLAFONNÉS À 2 (règle du design system).
+  // `!!discountPct` : la remise peut valoir 0 (arrondi) et 0 est falsy.
   const badges = [
-    ...(discountPct
-      ? [{ label: `-${discountPct}%`, className: 'bg-terracotta text-white' }]
-      : []),
+    // Offre (cadeau d'un palier) en premier, couleur d'accent du thème.
+    ...(offre ? [{ label: offre, className: 'badge-saison bg-mustard text-mustard-ink' }] : []),
+    ...(discountPct ? [{ label: `-${discountPct}\u00a0%`, className: 'bg-terracotta text-white' }] : []),
+    ...(stockBas ? [{ label: `Plus que ${stockBas}`, className: 'bg-terracotta/90 text-white' }] : []),
+    ...(product.carte?.nouveau ? [{ label: 'Nouveau', className: 'bg-spruce text-white' }] : []),
     // badge-saison : couleur d'accent pendant une période du mode saison (lib/saison)
     ...(isBest ? [{ label: 'Best-seller', className: 'badge-saison bg-mustard text-mustard-ink' }] : []),
-    ...(showLowStock
-      ? [{ label: `Plus que ${stockAtStore}`, className: 'bg-terracotta/90 text-white' }]
-      : []),
     ...(isSante ? [{ label: 'Santé', className: 'bg-sage/95 text-spruce' }] : []),
   ].slice(0, 2)
 
-  async function handleAdd(e: React.MouseEvent) {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!canQuickAct) return
-    if (hasMultipleVariants) {
-      // Le client doit choisir sa saveur/son format sur la fiche.
-      router.push(href)
-      return
-    }
-    setAdding(true)
-    try {
-      await addItem(variant.id)
-    } finally {
-      setAdding(false)
-    }
+  // Retour visuel « Ajouté » quelques secondes après un ajout réussi.
+  useEffect(() => {
+    if (etat !== 'ajoute') return
+    const t = setTimeout(() => setEtat('repos'), 2200)
+    return () => clearTimeout(t)
+  }, [etat])
+
+  const ajouter = useCallback(
+    async (variantId: string) => {
+      setEtat('ajout')
+      const ok = await addItem(variantId)
+      setEtat(ok ? 'ajoute' : 'repos')
+    },
+    [addItem]
+  )
+
+  // Les variantes se lisent dès que le doigt (ou la souris) appuie, avant le
+  // clic : la feuille s'ouvre souvent déjà remplie. Pas au survol, pour ne pas
+  // lancer une requête par carte survolée. Une seule requête par produit et par visite.
+  const precharger = () => {
+    if (plusieurs && !versLaFiche) chargerProduitAjout(product.handle).catch(() => {})
   }
 
+  function auClic() {
+    if (etat === 'ajout') return
+    if (plusieurs) {
+      precharger()
+      setFeuille(true)
+      return
+    }
+    if (variant) void ajouter(variant.id)
+  }
+
+  const fermerFeuille = useCallback(() => {
+    setFeuille(false)
+    bouton.current?.focus()
+  }, [])
+
+  // La feuille se ferme avant l'ajout : le tiroir panier qui s'ouvre ensuite
+  // garde seul la page figée (pas deux verrous de défilement imbriqués).
+  const ajouterDepuisFeuille = useCallback(
+    (variantId: string) => {
+      setFeuille(false)
+      bouton.current?.focus()
+      void ajouter(variantId)
+    },
+    [ajouter]
+  )
+
+  const libelle =
+    etat === 'ajout' ? 'Ajout…' : etat === 'ajoute' ? 'Ajouté' : plusieurs ? 'Choisir' : 'Ajouter'
+
   return (
-    // PREMIUM V2 (2026-08) : la bordure permanente est retirée. Bordure + ombre
-    // + fond blanc est LE trio le plus générique du web — l'élévation seule
-    // (ombre teintée verte) suffit à détacher la carte du fond crème, et la
-    // grille respire beaucoup plus. Le rayon est volontairement plus généreux
-    // (20px) que celui des éléments internes : hiérarchie de rayons.
+    // PREMIUM V2 (2026-08) : pas de bordure, l'ombre teintée verte détache la
+    // carte du fond crème. Rayon 20px, plus généreux que les éléments internes.
     <div className="carte-produit group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift">
-      {/* Zone image avec fond vegetal */}
+      {/* Zone image avec fond végétal */}
       <Link
         href={href}
         className="relative block w-full aspect-[4/5] overflow-hidden bg-cover bg-bottom bg-no-repeat"
         style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
       >
-        <div className="absolute inset-0 flex items-end justify-center pb-4">
+        <div className="absolute inset-0 flex items-end justify-center pb-2">
           {product.featuredImage ? (
             <Image
               src={product.featuredImage.url}
               alt={altImage(product.featuredImage, altProduit(product))}
               width={200}
               height={200}
-              // h-[70%] (au lieu de 65) : le produit occupe plus de place, c'est
-              // lui la star. Ombre portée TEINTÉE verte au lieu du drop-shadow-2xl
-              // noir, qui grisait le végétal derrière.
+              priority={prioritaire}
+              fetchPriority={prioritaire ? 'high' : undefined}
+              // h-[84%] (70 % avant le 28/11/2026) : le produit est la star de
+              // la carte. Ombre portée TEINTÉE verte, jamais noire.
               className={cn(
-                'relative z-10 h-[70%] w-auto object-contain transition-transform duration-500 ease-out-expo group-hover:scale-[1.07]',
-                '[filter:drop-shadow(0_18px_22px_rgba(45,90,45,0.28))]',
+                'relative z-10 h-[84%] w-auto max-w-[90%] object-contain transition-transform duration-500 ease-out-expo group-hover:scale-[1.05]',
+                '[filter:drop-shadow(0_16px_20px_rgba(45,90,45,0.26))]',
                 soldOut && 'opacity-60 saturate-[0.55]'
               )}
             />
@@ -160,17 +251,12 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
           )}
         </div>
 
-        {/* Gradient fondu blanc en bas (raccord avec la carte) */}
-        <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent z-0" />
+        {/* Fondu blanc en bas (raccord avec la carte) */}
+        <div className="absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-white to-transparent z-0" />
 
-        {/* Badges — PREMIUM V2 : HIÉRARCHISÉS ET PLAFONNÉS À 2.
-            Avant, un produit pouvait empiler « -20% + Best-seller + Santé +
-            Plus que 3 en stock » : quatre pastilles = effet sapin de Noël, plus
-            aucune ne se lit. On garde la promo (l'argument le plus vendeur) puis
-            UN seul badge secondaire, par ordre d'utilité commerciale.
-            Étiquettes à coins doux (rounded-lg) et non des pilules : plus sobre,
-            moins « composant par défaut ». */}
-        <div className="absolute left-3 top-3 z-30 flex flex-col items-start gap-1.5">
+        {/* Pastilles : 2 au plus, coins doux (rounded-lg). */}
+        {/* right borné : une pastille longue (« Offerte dès 100 € ») passe à la ligne au lieu d'être rognée. */}
+        <div className="absolute left-2.5 right-2.5 top-2.5 z-30 flex flex-col items-start gap-1.5 sm:left-3 sm:right-3 sm:top-3">
           {soldOut ? (
             <span className="inline-flex items-center rounded-lg bg-ink/90 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white backdrop-blur-sm">
               Épuisé
@@ -180,7 +266,7 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
               <span
                 key={b.label}
                 className={cn(
-                  'inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] backdrop-blur-sm',
+                  'inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-semibold uppercase leading-tight tracking-[0.06em] backdrop-blur-sm',
                   b.className
                 )}
               >
@@ -191,37 +277,26 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
         </div>
       </Link>
 
-      {/* Contenu. p-4 sous sm : à 360 px la carte fait 154 px, et avec p-5 un
-          prix à 5 chiffres (« 36,90 € ») plus le bouton de 44 px ne tenaient pas. */}
-      <div className="p-4 sm:p-5 flex flex-col flex-1">
-        {/* Libelle categorie reelle (si dispo) */}
-        {categoryLabel && (
-          <span className="text-[12px] text-ink-mute font-medium mb-1.5">
-            {categoryLabel}
-          </span>
+      {/* Contenu. p-3.5 sous sm : à 360 px la carte fait 154 px de large. */}
+      <div className="flex flex-1 flex-col p-3.5 sm:p-5">
+        {(subtitle || categoryLabel) && (
+          <span className="mb-1 line-clamp-1 text-[12px] font-medium text-ink-mute">{subtitle || categoryLabel}</span>
         )}
 
-        {/* Titre — Fraunces : un cran plus grand qu'avant, le serif porte le nom
-            du produit. min-h réservé pour aligner les prix d'une même rangée. */}
-        <Link href={href}>
-          <h3 className="mb-1.5 line-clamp-2 min-h-[2.6rem] font-display text-[16px] font-bold leading-[1.25] text-spruce transition-colors hover:text-fresh-deep">
+        {/* Nom en Fraunces, 2 lignes réservées pour aligner les prix d'une rangée. */}
+        <Link href={href} className="rounded-sm">
+          <h3 className="line-clamp-2 min-h-[2.5rem] font-display text-[15px] font-bold leading-[1.25] text-spruce transition-colors hover:text-fresh-deep sm:min-h-[2.6rem] sm:text-[16px]">
             {product.title}
           </h3>
         </Link>
 
-        {/* Sous-titre court (optionnel) ; parfum trouvé par la recherche à la place */}
-        {(parfum || subtitle) && (
-          <p className="text-[13px] text-ink-mute leading-snug mb-3 line-clamp-1">{parfum || subtitle}</p>
-        )}
+        {/* Format et parfums (« 1 kg · 6 parfums ») ; parfum trouvé par la recherche à la place. */}
+        <p className="mt-1 min-h-[1.25rem] line-clamp-1 text-[13px] leading-snug text-ink-mute">{details}</p>
 
-        {/* Prix + bouton ajout discret (icone +) */}
-        {/* Carte étroite (2 colonnes à 390 px) : « dès », le prix et le prix
-            barré passent à la ligne au lieu de glisser sous le bouton. */}
-        <div className="flex items-center justify-between gap-2 mt-auto pt-2">
-          <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
+        <div className="mt-auto pt-2.5">
+          {/* Prix : « dès », prix, prix barré réel ; passe à la ligne sur carte étroite. */}
+          <div className="mb-2.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5">
             {prix?.from && <span className="text-[13px] font-medium text-ink-mute">dès</span>}
-            {/* Le prix en serif extrabold : c'est LE chiffre de la carte, il doit
-                dominer le titre (19px contre 16px). */}
             <span className="whitespace-nowrap font-display text-[19px] font-extrabold tracking-tight text-spruce">
               {formatPrice(prix?.price ?? product.priceRange.minVariantPrice)}
             </span>
@@ -230,45 +305,62 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
             )}
           </div>
 
-          <button
-            onClick={handleAdd}
-            disabled={!canQuickAct || adding}
-            aria-label={
-              hasMultipleVariants
-                ? `Choisir la saveur de ${product.title}`
-                : `Ajouter ${product.title} au panier`
-            }
-            className={cn(
-              // w-11 = 44px : minimum tactile. flex-shrink-0 : ne pas se faire
-              // comprimer par la ligne prix sur les colonnes étroites.
-              'flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full transition-all duration-200 ease-out-expo',
-              canQuickAct && !adding
-                ? 'bg-fresh text-white shadow-soft hover:scale-105 hover:bg-fresh-deep hover:shadow-card active:scale-95'
-                : 'cursor-not-allowed bg-spruce/10 text-spruce/30'
-            )}
-          >
-            {adding ? (
-              <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                />
-              </svg>
-            ) : (
-              <Plus className="w-4 h-4" />
-            )}
-          </button>
+          {versLaFiche ? (
+            <Link
+              href={href}
+              aria-label={
+                soldOut || !variant?.availableForSale
+                  ? `${product.title} épuisé : voir la fiche pour être prévenu du retour`
+                  : `Composer ${product.title} sur sa fiche`
+              }
+              className="press inline-flex h-11 w-full items-center justify-center rounded-full border border-spruce/20 text-[14px] font-semibold text-spruce transition-colors hover:border-spruce/50 hover:bg-spruce/5"
+            >
+              {soldOut || !variant?.availableForSale ? 'M’alerter' : 'Composer'}
+            </Link>
+          ) : (
+            <button
+              ref={bouton}
+              type="button"
+              onClick={auClic}
+              onPointerDown={precharger}
+              onFocus={precharger}
+              aria-busy={etat === 'ajout'}
+              aria-haspopup={plusieurs ? 'dialog' : undefined}
+              aria-label={
+                plusieurs ? `Choisir le parfum et le format de ${product.title}` : `Ajouter ${product.title} au panier`
+              }
+              className={cn(
+                'press inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full text-[14px] font-semibold text-white shadow-soft transition-colors',
+                etat === 'ajoute' ? 'bg-spruce' : 'bg-fresh hover:bg-fresh-deep'
+              )}
+            >
+              {etat === 'ajout' ? (
+                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+              ) : etat === 'ajoute' ? (
+                <Check className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                !plusieurs && <Plus className="h-4 w-4" aria-hidden="true" />
+              )}
+              <span aria-live="polite">{libelle}</span>
+            </button>
+          )}
         </div>
       </div>
+
+      {feuille && (
+        <FeuilleAjoutRapide
+          handle={product.handle}
+          titre={product.title}
+          href={href}
+          image={product.featuredImage}
+          varianteInitiale={varianteId}
+          onFermer={fermerFeuille}
+          onAjouter={ajouterDepuisFeuille}
+        />
+      )}
     </div>
   )
 }

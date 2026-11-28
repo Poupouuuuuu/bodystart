@@ -8,79 +8,86 @@ import {
   formatShippingPrice,
 } from '@/lib/shipping'
 import { CONTACT_EMAIL } from '@/lib/store-info'
+import { getMoyensPaiement } from '@/lib/shopify/paiement'
+import type { MoyensPaiement } from '@/lib/paiement'
 
 const FRANCO = formatShippingPrice(FREE_SHIPPING_THRESHOLD_CENTS)
 
-const FAQ_ITEMS = [
-  {
-    category: 'Commandes & Livraison',
-    questions: [
-      { q: 'Quels sont les délais de livraison ?', a: `Mondial Relay (point relais) : ${MONDIAL_RELAY.delayLabel}. Colissimo (domicile) : ${COLISSIMO.delayLabel}. Click & Collect : retrait immédiat en boutique si le produit est en stock, sinon prêt au plus tard sous 2 h.` },
-      { q: 'La livraison est-elle gratuite ?', a: `La livraison est gratuite à partir de ${FRANCO} d'achat en Mondial Relay et en Colissimo. En dessous, les frais sont de ${formatShippingPrice(MONDIAL_RELAY.priceCents)} en Mondial Relay (point relais) et ${formatShippingPrice(COLISSIMO.priceCents)} en Colissimo (domicile). Le Click & Collect est toujours gratuit. Autour de Coignières, on peut aussi te livrer nous-mêmes le soir même pour ${formatShippingPrice(LIVRAISON_LOCALE.priceCents)}.` },
-      { q: 'Comment suivre ma commande ?', a: 'Tu recevras un email avec ton numéro de suivi dès l\'expédition de ton colis. Tu peux aussi consulter ton espace client.' },
-      { q: 'Comment fonctionne le Click & Collect ?', a: 'Choisis le Click & Collect au checkout. Si tes produits sont en stock en boutique, tu peux les retirer tout de suite, aux heures d\'ouverture ; sinon ta commande est prête au plus tard sous 2 h. Présente ton email de confirmation en boutique pour retirer tes produits.' },
-      { q: 'Comment choisir mon point relais ?', a: 'Choisis ton point relais dans le panier\u00a0; sinon, on choisit le plus proche de ton adresse. Au paiement, prends la livraison Mondial Relay.' },
-    ],
-  },
-  {
-    category: 'Produits & Conseils',
-    questions: [
-      { q: 'Vos produits conviennent-ils aux végétariens/végétaliens ?', a: 'Certains de nos produits sont végétariens ou végétaliens. Chaque fiche produit précise les informations relatives au régime alimentaire.' },
-      { q: 'Comment choisir le bon complément pour mon objectif ?', a: 'Fais le point en une minute avec notre guide conseil\u00a0: ton objectif, ton budget et ta fréquence d\'entraînement, et il te propose une sélection en stock à la boutique. Tu peux aussi parcourir nos catégories (Protéines, Créatine, …) ou venir en boutique, où nos conseillers te guideront personnellement.' },
-      { q: 'Les produits sont-ils contrôlés antidopage ?', a: 'Nous sélectionnons des produits de qualité. Consulte les fiches produits pour les certifications spécifiques. En cas de doute, consulte la liste de l\'AFLD.' },
-      { q: 'Peut-on cumuler plusieurs compléments ?', a: 'Oui, mais nous recommandons de demander l\'avis d\'un professionnel de santé avant d\'associer plusieurs produits. Nos conseillers en boutique peuvent t\'aider.' },
-    ],
-  },
-  {
-    category: 'Compte & Paiement',
-    questions: [
-      { q: 'Comment créer un compte ?', a: 'Touche l\'icône compte en haut à droite puis "Créer un compte". Renseigne ton email et un mot de passe. C\'est gratuit et rapide.' },
-      { q: 'Quels modes de paiement acceptez-vous ?', a: 'Nous acceptons les cartes bancaires (Visa, Mastercard, Amex) via Shopify Payments. Le paiement est 100% sécurisé (SSL).' },
-      { q: 'J\'ai oublié mon mot de passe, que faire ?', a: 'Clique sur "Mot de passe oublié ?" sur la page de connexion. Tu recevras un email de réinitialisation dans quelques minutes.' },
-      { q: 'Comment modifier mon adresse de livraison ?', a: 'Connecte-toi à ton espace client, va dans "Mon profil" ou "Mes adresses" pour modifier tes informations.' },
-    ],
-  },
-  {
-    category: 'Retours & Remboursements',
-    questions: [
-      { q: 'Quel est le délai pour retourner un produit ?', a: 'Tu disposes de 14 jours à compter de la réception pour exercer ton droit de rétractation.' },
-      { q: 'Comment initier un retour ?', a: `Tu as 14 jours après la réception de ta commande pour changer d'avis. Écris-nous à ${CONTACT_EMAIL} avec ton numéro de commande, ou envoie-nous le formulaire de rétractation de notre politique de retour (page Livraison & Retours). Ensuite, rapporte le produit à la boutique de Coignières, gratuitement, du lundi au samedi de 11\u00a0h à 19\u00a0h, ou renvoie-le par la poste à tes frais, dans les 14 jours qui suivent ta demande. Le produit doit être non ouvert, dans son emballage d'origine\u00a0: pour des raisons d'hygiène, on ne peut pas reprendre un produit descellé. Produit défectueux ou non conforme\u00a0: les frais de retour sont pour nous.` },
-      { q: 'Quand serai-je remboursé(e) ?', a: "Sous 14 jours à compter de ta demande de rétractation, avec le même moyen de paiement que pour ta commande. Le remboursement comprend le prix des produits et les frais de livraison payés à la commande. On peut attendre d'avoir reçu le produit, ou une preuve de son envoi, avant de te rembourser." },
-    ],
-  },
-]
+// Moyens de paiement lus dans Shopify (lib/shopify/paiement) : la réponse suit la caisse.
+function faqItems(paiement: MoyensPaiement) {
+  return [
+    {
+      category: 'Commandes & Livraison',
+      questions: [
+        { q: 'Quels sont les délais de livraison ?', a: `Mondial Relay (point relais) : ${MONDIAL_RELAY.delayLabel}. Colissimo (domicile) : ${COLISSIMO.delayLabel}. Click & Collect : retrait immédiat en boutique si le produit est en stock, sinon prêt au plus tard sous 2 h.` },
+        { q: 'La livraison est-elle gratuite ?', a: `La livraison est gratuite à partir de ${FRANCO} d'achat en Mondial Relay et en Colissimo. En dessous, les frais sont de ${formatShippingPrice(MONDIAL_RELAY.priceCents)} en Mondial Relay (point relais) et ${formatShippingPrice(COLISSIMO.priceCents)} en Colissimo (domicile). Le Click & Collect est toujours gratuit. Autour de Coignières, on peut aussi te livrer nous-mêmes le soir même pour ${formatShippingPrice(LIVRAISON_LOCALE.priceCents)}.` },
+        { q: 'Comment suivre ma commande ?', a: 'Tu recevras un email avec ton numéro de suivi dès l\'expédition de ton colis. Tu peux aussi consulter ton espace client.' },
+        { q: 'Comment fonctionne le Click & Collect ?', a: 'Choisis le Click & Collect au checkout. Si tes produits sont en stock en boutique, tu peux les retirer tout de suite, aux heures d\'ouverture ; sinon ta commande est prête au plus tard sous 2 h. Présente ton email de confirmation en boutique pour retirer tes produits.' },
+        { q: 'Comment choisir mon point relais ?', a: 'Choisis ton point relais dans le panier\u00a0; sinon, on choisit le plus proche de ton adresse. Au paiement, prends la livraison Mondial Relay.' },
+      ],
+    },
+    {
+      category: 'Produits & Conseils',
+      questions: [
+        { q: 'Vos produits conviennent-ils aux végétariens/végétaliens ?', a: 'Certains de nos produits sont végétariens ou végétaliens. Chaque fiche produit précise les informations relatives au régime alimentaire.' },
+        { q: 'Comment choisir le bon complément pour mon objectif ?', a: 'Fais le point en une minute avec notre guide conseil\u00a0: ton objectif, ton budget et ta fréquence d\'entraînement, et il te propose une sélection en stock à la boutique. Tu peux aussi parcourir nos catégories (Protéines, Créatine, …) ou venir en boutique, où nos conseillers te guideront personnellement.' },
+        { q: 'Les produits sont-ils contrôlés antidopage ?', a: 'Nous sélectionnons des produits de qualité. Consulte les fiches produits pour les certifications spécifiques. En cas de doute, consulte la liste de l\'AFLD.' },
+        { q: 'Peut-on cumuler plusieurs compléments ?', a: 'Oui, mais nous recommandons de demander l\'avis d\'un professionnel de santé avant d\'associer plusieurs produits. Nos conseillers en boutique peuvent t\'aider.' },
+      ],
+    },
+    {
+      category: 'Compte & Paiement',
+      questions: [
+        { q: 'Comment créer un compte ?', a: 'Touche l\'icône compte en haut à droite puis "Créer un compte". Renseigne ton email et un mot de passe. C\'est gratuit et rapide.' },
+        { q: 'Quels modes de paiement acceptez-vous ?', a: `Sur le site, tu paies ${paiement.phrase}. Le paiement se fait sur la page sécurisée de Shopify, en connexion chiffrée. En boutique\u00a0: carte bancaire et espèces.` },
+        { q: 'J\'ai oublié mon mot de passe, que faire ?', a: 'Clique sur "Mot de passe oublié ?" sur la page de connexion. Tu recevras un email de réinitialisation dans quelques minutes.' },
+        { q: 'Comment modifier mon adresse de livraison ?', a: 'Connecte-toi à ton espace client, va dans "Mon profil" ou "Mes adresses" pour modifier tes informations.' },
+      ],
+    },
+    {
+      category: 'Retours & Remboursements',
+      questions: [
+        { q: 'Quel est le délai pour retourner un produit ?', a: 'Tu disposes de 14 jours à compter de la réception pour exercer ton droit de rétractation.' },
+        { q: 'Comment initier un retour ?', a: `Tu as 14 jours après la réception de ta commande pour changer d'avis. Écris-nous à ${CONTACT_EMAIL} avec ton numéro de commande, ou envoie-nous le formulaire de rétractation de notre politique de retour (page Livraison & Retours). Ensuite, rapporte le produit à la boutique de Coignières, gratuitement, du lundi au samedi de 11\u00a0h à 19\u00a0h, ou renvoie-le par la poste à tes frais, dans les 14 jours qui suivent ta demande. Le produit doit être non ouvert, dans son emballage d'origine\u00a0: pour des raisons d'hygiène, on ne peut pas reprendre un produit descellé. Produit défectueux ou non conforme\u00a0: les frais de retour sont pour nous.` },
+        { q: 'Quand serai-je remboursé(e) ?', a: "Sous 14 jours à compter de ta demande de rétractation, avec le même moyen de paiement que pour ta commande. Le remboursement comprend le prix des produits et les frais de livraison payés à la commande. On peut attendre d'avoir reçu le produit, ou une preuve de son envoi, avant de te rembourser." },
+      ],
+    },
+  ]
+}
 
 // JSON-LD FAQPage — 8 questions principales, reprises MOT POUR MOT des Q/R
 // affichées (cf. skill bodystart-seo-geo / references/schema-markup.md : tout ce
 // qui est dans le schema doit être visible sur la page). On les référence
 // directement depuis FAQ_ITEMS → identité garantie avec l'affichage.
-const SCHEMA_FAQ = [
-  FAQ_ITEMS[0].questions[0], // Délais de livraison
-  FAQ_ITEMS[0].questions[1], // Livraison gratuite
-  FAQ_ITEMS[0].questions[3], // Click & Collect
-  FAQ_ITEMS[2].questions[1], // Modes de paiement
-  FAQ_ITEMS[3].questions[0], // Délai de retour
-  FAQ_ITEMS[3].questions[1], // Comment initier un retour
-  FAQ_ITEMS[3].questions[2], // Quand serai-je remboursé(e)
-  FAQ_ITEMS[1].questions[2], // Contrôle antidopage
-]
-
-const faqJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: SCHEMA_FAQ.map(({ q, a }) => ({
-    '@type': 'Question',
-    name: q,
-    acceptedAnswer: { '@type': 'Answer', text: a },
-  })),
+function faqJsonLd(FAQ_ITEMS: ReturnType<typeof faqItems>) {
+  const SCHEMA_FAQ = [
+    FAQ_ITEMS[0].questions[0], // Délais de livraison
+    FAQ_ITEMS[0].questions[1], // Livraison gratuite
+    FAQ_ITEMS[0].questions[3], // Click & Collect
+    FAQ_ITEMS[2].questions[1], // Modes de paiement
+    FAQ_ITEMS[3].questions[0], // Délai de retour
+    FAQ_ITEMS[3].questions[1], // Comment initier un retour
+    FAQ_ITEMS[3].questions[2], // Quand serai-je remboursé(e)
+    FAQ_ITEMS[1].questions[2], // Contrôle antidopage
+  ]
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: SCHEMA_FAQ.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  }
 }
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  const FAQ_ITEMS = faqItems(await getMoyensPaiement())
   return (
     <div className="bg-canvas min-h-screen">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQ_ITEMS)) }}
       />
       <div className="container py-14 md:py-20 max-w-4xl">
         <Link
