@@ -145,8 +145,9 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum, pri
     [addItem]
   )
 
-  // Les variantes se lisent dès l'intention (survol, doigt posé) : la feuille
-  // s'ouvre souvent déjà remplie. Une seule requête par produit et par visite.
+  // Les variantes se lisent dès que le doigt (ou la souris) appuie, avant le
+  // clic : la feuille s'ouvre souvent déjà remplie. Pas au survol, pour ne pas
+  // lancer une requête par carte survolée. Une seule requête par produit et par visite.
   const precharger = () => {
     if (plusieurs && !versLaFiche) chargerProduitAjout(product.handle).catch(() => {})
   }
@@ -284,7 +285,7 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum, pri
               ref={bouton}
               type="button"
               onClick={auClic}
-              onPointerEnter={precharger}
+              onPointerDown={precharger}
               onFocus={precharger}
               aria-busy={etat === 'ajout'}
               aria-haspopup={plusieurs ? 'dialog' : undefined}

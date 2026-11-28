@@ -126,7 +126,8 @@ export default function FeuilleAjoutRapide({
   return createPortal(
     // Centrage en flex (et pas en translate) : l'animation d'entrée anime
     // transform, elle écraserait un translate de centrage sur ordinateur.
-    <div className="fixed inset-0 z-[60] flex items-end md:items-center md:justify-center" role="presentation">
+    // z-[70] : au-dessus du bandeau cookies (z-[60]) et du tiroir (z-50).
+    <div className="fixed inset-0 z-[70] flex items-end md:items-center md:justify-center" role="presentation">
       <div
         className="absolute inset-0 animate-fade-in bg-ink/40 backdrop-blur-[2px] motion-reduce:animate-none"
         onClick={onFermer}
