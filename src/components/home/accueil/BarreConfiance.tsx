@@ -9,8 +9,8 @@ import { FREE_SHIPPING_LABEL } from '@/lib/shipping'
  * - note Google : valeurs du metafield (lib/shopify/google-rating), jamais en dur ;
  * - retrait immédiat en boutique, si le produit est en stock (lib/shipping) ;
  * - livraison offerte dès 85 € (FREE_SHIPPING_LABEL, lib/shipping) ;
- * - paiement sécurisé, sans nommer de moyen tant qu'ils ne sont pas lus
- *   dans Shopify (lib/shopify/paiement, à relier).
+ * - paiement sécurisé : CB, PayPal et Klarna, vérifiés sur l'écran de
+ *   paiement (lib/shopify/paiement à relier quand il sera dans main).
  * 2 × 2 sur téléphone, une rangée de 4 sur ordinateur.
  */
 export default async function BarreConfiance() {
@@ -35,7 +35,9 @@ export default async function BarreConfiance() {
     {
       icone: <ShieldCheck className="h-[18px] w-[18px] text-spruce" strokeWidth={1.75} aria-hidden="true" />,
       titre: 'Paiement sécurisé',
-      texte: 'en ligne comme en boutique',
+      // Moyens vérifiés sur l'écran de paiement le 28/11/2026 (à relier à
+      // getMoyensPaiement, lib/shopify/paiement, quand il sera dans main).
+      texte: 'CB, PayPal, Klarna',
     },
   ]
   return (
