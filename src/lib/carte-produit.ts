@@ -18,6 +18,7 @@
 // Pur, sans réseau. Testé dans carte-produit.test.ts.
 
 import { formatCourt } from '@/lib/alt-produit'
+import { formatPoids } from '@/lib/typo'
 
 export const JOURS_NOUVEAU = 30
 export const SEUIL_STOCK_BAS = 5
@@ -27,13 +28,16 @@ export interface OptionCarte {
   optionValues: { name: string }[]
 }
 
-/** Résumé envoyé au navigateur avec le produit. */
+/**
+ * Résumé envoyé au navigateur avec le produit. Clés absentes plutôt que
+ * vides (null, 0, false) : ~110 produits partent dans la charge de /products.
+ */
 export interface ResumeCarte {
-  /** « 1 kg », « 500 g ou 1 kg », « 3 formats » ; null si inconnu ou déjà dans le nom. */
-  format: string | null
-  /** Nombre de parfums (0 ou 1 : rien à afficher). */
-  parfums: number
-  nouveau: boolean
+  /** « 1 kg », « 500 g ou 1 kg », « 3 formats » ; absent si inconnu ou déjà dans le nom. */
+  format?: string
+  /** Nombre de parfums, à partir de 2. */
+  parfums?: number
+  nouveau?: true
 }
 
 const norm = (s: string) =>
@@ -57,14 +61,16 @@ export function formatCarte(
   const titreCompact = compact(titre)
   const dejaDansLeNom = (v: string) => titreCompact.includes(compact(v))
   const option = (options ?? []).find((o) => OPTIONS_FORMAT.has(norm(o.name)))
-  const formats = valeurs(option)
+  // « 2.27kg » → « 2,27 kg » (saisie Shopify brute).
+  const formats = valeurs(option).map(formatPoids)
   if (formats.length > 0) {
     if (formats.every(dejaDansLeNom)) return null
     if (formats.length === 1) return formats[0]
     if (formats.length === 2) return `${formats[0]} ou ${formats[1]}`
     return `${formats.length} formats`
   }
-  const court = formatCourt(formatMeta)
+  const brut = formatCourt(formatMeta)
+  const court = brut ? formatPoids(brut) : null
   if (!court || dejaDansLeNom(court)) return null
   // La quantité seule (« 120 gélules » de « 120 gélules végétales ») déjà dans le nom.
   const quantite = court.match(/^\d+(?:[.,]\d+)?\s*\p{L}+/u)?.[0]
@@ -98,18 +104,22 @@ export function resumeCarte(
     formatMeta?: { value?: string | null } | null
   },
   maintenant: Date
-): ResumeCarte {
-  return {
-    format: formatCarte(p.title, p.optionsCarte, p.formatMeta?.value),
-    parfums: nombreDeParfums(p.optionsCarte),
-    nouveau: estNouveau(p, maintenant),
+): ResumeCarte | null {
+  const format = formatCarte(p.title, p.optionsCarte, p.formatMeta?.value)
+  const parfums = nombreDeParfums(p.optionsCarte)
+  const resume: ResumeCarte = {
+    ...(format ? { format } : {}),
+    ...(parfums >= 2 ? { parfums } : {}),
+    ...(estNouveau(p, maintenant) ? { nouveau: true as const } : {}),
   }
+  return Object.keys(resume).length ? resume : null
 }
 
 /** « 1 kg · 6 parfums » ; null s'il n'y a rien à dire. */
 export function ligneDetailsCarte(resume: ResumeCarte | null | undefined): string | null {
   if (!resume) return null
-  const parties = [resume.format, resume.parfums >= 2 ? `${resume.parfums} parfums` : null].filter(Boolean)
+  const parfums = resume.parfums ?? 0
+  const parties = [resume.format, parfums >= 2 ? `${parfums} parfums` : null].filter(Boolean)
   return parties.length ? parties.join(' · ') : null
 }
 

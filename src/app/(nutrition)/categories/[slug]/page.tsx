@@ -132,22 +132,23 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <h1 className="max-w-[760px] font-display text-[32px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
             {frenchSpacing(cat.h1)}
           </h1>
-          {/* Mobile : les autres rayons en pastilles qui défilent (liens vers
-              leur page), le rayon courant en premier, marqué. */}
-          <PastillesFiltres
-            className="mb-6 lg:hidden"
-            libelle="Rayons"
-            pastilles={[cat, ...CATEGORY_PAGES.filter((c) => c.slug !== cat.slug)].map((c) => ({
-              cle: c.slug,
-              libelle: c.label,
-              actif: c.slug === cat.slug,
-              href: `/categories/${c.slug}`,
-            }))}
-          />
         </div>
       </section>
 
       <div className="container pb-12 md:pb-16">
+        {/* Mobile : les autres rayons en pastilles qui défilent (liens vers
+            leur page), le rayon courant en premier, marqué. Hors du bandeau :
+            le thème de saison y recolore les liens. */}
+        <PastillesFiltres
+          className="pt-5 lg:hidden"
+          libelle="Rayons"
+          pastilles={[cat, ...CATEGORY_PAGES.filter((c) => c.slug !== cat.slug)].map((c) => ({
+            cle: c.slug,
+            libelle: c.label,
+            actif: c.slug === cat.slug,
+            href: `/categories/${c.slug}`,
+          }))}
+        />
         {/* Intro answer-first */}
         <div className="max-w-[760px] mb-10">
           {/* MOBILE FIRST : l'intro (2-3 paragraphes) repoussait les produits a

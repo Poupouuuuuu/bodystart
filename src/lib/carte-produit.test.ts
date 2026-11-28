@@ -6,9 +6,11 @@ const MAINTENANT = new Date('2026-11-28T02:00:00Z')
 
 describe('formatCarte', () => {
   it('lit l’option Poids, Format, Taille ou Contenance', () => {
-    expect(formatCarte('Whey Native', [opt('Saveur', 'Chocolat', 'Vanille'), opt('Poids', '1 kg')], null)).toBe('1 kg')
-    expect(formatCarte('Whey Native', [opt('Format', '500 g', '1 kg')], null)).toBe('500 g ou 1 kg')
+    expect(formatCarte('Whey Native', [opt('Saveur', 'Chocolat', 'Vanille'), opt('Poids', '1 kg')], null)).toBe('1\u00a0kg')
+    expect(formatCarte('Whey Native', [opt('Format', '500 g', '1 kg')], null)).toBe('500\u00a0g ou 1\u00a0kg')
     expect(formatCarte('Whey Native', [opt('Contenance', '500 g', '1 kg', '2 kg')], null)).toBe('3 formats')
+    expect(formatCarte('Mass', [opt('Poids', '2.27kg', '6.8kg')], null)).toBe('2,27\u00a0kg ou 6,8\u00a0kg')
+    expect(formatCarte('Créatine', null, '500g')).toBe('500\u00a0g')
   })
   it('se tait quand le nom contient déjà le format', () => {
     expect(formatCarte('Whey Protein PER4M - 810 g et 1,8 kg', [opt('Poids', '810 g', '1,8 kg')], null)).toBeNull()
@@ -16,7 +18,7 @@ describe('formatCarte', () => {
     expect(formatCarte('L-Carnitine 1500 - 120 gélules', null, '120 gélules végétales')).toBeNull()
   })
   it('se rabat sur le métachamp format, réduit à sa quantité', () => {
-    expect(formatCarte('Isolate Zero', [opt('Title', 'Default Title')], 'Pot de 908 g (30 doses)')).toBe('908 g')
+    expect(formatCarte('Isolate Zero', [opt('Title', 'Default Title')], 'Pot de 908 g (30 doses)')).toBe('908\u00a0g')
     expect(formatCarte('Isolate Zero', null, '500 g / 1 kg')).toBeNull()
     expect(formatCarte('Isolate Zero', null, null)).toBeNull()
   })
@@ -43,9 +45,9 @@ describe('estNouveau', () => {
 
 describe('ligneDetailsCarte', () => {
   it('format puis parfums, à partir de 2 parfums', () => {
-    expect(ligneDetailsCarte({ format: '1 kg', parfums: 6, nouveau: false })).toBe('1 kg · 6 parfums')
-    expect(ligneDetailsCarte({ format: null, parfums: 1, nouveau: false })).toBeNull()
-    expect(ligneDetailsCarte({ format: '908 g', parfums: 0, nouveau: true })).toBe('908 g')
+    expect(ligneDetailsCarte({ format: '1 kg', parfums: 6 })).toBe('1 kg · 6 parfums')
+    expect(ligneDetailsCarte({ parfums: 1 })).toBeNull()
+    expect(ligneDetailsCarte({ format: '908 g', nouveau: true })).toBe('908 g')
     expect(ligneDetailsCarte(undefined)).toBeNull()
   })
   it('resumeCarte réunit les trois', () => {
@@ -54,7 +56,8 @@ describe('ligneDetailsCarte', () => {
         { title: 'Whey', createdAt: '2026-11-25T00:00:00Z', optionsCarte: [opt('Saveur', 'A', 'B'), opt('Poids', '1 kg')] },
         MAINTENANT
       )
-    ).toEqual({ format: '1 kg', parfums: 2, nouveau: true })
+    ).toEqual({ format: '1\u00a0kg', parfums: 2, nouveau: true })
+    expect(resumeCarte({ title: 'Shaker', createdAt: '2024-01-01T00:00:00Z', optionsCarte: [] }, MAINTENANT)).toBeNull()
   })
 })
 
