@@ -26,6 +26,7 @@ import { composantsSansFiche } from '@/lib/shopify/composants-sans-fiche'
 import { productSchema } from '@/lib/jsonld/product'
 import { guidesDeFiche, rayonDeFiche } from '@/lib/rayon-fiche'
 import { altProduit } from '@/lib/alt-produit'
+import { pointsForts } from '@/lib/points-forts'
 import { cadeauDeFiche, type CadeauFiche } from '@/lib/paliers'
 import { lirePaliers } from '@/lib/paliers/serveur'
 import { periodeServeur } from '@/lib/saison'
@@ -302,7 +303,9 @@ export default async function ProductPage({ params }: Props) {
 
       {/* ─── Buy box : galerie + panneau achat ─── */}
       <section className="bg-canvas">
-        <div className="container py-10 md:py-14">
+        {/* pt-3 sous sm : la photo commence plus haut, le bouton d'achat tient
+            au premier écran du téléphone (28/11/2026). */}
+        <div className="container pt-3 pb-10 sm:pt-10 md:py-14">
           {/* Sans <Suspense> (08/10/2026) : React sort toute frontière dont le
               HTML dépasse ~12 Ko dans un bloc caché révélé par un script, même
               prête. La zone d'achat (galerie, prix, bouton) était invisible sans
@@ -318,6 +321,7 @@ export default async function ProductPage({ params }: Props) {
             activeStore={activeStore}
             productId={product.id}
             benefits={benefits}
+            pointsForts={pointsForts(product.descriptionHtml)}
             format={format}
             vendor={product.vendor}
             isBundle={productIsBundle}
@@ -333,7 +337,15 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ─── Description Shopify, juste sous la zone d'achat (10/10/2026) ───
+      {/* ─── Souvent achetés avec, juste sous la zone d'achat (28/11/2026) ───
+          Avant : en bas de page, après les avis. Même sélection qu'avant
+          (lib/merchandising : 3 meilleures ventes de chaque famille qui va
+          avec la fiche). */}
+      {relatedProducts.length > 0 && (
+        <CrossSellV2 products={relatedProducts} currentHandle={product.handle} />
+      )}
+
+      {/* ─── Description Shopify, sous la zone d'achat (10/10/2026) ───
           Avant : deux blocs génériques identiques sur toutes les fiches
           (« Le conseil BodyStart », « Ce qu'on vérifie ») passaient devant,
           dont une allégation santé non autorisée affichée partout. Aucune
@@ -362,11 +374,6 @@ export default async function ProductPage({ params }: Props) {
       {/* Sans <Suspense> : composant serveur (note Google), rien à hydrater ;
           la frontière ne servait qu'à l'envoyer dans un bloc caché sans JS. */}
       <ReviewsV2 />
-
-      {/* ─── Cross-sell + nudge franco ─── */}
-      {relatedProducts.length > 0 && (
-        <CrossSellV2 products={relatedProducts} currentHandle={product.handle} />
-      )}
 
       {/* ─── Précautions d'emploi des compléments alimentaires (statique, légal) ─── */}
       {showPrecautions && <PrecautionsEmploiV2 />}
