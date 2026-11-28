@@ -305,7 +305,7 @@ export default async function ProductPage({ params }: Props) {
       <section className="bg-canvas">
         {/* pt-3 sous sm : la photo commence plus haut, le bouton d'achat tient
             au premier écran du téléphone (28/11/2026). */}
-        <div className="container pt-3 pb-10 sm:pt-10 md:py-14">
+        <div className="container pt-2 pb-10 sm:pt-10 md:py-14">
           {/* Sans <Suspense> (08/10/2026) : React sort toute frontière dont le
               HTML dépasse ~12 Ko dans un bloc caché révélé par un script, même
               prête. La zone d'achat (galerie, prix, bouton) était invisible sans

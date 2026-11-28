@@ -7,8 +7,13 @@ import type { ShopifyImage } from '@/lib/shopify/types'
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react'
 import { altImage } from '@/lib/alt-produit'
 
-/** Hauteur de la photo sous sm, partagée avec BundleGalleryV2 (premier écran du téléphone). */
-export const HAUTEUR_MOBILE = 'max-sm:h-[clamp(180px,28svh,260px)]'
+/**
+ * Hauteur de la photo sous sm, partagée avec BundleGalleryV2 (premier écran
+ * du téléphone) : ~22 % de la hauteur d'écran, entre 160 et 240 px. En
+ * 390×844, le bouton d'achat reste visible au-dessus du bandeau cookies de
+ * la 1re visite (~117 px).
+ */
+export const HAUTEUR_MOBILE = 'max-sm:h-[clamp(160px,22svh,240px)]'
 
 interface ProductGalleryV2Props {
   images: ShopifyImage[]
@@ -123,10 +128,10 @@ export default function ProductGalleryV2({
             (43 + 44 Ko avant le 08/10/2026). */}
         {/* saison-toile, saison-badge-citrouille : déco du thème pendant une
             période décorée (components/saison/halloween/styles.ts). */}
-        {/* Téléphone (28/11/2026) : photo réduite à ~28 % de la hauteur d'écran
-            (entre 180 et 260 px) pour que nom, prix, choix et bouton d'achat
-            tiennent au premier écran. Sans svh (vieux navigateurs), la
-            hauteur est ignorée et le 4/3 reprend la main. */}
+        {/* Téléphone (28/11/2026) : photo réduite (HAUTEUR_MOBILE) pour que
+            nom, prix, choix et bouton d'achat tiennent au premier écran. Sans
+            svh (vieux navigateurs), la hauteur est ignorée et le 4/3 reprend
+            la main. */}
         <div className={cn('saison-toile group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-sage shadow-card', HAUTEUR_MOBILE)}>
           <Image
             src="/bg-vegetal-800.webp"

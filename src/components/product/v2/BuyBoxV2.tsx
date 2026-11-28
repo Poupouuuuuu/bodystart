@@ -377,7 +377,7 @@ export default function BuyBoxV2({
           points forts, choix et bouton d'achat visibles sans défiler sur
           390×844. Écarts resserrés sous sm ; à partir de lg, mise en page
           d'ordinateur inchangée (galerie collante à gauche). */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-5 sm:gap-10 lg:gap-14 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-4 sm:gap-10 lg:gap-14 items-start">
         {/* ─── Galerie ─── */}
         {/* Pastille -X % : remise de la variante AFFICHÉE (compareAtPrice > price
             sur cette variante), pas celle de la variante d'ouverture. */}
@@ -413,21 +413,23 @@ export default function BuyBoxV2({
           {/* Fournisseur (vendor) — "Packs" pour un bundle */}
           <Link
             href={eyebrowHref}
-            className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute -mt-3.5 inline-flex min-h-[44px] items-center hover:text-spruce transition-colors"
+            // Zone tactile de 44 px qui déborde sur les marges (-mt, -mb sous sm) :
+            // le libellé ne fait que 11 px de haut.
+            className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute -mt-3.5 max-sm:-mb-1.5 inline-flex min-h-[44px] items-center hover:text-spruce transition-colors"
           >
             {eyebrowLabel}
           </Link>
 
           {/* Titre */}
-          <h1 className="font-display text-[28px] md:text-[36px] lg:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-2">
+          <h1 className="font-display text-[28px] md:text-[36px] lg:text-[40px] font-extrabold text-spruce leading-[1.1] tracking-tight mb-1 sm:mb-2">
             {title}
           </h1>
 
           {/* Format / grammage (metafield Shopify) */}
           {format && (
-            <p className="text-[14px] text-ink-mute font-medium mb-3 sm:mb-5">{formatPoids(format)}</p>
+            <p className="text-[14px] text-ink-mute font-medium mb-2 sm:mb-5">{formatPoids(format)}</p>
           )}
-          {!format && <div className="mb-3 sm:mb-5" />}
+          {!format && <div className="mb-2 sm:mb-5" />}
 
           {/* Pastilles benefices (sage + spruce) */}
           {benefits.length > 0 && (
@@ -444,7 +446,7 @@ export default function BuyBoxV2({
           )}
 
           {/* Prix */}
-          <div className={cn('flex items-baseline gap-3', cadeauFiche || pointsForts.length > 0 ? 'mb-3' : 'mb-4 sm:mb-7')}>
+          <div className={cn('flex items-baseline gap-3', cadeauFiche || pointsForts.length > 0 ? 'mb-3' : 'mb-3 sm:mb-7')}>
             <span className="font-display text-[32px] md:text-[36px] font-extrabold text-spruce leading-none">
               {formatPrice(selectedVariant.price)}
             </span>
@@ -579,7 +581,7 @@ export default function BuyBoxV2({
           )}
 
           {/* Quantite + Ajouter au panier */}
-          <div className={cn('flex items-stretch gap-3', selectedUnavailable ? 'mt-4' : 'mt-2 sm:mt-7')}>
+          <div className={cn('flex items-stretch gap-3', selectedUnavailable ? 'mt-4' : 'mt-1 sm:mt-7')}>
             <div className="inline-flex items-center border border-spruce/20 rounded-full overflow-hidden h-[56px] bg-white">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
