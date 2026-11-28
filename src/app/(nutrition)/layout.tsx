@@ -12,7 +12,7 @@ import VenometteBanner from '@/components/marketing/VenometteBanner'
 import NavigationTracker from '@/components/layout/NavigationTracker'
 import { getCollections } from '@/lib/shopify'
 import { apercuSaison, getSaison } from '@/lib/shopify/saison'
-import { periodeServeur } from '@/lib/saison'
+import { indexPeriode, periodeServeur } from '@/lib/saison'
 import { decorSaison } from '@/components/saison/decors'
 import AnimationsSaison from '@/components/saison/AnimationsSaison'
 import type { ShopifyCollection } from '@/lib/shopify/types'
@@ -52,7 +52,8 @@ export default async function NutritionLayout({ children }: { children: React.Re
   const saison = await getSaison()
   // Hors production, `?saison=black-week` (cookie) force un thème : null en production.
   const apercu = await apercuSaison()
-  const themeServeur = periodeServeur(saison, new Date(), apercu)?.theme ?? null
+  const periodeRendue = periodeServeur(saison, new Date(), apercu)
+  const themeServeur = periodeRendue?.theme ?? null
   // Calculé au rendu (ISR 15 min) : les fermetures exceptionnelles passées sortent du JSON-LD.
   const storeLd = storeJsonLd(SITE_URL, new Date())
   // Déco de saison complète (haut de l'accueil, séparateurs, frise du pied de
@@ -103,7 +104,7 @@ export default async function NutritionLayout({ children }: { children: React.Re
       <Header
         collections={collections}
         saison={saison}
-        themeServeur={themeServeur}
+        rangServeur={indexPeriode(saison, periodeRendue)}
         apercu={apercu}
         previsualisation={process.env.VERCEL_ENV !== 'production'}
       />
