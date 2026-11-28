@@ -2,6 +2,7 @@ import { cache } from 'react'
 import { getProducts, getCollections, getInventoryForVariants } from '@/lib/shopify'
 import { BODY_START_STORES, type ShopifyCollection, type ShopifyProduct } from '@/lib/shopify/types'
 import { estPackCatalogue } from '@/lib/catalogue'
+import { offresDesCartes } from '@/lib/offres-cartes'
 
 export interface Catalogue {
   products: ShopifyProduct[]
@@ -25,7 +26,8 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
       // 99 % du CA) : le tri par defaut « Meilleures ventes » affiche les vrais
       // best-sellers en tete (decision Adam 2026-07). Le tri client
       // « Nouveautes » repose sur le champ createdAt.
-      getProducts({ first: 250, sortKey: 'BEST_SELLING' }),
+      // offres : pastille « Offerte dès … » du cadeau des paliers en cours.
+      getProducts({ first: 250, sortKey: 'BEST_SELLING', offres: offresDesCartes() }),
       getCollections(50),
     ])
     // Exclut les packs (type « Pack ») de "Tous les produits" : ils ont leur

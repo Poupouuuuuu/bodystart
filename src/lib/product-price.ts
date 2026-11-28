@@ -15,6 +15,9 @@ export interface Money {
 }
 
 export interface PrixVariante {
+  /** Présents dans prixVariantes (lib/carte-produit), pas ailleurs. */
+  id?: string
+  currentlyNotInStock?: boolean | null
   availableForSale: boolean
   price: Money
   compareAtPrice: Money | null
