@@ -10,6 +10,8 @@
 // Les packs gardent leur règle (pickInitialBundleVariant, lib/shopify/bundle) ;
 // seules leurs variantes complètes peuvent être choisies par ?variant=.
 
+import { formatPoids } from '@/lib/typo'
+
 interface VariantLike {
   id: string
   availableForSale: boolean
@@ -55,4 +57,35 @@ export function initialImageIndex(
   if (!opening || !url || opening.id === variants[0]?.id) return 0
   const i = images.findIndex((img) => img.url === url)
   return i >= 0 ? i : 0
+}
+
+interface VariantOptions {
+  title: string
+  selectedOptions?: { name: string; value: string }[] | null
+}
+
+const DEFAULT_TITLE = 'Default Title'
+
+/**
+ * Choix affiché dans la barre d'achat fixe de la fiche (28/11/2026) : les
+ * valeurs des options qui changent d'une variante à l'autre (saveur, format,
+ * formule d'un pack comme « Jour »), dans l'ordre Shopify, séparées par « · »
+ * et poids à la française (« Chocolat · 2,27 kg »). Une option qui a la même
+ * valeur partout (format unique) n'apprend rien au client : elle est omise.
+ * null pour un produit à variante unique. Sans selectedOptions, le titre
+ * Shopify « Saveur / Format » sert de repli.
+ */
+export function libelleVariante(variante: VariantOptions, variantes: VariantOptions[]): string | null {
+  if (variantes.length <= 1) return null
+  const options = (variante.selectedOptions ?? []).filter((o) => o.value && o.value !== DEFAULT_TITLE)
+  let valeurs: string[]
+  if (options.length > 0) {
+    const valeurDe = (v: VariantOptions, nom: string) => v.selectedOptions?.find((o) => o.name === nom)?.value
+    const changeantes = options.filter((o) => variantes.some((v) => valeurDe(v, o.name) !== o.value))
+    valeurs = (changeantes.length > 0 ? changeantes : options).map((o) => o.value)
+  } else {
+    valeurs = variante.title.split(' / ').filter((t) => t && t !== DEFAULT_TITLE)
+  }
+  const libelle = formatPoids(valeurs.map((v) => v.trim()).filter(Boolean).join(' · '))
+  return libelle || null
 }

@@ -141,3 +141,15 @@ describe('formats affichés à la française (Mutant Mass)', () => {
     expect(variants[0].title).toBe('Triple Chocolate / 2.27kg')
   })
 })
+
+describe('barre d’achat fixe : la variante choisie à côté du prix', () => {
+  it('rappelle la saveur choisie et suit le changement de saveur', async () => {
+    renderFiche('')
+    await waitFor(() => expect(viewContent).toHaveBeenCalledTimes(1))
+    // Format 400 g identique partout : seule la saveur est rappelée.
+    expect(screen.getByTitle('Tropical')).toBeTruthy()
+    screen.getByRole('button', { name: 'Watermelon' }).click()
+    await waitFor(() => expect(screen.getByTitle('Watermelon')).toBeTruthy())
+    expect(screen.queryByTitle('Tropical')).toBeNull()
+  })
+})
