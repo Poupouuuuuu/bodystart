@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
 import Image from '@/components/ui/Image'
+import { MESSAGES_COMPTE, messageErreurConnexion } from '@/lib/erreurs-compte'
 
 function LoginContent() {
   const router = useRouter()
@@ -40,13 +41,20 @@ function LoginContent() {
 
     setLoading(true)
     setError(null)
-    const { errors } = await login(form.email, form.password)
-    if (errors.length > 0) {
-      setError('Email ou mot de passe incorrect.')
-    } else {
-      router.push(redirect || '/account')
+    // try/finally : une exception (réseau, limite Shopify) laissait le bouton
+    // figé sur « Connexion… » sans message.
+    try {
+      const { errors } = await login(form.email, form.password)
+      if (errors.length > 0) {
+        setError(messageErreurConnexion(errors))
+      } else {
+        router.push(redirect || '/account')
+      }
+    } catch {
+      setError(MESSAGES_COMPTE.connexionImpossible)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
@@ -76,7 +84,7 @@ function LoginContent() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Erreur */}
             {error && (
-              <div className="p-4 bg-terracotta/10 border border-terracotta/20 rounded-xl text-[13px] text-terracotta font-medium">
+              <div role="alert" className="p-4 bg-terracotta/10 border border-terracotta/20 rounded-xl text-[13px] text-terracotta font-medium">
                 {error}
               </div>
             )}

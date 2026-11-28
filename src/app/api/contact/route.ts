@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { CONTACT_EMAIL } from '@/lib/store-info'
-import { validerContact } from '@/lib/contact-validation'
+import { validerContact, MESSAGE_CONTACT_NON_PARTI } from '@/lib/contact-validation'
 
 const TO = process.env.CONTACT_EMAIL_TO ?? CONTACT_EMAIL
 // Expéditeur Resend. Par défaut le domaine de TEST Resend (onboarding@resend.dev),
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
       if (!success) {
         return NextResponse.json(
-          { error: 'Trop de requêtes. Réessayez dans quelques minutes.' },
+          { error: 'Trop de demandes d\'un coup. Réessaie dans quelques minutes, ou appelle-nous au 07 61 84 75 80.' },
           { status: 429, headers: { 'X-RateLimit-Remaining': String(remaining) } }
         )
       }
@@ -75,7 +75,10 @@ export async function POST(req: NextRequest) {
     }
     const objectifLabel = objectifLabels[objectif] ?? escapeHtml(objectif)
 
-    await resend.emails.send({
+    // Resend ne lève pas d'exception sur un refus : il renvoie { data, error }.
+    // Avant, ce résultat n'était pas lu et le client lisait « C'est noté »
+    // même quand la boutique n'avait rien reçu.
+    const envoiBoutique = await resend.emails.send({
       from: FROM,
       to: TO,
       ...(email ? { replyTo: email } : {}),
@@ -131,10 +134,15 @@ export async function POST(req: NextRequest) {
           </div>
         </div>
       `,
-    })
+    }).catch((err: unknown) => ({ data: null, error: err }))
+    if (envoiBoutique.error || !envoiBoutique.data) {
+      console.error('[Contact API] e-mail boutique non parti :', envoiBoutique.error)
+      return NextResponse.json({ error: MESSAGE_CONTACT_NON_PARTI }, { status: 502 })
+    }
 
-    // Email de confirmation au client, seulement s'il a laissé son adresse
-    if (email) await resend.emails.send({
+    // Email de confirmation au client, seulement s'il a laissé son adresse.
+    // Son échec n'annule pas la demande : la boutique l'a reçue, elle rappelle.
+    const envoiClient = email ? await resend.emails.send({
       from: FROM,
       to: email,
       subject: 'Ta demande de rappel est bien reçue (BodyStart)',
@@ -166,11 +174,14 @@ export async function POST(req: NextRequest) {
           </div>
         </div>
       `,
-    })
+    }).catch((err: unknown) => ({ data: null, error: err })) : null
+    if (envoiClient?.error) {
+      console.warn('[Contact API] accusé de réception non parti :', envoiClient.error)
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('[Contact API] Erreur:', error)
-    return NextResponse.json({ error: 'Erreur serveur.' }, { status: 500 })
+    return NextResponse.json({ error: MESSAGE_CONTACT_NON_PARTI }, { status: 500 })
   }
 }
