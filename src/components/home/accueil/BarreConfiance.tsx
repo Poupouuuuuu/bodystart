@@ -4,9 +4,10 @@ import { FREE_SHIPPING_LABEL, MONDIAL_RELAY, formatShippingPrice } from '@/lib/s
 
 /**
  * Barre de confiance (refonte du 28/11/2026), libellés de Gestion, sans note
- * Google. Montants tirés de lib/shipping (franco et relais). Moyens de
- * paiement vérifiés sur l'écran de paiement Shopify le 28/11/2026 (à relier
- * à getMoyensPaiement, lib/shopify/paiement, quand il sera dans main).
+ * Google. Montants tirés de lib/shipping (franco et relais). Paiement :
+ * libellé court demandé par Gestion, CB, PayPal et Klarna vérifiés sur
+ * l'écran de paiement Shopify le 28/11/2026 (liste complète, lue dans
+ * Shopify : getMoyensPaiement, lib/shopify/paiement).
  * Chaque libellé : début en gras, suite en clair (texte continu).
  * 2 × 2 sur téléphone, une rangée de 4 sur ordinateur.
  */
