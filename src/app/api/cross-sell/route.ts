@@ -20,7 +20,7 @@ import type { ShopifyProduct } from '@/lib/shopify/types'
 //
 // `petits` (28/11/2026) : articles peu chers pour la suggestion « petit ajout »
 // sous les paliers (lib/paliers/suggestion), mêmes règles, sans boisson ni
-// canette, sans aucun cadeau d'une période en cours ou à venir. `cadeaux` :
+// canette, ni coffret, sans aucun cadeau d'une période en cours ou à venir. `cadeaux` :
 // ces variantes cadeaux (métachamp public), null si illisible : le tiroir ne
 // suggère alors rien.
 
@@ -68,6 +68,8 @@ export async function GET() {
               if (!monoVarianteEnStock(p) || !isAutoPromotable(p)) return false
               const famille = familyOf(p)
               if (famille === 'pack' || famille === 'boisson' || /canette/i.test(p.title)) return false
+              // Coffret = produit composé, comme un pack (ses composants peuvent porter un cadeau).
+              if (/coffret/i.test(p.productType ?? '') || (p.tags ?? []).includes('coffret-noel')) return false
               if (cadeaux.has(p.variants.nodes[0].id)) return false
               const prix = Number(p.priceRange.minVariantPrice.amount)
               return prix > 0 && prix <= PRIX_MAX_PETIT
