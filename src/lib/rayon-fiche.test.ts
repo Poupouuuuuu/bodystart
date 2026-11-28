@@ -2,25 +2,33 @@ import { describe, it, expect } from 'vitest'
 import { GUIDES_PAR_ETIQUETTE, GUIDES_PAR_TYPE, guidesDeFiche, rayonDeFiche } from './rayon-fiche'
 import { BLOG_ARTICLES } from '@/content/blog'
 
-const ouvert = { coffretsOuverts: true }
-const ferme = { coffretsOuverts: false }
-
 describe('rayonDeFiche', () => {
   it('page catégorie quand elle existe, libellé du menu', () => {
-    expect(rayonDeFiche({ productType: 'Protéines' }, ferme)).toEqual({ label: 'Protéines', href: '/categories/proteines' })
-    expect(rayonDeFiche({ productType: 'Brûleur' }, ferme)).toEqual({ label: 'Brûleurs', href: '/categories/bruleurs' })
-    expect(rayonDeFiche({ productType: 'Santé' }, ferme)).toEqual({ label: 'Santé & bien-être', href: '/categories/sante' })
+    expect(rayonDeFiche({ productType: 'Protéines' })).toEqual({ label: 'Protéines', href: '/categories/proteines' })
+    expect(rayonDeFiche({ productType: 'Brûleur' })).toEqual({ label: 'Brûleurs', href: '/categories/bruleurs' })
+    expect(rayonDeFiche({ productType: 'Santé' })).toEqual({ label: 'Santé & bien-être', href: '/categories/sante' })
   })
   it('filtre du catalogue pour les types sans page, packs, repli', () => {
-    expect(rayonDeFiche({ productType: 'Accessoires' }, ferme)).toEqual({ label: 'Accessoires', href: '/products?cat=accessoires' })
-    expect(rayonDeFiche({ productType: 'Snacks' }, ferme).href).toBe('/products?cat=snacks')
-    expect(rayonDeFiche({ productType: 'Pack' }, ferme)).toEqual({ label: 'Packs', href: '/packs' })
-    expect(rayonDeFiche({ productType: '' }, ferme)).toEqual({ label: 'Tous les produits', href: '/products' })
+    expect(rayonDeFiche({ productType: 'Accessoires' })).toEqual({ label: 'Accessoires', href: '/products?cat=accessoires' })
+    expect(rayonDeFiche({ productType: 'Snacks' }).href).toBe('/products?cat=snacks')
+    expect(rayonDeFiche({ productType: 'Pack' })).toEqual({ label: 'Packs', href: '/packs' })
+    expect(rayonDeFiche({ productType: '' })).toEqual({ label: 'Tous les produits', href: '/products' })
   })
-  it('coffrets : leur page pendant la période, le catalogue sinon', () => {
-    const coffret = { productType: 'Coffret', tags: ['coffret-noel'] }
-    expect(rayonDeFiche(coffret, ouvert)).toEqual({ label: 'Coffrets de Noël', href: '/coffrets-noel' })
-    expect(rayonDeFiche(coffret, ferme).href).toBe('/products')
+  it('coffrets de Noël : rayon Packs, quel que soit leur type Shopify', () => {
+    const packs = { label: 'Packs', href: '/packs' }
+    expect(rayonDeFiche({ productType: 'Coffret', tags: ['coffret-noel'] })).toEqual(packs)
+    // Étiquette en casse libre, type vide ou type d'un rayon qui a sa page : le tag l'emporte.
+    expect(rayonDeFiche({ productType: '', tags: ['Coffret-Noel '] })).toEqual(packs)
+    expect(rayonDeFiche({ productType: 'Protéines', tags: ['whey', 'coffret-noel'] })).toEqual(packs)
+    // Sans l'étiquette, le type Coffret suffit (Pack Gamer, listé dans /packs).
+    expect(rayonDeFiche({ productType: 'Coffret', tags: ['gamer'] })).toEqual(packs)
+    expect(rayonDeFiche({ productType: ' coffrets ' })).toEqual(packs)
+  })
+  it('un produit ordinaire ne passe pas en Packs pour un mot proche dans ses étiquettes', () => {
+    expect(rayonDeFiche({ productType: 'Protéines', tags: ['coffret', 'noel', 'pack'] })).toEqual({
+      label: 'Protéines',
+      href: '/categories/proteines',
+    })
   })
 })
 

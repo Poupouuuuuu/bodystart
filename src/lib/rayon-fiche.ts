@@ -3,14 +3,18 @@
 // - Fil d'Ariane « Accueil > [Rayon] > [Fiche] » : rayon déduit du type
 //   Shopify, comme le menu. Page catégorie quand elle existe
 //   (lib/categories), sinon le filtre du catalogue (Accessoires, Boissons,
-//   Snacks), les packs, ou les coffrets pendant leur période.
+//   Snacks), ou les packs. Coffrets (tag coffret-noel, ou type Shopify
+//   « Coffret » comme le Pack Gamer, listé dans /packs) : rayon Packs toute
+//   l'année (28/11/2026) ; avant, « Coffrets de Noël » pendant leur période,
+//   le catalogue ensuite, et « Tous les produits » pour le type seul. Le
+//   sur-titre de la fiche garde « Coffrets de Noël » (page produit).
 // - 1 ou 2 guides par fiche, choisis dans les guides de son rayon d'après ses
 //   étiquettes (gainer → guide gainer, isolate → whey ou isolate…).
 //
 // Pur, sans réseau. Testé dans rayon-fiche.test.ts.
 
 import { CATEGORY_PAGES } from '@/lib/categories'
-import { COFFRETS_CHEMIN, COFFRETS_LIBELLE, estCoffret } from '@/lib/coffrets'
+import { estCoffret } from '@/lib/coffrets'
 
 export interface Rayon {
   label: string
@@ -34,11 +38,13 @@ const FILTRES_CATALOGUE: Record<string, Rayon> = {
 }
 
 const CATALOGUE: Rayon = { label: 'Tous les produits', href: '/products' }
+const PACKS: Rayon = { label: 'Packs', href: '/packs' }
+const TYPES_PACKS = new Set(['pack', 'packs', 'coffret', 'coffrets'])
 
-export function rayonDeFiche(p: ProduitRayon, { coffretsOuverts }: { coffretsOuverts: boolean }): Rayon {
-  if (estCoffret(p)) return coffretsOuverts ? { label: COFFRETS_LIBELLE, href: COFFRETS_CHEMIN } : CATALOGUE
+/** Rayon du fil d'Ariane visible et du BreadcrumbList (même valeur pour les deux). */
+export function rayonDeFiche(p: ProduitRayon): Rayon {
   const type = norm(p.productType)
-  if (type === 'pack') return { label: 'Packs', href: '/packs' }
+  if (estCoffret(p) || TYPES_PACKS.has(type)) return PACKS
   const categorie = CATEGORY_PAGES.find((c) => norm(c.productType) === type)
   if (categorie) return { label: categorie.label, href: `/categories/${categorie.slug}` }
   return FILTRES_CATALOGUE[type] ?? CATALOGUE
