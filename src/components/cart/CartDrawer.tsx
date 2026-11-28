@@ -24,6 +24,8 @@ import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
 import PaliersCadeaux from './PaliersCadeaux'
 import { MentionCodePromo, TarifsLivraison } from './TarifsLivraison'
+import SuggestionPalier from './SuggestionPalier'
+import { choisirSuggestion } from '@/lib/paliers/suggestion'
 import TitrePanierVide from '@/components/saison/PanierVideSaison'
 import { gaBeginCheckout } from '@/lib/analytics'
 
@@ -42,7 +44,12 @@ type CrossSellItem = {
   variantId: string | null
   /** Famille (lib/merchandising) : pas de suggestion concurrente d'un article du panier. */
   family?: Family
+  /** Identifiant numérique du produit (base des cadeaux, lib/paliers/suggestion). */
+  productId?: string
 }
+
+/** Réponse de /api/cross-sell : best-sellers, petits articles et variantes cadeaux (null = inconnues). */
+type CrossSellData = { items: CrossSellItem[]; petits: CrossSellItem[]; cadeaux: Set<string> | null }
 
 /** Ancre du bloc point relais, visée par le rappel sous le bouton de paiement. */
 const RAPPEL_RELAIS_ID = 'panier-point-relais'
@@ -53,7 +60,8 @@ export default function CartDrawer() {
   const [isClickAndCollect, setIsClickAndCollect] = useState(false)
 
   // ─── Cross-sell (fetch LAZY à la 1re ouverture du panier) ───
-  const [crossSell, setCrossSell] = useState<CrossSellItem[] | null>(null)
+  const [crossSellData, setCrossSellData] = useState<CrossSellData | null>(null)
+  const crossSell = crossSellData?.items ?? null
   const [addingCross, setAddingCross] = useState<string | null>(null)
   const crossSellFetched = useRef(false)
   useEffect(() => {
@@ -62,7 +70,12 @@ export default function CartDrawer() {
     fetch('/api/cross-sell')
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => {
-        if (Array.isArray(j?.items)) setCrossSell(j.items as CrossSellItem[])
+        if (!Array.isArray(j?.items)) return
+        setCrossSellData({
+          items: j.items as CrossSellItem[],
+          petits: Array.isArray(j.petits) ? (j.petits as CrossSellItem[]) : [],
+          cadeaux: Array.isArray(j.cadeaux) ? new Set(j.cadeaux as string[]) : null,
+        })
       })
       .catch(() => {
         // best-effort : sans réponse, la section reste simplement masquée.
@@ -238,9 +251,21 @@ export default function CartDrawer() {
       .filter((e) => e.palier.type === 'cadeau' && e.atteint)
       .flatMap((e) => (e.palier.variantes ?? []).map((v) => v.id))
   )
+  // Un petit article pour le prochain palier, s'il manque peu (lib/paliers/suggestion).
+  const suggestion =
+    cadeaux.visible && crossSellData
+      ? choisirSuggestion({
+          etats: cadeaux.etat.etats,
+          candidats: [...crossSellData.petits, ...crossSellData.items],
+          handlesPanier: cartHandles,
+          variantesCadeaux: crossSellData.cadeaux,
+          baseCadeau: cadeaux.baseCadeau,
+        })
+      : null
   const crossSellItems: CrossSellItem[] = []
   for (const c of crossSell ?? []) {
     if (crossSellItems.length >= 3) break
+    if (c.handle === suggestion?.article.handle) continue
     if (cartHandles.has(c.handle) || (c.family && takenFamilies.has(c.family))) continue
     if (c.variantId && cadeauxAtteints.has(c.variantId)) continue
     if (c.family) takenFamilies.add(c.family)
@@ -377,7 +402,17 @@ export default function CartDrawer() {
             <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
               {/* Paliers cadeaux (dont la livraison offerte) ; à défaut, l'ancienne barre livraison seule */}
               {cadeaux.visible ? (
-                <PaliersCadeaux etat={cadeaux.etat} onAjouter={cadeaux.ajouterCadeau} />
+                <PaliersCadeaux etat={cadeaux.etat} onAjouter={cadeaux.ajouterCadeau}>
+                  {suggestion && (
+                    <SuggestionPalier
+                      article={suggestion.article}
+                      suffit={suggestion.suffit}
+                      ajout={addingCross === suggestion.article.handle}
+                      onAjouter={() => addCrossSell(suggestion.article)}
+                      onOuvrirFiche={closeCart}
+                    />
+                  )}
+                </PaliersCadeaux>
               ) : !isClickAndCollect && (
                 <div className="px-8 pb-5">
                   <div className="bg-white border border-spruce/10 rounded-xl p-4">
