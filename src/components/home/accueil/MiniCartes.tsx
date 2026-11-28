@@ -56,7 +56,7 @@ export default function MiniCartes({ produits, pastilles }: { produits: ShopifyP
                   />
                 )}
               </span>
-              <span className="mt-2 line-clamp-1 px-1 font-display text-[14px] font-bold leading-tight text-spruce">{p.title}</span>
+              <span className="mt-2 line-clamp-2 px-1 font-display text-[13px] font-bold leading-[1.2] text-spruce">{p.title}</span>
               {prix && (
                 <span className="flex items-baseline gap-1 px-1 pb-0.5 pt-0.5 font-display text-[17px] font-extrabold tabular-nums text-spruce">
                   {prix.from && <span className="font-sans text-[12px] font-medium text-ink-mute">dès</span>}
