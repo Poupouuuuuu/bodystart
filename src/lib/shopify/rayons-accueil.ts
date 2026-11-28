@@ -15,6 +15,8 @@ export interface RayonAccueil {
   sousTitre: string
   href: string
   image: { url: string; altText: string | null } | null
+  /** Photo sur fond blanc (coffrets) : vignette blanche, sans fond végétal. */
+  fondBlanc?: boolean
 }
 
 /** Rayons de l'accueil, dans l'ordre (pas de Brûleurs, décision de Gestion). */

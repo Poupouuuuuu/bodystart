@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import Image from '@/components/ui/Image'
 import type { RayonAccueil } from '@/lib/shopify/rayons-accueil'
+import { cn } from '@/lib/utils'
 
 /**
  * Rayons en tuiles (refonte du 28/11/2026, liste de Gestion) : titre et
@@ -28,17 +29,23 @@ export default function RayonsAccueil({ rayons }: { rayons: RayonAccueil[] }) {
                 className="press group flex h-full min-h-[76px] items-center gap-3 overflow-hidden rounded-[18px] bg-white p-2 pr-3 shadow-card transition-shadow duration-300 ease-out-expo hover:shadow-lift md:gap-4 md:p-2.5 md:pr-4"
               >
                 <span
-                  className="relative block h-[60px] w-[60px] shrink-0 overflow-hidden rounded-[13px] bg-sage bg-cover bg-bottom md:h-[72px] md:w-[72px]"
-                  style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
+                  className={cn(
+                    'relative block h-[60px] w-[60px] shrink-0 overflow-hidden rounded-[13px] bg-cover bg-bottom md:h-[72px] md:w-[72px]',
+                    r.fondBlanc ? 'bg-white ring-1 ring-spruce/10' : 'bg-sage'
+                  )}
+                  style={r.fondBlanc ? undefined : { backgroundImage: "url('/bg-vegetal-800.webp')" }}
                 >
                   {r.image && (
-                    <span className="absolute inset-[10%]">
+                    <span className={cn('absolute', r.fondBlanc ? 'inset-[4%]' : 'inset-[10%]')}>
                       <Image
                         src={r.image.url}
                         alt=""
                         fill
                         sizes="72px"
-                        className="object-contain transition-transform duration-500 ease-out-expo [filter:drop-shadow(0_6px_8px_rgba(45,90,45,0.28))] group-hover:scale-[1.07]"
+                        className={cn(
+                          'object-contain transition-transform duration-500 ease-out-expo group-hover:scale-[1.07]',
+                          !r.fondBlanc && '[filter:drop-shadow(0_6px_8px_rgba(45,90,45,0.28))]'
+                        )}
                       />
                     </span>
                   )}

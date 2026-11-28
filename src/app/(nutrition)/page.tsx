@@ -148,7 +148,7 @@ export default async function HomePage({
       ? [{ cle: 'packs', label: 'Packs', sousTitre: 'Plusieurs produits, un prix', href: '/packs', image: tousPacks[0].featuredImage ?? null }]
       : []),
     ...(periodeOffre?.theme === 'noel' && coffrets.length > 0
-      ? [{ cle: 'coffrets', label: 'Coffrets de Noël', sousTitre: 'Prêts à offrir', href: COFFRETS_CHEMIN, image: coffrets[0].featuredImage ?? null }]
+      ? [{ cle: 'coffrets', label: 'Coffrets de Noël', sousTitre: 'Prêts à offrir', href: COFFRETS_CHEMIN, image: coffrets[0].featuredImage ?? null, fondBlanc: true }]
       : []),
   ]
   const packs = periode && decor ? tousPacks : []
