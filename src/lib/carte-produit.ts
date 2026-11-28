@@ -101,6 +101,8 @@ const ETIQUETTES_NOUVEAU = new Set(['nouveau', 'nouveaute', 'nouveautes'])
 const valeurs = (o: OptionCarte | undefined) =>
   (o?.optionValues ?? []).map((v) => v.name?.trim()).filter((v): v is string => !!v)
 
+const propre = (v: string) => formatPoids(v.replace(/\s*[\u2013\u2014]\s*/g, ', '))
+
 /** Format lisible d'après les options ou le métachamp, null s'il est déjà dans le nom. */
 export function formatCarte(
   titre: string,
@@ -110,8 +112,9 @@ export function formatCarte(
   const titreCompact = compact(titre)
   const dejaDansLeNom = (v: string) => titreCompact.includes(compact(v))
   const option = (options ?? []).find((o) => OPTIONS_FORMAT.has(norm(o.name)))
-  // « 2.27kg » → « 2,27 kg » (saisie Shopify brute).
-  const formats = valeurs(option).map(formatPoids)
+  // « 2.27kg » → « 2,27 kg » (saisie Shopify brute) ; jamais de tiret long
+  // dans un texte client (« 300 g — Neutre » → « 300 g, Neutre »).
+  const formats = valeurs(option).map(propre)
   if (formats.length > 0) {
     if (formats.every(dejaDansLeNom)) return null
     if (formats.length === 1) return formats[0]
@@ -119,7 +122,7 @@ export function formatCarte(
     return `${formats.length} formats`
   }
   const brut = formatCourt(formatMeta)
-  const court = brut ? formatPoids(brut) : null
+  const court = brut ? propre(brut) : null
   if (!court || dejaDansLeNom(court)) return null
   // La quantité seule (« 120 gélules » de « 120 gélules végétales ») déjà dans le nom.
   const quantite = court.match(/^\d+(?:[.,]\d+)?\s*\p{L}+/u)?.[0]

@@ -11,6 +11,8 @@ describe('formatCarte', () => {
     expect(formatCarte('Whey Native', [opt('Contenance', '500 g', '1 kg', '2 kg')], null)).toBe('3 formats')
     expect(formatCarte('Mass', [opt('Poids', '2.27kg', '6.8kg')], null)).toBe('2,27\u00a0kg ou 6,8\u00a0kg')
     expect(formatCarte('Créatine', null, '500g')).toBe('500\u00a0g')
+    expect(formatCarte('Créatine DY', [opt('Format', '300 g \u2014 Neutre')], null)).toBe('300\u00a0g, Neutre')
+    expect(formatCarte('Creatine Monohydrate DY - 300 g Neutre', [opt('Format', '300 g \u2014 Neutre')], null)).toBeNull()
   })
   it('se tait quand le nom contient déjà le format', () => {
     expect(formatCarte('Whey Protein PER4M - 810 g et 1,8 kg', [opt('Poids', '810 g', '1,8 kg')], null)).toBeNull()
