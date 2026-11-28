@@ -3,6 +3,7 @@ import Image from '@/components/ui/Image'
 import CookieSettingsButton from '@/components/ui/CookieSettingsButton'
 import { decorSaison } from '@/components/saison/decors'
 import type { ThemeSaison } from '@/lib/saison'
+import { getMoyensPaiement } from '@/lib/shopify/paiement'
 import {
   MapPin,
   Phone,
@@ -72,7 +73,8 @@ const TRUST_BADGES = [
   {
     icon: ShieldCheck,
     label: 'Paiement sécurisé',
-    sub: 'CB, Visa, Mastercard',
+    // Remplacé au rendu par les moyens lus dans Shopify (lib/shopify/paiement).
+    sub: '',
   },
   {
     icon: Truck,
@@ -94,8 +96,10 @@ const TRUST_BADGES = [
 const INSTAGRAM_URL = 'https://www.instagram.com/bodystart_nutrition/'
 
 /** theme : période du mode saison au rendu (frise décorative en tête, lib/saison). */
-export default function Footer({ theme = null }: { theme?: ThemeSaison | null }) {
+export default async function Footer({ theme = null }: { theme?: ThemeSaison | null }) {
   const Frise = decorSaison(theme)?.Frise
+  const paiement = await getMoyensPaiement()
+  const badges = TRUST_BADGES.map((b) => (b.icon === ShieldCheck ? { ...b, sub: paiement.court } : b))
   return (
     <footer className="bg-white border-t border-spruce/10">
       {Frise && <Frise />}
@@ -104,7 +108,7 @@ export default function Footer({ theme = null }: { theme?: ThemeSaison | null })
       <div className="border-b border-spruce/10">
         <div className="container mx-auto px-4 lg:px-8 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {TRUST_BADGES.map(({ icon: Icon, label, sub }) => (
+            {badges.map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-full bg-sage flex items-center justify-center flex-shrink-0">
                   <Icon className="w-5 h-5 text-spruce" />
