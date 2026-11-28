@@ -131,9 +131,11 @@ export function offreDe(p: PeriodeSaison | null, estDernierJour: boolean): Offre
         ? 'Dernier jour\u00a0: ta créatine 500\u00a0g offerte dès 100\u00a0€ de compléments'
         : 'Ta créatine 500\u00a0g offerte dès 100\u00a0€ de compléments',
       accent: 'offerte',
-      phrase: `Elle arrive dans ton panier dès que tu passes les 100\u00a0€. Retrait gratuit à Coignières, livraison offerte ${FREE_SHIPPING_LABEL}.`,
+      phrase: `Elle arrive dans ton panier dès 100\u00a0€ d'achats. Retrait gratuit à Coignières, livraison offerte ${FREE_SHIPPING_LABEL}.`,
       bouton: "J'en profite",
-      lien: p.lien ?? '/products',
+      // Tout le catalogue : le lien du bandeau de la période peut viser un
+      // seul produit (Pack Gamer le 28/11), l'offre vaut pour tout le panier.
+      lien: '/products',
     }
   }
   if (p?.theme === 'noel') {
@@ -153,7 +155,7 @@ export function offreDe(p: PeriodeSaison | null, estDernierJour: boolean): Offre
     etiquette: 'Conseil gratuit en boutique',
     titre: `Livraison offerte ${FREE_SHIPPING_LABEL}, retrait gratuit à Coignières`,
     accent: 'offerte',
-    phrase: "Et le conseil reste gratuit, au comptoir comme en ligne\u00a0: dis-nous ton objectif, on t'oriente.",
+    phrase: "Et le conseil reste gratuit, au comptoir comme en ligne\u00a0: dis\u2011nous ton objectif, on t'oriente.",
     bouton: 'Voir les meilleures ventes',
     lien: '#meilleures-ventes',
   }

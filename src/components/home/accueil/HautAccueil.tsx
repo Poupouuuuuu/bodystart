@@ -84,6 +84,7 @@ export default function HautAccueil({
   offre,
   visuel,
   libelleVisuel,
+  fondBlanc = false,
 }: {
   decor?: DecorSaisonPremium | null
   /** Variante de couleur du thème (`?hero=` hors production). */
@@ -93,6 +94,8 @@ export default function HautAccueil({
   visuel: ShopifyProduct[]
   /** Libellé de la carte du produit principal (« Best-seller », « Coffret de Noël »). */
   libelleVisuel: string
+  /** Visuels photographiés sur fond blanc (coffrets) : scène blanche. */
+  fondBlanc?: boolean
 }) {
   const hero = decor?.hero
   const palette = (hero && ((variante && hero.palettes[variante]) || hero.palettes[hero.defaut])) || PALETTE_SITE
@@ -126,7 +129,12 @@ export default function HautAccueil({
         </div>
 
         {visuel.length > 0 && (
-          <SceneProduits produits={visuel} libelle={libelleVisuel} DecorPhoto={hero?.DecorPhoto} />
+          <SceneProduits
+            produits={visuel}
+            libelle={libelleVisuel}
+            fondBlanc={fondBlanc}
+            DecorPhoto={hero?.DecorPhoto}
+          />
         )}
       </div>
       {/* Décor sur toute la section (Noël : neige, sol enneigé), sans clic,
@@ -140,10 +148,13 @@ export default function HautAccueil({
 function SceneProduits({
   produits,
   libelle,
+  fondBlanc,
   DecorPhoto,
 }: {
   produits: ShopifyProduct[]
   libelle: string
+  /** Photos sur fond blanc (coffrets) : scène blanche, sans fond végétal. */
+  fondBlanc: boolean
   DecorPhoto?: ComponentType
 }) {
   const [principal, ...cotes] = produits
@@ -152,17 +163,20 @@ function SceneProduits({
   return (
     <div className="relative hidden lg:block">
       <div
-        className="relative aspect-[6/5] w-full overflow-hidden rounded-[28px] bg-sage bg-cover bg-bottom shadow-hero"
-        style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
+        className={cn(
+          'relative aspect-[6/5] w-full overflow-hidden rounded-[28px] bg-cover bg-bottom shadow-hero',
+          fondBlanc ? 'bg-white' : 'bg-sage'
+        )}
+        style={fondBlanc ? undefined : { backgroundImage: "url('/bg-vegetal-800.webp')" }}
       >
-        {/* Deux produits en retrait, de part et d'autre. */}
+        {/* Deux produits en retrait, de part et d'autre, au-dessus de la carte. */}
         {cotes.slice(0, 2).map((p, i) =>
           p.featuredImage ? (
             <div
               key={p.id}
               className={cn(
-                'absolute bottom-[20%] h-[46%] w-[30%]',
-                i === 0 ? 'left-[7%] -rotate-[5deg]' : 'right-[7%] rotate-[5deg]'
+                'absolute bottom-[29%] h-[38%] w-[25%]',
+                i === 0 ? 'left-[6%] -rotate-[5deg]' : 'right-[6%] rotate-[5deg]'
               )}
             >
               <Image
@@ -176,7 +190,7 @@ function SceneProduits({
           ) : null
         )}
         {image && (
-          <div className="absolute bottom-[14%] left-1/2 h-[64%] w-[44%] -translate-x-1/2">
+          <div className="absolute bottom-[25%] left-1/2 h-[60%] w-[42%] -translate-x-1/2">
             <Image
               src={image.url}
               alt={altImage(image, altProduit(principal))}

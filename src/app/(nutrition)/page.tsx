@@ -145,7 +145,14 @@ export default async function HomePage({
   return (
     <>
       {/* 1. Offre (LCP texte, rendu immédiat, jamais dans <Reveal>) */}
-      <HautAccueil decor={decor} variante={variante} offre={offre} visuel={visuel} libelleVisuel={libelleVisuel} />
+      <HautAccueil
+        decor={decor}
+        variante={variante}
+        offre={offre}
+        visuel={visuel}
+        libelleVisuel={libelleVisuel}
+        fondBlanc={coffretsVisuel.length > 0}
+      />
       {/* Bande de saison juste sous le haut de page (Noël : guirlande). */}
       {SousHero && <SousHero />}
 

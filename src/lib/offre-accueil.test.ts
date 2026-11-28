@@ -106,6 +106,8 @@ describe('offreDe', () => {
     expect(offreDe(BW, true).titre).toBe('Dernier jour\u00a0: ta créatine 500\u00a0g offerte dès 100\u00a0€ de compléments')
     expect(offreDe(BW, false).titre).toBe('Ta créatine 500\u00a0g offerte dès 100\u00a0€ de compléments')
     expect(offreDe(BW, true).lien).toBe('/products')
+    // Même si le bandeau de la période vise un seul produit.
+    expect(offreDe({ ...BW, lien: '/products/pack-gamer-serie-limitee' }, true).lien).toBe('/products')
   })
 
   it('Noël : les coffrets', () => {
