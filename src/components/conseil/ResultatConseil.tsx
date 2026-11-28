@@ -361,7 +361,7 @@ export default function ResultatConseil({ resultat, reponses, objectifLibelle, t
         <div
           inert={!barre || isOpen}
           className={cn(
-            'fixed inset-x-0 bottom-0 z-50 border-t border-spruce/10 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-4px_20px_rgba(45,90,45,0.06)] backdrop-blur-md transition-transform duration-300 md:hidden',
+            'fixed inset-x-0 bottom-[var(--bandeau-cookies,0px)] z-50 border-t border-spruce/10 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-4px_20px_rgba(45,90,45,0.06)] backdrop-blur-md transition-transform duration-300 md:hidden',
             barre && !isOpen ? 'translate-y-0' : 'translate-y-full'
           )}
         >
