@@ -23,6 +23,7 @@ import BundleComposite from '@/components/pack/v2/BundleComposite'
 import { CagnotteCartWidget } from './CagnotteCartWidget'
 import RelayPickupBlock from './RelayPickupBlock'
 import PaliersCadeaux from './PaliersCadeaux'
+import { MentionCodePromo, TarifsLivraison } from './TarifsLivraison'
 import TitrePanierVide from '@/components/saison/PanierVideSaison'
 import { gaBeginCheckout } from '@/lib/analytics'
 
@@ -381,12 +382,15 @@ export default function CartDrawer() {
                 <div className="px-8 pb-5">
                   <div className="bg-white border border-spruce/10 rounded-xl p-4">
                     {hasFreeShipping ? (
-                      <div className="flex items-center gap-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-fresh flex-shrink-0" />
-                        <p className="text-[12px] font-semibold text-spruce">
-                          Ta livraison est offerte !
-                        </p>
-                      </div>
+                      <>
+                        <div className="flex items-center gap-2.5">
+                          <CheckCircle2 className="w-4 h-4 text-fresh flex-shrink-0" />
+                          <p className="text-[12px] font-semibold text-spruce">
+                            Ta livraison est offerte !
+                          </p>
+                        </div>
+                        <MentionCodePromo montant={FREE_SHIPPING_THRESHOLD} className="mb-2.5 mt-1 pl-[26px]" />
+                      </>
                     ) : (
                       <p className="text-[12px] font-medium text-ink-mute mb-2.5">
                         Plus que{' '}
@@ -412,6 +416,7 @@ export default function CartDrawer() {
                         style={{ width: `${freeShippingProgress}%` }}
                       />
                     </div>
+                    {!hasFreeShipping && <TarifsLivraison className="mt-3 border-t border-spruce/10 pt-2.5" />}
                   </div>
                 </div>
               )}
@@ -639,7 +644,8 @@ export default function CartDrawer() {
                   )}
                 >
                   <Store className="w-3.5 h-3.5" />
-                  Retrait
+                  {/* « gratuit » dit ici, à tout montant : la ligne des tarifs disparaît dès 85 €. */}
+                  Retrait gratuit
                 </button>
               </div>
             )}
