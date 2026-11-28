@@ -60,10 +60,10 @@ function SansSeparateur() {
 // Produits mis en avant (metafield bodystart.accueil_vedettes, lib/vedettes) :
 // rendus avec la page, SANS <Suspense> (08/10/2026 : en ISR, le streaming
 // envoyait la section dans un bloc caché, invisible sans JS). Lus une fois :
-// les 2 premiers à côté de l'offre sur ordinateur (CARTES_HAUT), la piste
-// « Ce qui part vite » (5 cartes : les 5 premiers sur téléphone, les 5
-// suivants sur ordinateur), puis 3 de plus pour la sélection de saison, sans
-// doublon : 10 places.
+// les 2 premiers dans le haut de page (CARTES_HAUT : cartes à côté de
+// l'offre sur ordinateur, en petit dessous sur téléphone), les 5 suivants
+// dans la piste « Ce qui part vite », puis 3 de plus pour la sélection de
+// saison, sans doublon : 10 places.
 const CARTES_HAUT = 2
 const PRODUITS_PISTE = CARTES_HAUT + MEILLEURES_VENTES_AFFICHEES
 const PLACES_VEDETTES = PRODUITS_PISTE + 3
@@ -169,7 +169,7 @@ export default async function HomePage({
 
       {/* 2. Meilleures ventes, rayons, confiance : dans le premier écran et
              le suivant, SANS <Reveal> ni <Suspense> (visibles tout de suite). */}
-      <MeilleuresVentes products={piste} dejaEnHaut={cartesHaut.length} pastilles={pastilles} />
+      <MeilleuresVentes products={piste.slice(cartesHaut.length)} pastilles={pastilles} />
       <RayonsAccueil rayons={tuiles} />
       <BarreConfiance />
 

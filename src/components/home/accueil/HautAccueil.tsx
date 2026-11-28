@@ -6,6 +6,7 @@ import type { PastillesAccueil } from '@/lib/pastilles-accueil'
 import { cn } from '@/lib/utils'
 import OffreAccueil, { type ClassesOffre } from './OffreAccueil'
 import CarteVente from './CarteVente'
+import MiniCartes from './MiniCartes'
 
 /**
  * Haut de l'accueil « qui vend » (refonte du 28/11/2026). Critère de Gestion :
@@ -14,7 +15,8 @@ import CarteVente from './CarteVente'
  *
  * - Téléphone : l'offre en texte (sur-titre, titre, phrase, bouton, lien),
  *   plus de grande photo ; l'élément LCP est le titre, affiché dès la police
- *   chargée. Les meilleures ventes suivent juste dessous (MeilleuresVentes).
+ *   chargée. Dessous, les 2 premières meilleures ventes en petit avec leur
+ *   prix (MiniCartes), puis la piste des suivantes (MeilleuresVentes).
  * - Ordinateur (lg) : l'offre à gauche, à droite les 2 premières meilleures
  *   ventes en cartes catalogue (prix, ajout rapide). Bloc masqué sous lg :
  *   ses images, en chargement différé, n'y sont jamais téléchargées.
@@ -89,7 +91,7 @@ export default function HautAccueil({
   /** Variante de couleur du thème (`?hero=` hors production). */
   variante?: string
   offre: OffreServeur
-  /** Produits montrés à côté de l'offre sur ordinateur (2). */
+  /** 2 premières meilleures ventes : cartes à côté de l'offre (ordinateur), en petit dessous (téléphone). */
   cartes: ShopifyProduct[]
   pastilles: PastillesAccueil
 }) {
@@ -127,6 +129,7 @@ export default function HautAccueil({
             previsualisation={offre.previsualisation}
             c={CLASSES}
           />
+          <MiniCartes produits={cartes} pastilles={pastilles} />
         </div>
 
         {cartes.length > 0 && (
