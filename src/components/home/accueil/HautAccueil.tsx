@@ -112,9 +112,12 @@ export default function HautAccueil({
           hero?.espaceBas
         )}
       >
-        <div className="relative z-10 max-w-[640px]">
-          {/* h1 = la requête visée (audit SEO du 10/10/2026), mot pour mot. */}
-          <h1 className="mb-4 flex items-center gap-3 font-sans text-[13px] font-semibold leading-snug text-[color:var(--h-sur-titre)] md:mb-6 md:text-[15px]">
+        <div className="relative z-10 flex max-w-[640px] flex-col">
+          {/* h1 = la requête visée (audit SEO du 10/10/2026), mot pour mot,
+              premier dans le HTML. Téléphone : affiché sous le bouton (order),
+              pour que l'offre et son bouton tiennent au-dessus du bandeau
+              cookies dès 375 × 667 ; sur-titre à partir de sm. */}
+          <h1 className="order-last mt-6 flex items-center gap-3 font-sans text-[13px] font-semibold leading-snug text-[color:var(--h-sur-titre)] sm:order-none sm:mb-5 sm:mt-0 md:mb-6 md:text-[15px]">
             <span aria-hidden="true" className="h-px w-6 shrink-0 bg-[color:var(--h-trait)] md:w-8" />
             Compléments alimentaires et nutrition sportive à Coignières
           </h1>
