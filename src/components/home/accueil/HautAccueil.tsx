@@ -64,12 +64,14 @@ const CLASSES: ClassesOffre = {
     'text-[color:var(--h-accent)] underline decoration-[color:var(--h-souligne,transparent)] decoration-[0.07em] underline-offset-[0.14em] [text-decoration-skip-ink:none]',
   phrase:
     'mt-4 max-w-[540px] text-[16px] leading-[1.55] text-[color:var(--h-texte-doux)] md:mt-5 md:text-[18px]',
-  actions: 'mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 md:mt-8',
+  // Bouton et lien sur une ligne dès 375 px (« Voir les coffrets » et « Tous
+  // les produits ») : écart et texte un peu plus serrés sous sm.
+  actions: 'mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 sm:gap-x-6 md:mt-8',
   bouton:
-    'inline-flex min-h-[52px] items-center gap-3 rounded-full bg-[color:var(--h-bouton)] py-2 pl-6 pr-2 text-[16px] font-semibold text-[color:var(--h-bouton-texte)] shadow-hero transition-opacity duration-300 ease-out-expo hover:opacity-90',
+    'inline-flex min-h-[52px] items-center gap-3 rounded-full bg-[color:var(--h-bouton)] py-2 pl-5 pr-2 text-[15px] font-semibold sm:pl-6 sm:text-[16px] text-[color:var(--h-bouton-texte)] shadow-hero transition-opacity duration-300 ease-out-expo hover:opacity-90',
   rond: 'flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--h-rond)] text-[color:var(--h-rond-texte)]',
   second:
-    'inline-flex min-h-[44px] items-center text-[15px] font-semibold text-[color:var(--h-lien)] underline decoration-[color:var(--h-ligne-forte)] underline-offset-4 transition-colors hover:decoration-[color:var(--h-lien)]',
+    'inline-flex min-h-[44px] items-center text-[14px] font-semibold sm:text-[15px] text-[color:var(--h-lien)] underline decoration-[color:var(--h-ligne-forte)] underline-offset-4 transition-colors hover:decoration-[color:var(--h-lien)]',
 }
 
 export interface OffreServeur {
