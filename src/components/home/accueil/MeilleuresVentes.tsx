@@ -1,18 +1,36 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import type { ShopifyProduct } from '@/lib/shopify/types'
-import { ProductCardShop } from '@/components/product/ProductCardShop'
+import { cn } from '@/lib/utils'
+import type { PastillesAccueil } from '@/lib/pastilles-accueil'
+import CarteVente from './CarteVente'
+
+/** Cartes de la piste sur téléphone et tablette. */
+export const RAIL_MOBILE = 5
 
 /**
  * Meilleures ventes, juste sous l'offre (refonte du 28/11/2026) : la carte
  * catalogue (ProductCardShop, prix et ajout rapide) en piste horizontale sur
  * téléphone et tablette (scroll-snap natif, sans JS), une rangée de 5 sur
  * ordinateur. Ordre et choix : metafield bodystart.accueil_vedettes
- * (lib/vedettes, la liste fait foi). Rendu avec la page, sans <Suspense>.
+ * (lib/vedettes, la liste fait foi, produits épuisés écartés). Rendu avec la
+ * page, sans <Suspense>.
  *
- * `id="meilleures-ventes"` : cible du bouton de l'offre permanente.
+ * Ordinateur : les `dejaEnHaut` premiers produits sont déjà dans le haut de
+ * page (deux cartes à côté de l'offre) ; la rangée prend les 5 suivants.
+ * Téléphone : les 5 premiers.
+ *
+ * `id="meilleures-ventes"` : ancre de la section.
  */
-export default function MeilleuresVentes({ products }: { products: ShopifyProduct[] }) {
+export default function MeilleuresVentes({
+  products,
+  dejaEnHaut,
+  pastilles,
+}: {
+  products: ShopifyProduct[]
+  dejaEnHaut: number
+  pastilles: PastillesAccueil
+}) {
   if (products.length === 0) return null
   return (
     <section id="meilleures-ventes" aria-labelledby="titre-meilleures-ventes" className="scroll-mt-28 bg-canvas">
@@ -45,9 +63,16 @@ export default function MeilleuresVentes({ products }: { products: ShopifyProduc
           tabIndex={0}
           className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-4 pt-1 [scrollbar-width:none] sm:-mx-6 sm:scroll-px-6 sm:gap-4 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-5 lg:gap-5 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden"
         >
-          {products.map((p) => (
-            <div key={p.id} className="flex w-[46%] flex-shrink-0 snap-start flex-col sm:w-[31%] md:w-[23%] lg:w-auto [&>div]:flex-1">
-              <ProductCardShop product={p} />
+          {products.map((p, i) => (
+            <div
+              key={p.id}
+              className={cn(
+                'w-[46%] flex-shrink-0 snap-start flex-col sm:w-[31%] md:w-[23%] lg:w-auto [&>div]:flex-1',
+                i < RAIL_MOBILE ? 'flex' : 'hidden lg:flex',
+                i < dejaEnHaut && 'lg:hidden'
+              )}
+            >
+              <CarteVente product={p} pastille={pastilles.pastilles[p.id]} fin={pastilles.fin} />
             </div>
           ))}
           {/* Fin de piste (téléphone, tablette) : tout le catalogue. */}

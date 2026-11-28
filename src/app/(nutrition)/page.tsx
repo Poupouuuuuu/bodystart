@@ -12,11 +12,13 @@ import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import Reveal from '@/components/ui/Reveal'
 import { getCoffrets, getCollectionByHandle } from '@/lib/shopify'
 import { getVedettesAccueil } from '@/lib/shopify/vedettes'
-import { getRayonsAccueil } from '@/lib/shopify/rayons-accueil'
+import { getRayonsAccueil, type RayonAccueil } from '@/lib/shopify/rayons-accueil'
+import { lirePaliers } from '@/lib/paliers/serveur'
+import { pastillesCadeaux } from '@/lib/pastilles-accueil'
 import { buildPageMetadata } from '@/lib/seo'
 import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 import CoffretsNoelV3 from '@/components/home/v3/CoffretsNoelV3'
-import { coffretsVisibles, dateCoffrets } from '@/lib/coffrets'
+import { COFFRETS_CHEMIN, coffretsVisibles, dateCoffrets } from '@/lib/coffrets'
 import { finPeriode, indexPeriode, lireApercu, periodeServeur } from '@/lib/saison'
 import { dernierJour, periodeOffreServeur } from '@/lib/offre-accueil'
 import { apercuSaison, getSaison } from '@/lib/shopify/saison'
@@ -57,10 +59,14 @@ function SansSeparateur() {
 
 // Produits mis en avant (metafield bodystart.accueil_vedettes, lib/vedettes) :
 // rendus avec la page, SANS <Suspense> (08/10/2026 : en ISR, le streaming
-// envoyait la section dans un bloc caché, invisible sans JS). Lus une fois
-// pour le bloc « Ce qui part vite » (5 cartes) et la sélection de saison
-// (3 produits de plus, sans doublon) : 8 places.
-const PLACES_VEDETTES = MEILLEURES_VENTES_AFFICHEES + 3
+// envoyait la section dans un bloc caché, invisible sans JS). Lus une fois :
+// les 2 premiers à côté de l'offre sur ordinateur (CARTES_HAUT), la piste
+// « Ce qui part vite » (5 cartes : les 5 premiers sur téléphone, les 5
+// suivants sur ordinateur), puis 3 de plus pour la sélection de saison, sans
+// doublon : 10 places.
+const CARTES_HAUT = 2
+const PRODUITS_PISTE = CARTES_HAUT + MEILLEURES_VENTES_AFFICHEES
+const PLACES_VEDETTES = PRODUITS_PISTE + 3
 
 // Coffrets de Noël : du 2/11 au 24/12, heure de Paris (lib/coffrets). Hors
 // production, ?coffrets_date=2026-11-10 force la date (la page devient alors
@@ -95,7 +101,7 @@ export default async function HomePage({
 }) {
   // Lectures Shopify en parallèle (régénération ISR plus courte). Les packs
   // servent à la sélection de saison, ou au bloc packs hors saison.
-  const [coffrets, vedettes, saison, apercu, collectionPacks, variante, rayons] = await Promise.all([
+  const [coffrets, vedettes, saison, apercu, collectionPacks, variante, rayons, paliers] = await Promise.all([
     coffretsDuMoment(searchParams),
     getVedettesAccueil(PLACES_VEDETTES),
     getSaison(),
@@ -103,6 +109,7 @@ export default async function HomePage({
     getCollectionByHandle('packs', 24).catch(() => null),
     varianteHero(searchParams),
     getRayonsAccueil(),
+    lirePaliers().catch(() => null),
   ])
   const now = new Date()
   // Déco de saison (metafield bodystart.saison, components/saison) : haut de
@@ -119,22 +126,33 @@ export default async function HomePage({
     apercu,
     previsualisation: process.env.VERCEL_ENV !== 'production',
   }
-  // Scène produits du haut de page (ordinateur) : les coffrets pendant Noël,
-  // sinon les premières vedettes. Produits en stock avec image seulement.
-  const avecImage = (p: (typeof vedettes)[number]) => !!p.featuredImage && p.availableForSale !== false
-  const coffretsVisuel = periodeOffre?.theme === 'noel' ? coffrets.filter(avecImage) : []
-  const visuel = (coffretsVisuel.length > 0 ? coffretsVisuel : vedettes.filter(avecImage)).slice(0, 3)
-  const libelleVisuel = coffretsVisuel.length > 0 ? 'Coffret de Noël' : 'Best-seller'
+  // Cartes du haut (ordinateur) et piste : vedettes dans l'ordre du
+  // metafield. Pastille « Offerte dès 100 € » sur le cadeau d'un palier de la
+  // période de paliers en cours (lib/pastilles-accueil), jusqu'à sa fin.
+  const piste = vedettes.slice(0, PRODUITS_PISTE)
+  const pastilles = pastillesCadeaux(paliers, now, piste)
+  const cartesHaut = piste.length >= CARTES_HAUT ? piste.slice(0, CARTES_HAUT) : []
 
   // Packs : collection `packs`, comme la page /packs (mêmes cartes). En
   // saison, ils vont dans la sélection, dont les vedettes ne répètent ni les
   // meilleures ventes ni un produit déjà contenu dans un pack.
   const tousPacks = collectionPacks?.products?.nodes ?? []
+  // Rayons : 6 pages /categories, puis les packs, puis les coffrets de Noël
+  // pendant la période Noël seulement (liste de Gestion).
+  const tuiles: RayonAccueil[] = [
+    ...rayons,
+    ...(tousPacks.length > 0
+      ? [{ cle: 'packs', label: 'Packs', sousTitre: 'Plusieurs produits, un prix', href: '/packs', image: tousPacks[0].featuredImage ?? null }]
+      : []),
+    ...(periodeOffre?.theme === 'noel' && coffrets.length > 0
+      ? [{ cle: 'coffrets', label: 'Coffrets de Noël', sousTitre: 'Prêts à offrir', href: COFFRETS_CHEMIN, image: coffrets[0].featuredImage ?? null }]
+      : []),
+  ]
   const packs = periode && decor ? tousPacks : []
   const selection =
     periode && decor
       ? composerSelection(packs, vedettes, [
-          ...vedettes.slice(0, MEILLEURES_VENTES_AFFICHEES).map((p) => p.handle),
+          ...piste.map((p) => p.handle),
           ...packs.flatMap((p) =>
             p.variants.nodes.flatMap((v) => v.components?.nodes.map((c) => c.productVariant.product.handle) ?? [])
           ),
@@ -145,21 +163,14 @@ export default async function HomePage({
   return (
     <>
       {/* 1. Offre (LCP texte, rendu immédiat, jamais dans <Reveal>) */}
-      <HautAccueil
-        decor={decor}
-        variante={variante}
-        offre={offre}
-        visuel={visuel}
-        libelleVisuel={libelleVisuel}
-        fondBlanc={coffretsVisuel.length > 0}
-      />
+      <HautAccueil decor={decor} variante={variante} offre={offre} cartes={cartesHaut} pastilles={pastilles} />
       {/* Bande de saison juste sous le haut de page (Noël : guirlande). */}
       {SousHero && <SousHero />}
 
       {/* 2. Meilleures ventes, rayons, confiance : dans le premier écran et
              le suivant, SANS <Reveal> ni <Suspense> (visibles tout de suite). */}
-      <MeilleuresVentes products={vedettes.slice(0, MEILLEURES_VENTES_AFFICHEES)} />
-      <RayonsAccueil rayons={rayons} />
+      <MeilleuresVentes products={piste} dejaEnHaut={cartesHaut.length} pastilles={pastilles} />
+      <RayonsAccueil rayons={tuiles} />
       <BarreConfiance />
 
       <Separateur />

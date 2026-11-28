@@ -1,14 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { lireSaison, indexPeriode, periodeDeRang } from './saison'
-import {
-  dernierJour,
-  echeance,
-  heureFin,
-  offreDe,
-  periodeOffre,
-  periodeOffreServeur,
-  resteAvantFin,
-} from './offre-accueil'
+import { dernierJour, offreDe, periodeOffre, periodeOffreServeur } from './offre-accueil'
 
 // Périodes du metafield bodystart.saison au 28/11/2026 (Black Week puis Noël),
 // plus une annonce qui chevauche la Black Week.
@@ -77,35 +69,17 @@ describe('dernier jour et échéance', () => {
     expect(dernierJour(NOEL, new Date('2026-11-28T23:30:00Z'))).toBe(false)
     expect(dernierJour(null, new Date())).toBe(false)
   })
-
-  it('heure de fin et texte initial sans dépendre de l’heure', () => {
-    expect(heureFin(BW)).toBe('23\u00a0h\u00a059')
-    expect(echeance(BW, true)).toBe('Jusqu\'à ce soir 23\u00a0h\u00a059')
-    expect(echeance(NOEL, false)).toBe('Jusqu\'au 24/12')
-  })
-})
-
-describe('resteAvantFin', () => {
-  it('vrai compte à rebours dans les dernières 24 h', () => {
-    expect(resteAvantFin(BW, new Date('2026-11-28T17:48:00Z'))).toBe('Plus que 5\u00a0h\u00a012\u00a0min')
-    expect(resteAvantFin(BW, new Date('2026-11-28T22:18:00Z'))).toBe('Plus que 42\u00a0min')
-    expect(resteAvantFin(BW, new Date('2026-11-28T20:00:00Z'))).toBe('Plus que 3\u00a0h')
-    // Minutes arrondies au-dessus : 30 s avant la fin, il reste « 1 min ».
-    expect(resteAvantFin(BW, new Date('2026-11-28T22:59:30Z'))).toBe('Plus que 1\u00a0min')
-  })
-
-  it('rien hors des dernières 24 h ni après la fin', () => {
-    expect(resteAvantFin(BW, new Date('2026-11-27T20:00:00Z'))).toBeNull()
-    expect(resteAvantFin(BW, new Date('2026-11-28T23:00:00Z'))).toBeNull()
-    expect(resteAvantFin(NOEL, new Date('2026-11-29T10:00:00Z'))).toBeNull()
-  })
 })
 
 describe('offreDe', () => {
-  it('Black Week : préfixe « Dernier jour » le jour même seulement', () => {
-    expect(offreDe(BW, true).titre).toBe('Dernier jour\u00a0: ta créatine 500\u00a0g offerte dès 100\u00a0€ de compléments')
-    expect(offreDe(BW, false).titre).toBe('Ta créatine 500\u00a0g offerte dès 100\u00a0€ de compléments')
-    expect(offreDe(BW, true).lien).toBe('/products')
+  it('Black Week : « Dernier jour » le jour même seulement, textes de Gestion', () => {
+    expect(offreDe(BW, true).surTitre).toBe('Dernier jour')
+    expect(offreDe(BW, false).surTitre).toBe('Black Week')
+    const o = offreDe(BW, true)
+    expect(o.titre).toBe('Ta créatine 500\u00a0g offerte')
+    expect(o.phrase).toContain('(36,90\u00a0€)')
+    expect(o.lien).toBe('/products')
+    expect(o.second).toEqual({ texte: 'Voir les packs', lien: '/packs' })
     // Même si le bandeau de la période vise un seul produit.
     expect(offreDe({ ...BW, lien: '/products/pack-gamer-serie-limitee' }, true).lien).toBe('/products')
   })
@@ -113,14 +87,17 @@ describe('offreDe', () => {
   it('Noël : les coffrets', () => {
     const o = offreDe(NOEL, false)
     expect(o.cle).toBe('noel')
+    expect(o.surTitre).toBe('Noël chez BodyStart')
+    expect(o.titre).toBe('Les coffrets sont prêts')
     expect(o.lien).toBe('/coffrets-noel')
+    expect(o.second.lien).toBe('/products')
   })
 
   it('hors période : offre permanente vers les meilleures ventes', () => {
     const o = offreDe(null, false)
     expect(o.cle).toBe('permanente')
     expect(o.titre).toContain('85\u00a0€')
-    expect(o.lien).toBe('#meilleures-ventes')
+    expect(o.lien).toBe('/products')
   })
 
   it('les mots en couleur sont dans le titre', () => {
@@ -131,7 +108,7 @@ describe('offreDe', () => {
 
   it('aucun tiret long dans les textes', () => {
     for (const o of [offreDe(BW, true), offreDe(NOEL, false), offreDe(null, false)]) {
-      expect(`${o.etiquette} ${o.titre} ${o.phrase} ${o.bouton}`).not.toMatch(/[–—]/)
+      expect(`${o.surTitre} ${o.titre} ${o.phrase} ${o.bouton} ${o.second.texte}`).not.toMatch(/[\u2013\u2014]/)
     }
   })
 })

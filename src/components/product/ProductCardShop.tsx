@@ -50,9 +50,11 @@ export interface ProductCardShopProps {
   varianteId?: string | null
   /** Parfum ou format trouvé, affiché à la place du sous-titre. */
   parfum?: string | null
+  /** Pastille d'offre en tête des badges (« Offerte dès 100 € », accueil). */
+  pastilleOffre?: string
 }
 
-export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: ProductCardShopProps) {
+export function ProductCardShop({ product, stockAtStore, varianteId, parfum, pastilleOffre }: ProductCardShopProps) {
   const href = `/products/${product.handle}${varianteId ? `?variant=${varianteId}` : ''}`
   const variant = product.variants.nodes[0]
   const soldOut = product.availableForSale === false
@@ -96,6 +98,7 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
   // `!!discountPct` : la remise peut valoir 0 (arrondi d'un écart < 0,5 %) et
   // 0 est falsy — on ne veut ni « -0% », ni un littéral 0 rendu dans le JSX.
   const badges = [
+    ...(pastilleOffre ? [{ label: pastilleOffre, className: 'bg-terracotta text-white' }] : []),
     ...(discountPct
       ? [{ label: `-${discountPct}%`, className: 'bg-terracotta text-white' }]
       : []),

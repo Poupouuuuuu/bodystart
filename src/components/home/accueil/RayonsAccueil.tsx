@@ -1,12 +1,13 @@
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import Image from '@/components/ui/Image'
 import type { RayonAccueil } from '@/lib/shopify/rayons-accueil'
 
 /**
- * Rayons en tuiles (refonte du 28/11/2026) : les 9 pages /categories, un
- * produit en stock du rayon sur le fond végétal (même fichier que les cartes
- * produit, déjà téléchargé). 3 colonnes sur téléphone, une rangée de 9 sur
- * ordinateur. Liens au libellé exact du rayon (maillage SEO, comme le menu).
+ * Rayons en tuiles (refonte du 28/11/2026, liste de Gestion) : titre et
+ * sous-titre court, un produit du rayon sur le fond végétal (même fichier
+ * que les cartes produit, déjà téléchargé). 2 colonnes sur téléphone, 4 sur
+ * ordinateur. Libellés exacts des rayons (maillage SEO, comme le menu).
  */
 export default function RayonsAccueil({ rayons }: { rayons: RayonAccueil[] }) {
   if (rayons.length === 0) return null
@@ -19,32 +20,39 @@ export default function RayonsAccueil({ rayons }: { rayons: RayonAccueil[] }) {
         >
           Les rayons
         </h2>
-        <ul className="grid grid-cols-3 gap-2.5 sm:gap-3 md:grid-cols-5 lg:grid-cols-9 lg:gap-4">
+        <ul className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4 lg:gap-4">
           {rayons.map((r) => (
-            <li key={r.slug}>
+            <li key={r.cle}>
               <Link
                 href={r.href}
-                className="press group flex h-full flex-col overflow-hidden rounded-[18px] bg-white shadow-card transition-shadow duration-300 ease-out-expo hover:shadow-lift"
+                className="press group flex h-full min-h-[76px] items-center gap-3 overflow-hidden rounded-[18px] bg-white p-2 pr-3 shadow-card transition-shadow duration-300 ease-out-expo hover:shadow-lift md:gap-4 md:p-2.5 md:pr-4"
               >
                 <span
-                  className="relative block aspect-[5/4] overflow-hidden bg-sage bg-cover bg-bottom"
+                  className="relative block h-[60px] w-[60px] shrink-0 overflow-hidden rounded-[13px] bg-sage bg-cover bg-bottom md:h-[72px] md:w-[72px]"
                   style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
                 >
                   {r.image && (
-                    <span className="absolute inset-x-[16%] bottom-[8%] top-[12%]">
+                    <span className="absolute inset-[10%]">
                       <Image
                         src={r.image.url}
                         alt=""
                         fill
-                        sizes="(min-width: 1024px) 110px, (min-width: 768px) 18vw, 30vw"
-                        className="object-contain object-bottom transition-transform duration-500 ease-out-expo [filter:drop-shadow(0_10px_12px_rgba(45,90,45,0.28))] group-hover:scale-[1.06]"
+                        sizes="72px"
+                        className="object-contain transition-transform duration-500 ease-out-expo [filter:drop-shadow(0_6px_8px_rgba(45,90,45,0.28))] group-hover:scale-[1.07]"
                       />
                     </span>
                   )}
                 </span>
-                <span className="flex min-h-[44px] flex-1 items-center justify-center px-1.5 py-2 text-center font-display text-[13px] font-bold leading-[1.15] text-spruce sm:text-[14px]">
-                  {r.label}
+                <span className="min-w-0 flex-1">
+                  <span className="block font-display text-[15px] font-bold leading-tight text-spruce md:text-[17px]">
+                    {r.label}
+                  </span>
+                  <span className="mt-0.5 block text-[12px] leading-snug text-ink-mute md:text-[13px]">{r.sousTitre}</span>
                 </span>
+                <ArrowRight
+                  className="hidden h-4 w-4 shrink-0 text-spruce/50 transition-transform duration-300 ease-out-expo group-hover:translate-x-0.5 sm:block"
+                  aria-hidden="true"
+                />
               </Link>
             </li>
           ))}

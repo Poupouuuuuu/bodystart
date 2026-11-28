@@ -12,36 +12,37 @@ import {
   type ApercuSaison,
   type PeriodeSaison,
 } from '@/lib/saison'
-import { dernierJour, echeance, offreDe, periodeOffre, periodeOffreServeur, resteAvantFin } from '@/lib/offre-accueil'
+import { dernierJour, offreDe, periodeOffre, periodeOffreServeur } from '@/lib/offre-accueil'
 
 /**
- * Offre du haut de l'accueil : étiquette (et compte à rebours), titre, phrase,
- * bouton. Textes dans lib/offre-accueil, par thème.
+ * Offre du haut de l'accueil : sur-titre, titre, phrase, bouton et lien
+ * secondaire. Textes dans lib/offre-accueil, par thème. Pas de compte à
+ * rebours (Gestion, 28/11/2026).
  *
  * Bascule à l'heure pile, même avec la page en cache (modèle du header) :
  * - premier rendu = la période rendue par le serveur (son rang dans le
  *   metafield) et son « dernier jour », SANS lire l'heure : le HTML en cache
  *   et l'hydratation donnent le même texte (sinon erreur React 418) ;
- * - ensuite, un effet recalcule à l'heure du navigateur, puis à chaque minute
- *   (compte à rebours) et à la prochaine borne de période (prochainChangement).
- *
- * Le compte à rebours n'apparaît qu'après ce premier calcul : le texte initial
- * (« Jusqu'à ce soir 23 h 59 ») ne dépend pas de l'heure.
+ * - ensuite, un effet recalcule à l'heure du navigateur, puis à la prochaine
+ *   borne de période (prochainChangement) et à chaque minute pleine (passage
+ *   à minuit heure de Paris : « Dernier jour »). L'état ne change que si la
+ *   période ou le « dernier jour » change.
  */
 export interface ClassesOffre {
-  etiquette: string
+  surTitre: string
   point: string
   titre: string
   accent: string
   phrase: string
+  actions: string
   bouton: string
   rond: string
+  second: string
 }
 
 interface EtatOffre {
   periode: PeriodeSaison | null
   dernier: boolean
-  reste: string | null
 }
 
 export default function OffreAccueil({
@@ -66,7 +67,6 @@ export default function OffreAccueil({
   const [etat, setEtat] = useState<EtatOffre>(() => ({
     periode: periodeDeRang(periodes, rangServeur),
     dernier: dernierJourServeur,
-    reste: null,
   }))
 
   useEffect(() => {
@@ -80,14 +80,10 @@ export default function OffreAccueil({
       clearTimeout(minuterie)
       const now = dateForcee ? dateSaison(dateForcee, true) : new Date()
       const periode = force ? periodeOffreServeur(periodes, now, force) : periodeOffre(periodes, now)
-      setEtat({
-        periode,
-        dernier: dernierJour(periode, now),
-        reste: periode ? resteAvantFin(periode, now) : null,
-      })
+      const dernier = dernierJour(periode, now)
+      setEtat((e) => (e.periode === periode && e.dernier === dernier ? e : { periode, dernier }))
       if (dateForcee) return
-      // Prochaine minute pleine (compte à rebours, passage à minuit heure de
-      // Paris), ou plus tôt la prochaine borne de période.
+      // Prochaine minute pleine, ou plus tôt la prochaine borne de période.
       const reel = Date.now()
       const minute = 60000 - (reel % 60000)
       const borne = prochainChangement(periodes, new Date(reel))
@@ -107,43 +103,37 @@ export default function OffreAccueil({
     }
   }, [periodes, previsualisation, apercu])
 
-  const { periode, dernier, reste } = etat
-  const offre = offreDe(periode, dernier)
-  const temps = periode ? (reste ?? echeance(periode, dernier)) : null
+  const offre = offreDe(etat.periode, etat.dernier)
 
   return (
     <div data-offre={offre.cle}>
-      <p className={c.etiquette}>
+      <p className={c.surTitre}>
         <span aria-hidden="true" className={c.point} />
-        <span>{offre.etiquette}</span>
-        {temps && (
-          <>
-            <span aria-hidden="true">·</span>
-            {/* role="timer" sans annonce à chaque minute (aria-live off par défaut). */}
-            <span role="timer" className="tabular-nums">
-              {temps}
-            </span>
-          </>
-        )}
+        {offre.surTitre}
       </p>
 
-      {/* Pas le H1 de la page (gardé mot pour mot au-dessus, SEO) : un <p>. */}
+      {/* Pas le H1 de la page (gardé mot pour mot, SEO) : un <p>. */}
       <p className={c.titre}>
         <TitreAccent titre={offre.titre} accent={offre.accent} classe={c.accent} />
       </p>
 
       <p className={c.phrase}>{offre.phrase}</p>
 
-      <Link href={offre.lien} className={cn('press group', c.bouton)}>
-        {offre.bouton}
-        <span className={c.rond}>
-          <ArrowRight
-            className="h-4 w-4 transition-transform duration-500 ease-out-expo group-hover:translate-x-0.5"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-        </span>
-      </Link>
+      <div className={c.actions}>
+        <Link href={offre.lien} className={cn('press group', c.bouton)}>
+          {offre.bouton}
+          <span className={c.rond}>
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-500 ease-out-expo group-hover:translate-x-0.5"
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          </span>
+        </Link>
+        <Link href={offre.second.lien} className={c.second}>
+          {offre.second.texte}
+        </Link>
+      </div>
     </div>
   )
 }

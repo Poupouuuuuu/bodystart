@@ -1,10 +1,10 @@
 // ============================================================
 // Offre du haut de l'accueil (refonte du 28/11/2026)
 // ============================================================
-// Un titre, une phrase, un bouton, choisis par la période du mode saison
-// (metafield `bodystart.saison`, lib/saison) : Black Week, Noël, sinon une
-// offre permanente. Les textes sont écrits ici, par thème : rien n'est écrit
-// dans Shopify.
+// Sur-titre, titre, phrase, bouton et lien secondaire, choisis par la période
+// du mode saison (metafield `bodystart.saison`, lib/saison) : Black Week,
+// Noël, sinon une offre permanente. Les textes sont écrits ici, par thème :
+// rien n'est écrit dans Shopify. Pas de compte à rebours (Gestion, 28/11).
 //
 // Bascule sans intervention, même avec la page en cache (modèle du header) :
 // le serveur rend la période et passe son rang ; le premier rendu navigateur
@@ -16,7 +16,6 @@
 import { FREE_SHIPPING_LABEL } from '@/lib/shipping'
 import { COFFRETS_CHEMIN } from '@/lib/coffrets'
 import {
-  finPeriode,
   periodeActive,
   periodeDuTheme,
   type ApercuSaison,
@@ -30,8 +29,8 @@ const THEMES_OFFRE: ThemeSaison[] = ['black-week', 'noel']
 export interface OffreAccueil {
   /** Clé stable (tests, attributs data-). */
   cle: 'black-week' | 'noel' | 'permanente'
-  /** Petite étiquette au-dessus du titre. */
-  etiquette: string
+  /** Sur-titre (affiché en capitales). */
+  surTitre: string
   /** Titre (pas le H1 de la page). */
   titre: string
   /** Mots du titre mis en couleur (présents tels quels dans `titre`). */
@@ -39,6 +38,8 @@ export interface OffreAccueil {
   phrase: string
   bouton: string
   lien: string
+  /** Lien secondaire, à côté du bouton. */
+  second: { texte: string; lien: string }
 }
 
 /**
@@ -82,81 +83,46 @@ export function dernierJour(p: PeriodeSaison | null, now: Date): boolean {
   return now.getTime() <= fin + 999 && jourParis.format(now) === jourParis.format(new Date(fin))
 }
 
-const heureParis = new Intl.DateTimeFormat('fr-FR', {
-  timeZone: 'Europe/Paris',
-  hour: '2-digit',
-  minute: '2-digit',
-  hourCycle: 'h23',
-})
-
-/** Heure de fin, heure de Paris (« 23 h 59 »). */
-export function heureFin(p: PeriodeSaison): string {
-  const [h, m] = heureParis.format(new Date(p.au)).split(':')
-  return `${h}\u00a0h\u00a0${m}`
-}
-
 /**
- * Échéance affichée sans lire l'heure (premier rendu, identique au serveur) :
- * « Jusqu'à ce soir 23 h 59 » le dernier jour, sinon « Jusqu'au 24/12 ».
+ * Textes de l'offre pour une période (null : offre permanente). Textes de
+ * Digital validés par Gestion le 28/11/2026 ; pas de compte à rebours.
  */
-export function echeance(p: PeriodeSaison, estDernierJour: boolean): string {
-  return estDernierJour ? `Jusqu'à ce soir ${heureFin(p)}` : `Jusqu'au ${finPeriode(p)}`
-}
-
-/** Le compte à rebours ne s'affiche que dans les dernières 24 heures. */
-export const COMPTE_A_REBOURS_MS = 24 * 3600 * 1000
-
-/**
- * Temps restant avant la fin de la période (« Plus que 5 h 12 min »), null
- * hors des dernières 24 heures ou une fois la période finie. Minutes
- * arrondies au-dessus : jamais moins que le temps réel.
- */
-export function resteAvantFin(p: PeriodeSaison, now: Date): string | null {
-  const reste = Date.parse(p.au) + 1000 - now.getTime()
-  if (reste <= 0 || reste > COMPTE_A_REBOURS_MS) return null
-  const minutes = Math.ceil(reste / 60000)
-  const h = Math.floor(minutes / 60)
-  const m = minutes % 60
-  if (h === 0) return `Plus que ${m}\u00a0min`
-  return m === 0 ? `Plus que ${h}\u00a0h` : `Plus que ${h}\u00a0h\u00a0${m}\u00a0min`
-}
-
-/** Textes de l'offre pour une période (null : offre permanente). */
 export function offreDe(p: PeriodeSaison | null, estDernierJour: boolean): OffreAccueil {
   if (p?.theme === 'black-week') {
     return {
       cle: 'black-week',
-      etiquette: 'Black Week',
-      titre: estDernierJour
-        ? 'Dernier jour\u00a0: ta créatine 500\u00a0g offerte dès 100\u00a0€ de compléments'
-        : 'Ta créatine 500\u00a0g offerte dès 100\u00a0€ de compléments',
+      surTitre: estDernierJour ? 'Dernier jour' : 'Black Week',
+      titre: 'Ta créatine 500\u00a0g offerte',
       accent: 'offerte',
-      phrase: `Elle arrive dans ton panier dès 100\u00a0€ d'achats. Retrait gratuit à Coignières, livraison offerte ${FREE_SHIPPING_LABEL}.`,
+      phrase:
+        "Dès 100\u00a0€ de compléments, la créatine Dedicated 500\u00a0g (36,90\u00a0€) est offerte. En boutique jusqu'à 19\u00a0h, sur le site jusqu'à 23\u00a0h\u00a059.",
       bouton: "J'en profite",
       // Tout le catalogue : le lien du bandeau de la période peut viser un
       // seul produit (Pack Gamer le 28/11), l'offre vaut pour tout le panier.
       lien: '/products',
+      second: { texte: 'Voir les packs', lien: '/packs' },
     }
   }
   if (p?.theme === 'noel') {
     return {
       cle: 'noel',
-      etiquette: 'Coffrets de Noël',
-      titre: 'Nos coffrets de Noël, composés au comptoir',
-      accent: 'coffrets de Noël',
-      phrase:
-        'Des idées cadeaux pour un sportif, du plus gourmand au plus complet. Retrait gratuit à Coignières ou livraison partout en France.',
+      surTitre: 'Noël chez BodyStart',
+      titre: 'Les coffrets sont prêts',
+      accent: 'coffrets',
+      phrase: "Composés au comptoir avec ce qu'on conseille tous les jours. Tu les retires à Coignières, ou on te les livre.",
       bouton: 'Voir les coffrets',
       lien: COFFRETS_CHEMIN,
+      second: { texte: 'Tous les produits', lien: '/products' },
     }
   }
   return {
     cle: 'permanente',
-    etiquette: 'Conseil gratuit en boutique',
+    surTitre: 'Conseil gratuit en boutique',
     titre: `Livraison offerte ${FREE_SHIPPING_LABEL}, retrait gratuit à Coignières`,
     accent: 'offerte',
     phrase: "Et le conseil reste gratuit, au comptoir comme en ligne\u00a0: dis\u2011nous ton objectif, on t'oriente.",
-    bouton: 'Voir les meilleures ventes',
-    lien: '#meilleures-ventes',
+    bouton: 'Voir les produits',
+    lien: '/products',
+    second: { texte: 'Trouve ton produit en 1\u00a0min', lien: '/conseil' },
   }
 }
