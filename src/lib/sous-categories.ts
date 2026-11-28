@@ -23,6 +23,55 @@ export interface SousCategorie {
 /** Ordre de priorité des pastilles Protéines (la première portée l'emporte). */
 export const PRIORITE_PROTEINES = ['vegetale', 'mix', 'clear-whey', 'isolate', 'gainer', 'whey'] as const
 
+/**
+ * Pastilles de chaque rayon, par clé de rayon (= `?cat=` de /products = slug
+ * de /categories/[slug]). Source unique du catalogue et des pages catégorie
+ * (déplacées depuis ProductsPageClient le 28/11/2026, contenu inchangé).
+ * Sous-catégories Protéines du 18/11/2026 (Gestion et Boutique) ; caséine
+ * retirée (plus en rayon depuis le 25/10/2026).
+ */
+export const SOUS_CATEGORIES = {
+  proteines: [
+    { key: 'whey', label: 'Whey', tags: ['whey'] },
+    { key: 'isolate', label: 'Isolate', tags: ['isolate'] },
+    { key: 'mix', label: 'Mix', tags: ['mix'] },
+    { key: 'clear-whey', label: 'Clear whey', tags: ['clear-whey'] },
+    { key: 'gainer', label: 'Gainer', tags: ['gainer'] },
+    { key: 'vegetale', label: 'Végétale et œuf', tags: ['vegan', 'oeuf'] },
+  ],
+  glucides: [{ key: 'riz', label: 'Riz', tags: ['riz'] }],
+  creatine: [{ key: 'monohydrate', label: 'Monohydrate', tags: ['monohydrate'] }],
+  'acides-amines': [
+    { key: 'bcaa', label: 'BCAA', tags: ['bcaa'] },
+    { key: 'eaa', label: 'EAA', tags: ['eaa'] },
+    { key: 'glutamine', label: 'Glutamine', tags: ['glutamine'] },
+    { key: 'citrulline', label: 'Citrulline', tags: ['citrulline'] },
+    { key: 'beta-alanine', label: 'Bêta-alanine', tags: ['beta-alanine'] },
+  ],
+  bruleurs: [
+    { key: 'carnitine', label: 'Carnitine', tags: ['carnitine'] },
+    { key: 'cla', label: 'CLA', tags: ['cla'] },
+    { key: 'thermo-draineur', label: 'Formules complètes', tags: ['thermo', 'draineur'] },
+  ],
+  boosters: [
+    { key: 'pump', label: 'Pump', tags: ['pump'] },
+    { key: 'plantes', label: 'Formules aux plantes', tags: ['testo'] },
+  ],
+  sante: [
+    { key: 'omega', label: 'Oméga', tags: ['omega'] },
+    { key: 'vitamine', label: 'Vitamines', tags: ['vitamine'] },
+    { key: 'multivitamine', label: 'Multivitamines', tags: ['multivitamine'] },
+    { key: 'collagene', label: 'Collagène', tags: ['collagene'] },
+    { key: 'magnesium', label: 'Magnésium', tags: ['magnesium'] },
+    { key: 'zinc', label: 'Zinc', tags: ['zinc'] },
+    { key: 'mineraux', label: 'Minéraux', tags: ['mineraux'] },
+    { key: 'electrolytes', label: 'Électrolytes', tags: ['electrolytes'] },
+  ],
+} satisfies Record<string, SousCategorie[]>
+
+/** Ordre de priorité d'un rayon (pastilles exclusives), s'il en a un. */
+export const PRIORITES: Partial<Record<string, readonly string[]>> = { proteines: PRIORITE_PROTEINES }
+
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim()
 
 /**

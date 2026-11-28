@@ -7,7 +7,8 @@ import { availableFirst } from '@/lib/product-order'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 import { buildPageMetadata } from '@/lib/seo'
 import { CATEGORY_PAGES, getCategoryPage } from '@/lib/categories'
-import { ProductCardShop } from '@/components/product/ProductCardShop'
+import GrilleCategorie from '@/components/product/GrilleCategorie'
+import PastillesFiltres from '@/components/product/PastillesFiltres'
 import ReadMore from '@/components/ui/ReadMore'
 import BoutiqueConseil from '@/components/conseil/BoutiqueConseil'
 import { catalogueDuSite } from '@/lib/shopify/recherche'
@@ -131,6 +132,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <h1 className="max-w-[760px] font-display text-[32px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight mb-5">
             {frenchSpacing(cat.h1)}
           </h1>
+          {/* Mobile : les autres rayons en pastilles qui défilent (liens vers
+              leur page), le rayon courant en premier, marqué. */}
+          <PastillesFiltres
+            className="mb-6 lg:hidden"
+            libelle="Rayons"
+            pastilles={[cat, ...CATEGORY_PAGES.filter((c) => c.slug !== cat.slug)].map((c) => ({
+              cle: c.slug,
+              libelle: c.label,
+              actif: c.slug === cat.slug,
+              href: `/categories/${c.slug}`,
+            }))}
+          />
         </div>
       </section>
 
@@ -239,12 +252,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </h2>
         )}
         {products.length > 0 ? (
-          // 2 colonnes dès le mobile — cohérent avec /products (même carte)
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-14">
-            {products.map((p) => (
-              <ProductCardShop key={p.id} product={p} />
-            ))}
-          </div>
+          // Sous-catégories en pastilles au-dessus de la grille (lib/sous-categories).
+          <GrilleCategorie products={products} rayon={cat.slug} libelle={cat.label} />
         ) : cat.enBoutique ? null : (
           <p className="text-ink-mute mb-14">
             Le rayon se remplit. Passe nous voir en boutique ou{' '}

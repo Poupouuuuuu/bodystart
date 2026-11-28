@@ -34,16 +34,25 @@ import {
 } from './queries/inventory'
 import type { ShopifyProduct, ShopifyCollection, ShopifyCart, ShopifyBlog, ShopifyArticle } from './types'
 import { computeCardPrice } from '@/lib/product-price'
+import { resumeCarte } from '@/lib/carte-produit'
 
 // ─── PRODUITS ────────────────────────────────────────────────
 
 /**
  * Prix de carte calculé sur TOUTES les variantes (prixVariantes), puis la
  * liste brute est retirée : les composants client ne reçoivent que le résultat.
+ * Idem pour le résumé de carte (format, parfums, « Nouveau », lib/carte-produit) :
+ * options et métachamp format restent côté serveur. Sans ces champs (requête
+ * qui ne les demande pas), pas de résumé : la carte n'affiche rien de plus.
  */
 export function withCardPrice<T extends ShopifyProduct>(p: T): T {
-  const { prixVariantes, ...rest } = p
-  return { ...rest, cardPrice: computeCardPrice(prixVariantes?.nodes ?? p.variants?.nodes) } as T
+  const { prixVariantes, optionsCarte, formatMeta, ...rest } = p
+  const avecResume = optionsCarte !== undefined || formatMeta !== undefined
+  return {
+    ...rest,
+    cardPrice: computeCardPrice(prixVariantes?.nodes ?? p.variants?.nodes),
+    ...(avecResume ? { carte: resumeCarte({ ...p, optionsCarte, formatMeta }, new Date()) } : {}),
+  } as T
 }
 
 export async function getProducts(options?: {

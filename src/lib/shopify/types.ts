@@ -1,4 +1,5 @@
 import type { CardPrice, PrixVariante } from '@/lib/product-price'
+import type { OptionCarte, ResumeCarte } from '@/lib/carte-produit'
 // ============================================================
 // TYPES SHOPIFY — BodyStart
 // ============================================================
@@ -91,6 +92,11 @@ export interface ShopifyProduct {
   cardPrice?: CardPrice | null
   /** Variantes brutes pour ce calcul : retirées avant d'envoyer le produit aux composants. */
   prixVariantes?: { nodes: PrixVariante[] }
+  /** Format, nombre de parfums, « Nouveau » des cartes (lib/carte-produit), calculés côté serveur. */
+  carte?: ResumeCarte | null
+  /** Options et métachamp format bruts de ce calcul : retirés comme prixVariantes. */
+  optionsCarte?: OptionCarte[]
+  formatMeta?: { value?: string | null } | null
   // Champs SEO dédiés Shopify (Storefront API). Nullables si non remplis.
   seo?: {
     title: string | null
