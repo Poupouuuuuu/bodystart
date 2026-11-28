@@ -22,7 +22,9 @@ interface CrossSellV2Props {
 const FRANCO_THRESHOLD_CENTS = FREE_SHIPPING_THRESHOLD_CENTS
 
 /**
- * Cross-sell "Pour completer" + nudge franco (panier moyen +).
+ * Cross-sell « Souvent achetés avec » + nudge franco (panier moyen +), juste
+ * sous la zone d'achat depuis le 28/11/2026 (avant : « Ça va bien avec », en
+ * bas de fiche). Sélection inchangée : lib/merchandising (pickComplements).
  * Cf. tech-specs/redesign-v2-direction-artistique.md §B.Fiche produit.7
  *
  * Le nudge franco affiche "Plus que X € pour la livraison offerte" en
@@ -46,14 +48,15 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
 
   return (
     <section className="bg-canvas">
-      <div className="container py-14 md:py-18">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-9">
+      {/* Filet : même fond que la zone d'achat juste au-dessus. */}
+      <div className="container border-t border-spruce/10 py-10 md:py-18">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6 md:mb-9">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
               Pour compléter
             </p>
             <h2 className="font-display text-[28px] md:text-[36px] font-extrabold text-spruce leading-[1.1] tracking-tight">
-              Ça va bien avec
+              Souvent achetés avec
             </h2>
           </div>
 
@@ -72,7 +75,10 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
           )}
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Téléphone : une rangée qui défile au doigt (deux rangées de grandes
+            cartes repoussaient la description de ~700 px), grille à partir de sm.
+            scroll-px-4 : l'aimantation garde la marge de 16 px à gauche. */}
+        <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
           {items.map((product) => {
             const soldOut = product.availableForSale === false
             const productIsBundle = isBundle(product)
@@ -83,7 +89,7 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
               <Link
                 key={product.id}
                 href={`/products/${product.handle}`}
-                className="group bg-white rounded-2xl border border-spruce/10 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(45,90,45,0.08)]"
+                className="group w-[42%] min-w-[150px] shrink-0 snap-start bg-white rounded-2xl border border-spruce/10 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(45,90,45,0.08)] sm:w-auto sm:min-w-0"
               >
                 <div
                   className="relative w-full aspect-[4/5] bg-cover bg-bottom bg-no-repeat overflow-hidden"
@@ -126,7 +132,7 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
                     </>
                   )}
                 </div>
-                <div className="p-5">
+                <div className="p-3.5 sm:p-5">
                   <h3 className="font-display font-bold text-[15px] text-ink leading-tight mb-2 line-clamp-2">
                     {product.title}
                   </h3>

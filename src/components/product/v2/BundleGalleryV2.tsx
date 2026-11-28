@@ -4,6 +4,8 @@ import Image from '@/components/ui/Image'
 import Link from 'next/link'
 import type { BundleComponentDetail } from '@/lib/shopify/bundle'
 import type { ShopifyImage } from '@/lib/shopify/types'
+import { cn } from '@/lib/utils'
+import { HAUTEUR_MOBILE } from './ProductGalleryV2'
 
 interface BundleGalleryV2Props {
   /**
@@ -92,10 +94,13 @@ export default function BundleGalleryV2({
     components.length >= 4 ? '60%' : components.length === 3 ? '68%' : '74%'
 
   return (
-    <div className="w-full">
+    // max-lg:contents : sous lg, la photo et la liste des composants deviennent
+    // des éléments de la grille de BuyBoxV2, qui place la liste après la zone
+    // d'achat (order) ; à partir de lg, colonne galerie inchangée.
+    <div className="w-full max-lg:contents">
       {photo ? (
         /* ─── Hero coffret : sa photo, image LCP de la fiche ─── */
-        <div className="saison-toile saison-toile-droite relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-white">
+        <div className={cn('saison-toile saison-toile-droite relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-white', HAUTEUR_MOBILE)}>
           {discountPct !== null && (
             <div className="saison-badge-citrouille saison-badge-citrouille-droite absolute top-4 left-4 z-30 bg-terracotta text-white text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
               −{discountPct}%
@@ -107,8 +112,10 @@ export default function BundleGalleryV2({
             fill
             priority
             fetchPriority="high"
-            sizes="(max-width: 1024px) calc(100vw - 32px), 580px"
-            className="object-cover"
+            sizes="(max-width: 639px) 70vw, (max-width: 1024px) calc(100vw - 32px), 580px"
+            // Téléphone : photo carrée sur fond blanc dans un cadre moins haut
+            // que large, entière (contain) plutôt que recadrée.
+            className="object-contain sm:object-cover"
           />
         </div>
       ) : imagePack ? (
@@ -116,7 +123,7 @@ export default function BundleGalleryV2({
             Mise en page de ProductGalleryV2 : fond en <Image priority unoptimized>
             (préchargé avec le HTML, même URL que le fond des cartes), image
             centrée à 85 % (les PNG des packs sont carrés, pots centrés). */
-        <div className="saison-toile saison-toile-droite relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-sage">
+        <div className={cn('saison-toile saison-toile-droite relative w-full aspect-square overflow-hidden rounded-2xl border border-spruce/10 bg-sage', HAUTEUR_MOBILE)}>
           <Image
             src="/bg-vegetal-800.webp"
             alt=""
@@ -138,7 +145,7 @@ export default function BundleGalleryV2({
               fill
               priority
               fetchPriority="high"
-              sizes="(max-width: 1024px) calc(100vw - 32px), 580px"
+              sizes="(max-width: 639px) 70vw, (max-width: 1024px) calc(100vw - 32px), 580px"
               className="object-contain [filter:drop-shadow(0_22px_28px_rgba(45,90,45,0.30))]"
             />
           </div>
@@ -146,7 +153,7 @@ export default function BundleGalleryV2({
       ) : (
       /* ─── Hero : pots empiles sur fond vegetal ─── */
       <div
-        className="saison-toile saison-toile-droite relative w-full aspect-square bg-cover bg-bottom bg-no-repeat overflow-hidden rounded-2xl border border-spruce/10"
+        className={cn('saison-toile saison-toile-droite relative w-full aspect-square bg-cover bg-bottom bg-no-repeat overflow-hidden rounded-2xl border border-spruce/10', HAUTEUR_MOBILE)}
         style={{ backgroundImage: "url('/bg-vegetal-800.webp')" }}
       >
         {/* Badge promo eventuel (coherence avec ProductGalleryV2) */}
@@ -187,7 +194,8 @@ export default function BundleGalleryV2({
       )}
 
       {/* ─── Strip composants : noms + lien vers chaque produit qui a une fiche ─── */}
-      <div className="mt-5">
+      {/* Sous lg : après la zone d'achat (max-lg:order-2, cf. BuyBoxV2). */}
+      <div className="mt-5 max-lg:order-2 max-lg:mt-1">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
           {libelleComposants}
         </p>
