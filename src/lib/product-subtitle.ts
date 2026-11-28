@@ -6,21 +6,32 @@
 // doute, rien. Libellés descriptifs uniquement (forme, ingrédient), jamais
 // d'allégation.
 
-type Regle = [tag: string, label: string, condition?: 'whey' | 'vegetale']
+// Conditions :
+// - 'vegetale' : seulement sur une Protéine ;
+// - 'type-whey' : type de whey lu sur sa propre étiquette (isolate,
+//   clear-whey), avec ou sans l'étiquette whey, jamais sur une protéine
+//   végétale (les étiquettes restent descriptives : lib/sous-categories) ;
+// - 'whey' : type de whey qui exige aussi l'étiquette whey (concentre).
+type Regle = [tag: string, label: string, condition?: 'whey' | 'type-whey' | 'vegetale']
 
 const LABELS: Regle[] = [
   // Protéines végétales d'abord : « isolate » sur une protéine vegan n'est pas une whey.
   ['vegan', 'Protéine végétale', 'vegetale'],
-  ['clear-whey', 'Whey claire', 'whey'],
-  ['clear whey', 'Whey claire', 'whey'],
-  ['isolate', 'Whey isolat', 'whey'],
+  // Mix avant isolate : un mélange de protéines n'est pas une whey isolat,
+  // même s'il porte aussi les étiquettes isolate et whey.
+  ['mix', 'Mix de protéines'],
+  ['clear-whey', 'Whey claire', 'type-whey'],
+  ['clear whey', 'Whey claire', 'type-whey'],
+  ['isolate', 'Whey isolat', 'type-whey'],
   ['concentre', 'Whey concentrée', 'whey'],
   ['gainer', 'Gainer'],
   ['monohydrate', 'Créatine monohydrate'],
   ['eaa', 'Acides aminés essentiels'],
   ['bcaa', 'BCAA'],
-  ['citrulline', 'Citrulline'],
+  // Arginine avant citrulline : la L-Arginine porte aussi l'étiquette
+  // citrulline (rangée sous Citrulline au catalogue, demande Boutique du 18/11/2026).
   ['arginine', 'Arginine'],
+  ['citrulline', 'Citrulline'],
   ['glutamine', 'Glutamine'],
   ['beta-alanine', 'Bêta-alanine'],
   ['creme-de-riz', 'Crème de riz'],
@@ -69,6 +80,7 @@ export function productSubtitle(tags: string[] | null | undefined, ctx: Contexte
   for (const [tag, label, condition] of LABELS) {
     if (!have.has(tag)) continue
     if (condition === 'vegetale' && !proteines) continue
+    if (condition === 'type-whey' && vegetale) continue
     if (condition === 'whey' && (vegetale || !have.has('whey'))) continue
     if (norm(label) === category || dansLeNom(title, label)) return null
     return label
@@ -78,18 +90,22 @@ export function productSubtitle(tags: string[] | null | undefined, ctx: Contexte
 
 /**
  * Type de whey d'après les étiquettes (claire, isolat, concentrée), pour la
- * pastille de la fiche. null si le produit n'est pas étiqueté « whey », s'il
- * est végétal, si le type n'est pas précisé, ou si le nom le dit déjà.
+ * pastille de la fiche. null si le produit est végétal ou un mix, si le type
+ * n'est pas précisé, ou si le nom le dit déjà. Isolat et claire se lisent sur
+ * leur propre étiquette, avec ou sans l'étiquette whey ; concentrée exige
+ * l'étiquette whey.
  * Avant le 08/10/2026, toute whey recevait « Whey isolat » (Whey Native
  * Protimuscle comprise).
  */
 export function wheyLabel(tags: string[] | null | undefined, title?: string | null): string | null {
   const have = new Set((tags ?? []).map((t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()))
-  if (!have.has('whey') || have.has('vegan')) return null
+  if (have.has('vegan') || have.has('mix')) return null
   const t = title ? norm(title) : ''
   for (const [tag, label, condition] of LABELS) {
-    if (condition !== 'whey' || !have.has(tag)) continue
-    return dansLeNom(t, label) ? null : label
+    if (!have.has(tag)) continue
+    if (condition === 'type-whey' || (condition === 'whey' && have.has('whey'))) {
+      return dansLeNom(t, label) ? null : label
+    }
   }
   return null
 }

@@ -130,6 +130,18 @@ describe('synonymes', () => {
     expect(handles('isolate')).toContain('iso-zero-100-whey')
   })
 
+  it('végétale → protéines végétales, mélange → mix (sous-catégories du 18/11/2026)', () => {
+    for (const q of ['végétale', 'protéine végétale', 'vegetal']) {
+      expect(handles(q, 4), q).toEqual(expect.arrayContaining(['iso-french-vegan', 'tri-source-protein-vegan']))
+    }
+    const mix: Fiche[] = [
+      { handle: 'iso-fusion-protein', title: 'Iso Fusion Protein', productType: 'Protéines', vendor: 'Eric Favre', tags: ['mix'], availableForSale: true },
+      { handle: 'mutant-mass', title: 'Mutant Mass', productType: 'Protéines', vendor: 'Mutant', tags: ['gainer'], availableForSale: true },
+    ]
+    expect(rechercher(mix, 'mélange').map((p) => p.handle)).toEqual(['iso-fusion-protein'])
+    expect(rechercher(mix, 'mix').map((p) => p.handle)).toEqual(['iso-fusion-protein'])
+  })
+
   it('gainer ↔ prise de masse', () => {
     expect(handles('prise de masse')).toEqual(handles('gainer'))
   })
