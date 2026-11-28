@@ -23,12 +23,15 @@ export default async function ProductsPage() {
       {/* H1 rendu côté serveur, hors du Suspense : il ne dépend pas de l'URL. */}
       {/* saison-bandeau : fond du thème pendant une période décorée
           (components/saison/halloween/styles.ts), rien hors période. */}
-      <section className="saison-bandeau pt-10 pb-4 md:pt-12 md:pb-6">
+      {/* Mobile : bandeau resserré (28/11/2026) pour qu'une rangée de cartes
+          entière, prix compris, tienne au premier écran ; sur-titre masqué
+          sous md. H1 inchangé (texte et balise). */}
+      <section className="saison-bandeau pt-4 pb-3 md:pt-12 md:pb-6">
         <div className="container">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
+          <p className="hidden md:block text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
             Catalogue
           </p>
-          <h1 className="font-display text-[34px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight">
+          <h1 className="font-display text-[28px] md:text-[44px] font-extrabold text-spruce leading-[1.05] tracking-tight">
             Tous les produits
           </h1>
         </div>

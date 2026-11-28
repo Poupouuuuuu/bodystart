@@ -226,6 +226,14 @@ const toile = (couleur: string) =>
   `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='${couleur.replace('#', '%23')}' stroke-width='.6'%3E%3Cpath d='M16 0V16M16 0 3 13M16 0 0 7M16 0H0M16 5 12.5 3.5 11.4 2 11 0M16 10 8.9 7.1 6.8 4 6 0M16 14.5 5.7 10.3 2.7 5.8 1.5 0'/%3E%3C/svg%3E")`
 
 /**
+ * Survol réel seulement (souris, pavé tactile). Sur téléphone, :hover reste
+ * accroché à l'élément touché, ou à celui qui se retrouve sous le doigt quand
+ * un bandeau disparaît (bandeau cookies refusé : la carte du dessous gardait
+ * le contour jaune de la Black Week, constaté le 28/11/2026 sur la Crunch Bar).
+ */
+const SURVOL = '@media (hover:hover) and (pointer:fine)'
+
+/**
  * Règles propres à chaque thème, en plus de l'accent : décor léger des cartes
  * produit, des badges et de l'en-tête (déco Halloween du 19/10/2026), qui
  * basculent à l'heure pile avec le header. Couleurs tirées des
@@ -233,7 +241,7 @@ const toile = (couleur: string) =>
  */
 const CSS_THEME: Partial<Record<ThemeSaison, (p: PeriodeSaison) => string>> = {
   halloween: (p) =>
-    `.carte-produit:hover{box-shadow:0 0 0 1px color-mix(in srgb,var(--saison-accent) 32%,transparent),0 18px 44px -14px color-mix(in srgb,var(--saison-accent) 60%,transparent)!important}` +
+    `${SURVOL}{.carte-produit:hover{box-shadow:0 0 0 1px color-mix(in srgb,var(--saison-accent) 32%,transparent),0 18px 44px -14px color-mix(in srgb,var(--saison-accent) 60%,transparent)!important}}` +
     `.badge-saison:not(.absolute){position:relative}` +
     `.badge-saison::after{content:"";position:absolute;top:0;right:0;width:15px;height:15px;pointer-events:none;opacity:.5;background:${toile(p.texteSurAccent)} top right/contain no-repeat}` +
     // En-tête (Header : saison-lien-nav) : soulignement orange du lien actif
@@ -244,7 +252,7 @@ const CSS_THEME: Partial<Record<ThemeSaison, (p: PeriodeSaison) => string>> = {
   // Black Week (accent noir, accent_2 jaune) : liseré et soulignés jaunes,
   // contour jaune des cartes au survol (jamais d'ombre noire sur le crème).
   'black-week': () =>
-    `.carte-produit:hover{box-shadow:0 0 0 2px color-mix(in srgb,var(--saison-accent-2) 80%,transparent),0 18px 44px -16px color-mix(in srgb,var(--saison-accent-2) 45%,transparent)!important}` +
+    `${SURVOL}{.carte-produit:hover{box-shadow:0 0 0 2px color-mix(in srgb,var(--saison-accent-2) 80%,transparent),0 18px 44px -16px color-mix(in srgb,var(--saison-accent-2) 45%,transparent)!important}}` +
     `.saison-entete{box-shadow:inset 0 -3px 0 var(--saison-accent-2)}` +
     `.saison-lien-nav{text-decoration-line:underline;text-decoration-thickness:3px;text-underline-offset:6px;text-decoration-color:transparent;transition:text-decoration-color .3s}` +
     `.saison-lien-nav:hover,.saison-lien-nav[aria-current=page]{text-decoration-color:var(--saison-accent-2)}`,
@@ -252,7 +260,7 @@ const CSS_THEME: Partial<Record<ThemeSaison, (p: PeriodeSaison) => string>> = {
   // Guirlande sous l'en-tête et neige sur les badges : CSS du décor
   // (components/saison/noel/styles.ts).
   noel: () =>
-    `.carte-produit:hover{box-shadow:0 0 0 1px rgba(201,162,74,.45),0 18px 44px -14px rgba(201,162,74,.5)!important}` +
+    `${SURVOL}{.carte-produit:hover{box-shadow:0 0 0 1px rgba(201,162,74,.45),0 18px 44px -14px rgba(201,162,74,.5)!important}}` +
     `.saison-lien-nav{text-decoration-line:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:transparent;transition:text-decoration-color .3s}` +
     `.saison-lien-nav:hover,.saison-lien-nav[aria-current=page]{text-decoration-color:var(--saison-accent)}`,
 }

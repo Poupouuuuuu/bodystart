@@ -8,7 +8,7 @@
  *
  * Chaque pastille est un bouton (filtre sur la page) ou un lien (`href`).
  */
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
@@ -26,8 +26,11 @@ export default function PastillesFiltres({
   libelle,
   className,
   discret = false,
+  avant,
 }: {
   pastilles: Pastille[]
+  /** Commandes placées en tête de la même rangée (filtres, tri, recherche sur mobile). */
+  avant?: ReactNode
   /** Nom de la rangée pour les lecteurs d'écran (« Catégories »). */
   libelle: string
   className?: string
@@ -47,7 +50,7 @@ export default function PastillesFiltres({
     }
   }, [active])
 
-  if (pastilles.length === 0) return null
+  if (pastilles.length === 0 && !avant) return null
 
   return (
     <div
@@ -59,6 +62,7 @@ export default function PastillesFiltres({
         className
       )}
     >
+      {avant}
       {pastilles.map((p) => {
         const classes = cn(
           'inline-flex h-11 flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[14px] font-semibold transition-colors',

@@ -37,13 +37,14 @@ export default async function CataloguePage({ params }: Props) {
 
   return (
     <div className="bg-canvas min-h-screen">
-      <section className="saison-bandeau pt-10 pb-4 md:pt-12 md:pb-6">
+      {/* Mobile : bandeau resserré comme /products (28/11/2026), H1 inchangé. */}
+      <section className="saison-bandeau pt-4 pb-2 md:pt-12 md:pb-6">
         <div className="container">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute">Catalogue</p>
-          <h1 className="font-display text-[34px] font-extrabold leading-[1.05] tracking-tight text-spruce md:text-[44px]">
+          <p className="mb-3 hidden text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute md:block">Catalogue</p>
+          <h1 className="font-display text-[28px] font-extrabold leading-[1.05] tracking-tight text-spruce md:text-[44px]">
             Tous les produits
           </h1>
-          <p className="mt-3 text-[15px] text-ink-mute">
+          <p className="mt-1 text-[15px] text-ink-mute md:mt-3">
             Page {n} sur {pages}.{' '}
             <Link
               href="/products"
@@ -56,7 +57,7 @@ export default async function CataloguePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="pb-16 md:pb-20">
+      <section className="pt-3 pb-16 md:pt-0 md:pb-20">
         <div className="container">
           <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
             {items.map((product, i) => (

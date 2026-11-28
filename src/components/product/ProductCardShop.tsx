@@ -220,7 +220,9 @@ export function ProductCardShop({
   return (
     // PREMIUM V2 (2026-08) : pas de bordure, l'ombre teintée verte détache la
     // carte du fond crème. Rayon 20px, plus généreux que les éléments internes.
-    <div className="carte-produit group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo hover:-translate-y-1.5 hover:shadow-lift">
+    // Soulèvement au survol réel seulement (souris) : sur téléphone, :hover
+    // reste accroché à la carte touchée (contour du thème, lib/saison).
+    <div className="carte-produit group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card transition-all duration-300 ease-out-expo [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1.5 [@media(hover:hover)_and_(pointer:fine)]:hover:shadow-lift">
       {/* Zone image avec fond végétal */}
       <Link
         href={href}
@@ -239,7 +241,7 @@ export function ProductCardShop({
               // h-[84%] (70 % avant le 28/11/2026) : le produit est la star de
               // la carte. Ombre portée TEINTÉE verte, jamais noire.
               className={cn(
-                'relative z-10 h-[84%] w-auto max-w-[90%] object-contain transition-transform duration-500 ease-out-expo group-hover:scale-[1.05]',
+                'relative z-10 h-[84%] w-auto max-w-[90%] object-contain transition-transform duration-500 ease-out-expo [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.05]',
                 '[filter:drop-shadow(0_16px_20px_rgba(45,90,45,0.26))]',
                 soldOut && 'opacity-60 saturate-[0.55]'
               )}
