@@ -40,7 +40,7 @@ export default function RootError({
             Une erreur est survenue.
           </h1>
           <p className="mt-5 text-[17px] leading-[1.65] text-ink-mute">
-            Quelque chose s&apos;est mal passé de notre côté. Vous pouvez réessayer, ou
+            Quelque chose s&apos;est mal passé de notre côté. Tu peux réessayer, ou
             revenir à l&apos;accueil.
           </p>
 

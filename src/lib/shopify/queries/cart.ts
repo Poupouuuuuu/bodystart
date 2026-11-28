@@ -135,6 +135,18 @@ export const CREATE_CART = `
       cart {
         ...CartFragment
       }
+      # Erreurs et alertes (stock) : sans elles, un ajout refusé ou réduit
+      # passait pour un succès (lib/panier-ajout).
+      userErrors {
+        field
+        message
+        code
+      }
+      warnings {
+        code
+        message
+        target
+      }
     }
   }
 `
@@ -145,6 +157,18 @@ export const ADD_TO_CART = `
     cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
         ...CartFragment
+      }
+      # userErrors : panier introuvable (field cartId), article refusé.
+      # warnings : stock insuffisant (quantité réduite) ou rupture (rien ajouté).
+      userErrors {
+        field
+        message
+        code
+      }
+      warnings {
+        code
+        message
+        target
       }
     }
   }
