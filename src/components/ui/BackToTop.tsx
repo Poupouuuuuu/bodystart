@@ -34,7 +34,7 @@ export default function BackToTop() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-4 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-spruce text-canvas shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:bg-fresh-deep hover:shadow-lift sm:right-6"
+      className="fixed bottom-[calc(var(--bandeau-cookies,0px)_+_max(1.5rem,env(safe-area-inset-bottom)))] right-4 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-spruce text-canvas shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:bg-fresh-deep hover:shadow-lift sm:right-6"
       aria-label="Retour en haut"
     >
       <ArrowUp className="h-5 w-5" />
