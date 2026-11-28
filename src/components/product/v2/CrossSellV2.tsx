@@ -76,8 +76,9 @@ export default function CrossSellV2({ products, currentHandle }: CrossSellV2Prop
         </div>
 
         {/* Téléphone : une rangée qui défile au doigt (deux rangées de grandes
-            cartes repoussaient la description de ~700 px), grille à partir de sm. */}
-        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+            cartes repoussaient la description de ~700 px), grille à partir de sm.
+            scroll-px-4 : l'aimantation garde la marge de 16 px à gauche. */}
+        <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
           {items.map((product) => {
             const soldOut = product.availableForSale === false
             const productIsBundle = isBundle(product)

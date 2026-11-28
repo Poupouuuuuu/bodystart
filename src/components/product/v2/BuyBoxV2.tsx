@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
-import { ShoppingCart, Check, Minus, Plus, Truck, Store, MapPin, RotateCcw, Award, Star } from 'lucide-react'
+import { ShoppingCart, Check, Minus, Plus, Truck, Store, MapPin, ShieldCheck, RotateCcw, Award, Star } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
 import { formatPoids } from '@/lib/typo'
 import { GOOGLE_LISTING_URL, GOOGLE_RATING, type GoogleRating } from '@/lib/store-info'
@@ -671,7 +671,11 @@ export default function BuyBoxV2({
             </li>
             <li className="flex items-start gap-2.5">
               <RotateCcw className="mt-px h-4 w-4 flex-shrink-0 text-spruce" />
-              <span>Retour sous 14 jours · paiement sécurisé</span>
+              <span>Retour sous 14 jours</span>
+            </li>
+            <li className="flex items-start gap-2.5">
+              <ShieldCheck className="mt-px h-4 w-4 flex-shrink-0 text-spruce" />
+              <span>Paiement sécurisé (CB, Visa, Mastercard)</span>
             </li>
           </ul>
 
