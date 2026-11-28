@@ -25,8 +25,11 @@ export default async function ProductsPage() {
           (components/saison/halloween/styles.ts), rien hors période. */}
       {/* Mobile : bandeau resserré (28/11/2026) pour qu'une rangée de cartes
           entière, prix compris, tienne au premier écran ; sur-titre masqué
-          sous md. H1 inchangé (texte et balise). */}
-      <section className="saison-bandeau pt-4 pb-3 md:pt-12 md:pb-6">
+          sous md. H1 inchangé (texte et balise). max-md:! : le thème de
+          saison impose sa marge basse (1,75 rem) et un fond plus haut
+          (2,25 rem en Black Week, 2,75 rem à Noël) ; 2 rem suffisent à la
+          guirlande de Noël (24 px posée à 6 px du bas). */}
+      <section className="saison-bandeau pt-4 pb-3 max-md:!mb-0 max-md:!pb-8 md:pt-12 md:pb-6">
         <div className="container">
           <p className="hidden md:block text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
             Catalogue

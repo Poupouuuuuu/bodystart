@@ -43,7 +43,9 @@ export default function PastillesFiltres({
   useEffect(() => {
     const el = rangee.current
     const cible = el?.querySelector<HTMLElement>('[data-actif="true"]')
-    if (!el || !cible) return
+    // Première pastille (« Tout ») : rangée laissée au début, pour que les
+    // commandes placées avant (filtres, tri, recherche) restent visibles.
+    if (!el || !cible || cible.dataset.premier === 'true') return
     const gauche = cible.offsetLeft - el.offsetLeft - 16
     if (gauche > 0 && cible.offsetLeft + cible.offsetWidth > el.scrollLeft + el.clientWidth) {
       el.scrollTo({ left: gauche, behavior: 'instant' as ScrollBehavior })
@@ -63,7 +65,7 @@ export default function PastillesFiltres({
       )}
     >
       {avant}
-      {pastilles.map((p) => {
+      {pastilles.map((p, i) => {
         const classes = cn(
           'inline-flex h-11 flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[14px] font-semibold transition-colors',
           p.actif
@@ -87,6 +89,7 @@ export default function PastillesFiltres({
             key={p.cle}
             href={p.href}
             data-actif={p.actif}
+            data-premier={i === 0}
             aria-current={p.actif ? 'page' : undefined}
             className={classes}
           >
@@ -97,6 +100,7 @@ export default function PastillesFiltres({
             key={p.cle}
             type="button"
             data-actif={p.actif}
+            data-premier={i === 0}
             aria-pressed={p.actif}
             onClick={p.onClick}
             className={classes}
