@@ -36,6 +36,15 @@ async function chargerIndex(): Promise<FicheIndex[]> {
 /** Index partagé par /api/search et /search, renouvelé toutes les 10 minutes. */
 const indexEnCache = unstable_cache(chargerIndex, ['recherche-index-v3'], { revalidate: 600 })
 
+/**
+ * Tout le catalogue publié sur le site, meilleures ventes d'abord, avec le
+ * début de la description (même cache de 10 minutes que la recherche). Pour
+ * les liens calculés côté serveur (lib/composer-pre-workout).
+ */
+export async function catalogueDuSite(): Promise<ShopifyProduct[]> {
+  return indexEnCache()
+}
+
 /** Fiche trouvée, et la variante demandée (« whey vanille » → Vanille / 1 kg). */
 export interface ResultatRecherche {
   produit: ShopifyProduct
