@@ -74,7 +74,9 @@ export default function AboutPage() {
                   alt="Devanture de la boutique BodyStart Nutrition, 8 rue du Pont des Landes à Coignières"
                   fill
                   priority
-                  sizes="(max-width: 1024px) 100vw, 640px"
+                  fetchPriority="high"
+                  // colonne de la grille (conteneur de 1200 px) ; mobile : conteneur moins 2 × 16 px
+                  sizes="(min-width: 1024px) 510px, (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                   className="object-cover"
                 />
               </div>

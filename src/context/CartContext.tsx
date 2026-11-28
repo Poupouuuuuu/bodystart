@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef, type ReactNode } from 'react'
-import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, updateCartBuyerIdentity } from '@/lib/shopify'
+import { createCart, addToCart, updateCartLine, removeFromCart, getCart, updateCartAttributes, updateCartDiscountCodes, updateCartBuyerIdentity, type ResultatAjoutPanier } from '@/lib/shopify'
 import { useCustomer } from '@/context/CustomerContext'
 import { getStoredToken } from '@/lib/shopify/customer'
 import type { ShopifyCart } from '@/lib/shopify/types'
@@ -10,6 +10,63 @@ import { gaAddToCart } from '@/lib/analytics'
 import { metaAddToCart } from '@/lib/meta-pixel'
 import { toast } from '@/lib/toast'
 import { CADEAU_ATTR, type ActionCadeau } from '@/lib/paliers'
+import { bilanAjout, issueErreurLevee, MESSAGES_PANIER, type BilanAjout } from '@/lib/panier-ajout'
+
+const CART_ID_KEY = 'body-start-cart-id'
+
+function lireIdPanier(): string | null {
+  try {
+    return localStorage.getItem(CART_ID_KEY)
+  } catch {
+    return null
+  }
+}
+
+function ecrireIdPanier(id: string) {
+  try {
+    localStorage.setItem(CART_ID_KEY, id)
+  } catch {
+    /* navigation privée */
+  }
+}
+
+/** Retire l'identifiant seulement s'il désigne toujours ce panier-là. */
+function oublierIdPanier(id: string) {
+  try {
+    if (localStorage.getItem(CART_ID_KEY) === id) localStorage.removeItem(CART_ID_KEY)
+  } catch {
+    /* navigation privée */
+  }
+}
+
+type LignesAjout = { merchandiseId: string; quantity: number }[]
+
+/** GA4 add_to_cart et Meta AddToCart par ligne (chacun no-op sans son consentement). */
+function suivreAjout(cart: ShopifyCart, lines: LignesAjout) {
+  try {
+    for (const { merchandiseId, quantity } of lines) {
+      const line = cart.lines.nodes.find((l) => l.merchandise.id === merchandiseId)
+      if (!line) continue
+      const variant = line.merchandise.title
+      gaAddToCart({
+        item_id: line.merchandise.product.handle,
+        item_name: line.merchandise.product.title,
+        price: parseFloat(line.merchandise.price.amount),
+        quantity,
+        item_variant: variant && variant !== 'Default Title' ? variant : undefined,
+      })
+      // content_ids = ID numérique de la variante (format du catalogue Meta).
+      metaAddToCart({
+        variantId: merchandiseId,
+        name: line.merchandise.product.title,
+        price: parseFloat(line.merchandise.price.amount),
+        quantity,
+      })
+    }
+  } catch {
+    /* tracking best-effort */
+  }
+}
 
 /** Changement de parfum d'un cadeau (même ligne, autre variante). */
 export type MutationCadeau = ActionCadeau | { type: 'variante'; lineId: string; variantId: string; montant: number }
@@ -98,9 +155,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // doubler sur le réseau et la réponse PÉRIMÉE écraserait la plus récente.
   const updateQueueRef = useRef<Promise<void>>(Promise.resolve())
 
+  // true dès qu'un ajout est parti : la réponse du chargement initial, plus
+  // ancienne, ne doit plus écraser le panier ni effacer son identifiant.
+  const ajoutLanceRef = useRef(false)
+
   // Charger le panier depuis localStorage (avec fallback si expiré)
   useEffect(() => {
-    const cartId = localStorage.getItem('body-start-cart-id')
+    const cartId = lireIdPanier()
 
     // Retour depuis le checkout Shopify (bouton « précédent ») : quand la
     // page se recharge (pas de bfcache), l'utilisateur retombe sur le site
@@ -120,19 +181,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Un cart persisté existe : tant que getCart n'a pas répondu, le drawer
       // ne doit pas afficher « Ton panier est vide » (message faux sur 4G lente).
       setIsInitializing(true)
-      getCart(cartId).then((c) => {
-        if (c) {
-          setCart(c)
-          if (shouldReopen && (c.totalQuantity ?? 0) > 0) setIsOpen(true)
-        } else {
-          // Panier expiré ou supprimé côté Shopify
-          localStorage.removeItem('body-start-cart-id')
+      const charger = async (essai: number): Promise<void> => {
+        try {
+          const c = await getCart(cartId)
+          if (ajoutLanceRef.current) return
+          if (c) {
+            setCart(c)
+            if (shouldReopen && (c.totalQuantity ?? 0) > 0) setIsOpen(true)
+          } else {
+            // Shopify ne connaît plus ce panier (expiré, payé ou supprimé).
+            oublierIdPanier(cartId)
+          }
+        } catch (err) {
+          // Identifiant illisible : il ne servira jamais.
+          if (issueErreurLevee(err) === 'panier-disparu') return oublierIdPanier(cartId)
+          // Erreur passagère (réseau, 5xx, limite) : on GARDE l'identifiant.
+          // Avant : il était effacé et le prochain ajout ouvrait un panier
+          // neuf, sans les articles du client. Un 2e essai 3 s plus tard.
+          if (essai === 0) {
+            await new Promise((r) => setTimeout(r, 3000))
+            if (!ajoutLanceRef.current) return charger(1)
+          }
         }
-      }).catch(() => {
-        localStorage.removeItem('body-start-cart-id')
-      }).finally(() => {
-        setIsInitializing(false)
-      })
+      }
+      charger(0).finally(() => setIsInitializing(false))
     }
 
     // Retour via bfcache : la page est restaurée telle quelle (drawer encore
@@ -156,60 +228,86 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const openCart = () => setIsOpen(true)
   const closeCart = () => setIsOpen(false)
 
+  // Ajouts sérialisés : deux clics rapides sans panier ouvraient deux paniers,
+  // le 2e écrasant l'identifiant du 1er.
+  const ajoutQueueRef = useRef<Promise<unknown>>(Promise.resolve())
+
+  /**
+   * Ajoute des lignes au panier du client. Ne recrée un panier QUE si
+   * Shopify dit que le sien n'existe plus (lib/panier-ajout) ; sur une
+   * erreur passagère, lève sans toucher au panier ni à son identifiant.
+   */
+  const ajouterLignes = useCallback((lines: LignesAjout) => {
+    const run = async (): Promise<{ cart: ShopifyCart | null; bilan: BilanAjout; recree: boolean }> => {
+      ajoutLanceRef.current = true
+      const avant = cartRef.current
+      // Identifiant stocké même si le panier n'est pas encore chargé (4G
+      // lente, chargement initial en échec) : avant, un clic à ce moment
+      // ouvrait un panier neuf et faisait perdre l'ancien.
+      const cartId = avant?.id ?? lireIdPanier()
+      const appliquer = (r: ResultatAjoutPanier, base: ShopifyCart | null) => {
+        if (r.cart) {
+          cartRef.current = r.cart
+          ecrireIdPanier(r.cart.id)
+        }
+        return bilanAjout({ avant: base, apres: r.cart, demandes: lines, userErrors: r.userErrors, warnings: r.warnings })
+      }
+
+      if (cartId) {
+        let r: ResultatAjoutPanier
+        try {
+          r = await addToCart(cartId, lines)
+        } catch (err) {
+          if (issueErreurLevee(err) === 'passagere') throw err
+          r = { cart: null, userErrors: [{ field: ['cartId'], message: 'identifiant illisible' }], warnings: [] }
+        }
+        const bilan = appliquer(r, avant)
+        if (bilan.type !== 'panier-disparu') return { cart: r.cart, bilan, recree: false }
+        // Shopify ne connaît plus ce panier : on en ouvre un nouveau.
+        oublierIdPanier(cartId)
+        cartRef.current = null
+        setCart(null)
+      }
+
+      const r = await createCart(lines)
+      const bilan = appliquer(r, null)
+      return {
+        cart: r.cart,
+        bilan: bilan.type === 'panier-disparu' ? { type: 'rien', message: MESSAGES_PANIER.refuseGenerique } : bilan,
+        recree: Boolean(cartId),
+      }
+    }
+    const chained = ajoutQueueRef.current.then(run, run)
+    ajoutQueueRef.current = chained.catch(() => undefined)
+    return chained
+  }, [])
+
   const addItem = useCallback(async (merchandiseId: string, quantity = 1) => {
     setIsLoading(true)
     try {
-      let updatedCart: ShopifyCart
-      if (!cart) {
-        updatedCart = await createCart([{ merchandiseId, quantity }])
-        localStorage.setItem('body-start-cart-id', updatedCart.id)
-      } else {
-        try {
-          updatedCart = await addToCart(cart.id, [{ merchandiseId, quantity }])
-        } catch {
-          // Panier expiré — on en recrée un nouveau
-          updatedCart = await createCart([{ merchandiseId, quantity }])
-          localStorage.setItem('body-start-cart-id', updatedCart.id)
-        }
+      const lines = [{ merchandiseId, quantity }]
+      const { cart: updatedCart, bilan, recree } = await ajouterLignes(lines)
+      if (updatedCart) setCart(updatedCart)
+      if (!updatedCart || bilan.type === 'rien' || bilan.type === 'panier-disparu') {
+        // false → les CTA n'affichent PAS « Ajouté ✓ ».
+        toast.error(bilan.type === 'rien' ? bilan.message : MESSAGES_PANIER.refuseGenerique, { duration: 6000 })
+        return false
       }
-      setCart(updatedCart)
-      // GA4 add_to_cart et Meta AddToCart (chacun no-op sans son consentement).
-      // Détails dérivés de la ligne ajoutée ; n'interrompt jamais l'ajout panier.
-      try {
-        const line = updatedCart.lines.nodes.find((l) => l.merchandise.id === merchandiseId)
-        if (line) {
-          const variant = line.merchandise.title
-          gaAddToCart({
-            item_id: line.merchandise.product.handle,
-            item_name: line.merchandise.product.title,
-            price: parseFloat(line.merchandise.price.amount),
-            quantity,
-            item_variant: variant && variant !== 'Default Title' ? variant : undefined,
-          })
-          // content_ids = ID numérique de la variante (format du catalogue Meta).
-          metaAddToCart({
-            variantId: merchandiseId,
-            name: line.merchandise.product.title,
-            price: parseFloat(line.merchandise.price.amount),
-            quantity,
-          })
-        }
-      } catch {
-        /* tracking best-effort */
-      }
+      suivreAjout(updatedCart, lines)
       setIsOpen(true)
-      toast.success('Produit ajouté au panier !')
+      if (bilan.type === 'partiel') toast.info(bilan.message, { icon: '⚠️', duration: 6000 })
+      else if (recree) toast.success(MESSAGES_PANIER.panierRecree, { duration: 6000 })
+      else toast.success('Produit ajouté au panier !')
       return true
-    } catch {
-      toast.error('Erreur lors de l\'ajout au panier')
-      // false → les CTA n'affichent PAS « Ajouté ✓ » (avant : bouton vert de
-      // succès + toast rouge d'erreur simultanés, client persuadé d'avoir
-      // l'article au panier).
+    } catch (err) {
+      // Erreur passagère : panier et identifiant intacts, rien d'annoncé comme ajouté.
+      console.warn('[cart] ajout en échec :', err)
+      toast.error(MESSAGES_PANIER.passagere, { duration: 6000 })
       return false
     } finally {
       setIsLoading(false)
     }
-  }, [cart])
+  }, [ajouterLignes])
 
   const addItems = useCallback(async (
     lines: { merchandiseId: string; quantity: number }[],
@@ -218,20 +316,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (lines.length === 0) return false
     setIsLoading(true)
     try {
-      let updatedCart: ShopifyCart
-      if (!cart) {
-        updatedCart = await createCart(lines)
-        localStorage.setItem('body-start-cart-id', updatedCart.id)
-      } else {
-        try {
-          updatedCart = await addToCart(cart.id, lines)
-        } catch {
-          // Panier expiré — on en recrée un nouveau
-          updatedCart = await createCart(lines)
-          localStorage.setItem('body-start-cart-id', updatedCart.id)
-        }
+      const resultat = await ajouterLignes(lines)
+      const { bilan, recree } = resultat
+      let updatedCart = resultat.cart
+      if (updatedCart) setCart(updatedCart)
+      if (!updatedCart || bilan.type === 'rien' || bilan.type === 'panier-disparu') {
+        toast.error(bilan.type === 'rien' ? bilan.message : MESSAGES_PANIER.refuseGenerique, { duration: 6000 })
+        return false
       }
-      setCart(updatedCart)
 
       const attributes = options?.attributes ?? []
       if (attributes.length > 0) {
@@ -254,39 +346,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // GA4 add_to_cart / Meta AddToCart par ligne (no-op sans consentement).
-      try {
-        for (const { merchandiseId, quantity } of lines) {
-          const line = updatedCart.lines.nodes.find((l) => l.merchandise.id === merchandiseId)
-          if (!line) continue
-          const variant = line.merchandise.title
-          gaAddToCart({
-            item_id: line.merchandise.product.handle,
-            item_name: line.merchandise.product.title,
-            price: parseFloat(line.merchandise.price.amount),
-            quantity,
-            item_variant: variant && variant !== 'Default Title' ? variant : undefined,
-          })
-          metaAddToCart({
-            variantId: merchandiseId,
-            name: line.merchandise.product.title,
-            price: parseFloat(line.merchandise.price.amount),
-            quantity,
-          })
-        }
-      } catch {
-        /* tracking best-effort */
-      }
+      suivreAjout(updatedCart, lines)
       setIsOpen(true)
-      toast.success(lines.length > 1 ? 'Sélection ajoutée au panier !' : 'Produit ajouté au panier !')
+      if (bilan.type === 'partiel') toast.info(bilan.message, { icon: '⚠️', duration: 6000 })
+      else if (recree) {
+        toast.success(lines.length > 1 ? MESSAGES_PANIER.panierRecreeSelection : MESSAGES_PANIER.panierRecree, { duration: 6000 })
+      } else toast.success(lines.length > 1 ? 'Sélection ajoutée au panier !' : 'Produit ajouté au panier !')
       return true
-    } catch {
-      toast.error('Erreur lors de l\'ajout au panier')
+    } catch (err) {
+      console.warn('[cart] ajout groupé en échec :', err)
+      toast.error(MESSAGES_PANIER.passagere, { duration: 6000 })
       return false
     } finally {
       setIsLoading(false)
     }
-  }, [cart])
+  }, [ajouterLignes])
 
   // Mise à jour quantité — sérialisée, sans gel global (le drawer gère son
   // propre état par ligne). Détecte le plafonnement stock (Shopify renvoie la
@@ -355,8 +429,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
           o.type === 'ajouter' ? [{ merchandiseId: o.variantId, quantity: 1, attributes: attrs(o.montant) }] : []
         )
         if (ajouter.length) {
-          current = await addToCart(current.id, ajouter)
-          setCart(current)
+          const { cart: ajoute } = await addToCart(current.id, ajouter)
+          if (ajoute) {
+            current = ajoute
+            setCart(current)
+          }
         }
       } catch (err) {
         // Non bloquant : le panier reste utilisable, la barre se recalcule au prochain changement.
