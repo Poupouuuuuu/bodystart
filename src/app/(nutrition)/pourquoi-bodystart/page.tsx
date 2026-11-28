@@ -154,7 +154,7 @@ export default function PourquoiBodystartPage() {
                 alt="Rayon des protéines Nutrimuscle et Protimuscle dans la boutique BodyStart à Coignières"
                 fill
                 className="object-cover"
-                sizes="(min-width: 768px) 33vw, 100vw"
+                sizes="(min-width: 1080px) 330px, (min-width: 768px) 31vw, calc(100vw - 32px)"
               />
             </div>
             <div className="relative aspect-[4/3] md:aspect-[3/4] rounded-2xl overflow-hidden border border-spruce/10">
@@ -163,7 +163,7 @@ export default function PourquoiBodystartPage() {
                 alt="Pots de whey Iso Zero alignés dans la boutique BodyStart Nutrition"
                 fill
                 className="object-cover"
-                sizes="(min-width: 768px) 33vw, 50vw"
+                sizes="(min-width: 1080px) 330px, (min-width: 768px) 31vw, calc(50vw - 24px)"
               />
             </div>
             <div className="relative aspect-[4/3] md:aspect-[3/4] rounded-2xl overflow-hidden border border-spruce/10">
@@ -172,7 +172,7 @@ export default function PourquoiBodystartPage() {
                 alt="À la salle après l'entraînement : chez BodyStart, on pratique aussi"
                 fill
                 className="object-cover"
-                sizes="(min-width: 768px) 33vw, 50vw"
+                sizes="(min-width: 1080px) 330px, (min-width: 768px) 31vw, calc(50vw - 24px)"
               />
             </div>
           </div>
