@@ -59,8 +59,13 @@ export default async function CataloguePage({ params }: Props) {
       <section className="pb-16 md:pb-20">
         <div className="container">
           <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-            {items.map((product) => (
-              <ProductCardShop key={product.id} product={product} stockAtStore={stockByProductId[product.id]} />
+            {items.map((product, i) => (
+              <ProductCardShop
+                key={product.id}
+                product={product}
+                stockAtStore={stockByProductId[product.id]}
+                prioritaire={i < 2}
+              />
             ))}
           </div>
           <PaginationCatalogue page={n} pages={pages} />

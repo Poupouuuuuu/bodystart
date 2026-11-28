@@ -15,9 +15,10 @@ import { cn } from '@/lib/utils'
 import { availableFirst } from '@/lib/product-order'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
 import PaginationCatalogue from '@/components/product/PaginationCatalogue'
+import PastillesFiltres from '@/components/product/PastillesFiltres'
 import { nombreDePages } from '@/lib/catalogue'
 import { cardPriceOf } from '@/lib/product-price'
-import { dansSousCategorie, PRIORITE_PROTEINES, type SousCategorie } from '@/lib/sous-categories'
+import { dansSousCategorie, PRIORITE_PROTEINES, SOUS_CATEGORIES, type SousCategorie } from '@/lib/sous-categories'
 import type { ShopifyProduct, ShopifyCollection } from '@/lib/shopify/types'
 
 // ─── Objectifs (bandeau haut) ───
@@ -53,51 +54,17 @@ type Category = {
 }
 
 const CATEGORIES: Category[] = [
-  // Sous-catégories Protéines (18/11/2026, Gestion et Boutique) : une seule
-  // pastille par produit, par ordre de priorité (21/11/2026) ; les étiquettes
-  // Shopify restent descriptives (lib/sous-categories). Caséine retirée (plus
-  // en rayon depuis le 25/10/2026).
-  { key: 'proteines', label: 'Protéines', productTypes: ['Protéines'], priorite: PRIORITE_PROTEINES, subcategories: [
-    { key: 'whey', label: 'Whey', tags: ['whey'] },
-    { key: 'isolate', label: 'Isolate', tags: ['isolate'] },
-    { key: 'mix', label: 'Mix', tags: ['mix'] },
-    { key: 'clear-whey', label: 'Clear whey', tags: ['clear-whey'] },
-    { key: 'gainer', label: 'Gainer', tags: ['gainer'] },
-    { key: 'vegetale', label: 'Végétale et œuf', tags: ['vegan', 'oeuf'] },
-  ]},
-  { key: 'glucides', label: 'Glucides', productTypes: ['Glucides'], subcategories: [
-    { key: 'riz', label: 'Riz', tags: ['riz'] },
-  ]},
-  { key: 'creatine', label: 'Créatine', productTypes: ['Créatine'], subcategories: [
-    { key: 'monohydrate', label: 'Monohydrate', tags: ['monohydrate'] },
-  ]},
+  // Sous-catégories (pastilles) : lib/sous-categories, partagées avec les
+  // pages catégorie. Protéines : une seule pastille par produit, par ordre de
+  // priorité (21/11/2026).
+  { key: 'proteines', label: 'Protéines', productTypes: ['Protéines'], priorite: PRIORITE_PROTEINES, subcategories: SOUS_CATEGORIES.proteines },
+  { key: 'glucides', label: 'Glucides', productTypes: ['Glucides'], subcategories: SOUS_CATEGORIES.glucides },
+  { key: 'creatine', label: 'Créatine', productTypes: ['Créatine'], subcategories: SOUS_CATEGORIES.creatine },
   { key: 'pre-workout', label: 'Pré-workout', productTypes: ['Pré-workout'], subcategories: [] },
-  { key: 'acides-amines', label: 'Acides aminés', productTypes: ['Acides aminés'], subcategories: [
-    { key: 'bcaa', label: 'BCAA', tags: ['bcaa'] },
-    { key: 'eaa', label: 'EAA', tags: ['eaa'] },
-    { key: 'glutamine', label: 'Glutamine', tags: ['glutamine'] },
-    { key: 'citrulline', label: 'Citrulline', tags: ['citrulline'] },
-    { key: 'beta-alanine', label: 'Bêta-alanine', tags: ['beta-alanine'] },
-  ]},
-  { key: 'bruleurs', label: 'Brûleurs', productTypes: ['Brûleur'], subcategories: [
-    { key: 'carnitine', label: 'Carnitine', tags: ['carnitine'] },
-    { key: 'cla', label: 'CLA', tags: ['cla'] },
-    { key: 'thermo-draineur', label: 'Formules complètes', tags: ['thermo', 'draineur'] },
-  ]},
-  { key: 'boosters', label: 'Boosters', productTypes: ['Boosters'], subcategories: [
-    { key: 'pump', label: 'Pump', tags: ['pump'] },
-    { key: 'plantes', label: 'Formules aux plantes', tags: ['testo'] },
-  ]},
-  { key: 'sante', label: 'Santé & bien-être', productTypes: ['Santé'], subcategories: [
-    { key: 'omega', label: 'Oméga', tags: ['omega'] },
-    { key: 'vitamine', label: 'Vitamines', tags: ['vitamine'] },
-    { key: 'multivitamine', label: 'Multivitamines', tags: ['multivitamine'] },
-    { key: 'collagene', label: 'Collagène', tags: ['collagene'] },
-    { key: 'magnesium', label: 'Magnésium', tags: ['magnesium'] },
-    { key: 'zinc', label: 'Zinc', tags: ['zinc'] },
-    { key: 'mineraux', label: 'Minéraux', tags: ['mineraux'] },
-    { key: 'electrolytes', label: 'Électrolytes', tags: ['electrolytes'] },
-  ]},
+  { key: 'acides-amines', label: 'Acides aminés', productTypes: ['Acides aminés'], subcategories: SOUS_CATEGORIES['acides-amines'] },
+  { key: 'bruleurs', label: 'Brûleurs', productTypes: ['Brûleur'], subcategories: SOUS_CATEGORIES.bruleurs },
+  { key: 'boosters', label: 'Boosters', productTypes: ['Boosters'], subcategories: SOUS_CATEGORIES.boosters },
+  { key: 'sante', label: 'Santé & bien-être', productTypes: ['Santé'], subcategories: SOUS_CATEGORIES.sante },
   { key: 'barres-proteinees', label: 'Barres protéinées', productTypes: ['Barres protéinées'], subcategories: [] },
   { key: 'snacks', label: 'Snacks', productTypes: ['Snacks'], subcategories: [] },
   { key: 'boissons', label: 'Boissons', productTypes: ['Boissons'], subcategories: [] },
@@ -339,6 +306,15 @@ export function ProductsCatalog({
     syncFiltersToUrl(activeGoal, categoryKey, nextTag)
   }
 
+  // Pastilles mobiles : un appui choisit la catégorie, un 2e appui la retire.
+  const choisirCategorie = (key: string | null) => {
+    const next = key === activeCategory ? null : key
+    setActiveCategory(next)
+    setActiveTag(null)
+    if (next) setOpenSections((prev) => new Set(prev).add(next))
+    syncFiltersToUrl(activeGoal, next, null)
+  }
+
   // ─── Filtrage (logique inchangee de la V1) ───
   const filtered = useMemo(() => {
     let result = [...products]
@@ -449,6 +425,14 @@ export function ProductsCatalog({
     return cats
   }, [activeGoal, categoryCounts])
 
+  const sousCategoriesVisibles = currentCategory
+    ? currentCategory.subcategories.filter((s) => (subCounts[`${currentCategory.key}:${s.key}`] ?? 0) > 0)
+    : []
+
+  // Sous lg, catégorie et sous-catégorie actives se lisent déjà sur les
+  // pastilles : la ligne « Filtres : » ne s'affiche que pour les autres filtres.
+  const autresFiltres = activeGoal !== 'all' || !!searchQuery || priceRange[1] < 200
+
   return (
     <div>
       {/* Hero (eyebrow + H1 « Tous les produits ») rendu côté serveur dans
@@ -511,6 +495,58 @@ export function ProductsCatalog({
             </div>
           </div>
         </div>
+
+        {/* Mobile : catégories puis sous-catégories en pastilles qui défilent
+            au doigt (nuit du 28/11/2026). Mêmes filtres, mêmes paramètres
+            d'URL (?cat=, ?tag=) et mêmes compteurs que la colonne de filtres,
+            qui reste derrière le bouton « Filtres » (prix, objectifs). */}
+        {visibleCategories.length > 0 && (
+          <div className="lg:hidden mb-4 space-y-2">
+            <PastillesFiltres
+              libelle="Catégories"
+              pastilles={[
+                {
+                  cle: 'tout',
+                  libelle: 'Tout',
+                  compte: products.length,
+                  actif: !activeCategory,
+                  onClick: () => choisirCategorie(null),
+                },
+                ...visibleCategories.map((cat) => ({
+                  cle: cat.key,
+                  libelle: cat.label,
+                  compte: categoryCounts[cat.key] ?? 0,
+                  actif: activeCategory === cat.key,
+                  onClick: () => choisirCategorie(cat.key),
+                })),
+              ]}
+            />
+            {currentCategory && sousCategoriesVisibles.length > 0 && (
+              <PastillesFiltres
+                discret
+                libelle={`Sous-catégories : ${currentCategory.label}`}
+                pastilles={[
+                  {
+                    cle: 'tout',
+                    libelle: 'Tout voir',
+                    actif: !activeTag,
+                    onClick: () => {
+                      setActiveTag(null)
+                      syncFiltersToUrl(activeGoal, currentCategory.key, null)
+                    },
+                  },
+                  ...sousCategoriesVisibles.map((sub) => ({
+                    cle: sub.key,
+                    libelle: sub.label,
+                    compte: subCounts[`${currentCategory.key}:${sub.key}`] ?? 0,
+                    actif: activeTag === sub.key,
+                    onClick: () => selectTag(currentCategory.key, sub.key),
+                  })),
+                ]}
+              />
+            )}
+          </div>
+        )}
 
         {/* Recherche mobile */}
         <div className="md:hidden mb-5">
@@ -719,7 +755,7 @@ export function ProductsCatalog({
               activeTag ||
               searchQuery ||
               priceRange[1] < 200) && (
-              <div className="flex flex-wrap items-center gap-2 mb-5">
+              <div className={cn('flex flex-wrap items-center gap-2 mb-5', !autresFiltres && 'hidden lg:flex')}>
                 <span className="text-[12px] text-ink-mute mr-1">Filtres :</span>
                 {activeGoal !== 'all' && (
                   <button
@@ -740,7 +776,7 @@ export function ProductsCatalog({
                       setActiveTag(null)
                       syncFiltersToUrl(activeGoal, null, null)
                     }}
-                    className="saison-actif-doux inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
+                    className="saison-actif-doux hidden lg:inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {currentCategory.label}
                     <X className="w-3 h-3" />
@@ -752,7 +788,7 @@ export function ProductsCatalog({
                       setActiveTag(null)
                       syncFiltersToUrl(activeGoal, activeCategory, null)
                     }}
-                    className="saison-actif-doux inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
+                    className="saison-actif-doux hidden lg:inline-flex items-center gap-1.5 px-3 py-1 bg-sage text-spruce rounded-full text-[12px] font-medium border border-spruce/10 hover:bg-sage/70 transition-colors"
                   >
                     {currentCategory.subcategories.find((s) => s.key === activeTag)?.label ?? activeTag}
                     <X className="w-3 h-3" />
@@ -798,11 +834,12 @@ export function ProductsCatalog({
                   className="grid grid-cols-2 md:grid-cols-3 gap-5 lg:gap-6"
                   onClickCapture={rememberGridState}
                 >
-                  {filtered.slice(0, visibleCount).map((product) => (
+                  {filtered.slice(0, visibleCount).map((product, i) => (
                     <ProductCardShop
                       key={product.id}
                       product={product}
                       stockAtStore={stockByProductId[product.id]}
+                      prioritaire={i < 2}
                     />
                   ))}
                 </div>

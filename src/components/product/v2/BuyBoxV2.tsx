@@ -677,7 +677,7 @@ export default function BuyBoxV2({
             </li>
             <li className="flex items-start gap-2.5">
               <ShieldCheck className="mt-px h-4 w-4 flex-shrink-0 text-spruce" />
-              <span>Paiement sécurisé (CB, Visa, Mastercard)</span>
+              <span>Paiement sécurisé (CB, Apple Pay, Google Pay, PayPal, Klarna)</span>
             </li>
           </ul>
 

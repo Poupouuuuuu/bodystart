@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCart } from '@/hooks/useCart'
-import { dateDeReference } from '@/lib/paliers'
+import { dateDeReference, type Palier } from '@/lib/paliers'
 import { calculerCadeaux, type DonneesPaliers } from '@/lib/paliers/panier'
 
 type Reponse = DonneesPaliers & { ok: true; dateForcable: boolean }
@@ -133,5 +133,11 @@ export function useCadeaux({ retraitBoutique }: { retraitBoutique: boolean }) {
     [majMemo, syncCadeaux]
   )
 
-  return { etat, visible: etat.etats.length > 0, retirerCadeau, ajouterCadeau, choisirVariante }
+  /** Produits (identifiants numériques) de la base d'un palier cadeau, null si inconnue (suggestion du tiroir). */
+  const baseCadeau = useMemo(() => {
+    const ensembles = (donnees?.ensembles ?? []).map((e) => new Set(e))
+    return (palier: Palier): ReadonlySet<string> | null => ensembles[(palier as Palier & { ensemble?: number }).ensemble ?? -1] ?? null
+  }, [donnees])
+
+  return { etat, visible: etat.etats.length > 0, retirerCadeau, ajouterCadeau, choisirVariante, baseCadeau }
 }

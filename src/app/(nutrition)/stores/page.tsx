@@ -15,6 +15,8 @@ import { buildPageMetadata } from '@/lib/seo'
 import { CONTACT_EMAIL, GOOGLE_DIRECTIONS_URL, GOOGLE_LISTING_URL } from '@/lib/store-info'
 import { getGoogleRating, formatRating } from '@/lib/shopify/google-rating'
 import { fermeturesAVenir } from '@/lib/fermetures'
+import { getMoyensPaiement } from '@/lib/shopify/paiement'
+import type { MoyensPaiement } from '@/lib/paiement'
 
 // ─── SEO ──────────────────────────────────────────────────────────
 export const metadata: Metadata = {
@@ -45,34 +47,37 @@ const MAPS_EMBED =
 
 // Le Store lui-même est déclaré une seule fois, dans le layout (même @id sur
 // toutes les pages, src/lib/jsonld/local.ts). Ici : la FAQ visible, mot pour mot.
-const FAQ = [
-  {
-    q: 'C’est bien l’ancienne boutique BodyFit ?',
-    a: 'Oui. Même adresse à Coignières, même passion du conseil. On a simplement changé de nom pour BodyStart Nutrition.',
-  },
-  {
-    q: 'Où se garer ?',
-    a: 'Un grand parking est disponible devant la boutique.',
-  },
-  {
-    q: 'Quels moyens de paiement acceptez-vous ?',
-    a: 'Carte bancaire (CB, Visa, Mastercard) et espèces en boutique.',
-  },
-  {
-    q: 'Le Click & Collect est-il vraiment gratuit ?',
-    a: 'Oui, 100 % gratuit. Tu commandes en ligne, tu récupères en boutique sans frais.',
-  },
-]
+function faqBoutique(paiement: MoyensPaiement) {
+  return [
+    {
+      q: 'C’est bien l’ancienne boutique BodyFit ?',
+      a: 'Oui. Même adresse à Coignières, même passion du conseil. On a simplement changé de nom pour BodyStart Nutrition.',
+    },
+    {
+      q: 'Où se garer ?',
+      a: 'Un grand parking est disponible devant la boutique.',
+    },
+    {
+      q: 'Quels moyens de paiement acceptez-vous ?',
+      // Boutique : terminal de paiement et caisse. Site : moyens lus dans Shopify (lib/shopify/paiement).
+      a: `En boutique\u00a0: carte bancaire (CB, Visa, Mastercard) et espèces. Sur le site\u00a0: ${paiement.texte}.`,
+    },
+    {
+      q: 'Le Click & Collect est-il vraiment gratuit ?',
+      a: 'Oui, 100 % gratuit. Tu commandes en ligne, tu récupères en boutique sans frais.',
+    },
+  ]
+}
 
-const FAQ_JSONLD = {
+const faqJsonLd = (faq: { q: string; a: string }[]) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: FAQ.map(({ q, a }) => ({
+  mainEntity: faq.map(({ q, a }) => ({
     '@type': 'Question',
     name: q,
     acceptedAnswer: { '@type': 'Answer', text: a },
   })),
-}
+})
 
 const BTN_PRIMARY =
   'inline-flex items-center justify-center gap-2 bg-fresh text-white font-semibold text-[15px] px-7 py-3.5 rounded-full transition-colors hover:bg-fresh-deep'
@@ -87,13 +92,14 @@ export default async function StoresPage() {
   // Fermetures exceptionnelles du jour ou à venir (lib/fermetures) : la page
   // est régénérée toutes les 15 min, la ligne disparaît le lendemain.
   const fermetures = fermeturesAVenir(new Date())
-  const rating = await getGoogleRating()
+  const [rating, paiement] = await Promise.all([getGoogleRating(), getMoyensPaiement()])
+  const FAQ = faqBoutique(paiement)
 
   return (
     <div className="bg-canvas min-h-screen">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQ)) }}
       />
 
       {/* ─── 1. Hero court (sans photo) ─── */}
