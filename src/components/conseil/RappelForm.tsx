@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useId, useState } from 'react'
 import { CheckCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { MESSAGE_CONTACT_NON_PARTI } from '@/lib/contact-validation'
 
 const CHAMP =
   'w-full rounded-xl border border-spruce/15 bg-white px-4 py-3 text-[16px] text-ink placeholder:text-ink-mute/60 transition-colors focus:border-fresh focus:outline-none focus:ring-1 focus:ring-fresh/30 md:text-[14px]'
@@ -27,10 +28,12 @@ export default function RappelForm({ objectif, contexte }: Props) {
   const id = useId()
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' })
   const [etat, setEtat] = useState<'repos' | 'envoi' | 'envoye' | 'erreur'>('repos')
+  const [erreur, setErreur] = useState<string>(MESSAGE_CONTACT_NON_PARTI)
 
   async function envoyer(e: React.FormEvent) {
     e.preventDefault()
     setEtat('envoi')
+    setErreur(MESSAGE_CONTACT_NON_PARTI)
     const message = [contexte, form.message.trim() ? `Message du client :\n${form.message.trim()}` : '']
       .filter(Boolean)
       .join('\n\n')
@@ -46,7 +49,13 @@ export default function RappelForm({ objectif, contexte }: Props) {
           message,
         }),
       })
-      if (!res.ok) throw new Error(String(res.status))
+      if (!res.ok) {
+        // Message de /api/contact (502 : e-mail boutique non parti, 429…) ;
+        // repli si la réponse n'est pas du JSON (pare-feu, page d'erreur).
+        const corps = (await res.json().catch(() => null)) as { error?: unknown } | null
+        if (typeof corps?.error === 'string' && corps.error.trim()) setErreur(corps.error)
+        throw new Error(String(res.status))
+      }
       setEtat('envoye')
     } catch {
       setEtat('erreur')
@@ -126,7 +135,7 @@ export default function RappelForm({ objectif, contexte }: Props) {
 
       {etat === 'erreur' && (
         <p role="alert" className="rounded-xl bg-terracotta/10 px-4 py-3 text-[14px] font-medium text-terracotta">
-          L&apos;envoi n&apos;a pas marché. Réessaie, ou appelle-nous directement.
+          {erreur}
         </p>
       )}
 

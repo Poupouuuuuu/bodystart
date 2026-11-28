@@ -33,6 +33,7 @@ import {
   GET_INVENTORY_FOR_VARIANTS,
 } from './queries/inventory'
 import type { ShopifyProduct, ShopifyCollection, ShopifyCart, ShopifyBlog, ShopifyArticle } from './types'
+import type { CartUserError, CartWarning } from '@/lib/panier-ajout'
 import { computeCardPrice } from '@/lib/product-price'
 
 // ─── PRODUITS ────────────────────────────────────────────────
@@ -172,23 +173,39 @@ export async function getArticleByHandle(blogHandle: string, articleHandle: stri
 
 // ─── CART ────────────────────────────────────────────────────
 
-export async function createCart(lines?: { merchandiseId: string; quantity: number }[]) {
-  const data = await shopifyFetch<{ cartCreate: { cart: ShopifyCart } }>(
-    CREATE_CART,
-    { lines: lines ?? [] }
-  )
-  return data.cartCreate.cart
+/** Réponse d'une mutation d'ajout : le panier (null si Shopify refuse tout),
+ *  ses erreurs et ses alertes de stock. À lire avec `bilanAjout` (lib/panier-ajout). */
+export interface ResultatAjoutPanier {
+  cart: ShopifyCart | null
+  userErrors: CartUserError[]
+  warnings: CartWarning[]
+}
+
+export async function createCart(
+  lines?: { merchandiseId: string; quantity: number }[]
+): Promise<ResultatAjoutPanier> {
+  const data = await shopifyFetch<{
+    cartCreate: { cart: ShopifyCart | null; userErrors?: CartUserError[]; warnings?: CartWarning[] }
+  }>(CREATE_CART, { lines: lines ?? [] })
+  return {
+    cart: data.cartCreate.cart,
+    userErrors: data.cartCreate.userErrors ?? [],
+    warnings: data.cartCreate.warnings ?? [],
+  }
 }
 
 export async function addToCart(
   cartId: string,
   lines: { merchandiseId: string; quantity: number; attributes?: { key: string; value: string }[] }[]
-) {
-  const data = await shopifyFetch<{ cartLinesAdd: { cart: ShopifyCart } }>(
-    ADD_TO_CART,
-    { cartId, lines }
-  )
-  return data.cartLinesAdd.cart
+): Promise<ResultatAjoutPanier> {
+  const data = await shopifyFetch<{
+    cartLinesAdd: { cart: ShopifyCart | null; userErrors?: CartUserError[]; warnings?: CartWarning[] }
+  }>(ADD_TO_CART, { cartId, lines })
+  return {
+    cart: data.cartLinesAdd.cart,
+    userErrors: data.cartLinesAdd.userErrors ?? [],
+    warnings: data.cartLinesAdd.warnings ?? [],
+  }
 }
 
 export async function updateCartLine(

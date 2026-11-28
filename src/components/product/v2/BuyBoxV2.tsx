@@ -718,7 +718,7 @@ export default function BuyBoxV2({
       <div
         ref={stickyBarRef}
         className={cn(
-          'fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-spruce/10 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-4 md:px-6 z-50 transition-transform duration-300 shadow-[0_-4px_20px_rgba(45,90,45,0.06)]',
+          'fixed bottom-[var(--bandeau-cookies,0px)] left-0 right-0 bg-white/95 backdrop-blur-md border-t border-spruce/10 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-4 md:px-6 z-50 transition-transform duration-300 shadow-[0_-4px_20px_rgba(45,90,45,0.06)]',
           isStickyVisible && !isCartOpen ? 'translate-y-0' : 'translate-y-full'
         )}
       >

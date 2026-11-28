@@ -22,7 +22,8 @@ export default function ConseilV3() {
                   src="/boutique/allee-acides-amines.webp"
                   alt="Allée de la boutique BodyStart Nutrition à Coignières : rayons acides aminés, créatine et gainers"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 600px"
+                  // colonne de la grille (conteneur de 1200 px) ; mobile : conteneur moins cadre de 6 px
+                  sizes="(min-width: 1024px) 500px, (min-width: 640px) calc(100vw - 60px), calc(100vw - 44px)"
                   quality={68}
                   className="object-cover object-[50%_30%] transition-transform duration-[1200ms] ease-out-expo hover:scale-[1.03]"
                 />
