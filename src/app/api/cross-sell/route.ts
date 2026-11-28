@@ -3,7 +3,7 @@ import { getProducts } from '@/lib/shopify'
 import { familyOf, isAutoPromotable } from '@/lib/merchandising'
 import { idNumerique } from '@/lib/paliers'
 import { lirePaliers } from '@/lib/paliers/serveur'
-import { variantesCadeaux } from '@/lib/paliers/suggestion'
+import { estCanette, variantesCadeaux } from '@/lib/paliers/suggestion'
 import type { ShopifyProduct } from '@/lib/shopify/types'
 
 // Cross-sell du panier (« Complète ta commande ») — best-sellers publiés en
@@ -19,8 +19,8 @@ import type { ShopifyProduct } from '@/lib/shopify/types'
 // famille, le tiroir écarte celles déjà présentes au panier (lib/merchandising).
 //
 // `petits` (28/11/2026) : articles peu chers pour la suggestion « petit ajout »
-// sous les paliers (lib/paliers/suggestion), mêmes règles, sans boisson ni
-// canette, ni coffret, sans aucun cadeau d'une période en cours ou à venir. `cadeaux` :
+// sous les paliers (lib/paliers/suggestion), mêmes règles, sans canette (dans
+// le doute, boisson exclue), ni coffret, sans aucun cadeau d'une période en cours ou à venir. `cadeaux` :
 // ces variantes cadeaux (métachamp public), null si illisible : le tiroir ne
 // suggère alors rien.
 
@@ -67,7 +67,7 @@ export async function GET() {
             .filter((p) => {
               if (!monoVarianteEnStock(p) || !isAutoPromotable(p)) return false
               const famille = familyOf(p)
-              if (famille === 'pack' || famille === 'boisson' || /canette/i.test(p.title)) return false
+              if (famille === 'pack' || estCanette({ title: p.title, family: famille })) return false
               // Coffret = produit composé, comme un pack (ses composants peuvent porter un cadeau).
               if (/coffret/i.test(p.productType ?? '') || (p.tags ?? []).includes('coffret-noel')) return false
               if (cadeaux.has(p.variants.nodes[0].id)) return false

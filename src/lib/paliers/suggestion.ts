@@ -9,8 +9,9 @@
 // L'article est en stock (filtré par /api/cross-sell), mono-variante (ajout
 // direct), pas déjà au panier, jamais le cadeau d'une période en cours ou à
 // venir (acheté, il serait absorbé par la remise et le panier n'avancerait
-// pas), jamais une canette ni une boisson (pas de canette dans les colis), ni
-// un pack, ni une marque exclue des blocs automatiques (lib/merchandising).
+// pas), jamais une canette (pas de canette dans les colis ; dans le doute, une
+// boisson est exclue, voir estCanette), ni un pack, ni une marque exclue des
+// blocs automatiques (lib/merchandising).
 
 import { isAutoPromotable, type Family } from '@/lib/merchandising'
 import { prochainPalier, type EtatPalier, type Palier, type Periode } from './index'
@@ -49,15 +50,36 @@ export function variantesCadeaux(periodes: Pick<Periode, 'au' | 'paliers'>[], no
 
 const prix = (a: ArticleSuggerable) => Number(a.price)
 
+/** Volume en ml lu dans le titre (« 330 ml », « 33 cl », « 0,5 L »), null si absent. */
+function volumeMl(titre: string): number | null {
+  const m = titre.match(/(\d+(?:[.,]\d+)?)\s*(ml|cl|l)\b/i)
+  if (!m) return null
+  const n = Number(m[1].replace(',', '.'))
+  const unite = m[2].toLowerCase()
+  return unite === 'ml' ? n : unite === 'cl' ? n * 10 : n * 1000
+}
+
+/**
+ * Canette, jamais dans un colis (règle du métachamp des paliers). Dans le doute,
+ * exclue : une boisson ne passe que si on la sait autre chose qu'une canette
+ * (shot, pastilles, poudre, brique, bouteille, ou moins de 250 ml).
+ */
+export function estCanette(a: { title: string; family?: Family }): boolean {
+  if (/canette|\bcans?\b/i.test(a.title)) return true
+  if (a.family !== 'boisson') return false
+  if (/\bshots?\b|pastille|comprim|tablet|poudre|brique|bouteille/i.test(a.title)) return false
+  const ml = volumeMl(a.title)
+  return ml === null || ml >= 250
+}
+
 function suggerable(a: ArticleSuggerable, panier: ReadonlySet<string>, cadeaux: ReadonlySet<string>): boolean {
   return (
     !!a.variantId &&
     prix(a) > 0 &&
     !panier.has(a.handle) &&
     !cadeaux.has(a.variantId) &&
-    a.family !== 'boisson' &&
     a.family !== 'pack' &&
-    !/canette/i.test(a.title) &&
+    !estCanette(a) &&
     isAutoPromotable(a)
   )
 }

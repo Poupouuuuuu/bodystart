@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { EtatPalier, Palier } from './index'
-import { choisirSuggestion, variantesCadeaux, type ArticleSuggerable } from './suggestion'
+import { choisirSuggestion, estCanette, variantesCadeaux, type ArticleSuggerable } from './suggestion'
 
 const livraison: Palier = { montant: 85, type: 'livraison', libelle: 'Livraison offerte' }
 const creatine: Palier & { ensemble: number } = {
@@ -68,7 +68,8 @@ describe('choisirSuggestion : livraison offerte', () => {
   it('jamais une canette, une boisson, un pack, une marque exclue, un article sans variante unique ou déjà au panier', () => {
     const candidats = [
       article('canette', 2.9, { title: 'C4 Energy - Canette 500 ml', family: 'autre' }),
-      article('shot', 2.9, { family: 'boisson' }),
+      article('abe', 2.9, { title: 'ABE Energy - Boisson Énergisante Performance', family: 'boisson' }),
+      article('shake', 2.9, { title: 'ON High Protein Shake - 330 ml', family: 'boisson' }),
       article('pack', 3.5, { family: 'pack' }),
       article('exclue', 3.5, { vendor: 'Eric Favre' }),
       article('saveurs', 3.5, { variantId: null }),
@@ -135,6 +136,29 @@ describe('choisirSuggestion : palier cadeau', () => {
     const s = appel([etat(livraison, 82), etat(creatine, 82)], [vitD, shaker])
     expect(s?.palier.palier.type).toBe('livraison')
     expect(s?.article.handle).toBe('shaker')
+  })
+})
+
+describe('estCanette', () => {
+  it('canette nommée, ou boisson dont on ne sait pas que ce n’en est pas une : exclue', () => {
+    expect(estCanette({ title: 'C4 Energy - Canette 500 ml', family: 'boisson' })).toBe(true)
+    expect(estCanette({ title: 'Monster Can', family: 'autre' })).toBe(true)
+    expect(estCanette({ title: 'ABE Energy - Boisson Énergisante Performance', family: 'boisson' })).toBe(true)
+    expect(estCanette({ title: 'ON High Protein Shake - 330 ml', family: 'boisson' })).toBe(true)
+    expect(estCanette({ title: 'Protein Water ON - Eau Protéinée 35 cl', family: 'boisson' })).toBe(true)
+  })
+
+  it('shot, pastilles, bouteille ou petit format : passe', () => {
+    expect(estCanette({ title: 'C4 Energy Shot - Shot Pré-Workout 60 ml', family: 'boisson' })).toBe(false)
+    expect(estCanette({ title: 'Rage Energy Shot - Pré-Workout Liquide', family: 'boisson' })).toBe(false)
+    expect(estCanette({ title: "Endurance Hydration - Pastilles d'électrolytes", family: 'boisson' })).toBe(false)
+    expect(estCanette({ title: 'Shake protéiné - Bouteille 330 ml', family: 'boisson' })).toBe(false)
+    expect(estCanette({ title: 'Gel 60 ml', family: 'glucides' })).toBe(false)
+  })
+
+  it('un shot à 2,90 € peut être suggéré pour la livraison', () => {
+    const shot = article('shot', 2.9, { title: 'C4 Energy Shot - Shot Pré-Workout 60 ml', family: 'boisson' })
+    expect(appel([etat(livraison, 82.5)], [shot])?.article.handle).toBe('shot')
   })
 })
 
