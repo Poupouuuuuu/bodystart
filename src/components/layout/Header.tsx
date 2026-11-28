@@ -21,11 +21,11 @@ import {
   dateSaison,
   lireApercu,
   periodeActive,
+  periodeDeRang,
   periodeDuTheme,
   prochainChangement,
   type ApercuSaison,
   type PeriodeSaison,
-  type ThemeSaison,
 } from '@/lib/saison'
 import DecorSaison from './DecorSaison'
 import LogoSaison from '@/components/saison/LogoSaison'
@@ -79,8 +79,8 @@ interface HeaderProps {
   collections?: ShopifyCollection[]
   /** Mode saison : périodes du metafield bodystart.saison (lib/saison). */
   saison?: PeriodeSaison[]
-  /** Période active au moment du rendu serveur (HTML en cache). */
-  themeServeur?: ThemeSaison | null
+  /** Rang dans `saison` de la période rendue par le serveur (HTML en cache), -1 : aucune (lib/saison, indexPeriode). */
+  rangServeur?: number
   /** Thème forcé sur la preview (cookie de `?saison=`), null en production. */
   apercu?: ApercuSaison | null
   /** Hors production : ?saison_date=AAAA-MM-JJ force la date, ?saison= le
@@ -92,7 +92,7 @@ const STORE = BODY_START_STORES.find((s) => s.isActive) ?? BODY_START_STORES[0]
 // « 07 61 84 75 80 » → tel:+33761847580
 const STORE_TEL = `tel:+33${STORE.phone.replace(/\s/g, '').replace(/^0/, '')}`
 
-export default function Header({ saison = [], themeServeur = null, apercu = null, previsualisation = false }: HeaderProps) {
+export default function Header({ saison = [], rangServeur = -1, apercu = null, previsualisation = false }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileCatsOpen, setMobileCatsOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -116,8 +116,11 @@ export default function Header({ saison = [], themeServeur = null, apercu = null
   // rebascule tout seul à la prochaine borne, sans recharger. On garde la
   // période elle-même, pas seulement son thème : deux périodes peuvent avoir
   // le même thème (bug du 16/11/2026, l'annonce des coffrets aurait affiché
-  // le texte de la fermeture du 11/11).
-  const [periode, setPeriode] = useState<PeriodeSaison | null>(() => periodeDuTheme(saison, themeServeur, new Date()))
+  // le texte de la fermeture du 11/11). Premier rendu : la période du serveur,
+  // à l'identique et sans lire l'heure (sinon erreur d'hydratation 418 quand
+  // l'heure du navigateur tombe dans une autre période, 27/11/2026) ; l'effet
+  // ci-dessous passe ensuite à celle de l'heure du navigateur.
+  const [periode, setPeriode] = useState<PeriodeSaison | null>(() => periodeDeRang(saison, rangServeur))
   const theme = periode?.theme ?? null
   useEffect(() => {
     if (saison.length === 0) return

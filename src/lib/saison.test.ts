@@ -1,5 +1,18 @@
 import { describe, it, expect } from 'vitest'
-import { BLANC, NOIR, contraste, cssSaison, dateSaison, lireApercu, lireSaison, periodeActive, periodeServeur, prochainChangement } from './saison'
+import {
+  BLANC,
+  NOIR,
+  contraste,
+  cssSaison,
+  dateSaison,
+  indexPeriode,
+  lireApercu,
+  lireSaison,
+  periodeActive,
+  periodeDeRang,
+  periodeServeur,
+  prochainChangement,
+} from './saison'
 
 // Metafield `bodystart.saison` tel que créé le 19/10/2026 (copie).
 const METAFIELD = JSON.stringify({
@@ -128,6 +141,29 @@ describe('prévisualisation', () => {
     expect(periodeServeur(P, now, 'aucun')).toBeNull()
     expect(periodeServeur(P, now, null)).toEqual(periodeActive(P, now))
     expect(periodeServeur([], now, 'black-week')).toBeNull()
+  })
+})
+
+describe('premier rendu du header = période du serveur (erreur React 418 du 27/11/2026)', () => {
+  // Deux périodes du même thème, comme le metafield de la Black Week 2026.
+  const bw = P.find((p) => p.theme === 'black-week')!
+  const DEUX = [
+    { ...bw, au: '2026-11-26T10:59:59Z', texte: 'Black Week du 23 au 28/11' },
+    { ...bw, du: '2026-11-26T11:00:00Z', texte: 'Créatine offerte dès 100 €' },
+    P.find((p) => p.theme === 'noel')!,
+  ]
+  it('le rang désigne la période rendue par le serveur, à l’objet près', () => {
+    const rendue = periodeServeur(DEUX, new Date('2026-11-27T18:05:00Z'), null)
+    expect(indexPeriode(DEUX, rendue)).toBe(1)
+    expect(periodeDeRang(DEUX, indexPeriode(DEUX, rendue))).toBe(rendue)
+    expect(indexPeriode(DEUX, periodeServeur(DEUX, new Date('2026-11-27T18:05:00Z'), 'aucun'))).toBe(-1)
+    expect(indexPeriode(DEUX, periodeServeur(DEUX, new Date('2026-11-27T18:05:00Z'), 'noel'))).toBe(2)
+  })
+  it('hors période ou rang inconnu : aucune période', () => {
+    expect(indexPeriode(DEUX, periodeServeur(DEUX, new Date('2026-12-30T12:00:00Z'), null))).toBe(-1)
+    expect(periodeDeRang(DEUX, -1)).toBeNull()
+    expect(periodeDeRang(DEUX, 7)).toBeNull()
+    expect(periodeDeRang([], 0)).toBeNull()
   })
 })
 

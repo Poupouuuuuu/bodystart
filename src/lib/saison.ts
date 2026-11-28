@@ -192,6 +192,24 @@ export function periodeServeur(periodes: PeriodeSaison[], now: Date, apercu: Ape
 }
 
 /**
+ * Rang de la période rendue par le serveur dans le metafield (-1 : aucune).
+ * Le header part de cette période exacte au premier rendu dans le navigateur,
+ * puis recalcule à l'heure du navigateur. Recalculer dès le premier rendu
+ * donnait un texte différent du HTML en cache quand l'heure du navigateur
+ * tombait dans une autre période (bascule de minuit, horloge décalée) : erreur
+ * d'hydratation React 418 et page entière refaite dans le navigateur
+ * (reproduit le 27/11/2026, aux bornes du 26/11 11 h UTC et du 28/11 23 h UTC).
+ */
+export function indexPeriode(periodes: PeriodeSaison[], periode: PeriodeSaison | null): number {
+  return periode ? periodes.indexOf(periode) : -1
+}
+
+/** Période d'un rang donné par indexPeriode, null hors du metafield. */
+export function periodeDeRang(periodes: PeriodeSaison[], rang: number): PeriodeSaison | null {
+  return rang >= 0 ? (periodes[rang] ?? null) : null
+}
+
+/**
  * Date de référence : maintenant, ou celle de `?saison_date=` hors production
  * (vérifier les thèmes sur la preview avant leurs dates). Ignorée en production.
  */
