@@ -109,6 +109,8 @@ export default function HautAccueil({
       <div
         className={cn(
           'container relative grid items-center gap-10 pb-8 pt-6 md:pb-14 md:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-14 xl:gap-20',
+          // Saison : place pour la guirlande posée sous l'en-tête (Noël, Halloween).
+          hero && 'pt-10 md:pt-12',
           hero?.espaceBas
         )}
       >
@@ -146,6 +148,10 @@ export default function HautAccueil({
     </section>
   )
 }
+
+/** Photos sur fond blanc : sans ombre portée (elle dessinerait le cadre de
+ * la photo) et en « multiply », le blanc de la photo se fond dans la scène. */
+const OMBRE_AUCUNE = 'mix-blend-multiply'
 
 /** Scène produits, à partir de lg seulement (masquée en dessous, rien n'y est téléchargé). */
 function SceneProduits({
@@ -187,7 +193,7 @@ function SceneProduits({
                 alt={altImage(p.featuredImage, altProduit(p))}
                 fill
                 sizes="(min-width: 1024px) 220px, 1px"
-                className="object-contain object-bottom opacity-95 [filter:drop-shadow(0_18px_22px_rgba(45,90,45,0.28))]"
+                className={cn('object-contain object-bottom', fondBlanc ? OMBRE_AUCUNE : 'opacity-95 [filter:drop-shadow(0_18px_22px_rgba(45,90,45,0.28))]')}
               />
             </div>
           ) : null
@@ -201,7 +207,7 @@ function SceneProduits({
               priority
               fetchPriority="high"
               sizes="(min-width: 1024px) 340px, 1px"
-              className="object-contain object-bottom [filter:drop-shadow(0_28px_32px_rgba(45,90,45,0.34))]"
+              className={cn('object-contain object-bottom', fondBlanc ? OMBRE_AUCUNE : '[filter:drop-shadow(0_28px_32px_rgba(45,90,45,0.34))]')}
             />
           </div>
         )}
