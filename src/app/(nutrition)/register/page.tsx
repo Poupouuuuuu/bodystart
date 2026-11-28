@@ -11,6 +11,7 @@ import { Eye, EyeOff, UserPlus, Check } from 'lucide-react'
 import { useCustomer } from '@/context/CustomerContext'
 import Image from '@/components/ui/Image'
 import { cn } from '@/lib/utils'
+import { MESSAGES_COMPTE, messagesErreursInscription } from '@/lib/erreurs-compte'
 
 function RegisterContent() {
   const router = useRouter()
@@ -48,26 +49,34 @@ function RegisterContent() {
 
     setLoading(true)
     setErrors([])
-    const { errors: apiErrors } = await register(form)
-    if (apiErrors.length > 0) {
-      setErrors(apiErrors.map((err) => err.message))
-    } else {
-      // Abonnement marketing si coché — système unifié : consentement enregistré
-      // dans Shopify (même pipeline que la popup), plus d'audience Resend.
-      if (form.acceptsMarketing) {
-        try {
-          await fetch('/api/subscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: form.email }),
-          })
-        } catch {
-          // Non bloquant — on continue
+    // try/finally : une exception (réseau, limite Shopify) laissait le bouton
+    // figé. Les customerUserErrors sont traduits à partir de leur code
+    // (lib/erreurs-compte), jamais affichés bruts.
+    try {
+      const { errors: apiErrors } = await register(form)
+      if (apiErrors.length > 0) {
+        setErrors(messagesErreursInscription(apiErrors))
+      } else {
+        // Abonnement marketing si coché — système unifié : consentement enregistré
+        // dans Shopify (même pipeline que la popup), plus d'audience Resend.
+        if (form.acceptsMarketing) {
+          try {
+            await fetch('/api/subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: form.email }),
+            })
+          } catch {
+            // Non bloquant — on continue
+          }
         }
+        router.push('/account')
       }
-      router.push('/account')
+    } catch {
+      setErrors([MESSAGES_COMPTE.inscriptionImpossible])
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const inputBase = "w-full px-5 py-3.5 rounded-xl border text-[16px] md:text-[14px] font-medium transition-all focus:outline-none bg-white border-spruce/20 text-ink focus:border-fresh focus:ring-1 focus:ring-fresh/30 placeholder:text-ink-mute/60"
@@ -99,7 +108,7 @@ function RegisterContent() {
         <div className="rounded-2xl p-8 md:p-10 border bg-white border-spruce/10">
           <form onSubmit={handleSubmit} className="space-y-5">
             {errors.length > 0 && (
-              <div className="p-4 bg-terracotta/10 border border-terracotta/20 rounded-xl space-y-1">
+              <div role="alert" className="p-4 bg-terracotta/10 border border-terracotta/20 rounded-xl space-y-1">
                 {errors.map((err, i) => (
                   <p key={i} className="text-[13px] font-medium text-terracotta">{err}</p>
                 ))}
