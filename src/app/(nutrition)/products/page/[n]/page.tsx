@@ -38,7 +38,7 @@ export default async function CataloguePage({ params }: Props) {
   return (
     <div className="bg-canvas min-h-screen">
       {/* Mobile : bandeau resserré comme /products (28/11/2026), H1 inchangé. */}
-      <section className="saison-bandeau pt-4 pb-2 max-md:!mb-0 max-md:!pb-8 md:pt-12 md:pb-6">
+      <section className="saison-bandeau pt-5 pb-2 max-md:!mb-0 max-md:!pb-8 md:pt-12 md:pb-6">
         <div className="container">
           <p className="mb-3 hidden text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute md:block">Catalogue</p>
           <h1 className="font-display text-[28px] font-extrabold leading-[1.05] tracking-tight text-spruce md:text-[44px]">

@@ -28,8 +28,9 @@ export default async function ProductsPage() {
           sous md. H1 inchangé (texte et balise). max-md:! : le thème de
           saison impose sa marge basse (1,75 rem) et un fond plus haut
           (2,25 rem en Black Week, 2,75 rem à Noël) ; 2 rem suffisent à la
-          guirlande de Noël (24 px posée à 6 px du bas). */}
-      <section className="saison-bandeau pt-4 pb-3 max-md:!mb-0 max-md:!pb-8 md:pt-12 md:pb-6">
+          guirlande de Noël (24 px posée à 6 px du bas) ; pt-5 : le H1 ne
+          touche pas la guirlande accrochée sous l'en-tête. */}
+      <section className="saison-bandeau pt-5 pb-3 max-md:!mb-0 max-md:!pb-8 md:pt-12 md:pb-6">
         <div className="container">
           <p className="hidden md:block text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
             Catalogue

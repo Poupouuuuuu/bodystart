@@ -295,9 +295,9 @@ export function ProductCardShop({
         {/* Format et parfums (« 1 kg · 6 parfums ») ; parfum trouvé par la recherche à la place. */}
         <p className="mt-1 min-h-[1.25rem] line-clamp-1 text-[13px] leading-snug text-ink-mute">{details}</p>
 
-        <div className="mt-auto pt-2.5">
+        <div className="mt-auto pt-2 sm:pt-2.5">
           {/* Prix : « dès », prix, prix barré réel ; passe à la ligne sur carte étroite. */}
-          <div className="mb-2.5 flex min-w-0 flex-wrap items-baseline gap-x-1.5">
+          <div className="mb-2 flex min-w-0 flex-wrap items-baseline gap-x-1.5 sm:mb-2.5">
             {prix?.from && <span className="text-[13px] font-medium text-ink-mute">dès</span>}
             <span className="whitespace-nowrap font-display text-[19px] font-extrabold tracking-tight text-spruce">
               {formatPrice(prix?.price ?? product.priceRange.minVariantPrice)}

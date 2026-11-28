@@ -547,7 +547,7 @@ export function ProductsCatalog({
             mêmes compteurs que la colonne de filtres. Tablette (md à lg) :
             la même rangée sans ses commandes (barre de contrôle au-dessus),
             rendue une seule fois pour ne pas alourdir le HTML. */}
-        <div className="lg:hidden mb-3 space-y-2 pt-3 md:mb-4 md:pt-0">
+        <div className="lg:hidden mb-2 space-y-2 pt-2 md:mb-4 md:pt-0">
           <PastillesFiltres
             libelle="Filtres, tri et catégories"
             avant={
