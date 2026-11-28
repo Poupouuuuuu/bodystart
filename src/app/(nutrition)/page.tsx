@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import HeroV3 from '@/components/home/v3/HeroV3'
-import MarqueeBand from '@/components/home/v3/MarqueeBand'
-import ObjectifsV3 from '@/components/home/v3/ObjectifsV3'
-import StatsBand from '@/components/home/v3/StatsBand'
-import BestSellersV3 from '@/components/home/v3/BestSellersV3'
-import ConseilV3 from '@/components/home/v3/ConseilV3'
+import HautAccueil from '@/components/home/accueil/HautAccueil'
+import MeilleuresVentes from '@/components/home/accueil/MeilleuresVentes'
+import RayonsAccueil from '@/components/home/accueil/RayonsAccueil'
+import BarreConfiance from '@/components/home/accueil/BarreConfiance'
+import PacksAccueil from '@/components/home/accueil/PacksAccueil'
+import TrouveTonProduit from '@/components/home/accueil/TrouveTonProduit'
 import VuSurInstagramV3 from '@/components/home/v3/VuSurInstagramV3'
 import BandeauParrainageV2 from '@/components/home/v2/BandeauParrainageV2'
 import BoutiqueGalleryV2 from '@/components/home/v2/BoutiqueGalleryV2'
@@ -12,18 +12,22 @@ import StoreCallV2 from '@/components/home/v2/StoreCallV2'
 import Reveal from '@/components/ui/Reveal'
 import { getCoffrets, getCollectionByHandle } from '@/lib/shopify'
 import { getVedettesAccueil } from '@/lib/shopify/vedettes'
+import { getRayonsAccueil } from '@/lib/shopify/rayons-accueil'
 import { buildPageMetadata } from '@/lib/seo'
 import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 import CoffretsNoelV3 from '@/components/home/v3/CoffretsNoelV3'
 import { coffretsVisibles, dateCoffrets } from '@/lib/coffrets'
-import { finPeriode, lireApercu, periodeServeur } from '@/lib/saison'
+import { finPeriode, indexPeriode, lireApercu, periodeServeur } from '@/lib/saison'
+import { dernierJour, periodeOffreServeur } from '@/lib/offre-accueil'
 import { apercuSaison, getSaison } from '@/lib/shopify/saison'
 import { composerSelection, MEILLEURES_VENTES_AFFICHEES } from '@/lib/selection-saison'
 import { decorSaison } from '@/components/saison/decors'
 import SelectionSaison from '@/components/saison/SelectionSaison'
 
-// REDESIGN V2 (2026-05-25) — cf. tech-specs/redesign-v2-direction-artistique.md
-// Ordre des sections : §B.Home.1-8 (avis retire, cf. site-rewrite-copy-v1.md §3.6)
+// Refonte « site qui vend » du 28/11/2026 : offre et bouton au premier écran
+// (texte, plus de grande photo), meilleures ventes avec ajout rapide, rayons,
+// barre de confiance, puis packs et coffrets, conseil, boutique et blog.
+// (Avant : REDESIGN V2 du 2026-05-25, tech-specs/redesign-v2-direction-artistique.md.)
 
 export const metadata: Metadata = {
   ...buildPageMetadata({
@@ -89,25 +93,44 @@ export default async function HomePage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  // Lectures Shopify en parallèle (régénération ISR plus courte). Les packs ne
-  // servent qu'à la sélection de saison, ignorés hors période.
-  const [coffrets, vedettes, periode, collectionPacks, variante] = await Promise.all([
+  // Lectures Shopify en parallèle (régénération ISR plus courte). Les packs
+  // servent à la sélection de saison, ou au bloc packs hors saison.
+  const [coffrets, vedettes, saison, apercu, collectionPacks, variante, rayons] = await Promise.all([
     coffretsDuMoment(searchParams),
     getVedettesAccueil(PLACES_VEDETTES),
-    Promise.all([getSaison(), apercuAccueil(searchParams)]).then(([saison, apercu]) =>
-      periodeServeur(saison, new Date(), apercu)
-    ),
+    getSaison(),
+    apercuAccueil(searchParams),
     getCollectionByHandle('packs', 24).catch(() => null),
     varianteHero(searchParams),
+    getRayonsAccueil(),
   ])
+  const now = new Date()
   // Déco de saison (metafield bodystart.saison, components/saison) : haut de
-  // page en deux parties, sélection et séparateurs pendant la période, rien
-  // sinon.
+  // page, sélection et séparateurs pendant la période, rien sinon.
+  const periode = periodeServeur(saison, now, apercu)
   const decor = decorSaison(periode?.theme)
-  // Packs : collection `packs`, comme la page /packs (mêmes cartes). Les
-  // vedettes proposées à côté ne répètent ni le bloc « Ce qui part vite » ni
-  // un produit déjà contenu dans un pack.
-  const packs = periode && decor ? (collectionPacks?.products?.nodes ?? []) : []
+  // Offre du haut de page (lib/offre-accueil) : période rendue ici, puis
+  // recalculée à l'heure du navigateur (OffreAccueil, modèle du header).
+  const periodeOffre = periodeOffreServeur(saison, now, apercu)
+  const offre = {
+    periodes: saison,
+    rang: indexPeriode(saison, periodeOffre),
+    dernierJour: dernierJour(periodeOffre, now),
+    apercu,
+    previsualisation: process.env.VERCEL_ENV !== 'production',
+  }
+  // Scène produits du haut de page (ordinateur) : les coffrets pendant Noël,
+  // sinon les premières vedettes. Produits en stock avec image seulement.
+  const avecImage = (p: (typeof vedettes)[number]) => !!p.featuredImage && p.availableForSale !== false
+  const coffretsVisuel = periodeOffre?.theme === 'noel' ? coffrets.filter(avecImage) : []
+  const visuel = (coffretsVisuel.length > 0 ? coffretsVisuel : vedettes.filter(avecImage)).slice(0, 3)
+  const libelleVisuel = coffretsVisuel.length > 0 ? 'Coffret de Noël' : 'Best-seller'
+
+  // Packs : collection `packs`, comme la page /packs (mêmes cartes). En
+  // saison, ils vont dans la sélection, dont les vedettes ne répètent ni les
+  // meilleures ventes ni un produit déjà contenu dans un pack.
+  const tousPacks = collectionPacks?.products?.nodes ?? []
+  const packs = periode && decor ? tousPacks : []
   const selection =
     periode && decor
       ? composerSelection(packs, vedettes, [
@@ -121,37 +144,28 @@ export default async function HomePage({
   const SousHero = decor?.SousHero
   return (
     <>
-      {/* 1. Hero (LCP, rendu immediat — jamais enveloppe dans <Reveal>) */}
-      <HeroV3 decor={decor} variante={variante} />
+      {/* 1. Offre (LCP texte, rendu immédiat, jamais dans <Reveal>) */}
+      <HautAccueil decor={decor} variante={variante} offre={offre} visuel={visuel} libelleVisuel={libelleVisuel} />
       {/* Bande de saison juste sous le haut de page (Noël : guirlande). */}
       {SousHero && <SousHero />}
 
-      {/* 2. Bandeau reassurance — volontairement SANS reveal : il est visible
-             des le chargement sur desktop, l'animer donnerait l'impression que
-             toute la page bouge au premier coup d'oeil. */}
-      <MarqueeBand />
+      {/* 2. Meilleures ventes, rayons, confiance : dans le premier écran et
+             le suivant, SANS <Reveal> ni <Suspense> (visibles tout de suite). */}
+      <MeilleuresVentes products={vedettes.slice(0, MEILLEURES_VENTES_AFFICHEES)} />
+      <RayonsAccueil rayons={rayons} />
+      <BarreConfiance />
 
-      {/* PREMIUM V2 : les sections sous la ligne de flottaison montent en
-          douceur a l'entree dans l'ecran. Sans JS ou en prefers-reduced-motion,
-          <Reveal> n'applique aucun masquage (cf. globals.css .reveal). */}
+      <Separateur />
 
-      {/* 2 bis. Coffrets de Noël, en saison seulement (rien sinon) */}
+      {/* 3. Coffrets de Noël (du 2/11 au 24/12, rien sinon), puis les packs :
+             sélection de saison (packs et vedettes) pendant une période
+             décorée, bloc packs sinon. */}
       {coffrets.length > 0 && (
         <Reveal>
           <CoffretsNoelV3 coffrets={coffrets} />
         </Reveal>
       )}
-
-      {/* 3. Best-sellers (data Shopify, streame) */}
-      <Reveal>
-        <BestSellersV3 products={vedettes} />
-      </Reveal>
-
-      {/* 3 ter. Sélection de saison (packs puis vedettes), pendant
-             une période décorée seulement. Après les meilleures ventes et pas
-             sous le haut de page : ses images partaient avec la photo (LCP
-             mobile +0,6 s mesuré le 19/10/2026). */}
-      {periode && decor && selection && (
+      {periode && decor && selection ? (
         <Reveal>
           <SelectionSaison
             packs={selection.packs}
@@ -160,59 +174,43 @@ export default async function HomePage({
             {...decor.selection}
           />
         </Reveal>
+      ) : (
+        <Reveal>
+          <PacksAccueil packs={tousPacks} />
+        </Reveal>
       )}
 
-      {/* 3 bis. Vu sur Instagram — vidéos d'influenceurs tournées à la boutique.
-          Masqué tant que src/lib/social-proof.ts est vide (Reveal interne). */}
+      <Separateur />
+
+      {/* 4. Trouve ton produit en 1 min (questionnaire /conseil) */}
+      <Reveal>
+        <TrouveTonProduit />
+      </Reveal>
+
+      {/* Vu sur Instagram : masqué tant que src/lib/social-proof.ts est vide. */}
       <VuSurInstagramV3 />
 
       <Separateur />
 
-      {/* 4. Objectifs — liste typographique */}
-      <Reveal>
-        <ObjectifsV3 />
-      </Reveal>
-
-      <Separateur />
-
-      {/* 5. Le conseil qu'aucun site n'a (differenciateur) */}
-      <Reveal>
-        <ConseilV3 />
-      </Reveal>
-
-      <Separateur />
-
-      {/* 5a. Nos guides : maillage vers le blog (audit SEO du 10/10/2026) */}
-      <Reveal>
-        <NosGuidesV3 />
-      </Reveal>
-
-      {/* 5b. Preuves — chiffres geants sur vert sapin (chapitre) */}
-      <Reveal>
-        <StatsBand />
-      </Reveal>
-
-      {/* 6. Bande parrainage (exploite loyalty L4) */}
-      <Reveal>
-        <BandeauParrainageV2 />
-      </Reveal>
-
-      <Separateur />
-
-      {/* 7a. Galerie boutique (vraies photos du magasin, 07/2026) */}
+      {/* 5. La boutique : vraies photos (carrousel), puis infos pratiques */}
       <Reveal>
         <BoutiqueGalleryV2 />
       </Reveal>
-
-      <Separateur />
-
-      {/* 7b. Boutique & Click & Collect */}
       <Reveal>
         <StoreCallV2 />
       </Reveal>
 
-      {/* 8. Avis : retire (cf. site-rewrite-copy-v1.md §3.6). A reactiver
-             quand on a de vrais avis Google. */}
+      <Separateur />
+
+      {/* 6. Le blog : nos guides (maillage, audit SEO du 10/10/2026) */}
+      <Reveal>
+        <NosGuidesV3 />
+      </Reveal>
+
+      {/* 7. Parrainage (programme fidélité) */}
+      <Reveal>
+        <BandeauParrainageV2 />
+      </Reveal>
     </>
   )
 }
