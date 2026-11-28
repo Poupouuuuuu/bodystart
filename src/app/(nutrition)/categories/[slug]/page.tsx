@@ -140,7 +140,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             leur page), le rayon courant en premier, marqué. Hors du bandeau :
             le thème de saison y recolore les liens. */}
         <PastillesFiltres
-          className="pt-5 lg:hidden"
+          className="mb-6 pt-5 lg:hidden"
           libelle="Rayons"
           pastilles={[cat, ...CATEGORY_PAGES.filter((c) => c.slug !== cat.slug)].map((c) => ({
             cle: c.slug,

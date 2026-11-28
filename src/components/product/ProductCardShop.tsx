@@ -69,11 +69,17 @@ export interface ProductCardShopProps {
   varianteId?: string | null
   /** Parfum ou format trouvé, affiché à la place du sous-titre. */
   parfum?: string | null
+  /**
+   * Première rangée d'une grille en haut de page (/products, recherche) :
+   * l'image du produit est l'élément LCP sur mobile depuis qu'elle est plus
+   * grande, elle part donc en priorité (priority + fetchPriority high).
+   */
+  prioritaire?: boolean
 }
 
 type EtatAjout = 'repos' | 'ajout' | 'ajoute'
 
-export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: ProductCardShopProps) {
+export function ProductCardShop({ product, stockAtStore, varianteId, parfum, prioritaire = false }: ProductCardShopProps) {
   const href = `/products/${product.handle}${varianteId ? `?variant=${varianteId}` : ''}`
   const variantes = product.variants.nodes
   const variant = variantes[0]
@@ -191,6 +197,8 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum }: P
               alt={altImage(product.featuredImage, altProduit(product))}
               width={200}
               height={200}
+              priority={prioritaire}
+              fetchPriority={prioritaire ? 'high' : undefined}
               // h-[84%] (70 % avant le 28/11/2026) : le produit est la star de
               // la carte. Ombre portée TEINTÉE verte, jamais noire.
               className={cn(

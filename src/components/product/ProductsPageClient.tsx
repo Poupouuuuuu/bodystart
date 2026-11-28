@@ -834,11 +834,12 @@ export function ProductsCatalog({
                   className="grid grid-cols-2 md:grid-cols-3 gap-5 lg:gap-6"
                   onClickCapture={rememberGridState}
                 >
-                  {filtered.slice(0, visibleCount).map((product) => (
+                  {filtered.slice(0, visibleCount).map((product, i) => (
                     <ProductCardShop
                       key={product.id}
                       product={product}
                       stockAtStore={stockByProductId[product.id]}
+                      prioritaire={i < 2}
                     />
                   ))}
                 </div>
