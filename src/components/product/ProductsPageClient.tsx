@@ -544,8 +544,10 @@ export function ProductsCatalog({
             objectifs), tri, recherche repliée derrière la loupe, puis les
             catégories ; sous-catégories en 2e rangée quand une catégorie est
             choisie. Mêmes filtres, mêmes paramètres d'URL (?cat=, ?tag=) et
-            mêmes compteurs que la colonne de filtres. */}
-        <div className="md:hidden mb-3 space-y-2 pt-3">
+            mêmes compteurs que la colonne de filtres. Tablette (md à lg) :
+            la même rangée sans ses commandes (barre de contrôle au-dessus),
+            rendue une seule fois pour ne pas alourdir le HTML. */}
+        <div className="lg:hidden mb-3 space-y-2 pt-3 md:mb-4 md:pt-0">
           <PastillesFiltres
             libelle="Filtres, tri et catégories"
             avant={
@@ -554,7 +556,7 @@ export function ProductsCatalog({
                   type="button"
                   onClick={() => setShowFilters(true)}
                   className={cn(
-                    'inline-flex h-11 flex-shrink-0 items-center gap-1.5 rounded-full border px-4 text-[14px] font-semibold transition-colors',
+                    'inline-flex h-11 flex-shrink-0 md:hidden items-center gap-1.5 rounded-full border px-4 text-[14px] font-semibold transition-colors',
                     activeGoal !== 'all' || priceRange[1] < 200
                       ? 'saison-actif-doux border-spruce/30 bg-sage text-spruce'
                       : 'border-spruce/15 bg-white text-spruce'
@@ -567,7 +569,7 @@ export function ProductsCatalog({
                     téléphone, lecteurs d'écran) ; la pastille n'est que l'habillage. */}
                 <div
                   className={cn(
-                    'relative inline-flex h-11 flex-shrink-0 items-center gap-1.5 rounded-full border px-4 text-[14px] font-semibold transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-fresh',
+                    'relative inline-flex h-11 flex-shrink-0 md:hidden items-center gap-1.5 rounded-full border px-4 text-[14px] font-semibold transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-fresh',
                     sortKey !== 'best'
                       ? 'saison-actif-doux border-spruce/30 bg-sage text-spruce'
                       : 'border-spruce/15 bg-white text-spruce'
@@ -596,7 +598,7 @@ export function ProductsCatalog({
                   aria-expanded={rechercheOuverte || !!searchQuery}
                   aria-controls="recherche-catalogue"
                   className={cn(
-                    'inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border transition-colors',
+                    'inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border transition-colors md:hidden',
                     rechercheOuverte || searchQuery
                       ? 'saison-actif-doux border-spruce/30 bg-sage text-spruce'
                       : 'border-spruce/15 bg-white text-spruce'
@@ -604,13 +606,13 @@ export function ProductsCatalog({
                 >
                   <Search className="h-4 w-4" aria-hidden="true" />
                 </button>
-                <span className="my-auto h-6 w-px flex-shrink-0 bg-spruce/15" aria-hidden="true" />
+                <span className="my-auto h-6 w-px flex-shrink-0 bg-spruce/15 md:hidden" aria-hidden="true" />
               </>
             }
             pastilles={visibleCategories.length > 0 ? pastillesCategories : []}
           />
           {(rechercheOuverte || searchQuery) && (
-            <div className="relative" id="recherche-catalogue">
+            <div className="relative md:hidden" id="recherche-catalogue">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-mute" aria-hidden="true" />
               <input
                 type="search"
@@ -638,18 +640,6 @@ export function ProductsCatalog({
             <PastillesFiltres discret libelle={`Sous-catégories : ${currentCategory.label}`} pastilles={pastillesSous} />
           )}
         </div>
-
-        {/* Tablette (md à lg) : catégories puis sous-catégories en pastilles,
-            sous la barre de contrôle (la colonne de filtres reste derrière
-            « Filtres »). */}
-        {visibleCategories.length > 0 && (
-          <div className="hidden md:block lg:hidden mb-4 space-y-2">
-            <PastillesFiltres libelle="Catégories" pastilles={pastillesCategories} />
-            {pastillesSous.length > 0 && currentCategory && (
-              <PastillesFiltres discret libelle={`Sous-catégories : ${currentCategory.label}`} pastilles={pastillesSous} />
-            )}
-          </div>
-        )}
 
         <div className="flex gap-8">
           {/* ─── Sidebar ─── */}
