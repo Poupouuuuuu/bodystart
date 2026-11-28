@@ -180,9 +180,10 @@ export default async function ProductPage({ params }: Props) {
   const coffret = estCoffret(product)
   const retourCoffrets = coffretsVisibles(new Date()) ? COFFRETS_CHEMIN : '/products'
   const surTitre = coffret ? { label: COFFRETS_LIBELLE, href: retourCoffrets } : null
-  // Fil d'Ariane (rayon déduit du type, comme le menu) et 1 ou 2 guides du
-  // rayon choisis d'après les étiquettes (lib/rayon-fiche).
-  const rayon = rayonDeFiche(product, { coffretsOuverts: coffretsVisibles(new Date()) })
+  // Fil d'Ariane (rayon déduit du type, comme le menu ; Packs pour les packs et
+  // les coffrets) et 1 ou 2 guides du rayon choisis d'après les étiquettes
+  // (lib/rayon-fiche). Le même rayon sert au BreadcrumbList plus bas.
+  const rayon = rayonDeFiche(product)
   const guides = guidesDeFiche(product).flatMap((slug) => {
     const article = BLOG_ARTICLES.find((a) => a.slug === slug)
     return article ? [{ slug, title: article.title, excerpt: article.excerpt }] : []

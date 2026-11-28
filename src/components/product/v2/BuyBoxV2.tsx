@@ -13,7 +13,7 @@ import BundleGalleryV2 from './BundleGalleryV2'
 import BundleSelectorsV2 from './BundleSelectorsV2'
 import StockAlertForm from './StockAlertForm'
 import { getBundleComponentDetailsFromVariant, getCompleteBundleVariants, pickInitialBundleVariant } from '@/lib/shopify/bundle'
-import { initialImageIndex, pickDefaultVariant, variantFromSearch } from '@/lib/product-variant'
+import { initialImageIndex, libelleVariante, pickDefaultVariant, variantFromSearch } from '@/lib/product-variant'
 import TrackViewItem from '@/components/analytics/TrackViewItem'
 import { discountPctOf } from '@/lib/product-price'
 import { mentionCadeauFiche, type CadeauFiche } from '@/lib/paliers'
@@ -330,6 +330,8 @@ export default function BuyBoxV2({
 
   // Disponibilité en ligne de la variante sélectionnée (achat e-commerce).
   const selectedUnavailable = !selectedVariant?.availableForSale
+  // Choix rappelé dans la barre fixe (saveur, format, formule d'un pack).
+  const choixVariante = libelleVariante(selectedVariant, variants)
   // Une autre variante (saveur/format) est-elle dispo ? → on invite à la choisir.
   const hasOtherAvailableVariant = variants.some((v) => v.availableForSale)
 
@@ -720,21 +722,32 @@ export default function BuyBoxV2({
           isStickyVisible && !isCartOpen ? 'translate-y-0' : 'translate-y-full'
         )}
       >
-        <div className="container flex items-center gap-4">
-          <div className="hidden md:flex flex-col min-w-0 flex-1">
-            <span className="font-semibold text-ink text-[14px] truncate">{title}</span>
-            <span className="text-ink-mute text-[12px]">{formatPoids(selectedVariant.title)}</span>
+        <div className="container flex items-center gap-3 md:gap-4">
+          {/* Choix + prix (28/11/2026). Mobile : la formule ou variante choisie
+              sur une ligne tronquée, le prix dessous. Ordinateur : titre et
+              choix à gauche, prix à droite. min-w-0 : sans lui, un long nom
+              de saveur pousserait le bouton hors de l'écran au lieu d'être
+              coupé par « … ». */}
+          <div className="flex min-w-0 flex-1 flex-col md:flex-row md:items-center md:gap-4">
+            <div className="min-w-0 md:flex-1">
+              <p className="hidden truncate text-[14px] font-semibold text-ink md:block">{title}</p>
+              {choixVariante && (
+                <p className="truncate text-[12px] leading-[1.3] text-ink-mute" title={choixVariante}>
+                  {choixVariante}
+                </p>
+              )}
+            </div>
+            {/* Prix visible aussi sur mobile : la barre y est le seul endroit ou
+                prix et CTA sont ensemble au premier ecran. */}
+            <span className="block whitespace-nowrap font-display text-[20px] font-extrabold leading-tight text-spruce tabular-nums md:text-[18px]">
+              {formatPrice(selectedVariant.price)}
+            </span>
           </div>
-          {/* Prix visible aussi sur mobile : la barre y est le seul endroit ou
-              prix et CTA sont ensemble au premier ecran. */}
-          <span className="block font-display font-extrabold text-spruce text-[20px] md:text-[18px] tabular-nums whitespace-nowrap">
-            {formatPrice(selectedVariant.price)}
-          </span>
           <button
             onClick={handleAddToCart}
             disabled={!selectedVariant?.availableForSale || adding}
             className={cn(
-              'flex-1 md:flex-none h-12 md:h-11 px-6 md:px-7 rounded-full text-white font-semibold text-[15px] md:text-[14px] flex items-center justify-center gap-2 transition-colors',
+              'shrink-0 h-12 md:h-11 px-6 md:px-7 rounded-full text-white font-semibold text-[15px] md:text-[14px] flex items-center justify-center gap-2 transition-colors',
               selectedVariant?.availableForSale && !adding
                 ? 'bg-fresh hover:bg-fresh-deep'
                 : 'bg-ink-mute/40 cursor-not-allowed'
