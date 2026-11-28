@@ -4,12 +4,31 @@
     "@typescript-eslint/no-unused-vars": [
       "warn",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "next/image",
+            "message": "Importe Image depuis @/components/ui/Image. L'optimiseur Vercel (/_next/image) est coupé depuis le 25/11/2026 (402) : ce composant sert les images Shopify par le CDN Shopify et les photos locales par leurs variantes (scripts/images-tailles.mjs)."
+          },
+          {
+            "name": "next/legacy/image",
+            "message": "Importe Image depuis @/components/ui/Image. L'optimiseur Vercel (/_next/image) est coupé depuis le 25/11/2026 (402) : ce composant sert les images Shopify par le CDN Shopify et les photos locales par leurs variantes (scripts/images-tailles.mjs)."
+          }
+        ]
+      }
     ]
   },
   "overrides": [
     {
       "files": ["src/app/api/**/route.ts"],
       "rules": { "@typescript-eslint/no-require-imports": "off" }
+    },
+    {
+      "files": ["src/components/ui/Image.tsx"],
+      "rules": { "no-restricted-imports": "off" }
     }
   ]
 }

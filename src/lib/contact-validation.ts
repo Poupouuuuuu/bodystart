@@ -4,6 +4,13 @@
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+/**
+ * Affiché dans le formulaire quand l'e-mail destiné à la boutique n'est pas
+ * parti (réponse 502 de /api/contact) : le client ne doit pas croire qu'on va
+ * le rappeler.
+ */
+export const MESSAGE_CONTACT_NON_PARTI = "Ton message n'est pas parti. Appelle-nous au 07 61 84 75 80 ou réessaie."
+
 export interface DemandeContact {
   name: string
   email: string | null
