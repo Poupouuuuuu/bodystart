@@ -43,6 +43,7 @@ const REQUETE = `
           id
           title
           availableForSale
+          currentlyNotInStock
           requiresComponents
           selectedOptions {
             name
@@ -72,9 +73,24 @@ export function chargerProduitAjout(handle: string): Promise<ProduitAjout | null
   const deja = enCours.get(handle)
   if (deja) return deja
   const promesse = shopifyFetch<{
-    product: (Omit<ProduitAjout, 'variants'> & { variants: { nodes: VarianteAjout[] } }) | null
+    product:
+      | (Omit<ProduitAjout, 'variants'> & {
+          variants: { nodes: (VarianteAjout & { currentlyNotInStock?: boolean | null })[] }
+        })
+      | null
   }>(REQUETE, { handle })
-    .then(({ product }) => (product ? { ...product, variants: product.variants.nodes } : null))
+    // Variante vendable mais à 0 (précommande) : en rupture pour l'ajout rapide.
+    .then(({ product }) =>
+      product
+        ? {
+            ...product,
+            variants: product.variants.nodes.map(({ currentlyNotInStock, ...v }) => ({
+              ...v,
+              availableForSale: v.availableForSale && !currentlyNotInStock,
+            })),
+          }
+        : null
+    )
     .catch((err) => {
       enCours.delete(handle)
       throw err

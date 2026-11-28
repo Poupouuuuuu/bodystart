@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { estNouveau, formatCarte, ligneDetailsCarte, nombreDeParfums, resumeCarte, stockBasCarte } from './carte-produit'
+import { estNouveau, formatCarte, ligneDetailsCarte, nombreDeParfums, offresDePaliers, resumeCarte, stockBasCarte } from './carte-produit'
 
 const opt = (name: string, ...vals: string[]) => ({ name, optionValues: vals.map((v) => ({ name: v })) })
 const MAINTENANT = new Date('2026-11-28T02:00:00Z')
@@ -74,5 +74,67 @@ describe('stockBasCarte', () => {
   })
   it('jamais sur un produit à plusieurs variantes (le total ne dit rien du parfum voulu)', () => {
     expect(stockBasCarte([v(1), v(1)], 2)).toBeNull()
+  })
+})
+
+describe('pastille « Offerte dès … »', () => {
+  const CREA = 'gid://shopify/ProductVariant/111'
+  const SHAKER = 'gid://shopify/ProductVariant/222'
+  const config = {
+    periodes: [
+      {
+        nom: 'Black Week',
+        du: '2026-11-21T00:00:00+01:00',
+        au: '2026-11-28T23:59:59+01:00',
+        paliers: [
+          { montant: 85, type: 'livraison' as const, libelle: 'Livraison offerte' },
+          { montant: 100, type: 'cadeau' as const, libelle: 'Créatine offerte', variantes: [{ id: CREA, nom: 'Créatine 500 g' }] },
+          { montant: 150, type: 'cadeau' as const, libelle: 'Shaker offert', variantes: [{ id: SHAKER, nom: 'Shaker' }] },
+        ],
+      },
+    ],
+  }
+
+  it('une pastille par variante cadeau en stock de la période en cours', () => {
+    const offres = offresDePaliers(config, { [SHAKER]: false }, MAINTENANT)
+    expect(offres[CREA]).toEqual({ libelle: 'Offerte dès 100\u00a0€', fin: '2026-11-28T23:59:59+01:00' })
+    expect(offres[SHAKER]).toBeUndefined()
+  })
+  it('rien hors période', () => {
+    expect(offresDePaliers(config, {}, new Date('2026-11-29T00:30:00+01:00'))).toEqual({})
+    expect(offresDePaliers(null, {}, MAINTENANT)).toEqual({})
+  })
+  it('la carte la porte si la variante cadeau du produit est en stock', () => {
+    const offres = offresDePaliers(config, {}, MAINTENANT)
+    const v = (id: string, dispo = true, precommande = false) => ({
+      id,
+      availableForSale: dispo,
+      currentlyNotInStock: precommande,
+      price: { amount: '36.9', currencyCode: 'EUR' },
+      compareAtPrice: null,
+    })
+    const crea = (variantes: ReturnType<typeof v>[]) =>
+      resumeCarte({ title: 'Créatine', createdAt: '2024-01-01T00:00:00Z', prixVariantes: { nodes: variantes } }, MAINTENANT, offres)
+    expect(crea([v('autre'), v(CREA)])).toEqual({ offre: 'Offerte dès 100\u00a0€', offreFin: '2026-11-28T23:59:59+01:00' })
+    expect(crea([v('autre'), v(CREA, false)])).toBeNull()
+    expect(crea([v('autre')])).toBeNull()
+  })
+})
+
+describe('produit tout à 0', () => {
+  const v = (dispo: boolean, precommande: boolean) => ({
+    availableForSale: dispo,
+    currentlyNotInStock: precommande,
+    price: { amount: '10', currencyCode: 'EUR' },
+    compareAtPrice: null,
+  })
+  const r = (nodes: ReturnType<typeof v>[]) =>
+    resumeCarte({ title: 'X', createdAt: '2024-01-01T00:00:00Z', prixVariantes: { nodes } }, MAINTENANT)
+  it('épuisé quand les seules variantes vendables sont en précommande', () => {
+    expect(r([v(true, true), v(false, false)])).toEqual({ epuise: true })
+  })
+  it('pas épuisé avec une variante en stock ; rien à dire si Shopify le dit déjà épuisé', () => {
+    expect(r([v(true, true), v(true, false)])).toBeNull()
+    expect(r([v(false, false)])).toBeNull()
   })
 })

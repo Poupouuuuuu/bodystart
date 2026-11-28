@@ -35,7 +35,7 @@ import {
 import type { ShopifyProduct, ShopifyCollection, ShopifyCart, ShopifyBlog, ShopifyArticle } from './types'
 import type { CartUserError, CartWarning } from '@/lib/panier-ajout'
 import { computeCardPrice } from '@/lib/product-price'
-import { resumeCarte } from '@/lib/carte-produit'
+import { resumeCarte, type OffresVariantes } from '@/lib/carte-produit'
 
 // ─── PRODUITS ────────────────────────────────────────────────
 
@@ -46,13 +46,13 @@ import { resumeCarte } from '@/lib/carte-produit'
  * options et métachamp format restent côté serveur. Sans ces champs (requête
  * qui ne les demande pas), pas de résumé : la carte n'affiche rien de plus.
  */
-export function withCardPrice<T extends ShopifyProduct>(p: T): T {
+export function withCardPrice<T extends ShopifyProduct>(p: T, offres?: OffresVariantes | null): T {
   const { prixVariantes, optionsCarte, formatMeta, ...rest } = p
   const avecResume = optionsCarte !== undefined || formatMeta !== undefined
   return {
     ...rest,
     cardPrice: computeCardPrice(prixVariantes?.nodes ?? p.variants?.nodes),
-    ...(avecResume ? { carte: resumeCarte({ ...p, optionsCarte, formatMeta }, new Date()) } : {}),
+    ...(avecResume ? { carte: resumeCarte(p, new Date(), offres) } : {}),
   } as T
 }
 
@@ -62,23 +62,25 @@ export async function getProducts(options?: {
   sortKey?: string
   reverse?: boolean
   query?: string
+  /** Pastilles « Offerte dès … » des cartes (lib/offres-cartes, côté serveur), lues en même temps que les produits. */
+  offres?: Promise<OffresVariantes | null>
 }) {
-  const data = await shopifyFetch<{
-    products: {
-      pageInfo: { hasNextPage: boolean; endCursor: string | null }
-      nodes: ShopifyProduct[]
-    }
-  }>(
-    GET_PRODUCTS,
-    {
+  const [data, offres] = await Promise.all([
+    shopifyFetch<{
+      products: {
+        pageInfo: { hasNextPage: boolean; endCursor: string | null }
+        nodes: ShopifyProduct[]
+      }
+    }>(GET_PRODUCTS, {
       first: options?.first ?? 250,
       after: options?.after ?? null,
       sortKey: options?.sortKey ?? 'BEST_SELLING',
       reverse: options?.reverse ?? false,
       query: options?.query ?? null,
-    }
-  )
-  return { ...data.products, nodes: data.products.nodes.map(withCardPrice) }
+    }),
+    options?.offres ?? null,
+  ])
+  return { ...data.products, nodes: data.products.nodes.map((p) => withCardPrice(p, offres)) }
 }
 
 export interface SitemapProduct {
@@ -135,7 +137,7 @@ export const getFeaturedProducts = cache(async (): Promise<ShopifyProduct[]> => 
     const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>(
       GET_FEATURED_PRODUCTS
     )
-    return availableFirst(data.products.nodes.map(withCardPrice))
+    return availableFirst(data.products.nodes.map((p) => withCardPrice(p)))
   } catch {
     // Sans cles API : section vide (graceful)
     return []

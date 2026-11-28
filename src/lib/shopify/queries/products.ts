@@ -48,7 +48,11 @@ export const PRODUCT_CARD_FRAGMENT = `
     # serveur (lib/product-price, via lib/shopify) puis retiré du produit.
     prixVariantes: variants(first: 100) {
       nodes {
+        # id et currentlyNotInStock : pastille « Offerte dès … » et produit
+        # tout à 0 (lib/carte-produit), calculés côté serveur puis retirés.
+        id
         availableForSale
+        currentlyNotInStock
         price {
           amount
           currencyCode
@@ -310,7 +314,9 @@ const CHAMPS_CARTE_ACCUEIL = `
         # Toutes les variantes, champs minimaux : prix de carte (cf. PRODUCT_CARD_FRAGMENT).
         prixVariantes: variants(first: 100) {
           nodes {
+            id
             availableForSale
+            currentlyNotInStock
             price {
               amount
               currencyCode

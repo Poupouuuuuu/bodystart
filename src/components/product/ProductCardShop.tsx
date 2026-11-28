@@ -75,15 +75,30 @@ export interface ProductCardShopProps {
    * grande, elle part donc en priorité (priority + fetchPriority high).
    */
   prioritaire?: boolean
+  /**
+   * Pastille d'offre passée par la page (« Offerte dès 100 € », accueil),
+   * prioritaire sur les autres. Sans elle, celle calculée côté serveur pour
+   * /products et les catégories (product.carte.offre, lib/offres-cartes).
+   */
+  pastilleOffre?: string
 }
 
 type EtatAjout = 'repos' | 'ajout' | 'ajoute'
 
-export function ProductCardShop({ product, stockAtStore, varianteId, parfum, prioritaire = false }: ProductCardShopProps) {
+export function ProductCardShop({
+  product,
+  stockAtStore,
+  varianteId,
+  parfum,
+  prioritaire = false,
+  pastilleOffre,
+}: ProductCardShopProps) {
   const href = `/products/${product.handle}${varianteId ? `?variant=${varianteId}` : ''}`
   const variantes = product.variants.nodes
   const variant = variantes[0]
-  const soldOut = product.availableForSale === false
+  // Épuisé : aucune variante vendable, ou toutes à 0 en précommande
+  // (carte.epuise) : jamais d'ajout rapide, la fiche (alerte de retour).
+  const soldOut = product.availableForSale === false || !!product.carte?.epuise
   const { addItem } = useCart()
   const [etat, setEtat] = useState<EtatAjout>('repos')
   const [feuille, setFeuille] = useState(false)
@@ -118,9 +133,30 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum, pri
   const prix = cardPriceOf(product)
   const discountPct = prix?.discountPct ?? null
 
+  // Offre calculée côté serveur : retirée à la fin de la période, même si la
+  // page (ISR) a été rendue avant (effet, jamais au rendu : pas d'écart
+  // d'hydratation).
+  const offreFin = pastilleOffre ? undefined : product.carte?.offreFin
+  const [offreFinie, setOffreFinie] = useState(false)
+  useEffect(() => {
+    if (!offreFin) return
+    const reste = Date.parse(offreFin) - Date.now()
+    if (Number.isNaN(reste)) return
+    if (reste <= 0) {
+      setOffreFinie(true)
+      return
+    }
+    if (reste > 24 * 60 * 60 * 1000) return
+    const t = setTimeout(() => setOffreFinie(true), reste)
+    return () => clearTimeout(t)
+  }, [offreFin])
+  const offre = pastilleOffre?.trim() || (offreFinie ? null : product.carte?.offre ?? null)
+
   // Par ordre d'utilité commerciale, PLAFONNÉS À 2 (règle du design system).
   // `!!discountPct` : la remise peut valoir 0 (arrondi) et 0 est falsy.
   const badges = [
+    // Offre (cadeau d'un palier) en premier, couleur d'accent du thème.
+    ...(offre ? [{ label: offre, className: 'badge-saison bg-mustard text-mustard-ink' }] : []),
     ...(discountPct ? [{ label: `-${discountPct}\u00a0%`, className: 'bg-terracotta text-white' }] : []),
     ...(stockBas ? [{ label: `Plus que ${stockBas}`, className: 'bg-terracotta/90 text-white' }] : []),
     ...(product.carte?.nouveau ? [{ label: 'Nouveau', className: 'bg-spruce text-white' }] : []),
@@ -219,7 +255,8 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum, pri
         <div className="absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-white to-transparent z-0" />
 
         {/* Pastilles : 2 au plus, coins doux (rounded-lg). */}
-        <div className="absolute left-2.5 top-2.5 z-30 flex flex-col items-start gap-1.5 sm:left-3 sm:top-3">
+        {/* right borné : une pastille longue (« Offerte dès 100 € ») passe à la ligne au lieu d'être rognée. */}
+        <div className="absolute left-2.5 right-2.5 top-2.5 z-30 flex flex-col items-start gap-1.5 sm:left-3 sm:right-3 sm:top-3">
           {soldOut ? (
             <span className="inline-flex items-center rounded-lg bg-ink/90 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white backdrop-blur-sm">
               Épuisé
@@ -229,7 +266,7 @@ export function ProductCardShop({ product, stockAtStore, varianteId, parfum, pri
               <span
                 key={b.label}
                 className={cn(
-                  'inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] backdrop-blur-sm',
+                  'inline-flex items-center rounded-lg px-2.5 py-1 text-[11px] font-semibold uppercase leading-tight tracking-[0.06em] backdrop-blur-sm',
                   b.className
                 )}
               >

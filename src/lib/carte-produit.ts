@@ -13,12 +13,19 @@
 // - « Plus que X » : seulement pour un produit à une seule variante, avec un
 //   stock réel déjà lu (stock de Coignières sur /products, sinon la quantité
 //   vendable de Shopify). Sur un produit à plusieurs parfums, le total de deux
-//   variantes ne dit rien du parfum que le client veut.
+//   variantes ne dit rien du parfum que le client veut ;
+// - « Offerte dès 100 € » (demande de Gestion, 28/11/2026) : une variante du
+//   produit, en stock, est le cadeau d'un palier de la période en cours
+//   (métachamp bodystart.paliers_cadeaux, lu comme le panier : remise active,
+//   cadeau en stock ; lib/offres-cartes) ;
+// - épuisé : aucune variante en stock, précommande comprise (variante vendable
+//   mais currentlyNotInStock) : pas d'ajout rapide, la fiche.
 //
 // Pur, sans réseau. Testé dans carte-produit.test.ts.
 
 import { formatCourt } from '@/lib/alt-produit'
 import { formatPoids } from '@/lib/typo'
+import { periodeActive, type PaliersConfig } from '@/lib/paliers'
 
 export const JOURS_NOUVEAU = 30
 export const SEUIL_STOCK_BAS = 5
@@ -38,6 +45,48 @@ export interface ResumeCarte {
   /** Nombre de parfums, à partir de 2. */
   parfums?: number
   nouveau?: true
+  /** Toutes les variantes à 0 alors que Shopify les dit vendables (précommande). */
+  epuise?: true
+  /** « Offerte dès 100 € » et fin de la période (ISO, absente si sans fin). */
+  offre?: string
+  offreFin?: string
+}
+
+/** Variante cadeau (gid) → pastille et fin de la période. */
+export type OffresVariantes = Record<string, { libelle: string; fin: string | null }>
+
+interface VariantePrix {
+  id?: string
+  availableForSale: boolean
+  currentlyNotInStock?: boolean | null
+}
+
+const enStock = (v: VariantePrix) => v.availableForSale && v.currentlyNotInStock !== true
+
+const euros = (montant: number) =>
+  `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(montant)}\u00a0€`
+
+/**
+ * Pastilles « Offerte dès … » de la période de paliers en cours : une par
+ * variante cadeau en stock (`stock` : variante → en stock, celui de
+ * /api/paliers ; inconnue = en stock, la carte revérifie la variante).
+ */
+export function offresDePaliers(
+  config: Pick<PaliersConfig, 'periodes'> | null,
+  stock: Readonly<Record<string, boolean>>,
+  maintenant: Date
+): OffresVariantes {
+  const periode = periodeActive(config, maintenant)
+  const offres: OffresVariantes = {}
+  if (!periode) return offres
+  for (const palier of periode.paliers) {
+    if (palier.type !== 'cadeau') continue
+    for (const v of palier.variantes ?? []) {
+      if (stock[v.id] === false || offres[v.id]) continue
+      offres[v.id] = { libelle: `Offerte dès ${euros(palier.montant)}`, fin: periode.au }
+    }
+  }
+  return offres
 }
 
 const norm = (s: string) =>
@@ -102,15 +151,25 @@ export function resumeCarte(
     createdAt?: string | null
     optionsCarte?: OptionCarte[] | null
     formatMeta?: { value?: string | null } | null
+    prixVariantes?: { nodes: VariantePrix[] } | null
   },
-  maintenant: Date
+  maintenant: Date,
+  offres?: OffresVariantes | null
 ): ResumeCarte | null {
   const format = formatCarte(p.title, p.optionsCarte, p.formatMeta?.value)
   const parfums = nombreDeParfums(p.optionsCarte)
+  const variantes = p.prixVariantes?.nodes ?? []
+  // Seulement le cas « vendable mais à 0 » : sinon le produit est déjà
+  // availableForSale = false, épuisé pour la carte.
+  const epuise = variantes.some((v) => v.availableForSale) && !variantes.some(enStock)
+  const cadeau = offres ? variantes.find((v) => v.id && offres[v.id] && enStock(v)) : undefined
+  const offre = cadeau?.id ? offres?.[cadeau.id] : undefined
   const resume: ResumeCarte = {
     ...(format ? { format } : {}),
     ...(parfums >= 2 ? { parfums } : {}),
     ...(estNouveau(p, maintenant) ? { nouveau: true as const } : {}),
+    ...(epuise ? { epuise: true as const } : {}),
+    ...(offre ? { offre: offre.libelle, ...(offre.fin ? { offreFin: offre.fin } : {}) } : {}),
   }
   return Object.keys(resume).length ? resume : null
 }
