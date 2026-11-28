@@ -1,36 +1,28 @@
 // Pastille « Offerte dès 100 € » des cartes de l'accueil (28/11/2026) : la
-// carte d'un produit dont une variante en stock est le cadeau d'un palier de
-// la période de paliers en cours (metafield bodystart.paliers_cadeaux,
-// lib/paliers). Calculée, jamais en dur : elle s'arrête avec la période
-// (fin rendue au navigateur, components/home/accueil/CarteVente).
+// carte d'un produit dont une variante est le cadeau d'un palier de la
+// période en cours. Mêmes règles que /products et les catégories
+// (lib/offres-cartes : remise active, cadeau en stock, période à l'heure du
+// rendu). Calculée, jamais en dur ; la carte la retire à la fin de la
+// période même page en cache (components/home/accueil/CarteVente).
 //
 // Pur, sans réseau. Testé dans pastilles-accueil.test.ts.
 
-import { cadeauDeFiche, periodeActive, type PaliersConfig } from '@/lib/paliers'
+import type { OffresVariantes } from '@/lib/carte-produit'
 
 interface ProduitCarte {
   id: string
-  variants: { nodes: { id: string; availableForSale?: boolean | null }[] }
+  variants: { nodes: { id: string }[] }
 }
 
-export interface PastillesAccueil {
-  /** Texte de la pastille par identifiant de produit. */
-  pastilles: Record<string, string>
-  /** Fin de la période de paliers (ISO), null sans fin ou sans période. */
-  fin: string | null
-}
+/** Pastille par identifiant de produit : texte et fin de la période (ISO, null sans fin). */
+export type PastillesAccueil = Record<string, { texte: string; fin: string | null }>
 
-const euros = (montant: number) =>
-  `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(montant)} €`
-
-export function pastillesCadeaux(config: PaliersConfig | null, now: Date, produits: ProduitCarte[]): PastillesAccueil {
-  const periode = periodeActive(config, now)
-  if (!periode) return { pastilles: {}, fin: null }
-  const pastilles: Record<string, string> = {}
+export function pastillesDesProduits(offres: OffresVariantes | null, produits: ProduitCarte[]): PastillesAccueil {
+  const out: PastillesAccueil = {}
+  if (!offres) return out
   for (const p of produits) {
-    const enStock = p.variants.nodes.filter((v) => v.availableForSale !== false).map((v) => v.id)
-    const cadeau = cadeauDeFiche(config, now, enStock)
-    if (cadeau) pastilles[p.id] = `Offerte dès ${euros(cadeau.palier.montant)}`
+    const v = p.variants.nodes.find((x) => offres[x.id])
+    if (v) out[p.id] = { texte: offres[v.id].libelle, fin: offres[v.id].fin }
   }
-  return { pastilles, fin: periode.au }
+  return out
 }

@@ -139,7 +139,7 @@ export default function HautAccueil({
             </p>
             <div className="grid grid-cols-2 gap-4 xl:gap-5">
               {cartes.slice(0, 2).map((p) => (
-                <CarteVente key={p.id} product={p} pastille={pastilles.pastilles[p.id]} fin={pastilles.fin} />
+                <CarteVente key={p.id} product={p} pastille={pastilles[p.id]} />
               ))}
             </div>
           </div>

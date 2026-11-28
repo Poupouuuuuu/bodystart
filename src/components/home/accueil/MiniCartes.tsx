@@ -23,7 +23,7 @@ export default function MiniCartes({ produits, pastilles }: { produits: ShopifyP
       {produits.slice(0, 2).map((p) => {
         const prix = cardPriceOf(p)
         const image = p.featuredImage
-        const pastille = pastilles.pastilles[p.id]
+        const pastille = pastilles[p.id]
         return (
           <li key={p.id}>
             <Link
@@ -50,9 +50,9 @@ export default function MiniCartes({ produits, pastilles }: { produits: ShopifyP
                 )}
                 {pastille && (
                   <PastilleDatee
-                    texte={pastille}
-                    fin={pastilles.fin}
-                    className="absolute left-1.5 top-1.5 rounded-md bg-terracotta px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-white"
+                    texte={pastille.texte}
+                    fin={pastille.fin}
+                    className="absolute left-1.5 top-1.5 badge-saison rounded-md bg-mustard px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-mustard-ink"
                   />
                 )}
               </span>

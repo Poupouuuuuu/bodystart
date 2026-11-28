@@ -61,7 +61,7 @@ export default function MeilleuresVentes({
               key={p.id}
               className="flex w-[46%] flex-shrink-0 snap-start flex-col sm:w-[31%] md:w-[23%] lg:w-auto [&>div]:flex-1"
             >
-              <CarteVente product={p} pastille={pastilles.pastilles[p.id]} fin={pastilles.fin} />
+              <CarteVente product={p} pastille={pastilles[p.id]} />
             </div>
           ))}
           {/* Fin de piste (téléphone, tablette) : tout le catalogue. */}

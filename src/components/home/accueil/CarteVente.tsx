@@ -13,17 +13,16 @@ import type { ShopifyProduct } from '@/lib/shopify/types'
 export default function CarteVente({
   product,
   pastille,
-  fin,
 }: {
   product: ShopifyProduct
-  pastille?: string
-  /** Fin de la période de paliers (ISO), null : sans fin. */
-  fin?: string | null
+  /** Pastille d'offre et fin de la période (ISO, null : sans fin), lib/pastilles-accueil. */
+  pastille?: { texte: string; fin: string | null }
 }) {
   const [active, setActive] = useState(!!pastille)
+  const fin = pastille?.fin
 
   useEffect(() => {
-    if (!pastille || !fin) return
+    if (!fin) return
     const reste = Date.parse(fin) + 1000 - Date.now()
     if (reste <= 0) {
       setActive(false)
@@ -33,7 +32,7 @@ export default function CarteVente({
     if (reste > 24 * 3600 * 1000) return
     const t = setTimeout(() => setActive(false), reste)
     return () => clearTimeout(t)
-  }, [pastille, fin])
+  }, [fin])
 
-  return <ProductCardShop product={product} pastilleOffre={active ? pastille : undefined} />
+  return <ProductCardShop product={product} pastilleOffre={active ? pastille?.texte : undefined} />
 }

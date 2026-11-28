@@ -13,8 +13,8 @@ import Reveal from '@/components/ui/Reveal'
 import { getCoffrets, getCollectionByHandle } from '@/lib/shopify'
 import { getVedettesAccueil } from '@/lib/shopify/vedettes'
 import { getRayonsAccueil, type RayonAccueil } from '@/lib/shopify/rayons-accueil'
-import { lirePaliers } from '@/lib/paliers/serveur'
-import { pastillesCadeaux } from '@/lib/pastilles-accueil'
+import { offresDesCartes } from '@/lib/offres-cartes'
+import { pastillesDesProduits } from '@/lib/pastilles-accueil'
 import { buildPageMetadata } from '@/lib/seo'
 import NosGuidesV3 from '@/components/home/v3/NosGuidesV3'
 import CoffretsNoelV3 from '@/components/home/v3/CoffretsNoelV3'
@@ -101,7 +101,7 @@ export default async function HomePage({
 }) {
   // Lectures Shopify en parallèle (régénération ISR plus courte). Les packs
   // servent à la sélection de saison, ou au bloc packs hors saison.
-  const [coffrets, vedettes, saison, apercu, collectionPacks, variante, rayons, paliers] = await Promise.all([
+  const [coffrets, vedettesBrutes, saison, apercu, collectionPacks, variante, rayons, offres] = await Promise.all([
     coffretsDuMoment(searchParams),
     getVedettesAccueil(PLACES_VEDETTES),
     getSaison(),
@@ -109,8 +109,11 @@ export default async function HomePage({
     getCollectionByHandle('packs', 24).catch(() => null),
     varianteHero(searchParams),
     getRayonsAccueil(),
-    lirePaliers().catch(() => null),
+    offresDesCartes(),
   ])
+  // Fiches dont toutes les variantes sont à 0 (vendables en précommande) :
+  // hors des blocs de l'accueil, les suivantes du metafield prennent la place.
+  const vedettes = vedettesBrutes.filter((p) => !p.carte?.epuise)
   const now = new Date()
   // Déco de saison (metafield bodystart.saison, components/saison) : haut de
   // page, sélection et séparateurs pendant la période, rien sinon.
@@ -128,9 +131,9 @@ export default async function HomePage({
   }
   // Cartes du haut (ordinateur) et piste : vedettes dans l'ordre du
   // metafield. Pastille « Offerte dès 100 € » sur le cadeau d'un palier de la
-  // période de paliers en cours (lib/pastilles-accueil), jusqu'à sa fin.
+  // période en cours (lib/offres-cartes, comme /products), jusqu'à sa fin.
   const piste = vedettes.slice(0, PRODUITS_PISTE)
-  const pastilles = pastillesCadeaux(paliers, now, piste)
+  const pastilles = pastillesDesProduits(offres, piste)
   const cartesHaut = piste.length >= CARTES_HAUT ? piste.slice(0, CARTES_HAUT) : []
 
   // Packs : collection `packs`, comme la page /packs (mêmes cartes). En
