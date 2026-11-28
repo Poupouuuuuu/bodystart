@@ -117,10 +117,12 @@ export default function BundleSelectorsV2({
               <p className="text-[13px] text-ink-mute">{axis.values[0]} · Inclus dans le pack</p>
             ) : (
               <div className="relative inline-block w-full sm:max-w-[360px]">
+                {/* 16 px sous md : iOS zoome au focus d'un select plus petit
+                    (règle mobile first), ce sélecteur est au premier écran. */}
                 <select
                   value={currentSelection[axis.name] ?? ''}
                   onChange={(e) => handleChange(axis.name, e.target.value)}
-                  className="appearance-none w-full bg-white border border-spruce/15 rounded-full pl-4 pr-11 py-2.5 text-[13px] font-semibold text-spruce hover:border-spruce/30 transition-colors cursor-pointer focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30"
+                  className="appearance-none w-full bg-white border border-spruce/15 rounded-full pl-4 pr-11 py-2.5 text-[16px] md:text-[13px] font-semibold text-spruce hover:border-spruce/30 transition-colors cursor-pointer focus:outline-none focus:border-fresh focus:ring-1 focus:ring-fresh/30"
                 >
                   {axis.values.map((val) => {
                     const avail = isBundleOptionAvailable(

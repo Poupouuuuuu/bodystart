@@ -4,8 +4,16 @@ import { useEffect, useRef, useState } from 'react'
 import Image from '@/components/ui/Image'
 import { cn } from '@/lib/utils'
 import type { ShopifyImage } from '@/lib/shopify/types'
-import { X, ZoomIn } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react'
 import { altImage } from '@/lib/alt-produit'
+
+/**
+ * Hauteur de la photo sous sm, partagée avec BundleGalleryV2 (premier écran
+ * du téléphone) : ~22 % de la hauteur d'écran, entre 160 et 240 px. En
+ * 390×844, le bouton d'achat reste visible au-dessus du bandeau cookies de
+ * la 1re visite (~117 px).
+ */
+export const HAUTEUR_MOBILE = 'max-sm:h-[clamp(160px,22svh,240px)]'
 
 interface ProductGalleryV2Props {
   images: ShopifyImage[]
@@ -120,7 +128,11 @@ export default function ProductGalleryV2({
             (43 + 44 Ko avant le 08/10/2026). */}
         {/* saison-toile, saison-badge-citrouille : déco du thème pendant une
             période décorée (components/saison/halloween/styles.ts). */}
-        <div className="saison-toile group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-sage shadow-card">
+        {/* Téléphone (28/11/2026) : photo réduite (HAUTEUR_MOBILE) pour que
+            nom, prix, choix et bouton d'achat tiennent au premier écran. Sans
+            svh (vieux navigateurs), la hauteur est ignorée et le 4/3 reprend
+            la main. */}
+        <div className={cn('saison-toile group pointer-events-none relative flex aspect-[4/3] sm:aspect-square w-full items-center justify-center overflow-hidden rounded-[24px] bg-sage shadow-card', HAUTEUR_MOBILE)}>
           <Image
             src="/bg-vegetal-800.webp"
             alt=""
@@ -154,7 +166,9 @@ export default function ProductGalleryV2({
                 // `priority` précharge sans priorité réseau haute (Next 15) :
                 // l'image produit est le LCP de la fiche, elle passe devant.
                 fetchPriority={selectedIndex === priorityIndex ? 'high' : undefined}
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                // Téléphone : la photo occupe au plus ~70 % de la largeur
+                // (hauteur réduite) ; une variante plus légère suffit.
+                sizes="(max-width: 639px) 70vw, (max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="bg-white/85 backdrop-blur-sm text-spruce p-3 rounded-full shadow-lg">
@@ -164,6 +178,36 @@ export default function ProductGalleryV2({
             </button>
           ) : (
             <div className="text-spruce/40 text-5xl font-extrabold">BS</div>
+          )}
+
+          {/* Téléphone : flèches et compteur à la place des vignettes (qui
+              prenaient 84 px sous la photo). Le glissé du doigt marche aussi. */}
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() => handleSelect((selectedIndex - 1 + images.length) % images.length)}
+                aria-label="Image précédente"
+                className="pointer-events-auto absolute left-1 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-spruce sm:hidden"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/85 shadow-soft">
+                  <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelect((selectedIndex + 1) % images.length)}
+                aria-label="Image suivante"
+                className="pointer-events-auto absolute right-1 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-spruce sm:hidden"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/85 shadow-soft">
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </span>
+              </button>
+              <span className="absolute bottom-2.5 right-3 z-20 rounded-full bg-white/85 px-2 py-0.5 text-[11px] font-semibold tabular-nums text-spruce shadow-soft sm:hidden">
+                {selectedIndex + 1}/{images.length}
+              </span>
+            </>
           )}
 
           {discountPct && (
@@ -176,11 +220,11 @@ export default function ProductGalleryV2({
           )}
         </div>
 
-        {/* Vignettes */}
-        {/* MOBILE FIRST : une seule rangee qui defile au doigt (8 vignettes en
-            grille prenaient 2 rangees = 180 px avant le titre et le prix). */}
+        {/* Vignettes, à partir de sm. Sous sm (28/11/2026) : flèches et
+            compteur sur la photo (avant : une rangée qui défilait au doigt,
+            84 px de plus avant le titre et le prix). */}
         {images.length > 1 && (
-          <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+          <div className="hidden gap-2.5 sm:flex sm:flex-wrap sm:pb-1 sm:pt-1">
             {images.map((img, i) => (
               <button
                 key={i}
