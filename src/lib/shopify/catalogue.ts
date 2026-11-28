@@ -1,7 +1,8 @@
 import { cache } from 'react'
 import { getProducts, getCollections, getInventoryForVariants } from '@/lib/shopify'
 import { BODY_START_STORES, type ShopifyCollection, type ShopifyProduct } from '@/lib/shopify/types'
-import { estPackCatalogue } from '@/lib/catalogue'
+import { estPackCatalogue, vedettesDabord } from '@/lib/catalogue'
+import { handlesVedettes } from '@/lib/shopify/vedettes'
 import { offresDesCartes } from '@/lib/offres-cartes'
 
 export interface Catalogue {
@@ -20,7 +21,7 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
   let products: ShopifyProduct[] = []
   let collections: ShopifyCollection[] = []
   try {
-    const [result, cols] = await Promise.all([
+    const [result, cols, vedettes] = await Promise.all([
       // first:250 = tout le catalogue en une seule requete.
       // BEST_SELLING = classement reel des ventes Shopify (caisse POS incluse,
       // 99 % du CA) : le tri par defaut « Meilleures ventes » affiche les vrais
@@ -29,11 +30,18 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
       // offres : pastille « Offerte dès … » du cadeau des paliers en cours.
       getProducts({ first: 250, sortKey: 'BEST_SELLING', offres: offresDesCartes() }),
       getCollections(50),
+      // Vedettes de l'accueil : en tête de la vue par défaut (lib/catalogue).
+      handlesVedettes(),
     ])
     // Exclut les packs (type « Pack ») de "Tous les produits" : ils ont leur
     // propre page /packs. Avant (SEO 2) : aussi tout produit tagué « pack »,
     // donc Hit Pack Complex (multivitamines en sachets) n'était nulle part.
-    products = result.nodes.filter((p) => !estPackCatalogue(p))
+    // Puis vedettes de l'accueil en stock en tête, le reste par meilleures
+    // ventes : même liste pour /products et /products/page/N.
+    products = vedettesDabord(
+      result.nodes.filter((p) => !estPackCatalogue(p)),
+      vedettes
+    )
     // Retire aussi la collection "Packs" de la barre de categories pour ne
     // pas laisser un filtre qui mene a une grille vide.
     collections = cols.filter((c) => c.handle !== 'packs')

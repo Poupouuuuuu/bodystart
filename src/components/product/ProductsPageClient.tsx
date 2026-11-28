@@ -10,7 +10,7 @@
  */
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { SlidersHorizontal, X, ChevronDown, Search, Package } from 'lucide-react'
+import { SlidersHorizontal, X, ChevronDown, Search, Package, ArrowUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { availableFirst } from '@/lib/product-order'
 import { ProductCardShop } from '@/components/product/ProductCardShop'
@@ -31,12 +31,13 @@ const GOALS: { key: string; label: string; image: string | null; linkedCategorie
 ]
 
 // ─── Tri ───
+// `court` : libellé de la pastille de tri sur mobile (« Trier » pour le tri par défaut).
 const SORT_OPTIONS = [
-  { key: 'best', label: 'Meilleures ventes' },
-  { key: 'price-asc', label: 'Prix croissant' },
-  { key: 'price-desc', label: 'Prix décroissant' },
-  { key: 'name', label: 'Nom A-Z' },
-  { key: 'newest', label: 'Nouveautés' },
+  { key: 'best', label: 'Meilleures ventes', court: 'Trier' },
+  { key: 'price-asc', label: 'Prix croissant', court: 'Prix croissant' },
+  { key: 'price-desc', label: 'Prix décroissant', court: 'Prix décroissant' },
+  { key: 'name', label: 'Nom A-Z', court: 'Nom A-Z' },
+  { key: 'newest', label: 'Nouveautés', court: 'Nouveautés' },
 ]
 
 // ─── Catégories ───
@@ -144,6 +145,8 @@ export function ProductsCatalog({
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200])
   const [visibleCount, setVisibleCount] = useState(12)
   const [searchQuery, setSearchQuery] = useState('')
+  // Mobile : la recherche est repliée derrière une pastille (loupe).
+  const [rechercheOuverte, setRechercheOuverte] = useState(false)
   const [openSections, setOpenSections] = useState<Set<string>>(
     initialCat ? new Set([initialCat]) : new Set()
   )
@@ -375,7 +378,8 @@ export function ProductsCatalog({
           (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
         )
         break
-      // default ('best') : ordre du fetch serveur = BEST_SELLING Shopify.
+      // default ('best') : ordre serveur (lib/shopify/catalogue) = vedettes de
+      // l'accueil en stock, puis meilleures ventes Shopify.
     }
 
     // Règle transverse (décision Adam 2026-07) : les épuisés vont en fin de
@@ -429,6 +433,43 @@ export function ProductsCatalog({
     ? currentCategory.subcategories.filter((s) => (subCounts[`${currentCategory.key}:${s.key}`] ?? 0) > 0)
     : []
 
+  const pastillesCategories = [
+    {
+      cle: 'tout',
+      libelle: 'Tout',
+      compte: products.length,
+      actif: !activeCategory,
+      onClick: () => choisirCategorie(null),
+    },
+    ...visibleCategories.map((cat) => ({
+      cle: cat.key,
+      libelle: cat.label,
+      compte: categoryCounts[cat.key] ?? 0,
+      actif: activeCategory === cat.key,
+      onClick: () => choisirCategorie(cat.key),
+    })),
+  ]
+  const pastillesSous = currentCategory
+    ? [
+        {
+          cle: 'tout',
+          libelle: 'Tout voir',
+          actif: !activeTag,
+          onClick: () => {
+            setActiveTag(null)
+            syncFiltersToUrl(activeGoal, currentCategory.key, null)
+          },
+        },
+        ...sousCategoriesVisibles.map((sub) => ({
+          cle: sub.key,
+          libelle: sub.label,
+          compte: subCounts[`${currentCategory.key}:${sub.key}`] ?? 0,
+          actif: activeTag === sub.key,
+          onClick: () => selectTag(currentCategory.key, sub.key),
+        })),
+      ]
+    : []
+
   // Sous lg, catégorie et sous-catégorie actives se lisent déjà sur les
   // pastilles : la ligne « Filtres : » ne s'affiche que pour les autres filtres.
   const autresFiltres = activeGoal !== 'all' || !!searchQuery || priceRange[1] < 200
@@ -444,7 +485,8 @@ export function ProductsCatalog({
         {/* Mobile : le compteur est masqué (il est repris au-dessus de « Voir
             plus ») pour laisser au tri sa largeur entière. Avant, à 390 px, la
             barre débordait ; la faire rétrécir coupait « Meilleures ventes ». */}
-        <div className="flex items-center justify-between mb-6 gap-3">
+        {/* md et plus : barre de contrôle inchangée. Mobile : rangée unique plus bas. */}
+        <div className="hidden md:flex items-center justify-between mb-6 gap-3">
           <p className="hidden sm:block text-[13px] text-ink-mute whitespace-nowrap">
             {Math.min(visibleCount, filtered.length)} sur {filtered.length} produit{filtered.length > 1 ? 's' : ''}
           </p>
@@ -496,79 +538,107 @@ export function ProductsCatalog({
           </div>
         </div>
 
-        {/* Mobile : catégories puis sous-catégories en pastilles qui défilent
-            au doigt (nuit du 28/11/2026). Mêmes filtres, mêmes paramètres
-            d'URL (?cat=, ?tag=) et mêmes compteurs que la colonne de filtres,
-            qui reste derrière le bouton « Filtres » (prix, objectifs). */}
-        {visibleCategories.length > 0 && (
-          <div className="lg:hidden mb-4 space-y-2">
-            <PastillesFiltres
-              libelle="Catégories"
-              pastilles={[
-                {
-                  cle: 'tout',
-                  libelle: 'Tout',
-                  compte: products.length,
-                  actif: !activeCategory,
-                  onClick: () => choisirCategorie(null),
-                },
-                ...visibleCategories.map((cat) => ({
-                  cle: cat.key,
-                  libelle: cat.label,
-                  compte: categoryCounts[cat.key] ?? 0,
-                  actif: activeCategory === cat.key,
-                  onClick: () => choisirCategorie(cat.key),
-                })),
-              ]}
-            />
-            {currentCategory && sousCategoriesVisibles.length > 0 && (
-              <PastillesFiltres
-                discret
-                libelle={`Sous-catégories : ${currentCategory.label}`}
-                pastilles={[
-                  {
-                    cle: 'tout',
-                    libelle: 'Tout voir',
-                    actif: !activeTag,
-                    onClick: () => {
-                      setActiveTag(null)
-                      syncFiltersToUrl(activeGoal, currentCategory.key, null)
-                    },
-                  },
-                  ...sousCategoriesVisibles.map((sub) => ({
-                    cle: sub.key,
-                    libelle: sub.label,
-                    compte: subCounts[`${currentCategory.key}:${sub.key}`] ?? 0,
-                    actif: activeTag === sub.key,
-                    onClick: () => selectTag(currentCategory.key, sub.key),
-                  })),
-                ]}
+        {/* Mobile (sous md) : UNE rangée qui défile au doigt (28/11/2026,
+            Gestion : le bandeau et trois rangées de commandes prenaient les
+            deux tiers du premier écran, aucun prix visible). Filtres (prix,
+            objectifs), tri, recherche repliée derrière la loupe, puis les
+            catégories ; sous-catégories en 2e rangée quand une catégorie est
+            choisie. Mêmes filtres, mêmes paramètres d'URL (?cat=, ?tag=) et
+            mêmes compteurs que la colonne de filtres. Tablette (md à lg) :
+            la même rangée sans ses commandes (barre de contrôle au-dessus),
+            rendue une seule fois pour ne pas alourdir le HTML. */}
+        <div className="lg:hidden mb-2 space-y-2 pt-2 md:mb-4 md:pt-0">
+          <PastillesFiltres
+            libelle="Filtres, tri et catégories"
+            avant={
+              <>
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(true)}
+                  className={cn(
+                    'inline-flex h-11 flex-shrink-0 md:hidden items-center gap-1.5 rounded-full border px-4 text-[14px] font-semibold transition-colors',
+                    activeGoal !== 'all' || priceRange[1] < 200
+                      ? 'saison-actif-doux border-spruce/30 bg-sage text-spruce'
+                      : 'border-spruce/15 bg-white text-spruce'
+                  )}
+                >
+                  <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+                  Filtres
+                </button>
+                {/* Tri : le vrai <select> natif couvre la pastille (sélecteur du
+                    téléphone, lecteurs d'écran) ; la pastille n'est que l'habillage. */}
+                <div
+                  className={cn(
+                    'relative inline-flex h-11 flex-shrink-0 md:hidden items-center gap-1.5 rounded-full border px-4 text-[14px] font-semibold transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-fresh',
+                    sortKey !== 'best'
+                      ? 'saison-actif-doux border-spruce/30 bg-sage text-spruce'
+                      : 'border-spruce/15 bg-white text-spruce'
+                  )}
+                >
+                  <ArrowUpDown className="h-4 w-4" aria-hidden="true" />
+                  <span aria-hidden="true">{SORT_OPTIONS.find((o) => o.key === sortKey)?.court ?? 'Trier'}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-ink-mute" aria-hidden="true" />
+                  <select
+                    value={sortKey}
+                    onChange={(e) => setSortKey(e.target.value)}
+                    aria-label="Trier les produits"
+                    className="absolute inset-0 h-full w-full cursor-pointer appearance-none rounded-full text-[16px] opacity-0"
+                  >
+                    {SORT_OPTIONS.map((o) => (
+                      <option key={o.key} value={o.key}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRechercheOuverte((o) => !o)}
+                  aria-label="Rechercher un produit"
+                  aria-expanded={rechercheOuverte || !!searchQuery}
+                  aria-controls="recherche-catalogue"
+                  className={cn(
+                    'inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border transition-colors md:hidden',
+                    rechercheOuverte || searchQuery
+                      ? 'saison-actif-doux border-spruce/30 bg-sage text-spruce'
+                      : 'border-spruce/15 bg-white text-spruce'
+                  )}
+                >
+                  <Search className="h-4 w-4" aria-hidden="true" />
+                </button>
+                <span className="my-auto h-6 w-px flex-shrink-0 bg-spruce/15 md:hidden" aria-hidden="true" />
+              </>
+            }
+            pastilles={visibleCategories.length > 0 ? pastillesCategories : []}
+          />
+          {(rechercheOuverte || searchQuery) && (
+            <div className="relative md:hidden" id="recherche-catalogue">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-mute" aria-hidden="true" />
+              <input
+                type="search"
+                autoFocus={rechercheOuverte && !searchQuery}
+                placeholder="Rechercher un produit…"
+                aria-label="Rechercher un produit"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white rounded-full text-[16px] text-ink border border-spruce/15 pl-10 pr-12 py-2.5 focus:outline-none focus:border-spruce/40 placeholder:text-ink-mute"
               />
-            )}
-          </div>
-        )}
-
-        {/* Recherche mobile */}
-        <div className="md:hidden mb-5">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-mute" />
-            <input
-              type="text"
-              placeholder="Rechercher un produit…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white rounded-full text-[16px] text-ink border border-spruce/15 pl-10 pr-12 py-2.5 focus:outline-none focus:border-spruce/40 placeholder:text-ink-mute"
-            />
-            {searchQuery && (
               <button
-                onClick={() => setSearchQuery('')}
+                type="button"
+                onClick={() => {
+                  setSearchQuery('')
+                  setRechercheOuverte(false)
+                }}
                 className="absolute right-0 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center"
-                aria-label="Effacer la recherche"
+                aria-label="Fermer la recherche"
               >
-                <X className="w-3.5 h-3.5 text-ink-mute" />
+                <X className="w-3.5 h-3.5 text-ink-mute" aria-hidden="true" />
               </button>
-            )}
-          </div>
+            </div>
+          )}
+          {pastillesSous.length > 0 && currentCategory && (
+            <PastillesFiltres discret libelle={`Sous-catégories : ${currentCategory.label}`} pastilles={pastillesSous} />
+          )}
         </div>
 
         <div className="flex gap-8">

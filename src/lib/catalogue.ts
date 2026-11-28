@@ -21,6 +21,30 @@ export function estPackCatalogue(p: { productType?: string | null }): boolean {
   return (p.productType ?? '').trim().toLowerCase() === 'pack'
 }
 
+/**
+ * Tête de la vue par défaut (demande de Gestion, 28/11/2026) : les vedettes de
+ * l'accueil (metafield bodystart.accueil_vedettes, dans son ordre), en stock
+ * seulement, puis tout le reste dans l'ordre reçu (meilleures ventes), sans
+ * doublon. Une vedette épuisée, absente du catalogue (pack) ou citée deux
+ * fois ne prend pas de place en tête. Avant : la Crunch Bar à 2,90 € et une
+ * canette ouvraient le catalogue.
+ */
+export function vedettesDabord<T extends { handle: string; availableForSale?: boolean; carte?: { epuise?: true } | null }>(
+  produits: T[],
+  handles: readonly string[]
+): T[] {
+  const parHandle = new Map(produits.map((p) => [p.handle, p]))
+  const tete: T[] = []
+  const pris = new Set<string>()
+  for (const h of handles) {
+    const p = parHandle.get(h)
+    if (!p || pris.has(h) || p.availableForSale === false || p.carte?.epuise) continue
+    tete.push(p)
+    pris.add(h)
+  }
+  return [...tete, ...produits.filter((p) => !pris.has(p.handle))]
+}
+
 /** Ordre de la vue par défaut de /products : meilleures ventes, épuisés en fin de liste. */
 export function ordreCatalogue<T extends { availableForSale?: boolean }>(produits: T[]): T[] {
   return availableFirst(produits)

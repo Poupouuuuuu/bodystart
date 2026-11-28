@@ -77,6 +77,11 @@ async function complement(): Promise<ShopifyProduct[]> {
   }
 }
 
+/** Handles du metafield des vedettes, dans leur ordre ; liste vide si illisible. */
+export async function handlesVedettes(): Promise<string[]> {
+  return handlesEnCache().catch(() => [] as string[])
+}
+
 /**
  * Produits de l'accueil : vedettes du metafield (ordre, publiés, en stock),
  * puis complément jusqu'à `places`. Liste vide si Shopify ne répond pas.

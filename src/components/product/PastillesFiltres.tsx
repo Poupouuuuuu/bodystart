@@ -8,7 +8,7 @@
  *
  * Chaque pastille est un bouton (filtre sur la page) ou un lien (`href`).
  */
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
@@ -26,8 +26,11 @@ export default function PastillesFiltres({
   libelle,
   className,
   discret = false,
+  avant,
 }: {
   pastilles: Pastille[]
+  /** Commandes placées en tête de la même rangée (filtres, tri, recherche sur mobile). */
+  avant?: ReactNode
   /** Nom de la rangée pour les lecteurs d'écran (« Catégories »). */
   libelle: string
   className?: string
@@ -40,14 +43,16 @@ export default function PastillesFiltres({
   useEffect(() => {
     const el = rangee.current
     const cible = el?.querySelector<HTMLElement>('[data-actif="true"]')
-    if (!el || !cible) return
+    // Première pastille (« Tout ») : rangée laissée au début, pour que les
+    // commandes placées avant (filtres, tri, recherche) restent visibles.
+    if (!el || !cible || cible.dataset.premier === 'true') return
     const gauche = cible.offsetLeft - el.offsetLeft - 16
     if (gauche > 0 && cible.offsetLeft + cible.offsetWidth > el.scrollLeft + el.clientWidth) {
       el.scrollTo({ left: gauche, behavior: 'instant' as ScrollBehavior })
     }
   }, [active])
 
-  if (pastilles.length === 0) return null
+  if (pastilles.length === 0 && !avant) return null
 
   return (
     <div
@@ -59,7 +64,8 @@ export default function PastillesFiltres({
         className
       )}
     >
-      {pastilles.map((p) => {
+      {avant}
+      {pastilles.map((p, i) => {
         const classes = cn(
           'inline-flex h-11 flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[14px] font-semibold transition-colors',
           p.actif
@@ -83,6 +89,7 @@ export default function PastillesFiltres({
             key={p.cle}
             href={p.href}
             data-actif={p.actif}
+            data-premier={i === 0}
             aria-current={p.actif ? 'page' : undefined}
             className={classes}
           >
@@ -93,6 +100,7 @@ export default function PastillesFiltres({
             key={p.cle}
             type="button"
             data-actif={p.actif}
+            data-premier={i === 0}
             aria-pressed={p.actif}
             onClick={p.onClick}
             className={classes}
