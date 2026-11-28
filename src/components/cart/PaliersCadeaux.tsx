@@ -1,5 +1,6 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { Gift, Truck, Check } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
 import { prochainPalier, type EtatPalier } from '@/lib/paliers'
@@ -25,7 +26,16 @@ function phraseReste(e: EtatPalier) {
  * Barre des paliers cadeaux du tiroir panier. Montants, libellés et périodes
  * viennent du métachamp (via useCadeaux) ; ce composant ne fait qu'afficher.
  */
-export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux; onAjouter: (montant: number) => void }) {
+export default function PaliersCadeaux({
+  etat,
+  onAjouter,
+  children,
+}: {
+  etat: EtatCadeaux
+  onAjouter: (montant: number) => void
+  /** Suggestion d'un petit article pour le prochain palier (SuggestionPalier), sous la liste. */
+  children?: ReactNode
+}) {
   const { horsBase, baseCadeaux, offertsParAchat } = etat
   // Cadeau que Shopify n'accorde pas avec ce panier (remises non cumulables : Crunch Bar et
   // créatine de la Black Week les 21 et 22/11/2026) : retiré du panier, et plus affiché ici.
@@ -125,6 +135,8 @@ export default function PaliersCadeaux({ etat, onAjouter }: { etat: EtatCadeaux;
             )
           })}
         </ul>
+
+        {children}
 
         {/* Textes validés par Claude Gestion le 13/10/2026 pour l'échelle Crunch Bar / shaker (lib/paliers/panier). */}
         {(offertsParAchat === 1 || (offertsParAchat > 1 && cadeauSuperieurPerdu)) && (
