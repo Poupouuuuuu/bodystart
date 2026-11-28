@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from '@/components/ui/Image'
 import { MapPin, Clock, Phone, ArrowRight, Truck } from 'lucide-react'
 import { BODY_START_STORES } from '@/lib/shopify/types'
 import { GOOGLE_DIRECTIONS_URL } from '@/lib/store-info'
@@ -15,7 +16,7 @@ export default function StoreCallV2() {
   return (
     <section className="saison-coin saison-coin-gauche bg-canvas">
       <div className="container py-14 md:py-18">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-10 lg:gap-14 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.72fr_1fr] gap-10 lg:gap-10 items-center">
           {/* Texte */}
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-mute mb-3">
@@ -35,6 +36,18 @@ export default function StoreCallV2() {
               <Truck className="w-3.5 h-3.5" />
               Livraison offerte dès 85 €
             </div>
+          </div>
+
+          {/* Devanture (photo du 28/11/2026, CDN Shopify) : pour reconnaître la
+              boutique en arrivant. Portrait 3:4, chargement différé. */}
+          <div className="relative mx-auto aspect-[3/4] w-full max-w-[300px] overflow-hidden rounded-[20px] shadow-card lg:max-w-none">
+            <Image
+              src="https://cdn.shopify.com/s/files/1/1030/7679/0614/files/boutique-facade-enseigne-900x1200.jpg?v=1795830285"
+              alt="Devanture de la boutique BodyStart Nutrition au 8 rue du Pont des Landes à Coignières, enseigne allumée au-dessus de la vitrine"
+              fill
+              sizes="(min-width: 1024px) 300px, 300px"
+              className="object-cover object-center"
+            />
           </div>
 
           {/* Carte boutique */}

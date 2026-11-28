@@ -27,7 +27,26 @@ import CarrouselBoutique from './CarrouselBoutique'
 // L'allée des acides aminés n'y est pas : elle illustre déjà le bloc conseil,
 // plus haut sur l'accueil. `position` : cadrage (object-position) dans la
 // carte 3:4, simulé photo par photo avant l'intégration.
+// En tête : photos du 28/11/2026, sans client, servies par le CDN Shopify
+// (components/ui/Image, loader Shopify ?width=).
+const CDN_BOUTIQUE = 'https://cdn.shopify.com/s/files/1/1030/7679/0614/files'
+
 const PHOTOS = [
+  {
+    src: `${CDN_BOUTIQUE}/boutique-allee-900x1200.jpg?v=1795830285`,
+    alt: 'Allée centrale de la boutique BodyStart Nutrition à Coignières : rayons de compléments de chaque côté et présentoirs au centre',
+    position: 'object-center',
+  },
+  {
+    src: `${CDN_BOUTIQUE}/boutique-whey-isolate-900x1200.jpg?v=1795830285`,
+    alt: 'Rayon whey isolate de la boutique BodyStart Nutrition à Coignières : étagères blanches devant le mur végétal',
+    position: 'object-center',
+  },
+  {
+    src: `${CDN_BOUTIQUE}/boutique-acides-amines-900x1200.jpg?v=1795830285`,
+    alt: 'Rayons santé et bien-être et acides aminés de la boutique BodyStart Nutrition à Coignières',
+    position: 'object-center',
+  },
   {
     src: '/boutique/presentoir-nutrimuscle.webp',
     alt: "Présentoir Nutrimuscle au centre de la boutique BodyStart Nutrition à Coignières : Native Iso Blend, Protimuscle, protéine d'œuf et crème de riz",
