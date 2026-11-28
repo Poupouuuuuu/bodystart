@@ -290,11 +290,32 @@ export default function BuyBoxV2({
       window.addEventListener('scroll', handleScroll, { passive: true })
       return () => window.removeEventListener('scroll', handleScroll)
     }
-    const io = new IntersectionObserver(([entry]) => setIsStickyVisible(!entry.isIntersecting), {
-      rootMargin: '0px 0px -8px 0px',
-    })
-    io.observe(el)
-    return () => io.disconnect()
+    // Premier écran du téléphone (28/11/2026) : le bouton principal y est
+    // souvent tout en bas. La barre reste affichée tant qu'il n'est pas visible
+    // à 90 % (avant : un liseré de 1 px suffisait à la masquer), et la partie
+    // cachée par le bandeau cookies (hauteur publiée dans --bandeau-cookies par
+    // CookieBanner) ne compte pas : l'observateur est refait quand elle change.
+    const html = document.documentElement
+    let io: IntersectionObserver | undefined
+    let bandeau = -1
+    const observer = () => {
+      const h = Math.ceil(parseFloat(getComputedStyle(html).getPropertyValue('--bandeau-cookies')) || 0)
+      if (h === bandeau) return
+      bandeau = h
+      io?.disconnect()
+      io = new IntersectionObserver(([entry]) => setIsStickyVisible(entry.intersectionRatio < 0.9), {
+        rootMargin: `0px 0px ${-8 - h}px 0px`,
+        threshold: [0, 0.9],
+      })
+      io.observe(el)
+    }
+    observer()
+    const mo = typeof MutationObserver === 'undefined' ? null : new MutationObserver(observer)
+    mo?.observe(html, { attributes: true, attributeFilter: ['style'] })
+    return () => {
+      io?.disconnect()
+      mo?.disconnect()
+    }
   }, [])
 
   // A11y : la sticky bar cachée n'est que translate-y-full (hors écran mais

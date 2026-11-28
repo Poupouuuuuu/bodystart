@@ -153,3 +153,44 @@ describe('barre d’achat fixe : la variante choisie à côté du prix', () => {
     expect(screen.queryByTitle('Tropical')).toBeNull()
   })
 })
+
+describe('barre d’achat fixe : visibilité du bouton principal', () => {
+  type Rappel = (entries: { intersectionRatio: number }[]) => void
+  const observateurs: { rappel: Rappel; marge: string }[] = []
+  beforeEach(() => {
+    observateurs.length = 0
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        constructor(rappel: Rappel, options: { rootMargin: string }) {
+          observateurs.push({ rappel, marge: options.rootMargin })
+        }
+        observe() {}
+        disconnect() {}
+      },
+    )
+  })
+  afterEach(() => document.documentElement.style.removeProperty('--bandeau-cookies'))
+
+  const barre = () => screen.getByTitle('Tropical').closest('div.fixed') as HTMLElement
+
+  it('cachée quand le bouton est visible à 90 %, affichée s’il ne dépasse qu’à moitié', async () => {
+    renderFiche('')
+    await waitFor(() => expect(observateurs.length).toBe(1))
+    const { rappel } = observateurs[0]
+    rappel([{ intersectionRatio: 1 }])
+    await waitFor(() => expect(barre().hasAttribute('inert')).toBe(true))
+    rappel([{ intersectionRatio: 0.5 }])
+    await waitFor(() => expect(barre().hasAttribute('inert')).toBe(false))
+  })
+
+  it('la partie cachée par le bandeau cookies ne compte pas (marge refaite quand il change)', async () => {
+    document.documentElement.style.setProperty('--bandeau-cookies', '117px')
+    renderFiche('')
+    await waitFor(() => expect(observateurs.length).toBe(1))
+    expect(observateurs[0].marge).toBe('0px 0px -125px 0px')
+    document.documentElement.style.setProperty('--bandeau-cookies', '0px')
+    await waitFor(() => expect(observateurs.length).toBe(2))
+    expect(observateurs[1].marge).toBe('0px 0px -8px 0px')
+  })
+})
